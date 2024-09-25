@@ -15,3 +15,11 @@ export interface UserData {
   login: string;
   access: string;
 }
+
+export interface TournamentData {
+  tournamentId: number;
+  name: string;
+  startDate: Date;
+  endDate: Date;
+  tournamentStateId: number;
+}

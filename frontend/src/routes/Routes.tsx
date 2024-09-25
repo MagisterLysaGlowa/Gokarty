@@ -4,8 +4,8 @@ import HomePage from "../pages/HomePage/HomePage";
 import LoginPage from "../pages/LoginPage/LoginPage";
 import RegisterPage from "../pages/RegisterPage/RegisterPage";
 import Tournaments from "../pages/Tournaments/Tournaments";
-import TournamentTable from "../pages/tournamentTable/tournamentTable";
 import TournamentEdit from "../pages/TournamentEdit/TournamentEdit";
+import TournamentTable from "../pages/tournamentTable/TournamentTable";
 
 export const router = createBrowserRouter([
   {

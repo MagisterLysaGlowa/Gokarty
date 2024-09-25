@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { LoginFormData } from "../../../types";
+import { LoginFormData, TournamentFormData } from "../../../types";
 import { getUser, login, logout } from "../../services/auth";
+import { get_tournament } from "../../services/tournament";
 
 const LoginPage = () => {
   const [loginFormData, setLoginFormData] = useState<LoginFormData>({
@@ -21,7 +22,7 @@ const LoginPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const data = await login(loginFormData.login, loginFormData.password);
+      await login(loginFormData.login, loginFormData.password);
       console.log("logged correctly");
     } catch (err) {
       setError("Login failed!");
@@ -46,8 +47,17 @@ const LoginPage = () => {
     }
   };
 
+  const testClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    try {
+      console.log(await get_tournament(5));
+    } catch (err) {
+      console.log("getting user failed");
+    }
+  };
+
   return (
     <div>
+      <button onClick={testClick}>Dodaj testowy</button>
       <button onClick={handleLogout}>Logout</button>
       <button onClick={handleGetUser}>Get user info</button>
       <form
