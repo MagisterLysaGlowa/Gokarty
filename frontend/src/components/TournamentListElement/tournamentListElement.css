@@ -1,0 +1,43 @@
+.tournamentListElementContiner {
+    display: grid;
+    grid-template-columns: 30% 40% 30%;
+    background-color: white;
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid rgb(160, 169, 172);
+    transition: all ease-in-out .3s;
+}
+
+
+.tournamentListElementContiner:hover {
+    -webkit-box-shadow: 8px 8px 24px 0px rgba(66, 68, 90, 1);
+    -moz-box-shadow: 8px 8px 24px 0px rgba(66, 68, 90, 1);
+    box-shadow: 8px 8px 24px 0px rgba(66, 68, 90, 1);
+}
+
+.tournamentListElementContiner img {
+    height: 110px;
+}
+
+.tournamentContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+.tournamentsControls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tournamentsControls button {
+    width: 100%;
+    border: 1px solid black !important;
+    display: grid;
+    grid-template-columns: 30% 70%;
+    align-items: center;
+    place-items: center;
+}

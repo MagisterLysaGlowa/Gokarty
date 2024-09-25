@@ -1,14 +1,24 @@
-import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Navbar from "./components/Navbar";
+import Navbar from "./components/Navbar/Navbar";
 import { Outlet } from "react-router-dom";
+import { Footer } from "./components/componentsExport";
 
 function App() {
   return (
-    <main>
+    <>
       <Navbar />
-      <Outlet />
-    </main>
+      <div
+        className="window"
+        style={{
+          minHeight: "calc(100vh - 75px - 60px)",
+          overflowY: "auto",
+          backgroundColor: "#F7F7F7",
+        }}
+      >
+        <Outlet />
+      </div>
+      <Footer />
+    </>
   );
 }
 
