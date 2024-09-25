@@ -1,9 +1,11 @@
-﻿namespace api.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace api.Models
 {
     public class Tournament
     {
         public int TournamentId { get; set; }
-        public int Name { get; set; }
+        public string? Name { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public int TournamentStateId { get; set; }

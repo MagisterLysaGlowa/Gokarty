@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using api.Data;
@@ -11,9 +12,11 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240925122408_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,7 +38,7 @@ namespace api.Migrations
 
                     b.HasKey("GokartId");
 
-                    b.ToTable("Gokarts", (string)null);
+                    b.ToTable("Gokarts");
                 });
 
             modelBuilder.Entity("api.Models.Player", b =>
@@ -62,7 +65,7 @@ namespace api.Migrations
 
                     b.HasIndex("SchoolId");
 
-                    b.ToTable("Players", (string)null);
+                    b.ToTable("Players");
                 });
 
             modelBuilder.Entity("api.Models.PlayerTournament", b =>
@@ -77,7 +80,7 @@ namespace api.Migrations
 
                     b.HasIndex("TournamentsId");
 
-                    b.ToTable("PlayerTournaments", (string)null);
+                    b.ToTable("PlayerTournaments");
                 });
 
             modelBuilder.Entity("api.Models.School", b =>
@@ -99,7 +102,7 @@ namespace api.Migrations
 
                     b.HasKey("SchoolId");
 
-                    b.ToTable("Schools", (string)null);
+                    b.ToTable("Schools");
                 });
 
             modelBuilder.Entity("api.Models.Tournament", b =>
@@ -113,8 +116,8 @@ namespace api.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
+                    b.Property<int>("Name")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
@@ -126,7 +129,7 @@ namespace api.Migrations
 
                     b.HasIndex("TournamentStateId");
 
-                    b.ToTable("Tournaments", (string)null);
+                    b.ToTable("Tournaments");
                 });
 
             modelBuilder.Entity("api.Models.TournamentState", b =>
@@ -142,7 +145,7 @@ namespace api.Migrations
 
                     b.HasKey("TournamentStateId");
 
-                    b.ToTable("TournamentStates", (string)null);
+                    b.ToTable("TournamentStates");
                 });
 
             modelBuilder.Entity("api.Models.User", b =>
@@ -164,7 +167,7 @@ namespace api.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("api.Models.Player", b =>

@@ -17,6 +17,7 @@ namespace api
             // Add services to the container.
             builder.Services.AddControllers();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<ITournamentRepository, TournamentRepository>();
             builder.Services.AddScoped<IJwtService, JwtService>();
 
             builder.Services.AddDbContext<AppDbContext>(options =>

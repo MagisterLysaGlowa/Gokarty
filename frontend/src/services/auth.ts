@@ -8,7 +8,6 @@ export const login = async (
   const formData = new FormData();
   formData.append("login", login);
   formData.append("password", password);
-  console.log(login + password);
 
   const response = await apiClient.post<string>("/auth/login", formData, {
     headers: {

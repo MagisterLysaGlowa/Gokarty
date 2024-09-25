@@ -16,7 +16,6 @@ const LoginPage = () => {
       ...loginFormData,
       [name]: value,
     });
-    console.log(loginFormData);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
