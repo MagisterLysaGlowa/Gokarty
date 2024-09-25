@@ -1,0 +1,17 @@
+.editTournamentForm form{
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.playersEditSection{
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.playersEditSection table{
+    text-align: center;
+    vertical-align: middle;
+}

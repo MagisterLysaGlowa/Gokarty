@@ -1,6 +1,6 @@
 .tournamentListElementContiner {
     display: grid;
-    grid-template-columns: 30% 40% 30%;
+    grid-template-columns: 20% 40% 30%;
     background-color: white;
     width: 100%;
     border-radius: 10px;
@@ -8,6 +8,11 @@
     transition: all ease-in-out .3s;
 }
 
+
+.tournamentListElementContiner p{
+    padding: 0 !important;
+    margin: 0;
+}
 
 .tournamentListElementContiner:hover {
     -webkit-box-shadow: 8px 8px 24px 0px rgba(66, 68, 90, 1);
@@ -17,6 +22,7 @@
 
 .tournamentListElementContiner img {
     height: 110px;
+    margin: 0 auto;
 }
 
 .tournamentContent {

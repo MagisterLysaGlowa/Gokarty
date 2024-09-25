@@ -16,8 +16,8 @@ export const router = createBrowserRouter([
       { path: "login", element: <LoginPage /> },
       { path: "register", element: <RegisterPage /> },
       { path: "zawody", element: <Tournaments /> },
-      { path: "zawody/wyniki", element: <TournamentTable /> },
-      { path: "zawody/edycja", element: <TournamentEdit /> },
+      { path: "zawody/wyniki/:id", element: <TournamentTable /> },
+      { path: "zawody/edycja/:id", element: <TournamentEdit /> },
     ],
   },
 ]);

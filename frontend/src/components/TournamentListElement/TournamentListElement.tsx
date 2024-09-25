@@ -2,7 +2,15 @@ import "./tournamentListElement.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTableList } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-const TournamentListElement = () => {
+import { TournamentData } from "../../../types";
+
+interface TournamentListElementProps {
+  data: TournamentData;
+}
+
+const TournamentListElement: React.FC<TournamentListElementProps> = ({
+  data,
+}) => {
   const navigate = useNavigate();
 
   return (
@@ -13,14 +21,15 @@ const TournamentListElement = () => {
           alt="logo"
         />
         <div className="tournamentContent">
-          <h5>Nazwa</h5>
-          <p>data</p>
+          <h5>{data.name}</h5>
+          <p>{new Date(data.startDate).toLocaleDateString()}</p>
+          <p>{new Date(data.endDate).toLocaleDateString()}</p>
         </div>
         <div className="tournamentsControls">
           <button
             className="btn btn-dark"
             onClick={() => {
-              navigate("/zawody/wyniki");
+              navigate("/zawody/wyniki/" + data.tournamentId);
             }}
           >
             <FontAwesomeIcon icon={faTableList} />
@@ -29,7 +38,7 @@ const TournamentListElement = () => {
           <button
             className="btn btn-light"
             onClick={() => {
-              navigate("/zawody/edycja");
+              navigate("/zawody/edycja/" + data.tournamentId);
             }}
           >
             <FontAwesomeIcon icon={faPenToSquare} />
