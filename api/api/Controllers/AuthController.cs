@@ -26,7 +26,8 @@ namespace api.Controllers
             var user = new User()
             {
                 Login = dto.Login,
-                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password)
+                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+                Access = "user"
             };
 
             return Created("success", userRepository.Create(user));
@@ -77,8 +78,8 @@ namespace api.Controllers
             }
         }
 
-        [HttpGet("loginIsFree/{email}")]
-        public IActionResult CheckIfEmailIsFree(string login)
+        [HttpGet("loginIsFree/{login}")]
+        public IActionResult CheckIfLoginIsFree(string login)
         {
             try
             {
