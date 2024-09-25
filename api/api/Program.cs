@@ -18,6 +18,7 @@ namespace api
             builder.Services.AddControllers();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<ITournamentRepository, TournamentRepository>();
+            builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
             builder.Services.AddScoped<IJwtService, JwtService>();
 
             builder.Services.AddDbContext<AppDbContext>(options =>
