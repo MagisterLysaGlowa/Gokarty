@@ -6,6 +6,7 @@ import RegisterPage from "../pages/RegisterPage/RegisterPage";
 import Tournaments from "../pages/Tournaments/Tournaments";
 import TournamentEdit from "../pages/TournamentEdit/TournamentEdit";
 import TournamentTable from "../pages/tournamentTable/TournamentTable";
+import { SchoolManagement } from "../pages/SchoolManagemet/SchoolManagement";
 
 export const router = createBrowserRouter([
   {
@@ -18,6 +19,7 @@ export const router = createBrowserRouter([
       { path: "zawody", element: <Tournaments /> },
       { path: "zawody/wyniki/:id", element: <TournamentTable /> },
       { path: "zawody/edycja/:id", element: <TournamentEdit /> },
+      { path: "szkoly", element: <SchoolManagement /> },
     ],
   },
 ]);

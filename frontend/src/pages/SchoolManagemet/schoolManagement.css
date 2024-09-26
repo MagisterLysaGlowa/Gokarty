@@ -1,0 +1,24 @@
+.schoolManagement {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 10px;
+}
+
+.schoolManagement > form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    margin: 20px 5%;
+    width: 25%;
+    align-self: center;
+}
+
+.schoolManagement > form > * {
+    width: 100%;
+}
+
+.schoolsTable {
+    margin: 20px 5%;
+}
