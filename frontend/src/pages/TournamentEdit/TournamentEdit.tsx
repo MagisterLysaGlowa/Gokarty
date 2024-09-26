@@ -11,6 +11,7 @@ import {
   remove_player,
 } from "../../services/player";
 import { handleChange } from "./TournamentEditUtils";
+import { Modal } from "./../../components/Modal/Modal";
 
 const TournamentEdit = () => {
   const { id } = useParams();
@@ -185,7 +186,7 @@ const TournamentEdit = () => {
                     <button
                       className="btn btn-danger"
                       data-bs-toggle="modal"
-                      data-bs-target="#exampleModal"
+                      data-bs-target="#deleteModal"
                       onClick={() => SetSelectedPlayer(element)}
                     >
                       <FontAwesomeIcon icon={faTrash} />
@@ -197,57 +198,16 @@ const TournamentEdit = () => {
           </tbody>
         </table>
       </div>
-      {/* Bootstrap modal */}
-      <div
-        className="modal fade"
-        id="exampleModal"
-        tabIndex={-1}
-        aria-labelledby="exampleModalLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="exampleModalLabel">
-                Czy aby na pewno chcesz usunąć tego zawodnika?
-              </h5>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-                onClick={() => SetSelectedPlayer(null)}
-              />
-            </div>
-            <div className="modal-body">
-              {selectedPlayer?.name + " " + selectedPlayer?.surname}
-            </div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-                onClick={() => SetSelectedPlayer(null)}
-              >
-                Nie
-              </button>
-              <button
-                type="button"
-                className="btn btn-primary"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-                onClick={() => {
-                  deletePlayerMutate.mutate(Number(selectedPlayer?.playerId));
-                  SetSelectedPlayer(null);
-                }}
-              >
-                Tak
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* {Bootstrap Modal} */}
+      <Modal 
+        id="deleteModal"
+        onConfirm={() => {
+          deletePlayerMutate.mutate(Number(selectedPlayer?.playerId));
+          SetSelectedPlayer(null);
+        }}
+        onAbort={() => SetSelectedPlayer(null)}
+        title="Czy aby na pewno chcesz usunąć tego zawodnika?"
+        message={selectedPlayer?.name + " " + selectedPlayer?.surname}
+      />
     </div>
   );
 };

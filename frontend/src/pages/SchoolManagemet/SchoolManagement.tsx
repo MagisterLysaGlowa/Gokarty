@@ -6,11 +6,13 @@ import { SchoolData, SchoolFormData } from "../../../types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-regular-svg-icons/faEdit";
 import { faTrash } from "@fortawesome/free-solid-svg-icons/faTrash";
+import Modal from "../../components/Modal/Modal";
 
 export const SchoolManagement = () => {
   const [schools, setSchools] = useState<Array<SchoolData>>([]);
   const [formEditId, setFormEditId] = useState<number>(-1);
   const [formData, setFormData] = useState<SchoolFormData>({name: "", city: "", acronym: ""} as SchoolFormData);
+  const [schoolToDelete, setSchoolToDelete] = useState<number | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -135,8 +137,11 @@ export const SchoolManagement = () => {
                   </button>
                 </td>
                 <td>
-                  <button className="btn btn-danger">
-                    <FontAwesomeIcon icon={faTrash} onClick={() => {deleteSchool.mutate(school.schoolId)}} />
+                  <button
+                    className="btn btn-danger"
+                    data-bs-toggle="modal"
+                    data-bs-target="#deleteModal">
+                    <FontAwesomeIcon icon={faTrash} onClick={() => {setSchoolToDelete(school.schoolId)}} />
                   </button>
                 </td>
               </tr>
@@ -144,6 +149,12 @@ export const SchoolManagement = () => {
           </tbody>
         </table>
       </div>
+      <Modal
+        id="deleteModal"
+        onConfirm={() => { if (schoolToDelete != null) deleteSchool.mutate(schoolToDelete as number)}}
+        onAbort={() => {setSchoolToDelete(null)}}
+        title="Czy na pewno chcesz usunąć tą szkołę"
+        message={schools.find(school => school.schoolId == schoolToDelete)?.name}/>
     </div>
   )
 }

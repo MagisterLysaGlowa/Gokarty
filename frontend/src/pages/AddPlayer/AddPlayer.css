@@ -1,0 +1,16 @@
+.editPlayerForm {
+    width: 50%;
+}
+
+.editPlayerForm > form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.checkbox {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+}

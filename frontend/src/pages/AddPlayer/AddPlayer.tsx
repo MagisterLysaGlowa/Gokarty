@@ -19,8 +19,9 @@ import "./AddPlayer.css";
 
 export const AddPlayer = () => {
   const [player, SetPlayer] = useState<PlayerData>(resetPlayerData());
-  const navigate = useNavigate();
+  const [checkbox, setCheckbox] = useState<boolean>(false)
   const { id, playerId } = useParams();
+  const navigate = useNavigate();
 
   const updatePlayerMutation = useMutation(
     async (player: PlayerData) => await update_player(player.playerId, player),
@@ -60,10 +61,11 @@ export const AddPlayer = () => {
     isLoading: schoolLoading,
     isFetching: schoolfetching,
   } = useQuery("getSchools", async () => await get_all_schools());
+
   return (
     <div className="playerContainer p-5">
       <div className="editPlayerForm">
-        <h3>Dodaj/Edytuj gracza</h3>
+        <h3>{(!player?.playerId || player.playerId == -1) ? "Dodaj gracza" : "Edytuj gracza"}</h3>
         <form onSubmit={(e) => e.preventDefault()}>
           <div>
             <label htmlFor="playerName">Imie</label>
@@ -134,19 +136,32 @@ export const AddPlayer = () => {
               </button>
             </div>
           </div>
+          {(!player?.playerId || player.playerId == -1) &&
+          <div className="checkbox">
+            <input type="checkbox" id="statute" checked={checkbox} onChange={(e) => {setCheckbox(e.target.checked)}}/>
+            <label htmlFor="statute">Zapoznałem się i akceptuję regulamin</label>
+          </div>}
           <div className="d-flex" style={{ gap: "10px" }}>
             <button
               className="btn btn-primary"
               onClick={() => {
-                if (!player?.playerId || player.playerId == -1)
-                  createPlayerMutate.mutate(player);
-                else if (playerId)
-                  updatePlayerMutation.mutate({
-                    ...player,
-                    birthDate: new Date(player.birthDate),
-                  });
-
-                SetPlayer(resetPlayerData());
+                  if (!player?.playerId || player.playerId == -1) {
+                    if(checkbox) {
+                      createPlayerMutate.mutate(player);
+                      SetPlayer(resetPlayerData());
+                      setCheckbox(false);
+                    }
+                    else {
+                      console.log("kliknij checkboxa");
+                    }
+                  }
+                  else if (playerId) {
+                    updatePlayerMutation.mutate({
+                      ...player,
+                      birthDate: new Date(player.birthDate),
+                    });
+                    SetPlayer(resetPlayerData());
+                  }
               }}
             >
               Zatwierdź
