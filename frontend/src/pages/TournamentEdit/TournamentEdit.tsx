@@ -1,23 +1,16 @@
 import { useNavigate, useParams } from "react-router-dom";
 import "./tournamentEdit.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useQuery, useMutation } from "react-query";
 import { get_tournament, update_tournament } from "../../services/tournament";
 import { useState } from "react";
 import { PlayerData, TournamentData, TournamentFormData } from "../../../types";
 import {
-  create_player,
   get_players_for_tournament,
   remove_player,
-  update_player,
 } from "../../services/player";
-import { get_all_schools } from "../../services/school";
-import {
-  compareFunction,
-  handleChange,
-  resetPlayerData,
-} from "./TournamentEditUtils";
+import { handleChange } from "./TournamentEditUtils";
 
 const TournamentEdit = () => {
   const { id } = useParams();
@@ -25,7 +18,6 @@ const TournamentEdit = () => {
   const [tournament, SetTournament] = useState<TournamentData>(
     {} as TournamentData
   );
-  const [player, SetPlayer] = useState<PlayerData>(resetPlayerData());
 
   const [selectedPlayer, SetSelectedPlayer] = useState<PlayerData | null>(null);
 
@@ -42,11 +34,6 @@ const TournamentEdit = () => {
       },
     }
   );
-  const {
-    data: schools,
-    isLoading: schoolLoading,
-    isFetching: schoolfetching,
-  } = useQuery("getSchools", async () => await get_all_schools());
 
   const {
     data: tournamentPlayers,
@@ -70,16 +57,6 @@ const TournamentEdit = () => {
     }
   );
 
-  const createPlayerMutate = useMutation(
-    async (data: PlayerData) => await create_player(Number(id), data),
-    {
-      onSuccess: async () => {
-        await refetchPlayers();
-      },
-      onError: () => {},
-    }
-  );
-
   const deletePlayerMutate = useMutation(
     async (id: number) => await remove_player(id),
     {
@@ -88,19 +65,6 @@ const TournamentEdit = () => {
         await refetchPlayers();
       },
       onError: () => {},
-    }
-  );
-
-  const updatePlayerMutation = useMutation(
-    async (player: PlayerData) => await update_player(player.playerId, player),
-    {
-      onSuccess: async () => {
-        console.log(1);
-        await refetchPlayers();
-      },
-      onError: () => {
-        console.log(2);
-      },
     }
   );
 
@@ -169,109 +133,17 @@ const TournamentEdit = () => {
             </button>
           </form>
         </div>
-        <div className="editPlayerForm">
-          <h3>Dodaj/Edytuj gracza</h3>
-          <form onSubmit={(e) => e.preventDefault()}>
-            <div>
-              <label htmlFor="playerName">Imie</label>
-              <input
-                name="name"
-                type="text"
-                id="playerName"
-                className="form-control"
-                value={player.name}
-                onChange={(e) => handleChange(e, SetPlayer)}
-              />
-            </div>
-            <div>
-              <label htmlFor="playerSurname">Nazwisko</label>
-              <input
-                id="playerSurname"
-                type="text"
-                name="surname"
-                className="form-control"
-                value={player.surname}
-                onChange={(e) => handleChange(e, SetPlayer)}
-              />
-            </div>
-            <div>
-              <label htmlFor="birthDate_">Data urodzenia</label>
-              <input
-                name="birthDate"
-                type="date"
-                id="birthDate_"
-                className="form-control"
-                value={
-                  (player.birthDate ? new Date(player.birthDate) : new Date())
-                    .toISOString()
-                    .split("T")[0]
-                }
-                onChange={(e) => {
-                  handleChange(e, SetPlayer);
-                }}
-              />
-            </div>
-            <div>
-              <label htmlFor="school">Szkoła</label>
-              <div className="d-flex" style={{ gap: "5px" }}>
-                {schoolLoading || schoolfetching ? (
-                  <p>Loading...</p>
-                ) : (
-                  <select
-                    name="schoolId"
-                    id="school"
-                    className="form-control"
-                    value={player.schoolId}
-                    onChange={(e) => handleChange(e, SetPlayer)}
-                  >
-                    {schools
-                      ?.sort((a, b) => compareFunction(a, b))
-                      .map((z) => (
-                        <option value={z.schoolId} key={z.name}>
-                          {z.acronym}
-                        </option>
-                      ))}
-                  </select>
-                )}
-                <button
-                  className="btn btn-primary"
-                  onClick={() => navigate("/szkoly")}
-                >
-                  <FontAwesomeIcon icon={faPlus} />
-                </button>
-              </div>
-            </div>
-            <div className="d-flex" style={{ gap: "10px" }}>
-              <button
-                className="btn btn-primary"
-                onClick={() => {
-                  if (!player?.playerId || player.playerId == -1)
-                    createPlayerMutate.mutate(player);
-                  else
-                    updatePlayerMutation.mutate({
-                      ...player,
-                      birthDate: new Date(player.birthDate),
-                    });
-
-                  SetPlayer(resetPlayerData());
-                }}
-              >
-                Zatwierdź
-              </button>
-              <button
-                className="btn btn-danger"
-                onClick={() => {
-                  SetPlayer(resetPlayerData);
-                }}
-              >
-                Wyczyść formularz
-              </button>
-            </div>
-          </form>
-        </div>
       </div>
       <div className="playersEditSection">
-        <h3>Uczestnicy</h3>
+        <div className="d-flex" style={{ gap: "10px" }}>
+          <h3>Uczestnicy</h3>
+          <button
+            className="btn btn-primary"
+            onClick={() => navigate(`/zawody/edycja/${id}/zawodnik`)}
+          >
+            Dodaj zawodnika
+          </button>
+        </div>
         <table className="table table-striped">
           <thead className="table-dark">
             <tr>
@@ -300,7 +172,11 @@ const TournamentEdit = () => {
                   <td>
                     <button
                       className="btn btn-primary"
-                      onClick={() => SetPlayer(element)}
+                      onClick={() =>
+                        navigate(
+                          `/zawody/edycja/${id}/zawodnik/${element.playerId}`
+                        )
+                      }
                     >
                       <FontAwesomeIcon icon={faEdit} />
                     </button>

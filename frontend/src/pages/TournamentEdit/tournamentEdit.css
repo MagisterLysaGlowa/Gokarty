@@ -1,5 +1,8 @@
-.editTournamentForm form,.editPlayerForm form{
-    width: 300px;
+.editTournamentForm{
+    width: 25%;
+}
+
+.editTournamentForm form{
     display: flex;
     flex-direction: column;
     gap: 10px;

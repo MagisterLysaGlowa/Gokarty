@@ -7,6 +7,7 @@ import Tournaments from "../pages/Tournaments/Tournaments";
 import TournamentEdit from "../pages/TournamentEdit/TournamentEdit";
 import TournamentTable from "../pages/tournamentTable/TournamentTable";
 import { SchoolManagement } from "../pages/SchoolManagemet/SchoolManagement";
+import { AddPlayer } from "../pages/AddPlayer/AddPlayer";
 
 export const router = createBrowserRouter([
   {
@@ -20,6 +21,8 @@ export const router = createBrowserRouter([
       { path: "zawody/wyniki/:id", element: <TournamentTable /> },
       { path: "zawody/edycja/:id", element: <TournamentEdit /> },
       { path: "szkoly", element: <SchoolManagement /> },
+      { path: "zawody/edycja/:id/zawodnik", element: <AddPlayer /> },
+      { path: "zawody/edycja/:id/zawodnik/:playerId", element: <AddPlayer /> },
     ],
   },
 ]);
