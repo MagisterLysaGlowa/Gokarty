@@ -1,9 +1,8 @@
 import {
   PlayerData,
+  PlayerFilterFormData,
   PlayerFormData,
   PlayerWithSchoolData,
-  TournamentData,
-  TournamentFormData,
 } from "../../types";
 import apiClient from "./apiClient";
 
@@ -96,6 +95,20 @@ export const get_players_for_tournament = async (
 ): Promise<PlayerData[]> => {
   const response = await apiClient.get<PlayerData[]>(
     `/player/forTournament/${tournamentId}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return response.data;
+};
+
+export const filter_players = async (
+  data: PlayerFilterFormData
+): Promise<PlayerData[]> => {
+  const response = await apiClient.get<PlayerData[]>(
+    `/player/filter?name=${data.name}&surname=${data.surname}&schoolId=${data.schoolId}`,
     {
       headers: {
         "Content-Type": "application/json",

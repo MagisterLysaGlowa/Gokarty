@@ -17,6 +17,12 @@ export interface PlayerFormData {
   schoolId: number;
 }
 
+export interface PlayerFilterFormData {
+  name: string;
+  surname: string;
+  schoolId: number;
+}
+
 export interface SchoolFormData {
   name: string;
   city: string;

@@ -1,8 +1,14 @@
 import { useState } from "react";
-import { LoginFormData, PlayerFormData, SchoolFormData } from "../../../types";
+import {
+  LoginFormData,
+  PlayerFilterFormData,
+  PlayerFormData,
+  SchoolFormData,
+} from "../../../types";
 import { getUser, login, logout } from "../../services/auth";
 import {
   create_player,
+  filter_players,
   get_all_players,
   get_player,
   get_player_with_school,
@@ -64,12 +70,12 @@ const LoginPage = () => {
 
   const testClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     try {
-      const school: SchoolFormData = {
-        name: "mechanik",
-        city: "limanowa",
-        acronym: "eser 123",
+      const filter: PlayerFilterFormData = {
+        name: "r",
+        surname: "",
+        schoolId: 1,
       };
-      console.log(await remove_school(3));
+      console.log(await filter_players(filter));
     } catch (err) {
       console.log("getting user failed");
     }

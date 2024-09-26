@@ -72,5 +72,10 @@ namespace api.Controllers
         {
             return Ok(playerRepository.GetAll());
         }
+        [HttpGet("filter")]
+        public IActionResult FilterPlayers([FromQuery] PlayerFilterDto dto)
+        {
+            return Ok(playerRepository.FilterPlayers(dto));
+        }
     }
 }

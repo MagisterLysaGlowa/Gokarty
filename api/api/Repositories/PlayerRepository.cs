@@ -1,4 +1,5 @@
 ﻿using api.Data;
+using api.Dtos;
 using api.Interfaces;
 using api.Models;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,28 @@ namespace api.Repositories
             tournament?.PlayerTournaments.Add(new PlayerTournament { Player = player });
             _context.SaveChanges();
             return player;
+        }
+
+        public List<Player> FilterPlayers(PlayerFilterDto dto)
+        {
+            var players = _context.Players.ToList();
+
+            if(dto.Name != "" && dto.Name != null)
+            {
+                players = players.Where(p => p.Name!.ToLower().Contains(dto.Name.ToLower())).ToList();
+            }
+
+            if (dto.Surname != "" && dto.Surname != null)
+            {
+                players = players.Where(p => p.Surname!.ToLower().Contains(dto.Surname.ToLower())).ToList();
+            }
+
+            if (dto.SchoolId != 0)
+            {
+                players = players.Where(p => p.SchoolId == dto.SchoolId).ToList();
+            }
+
+            return players;
         }
 
         public Player Get(int playerId)

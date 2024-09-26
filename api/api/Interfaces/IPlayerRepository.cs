@@ -1,4 +1,5 @@
-﻿using api.Models;
+﻿using api.Dtos;
+using api.Models;
 
 namespace api.Interfaces
 {
@@ -11,5 +12,6 @@ namespace api.Interfaces
         List<Player> GetAll();
         List<Player> GetAllForTournament(int tournamentId);
         Player Get(int playerId);
+        List<Player> FilterPlayers(PlayerFilterDto dto);
     }
 }
