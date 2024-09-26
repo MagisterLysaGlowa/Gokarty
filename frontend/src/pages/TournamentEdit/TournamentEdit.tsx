@@ -164,7 +164,7 @@ const TournamentEdit = () => {
               </tr>
             ) : (
               tournamentPlayers?.map((element, index) => (
-                <tr>
+                <tr key={element.playerId}>
                   <td>{index + 1}</td>
                   <td>{element.name}</td>
                   <td>{element.surname}</td>
@@ -198,7 +198,7 @@ const TournamentEdit = () => {
           </tbody>
         </table>
       </div>
-      <Modal 
+      <Modal
         id="deleteModal"
         onConfirm={() => {
           deletePlayerMutate.mutate(Number(selectedPlayer?.playerId));

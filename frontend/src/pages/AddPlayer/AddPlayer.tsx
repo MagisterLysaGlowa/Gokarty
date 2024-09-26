@@ -19,7 +19,7 @@ import "./AddPlayer.css";
 
 export const AddPlayer = () => {
   const [player, SetPlayer] = useState<PlayerData>(resetPlayerData());
-  const [checkbox, setCheckbox] = useState<boolean>(false)
+  const [checkbox, setCheckbox] = useState<boolean>(false);
   const { id, playerId } = useParams();
   const navigate = useNavigate();
 
@@ -28,7 +28,7 @@ export const AddPlayer = () => {
     {
       onSuccess: async () => {
         console.log(1);
-        navigate(`/zawody/edycja/${id}`);
+        navigate(-1);
       },
       onError: () => {
         console.log(2);
@@ -36,19 +36,24 @@ export const AddPlayer = () => {
     }
   );
 
-  useQuery("getPlayer", async () => await get_player(Number(playerId)), {
-    onSuccess: (res) => {
-      if (res) SetPlayer(res);
-      else SetPlayer(resetPlayerData());
-    },
-  });
+  const { isLoading: isLoadingPlayer, isFetching: isFetchingPlayer } = useQuery(
+    "getPlayer",
+    async () => (playerId ? await get_player(Number(playerId)) : null),
+    {
+      refetchOnWindowFocus: false,
+      refetchInterval: false,
+      onSuccess: (res) => {
+        SetPlayer(res ?? resetPlayerData());
+      },
+    }
+  );
 
   const createPlayerMutate = useMutation(
     async (data: PlayerData) => await create_player(Number(id), data),
     {
       onSuccess: async () => {
         console.log(1);
-        navigate(`/zawody/edycja/${id}`);
+        navigate(-1);
       },
       onError: () => {
         console.log(2);
@@ -62,10 +67,15 @@ export const AddPlayer = () => {
     isFetching: schoolfetching,
   } = useQuery("getSchools", async () => await get_all_schools());
 
+  if (isLoadingPlayer || isFetchingPlayer) return <p>Loading...</p>;
   return (
     <div className="playerContainer p-5">
       <div className="editPlayerForm">
-        <h3>{(!player?.playerId || player.playerId == -1) ? "Dodaj gracza" : "Edytuj gracza"}</h3>
+        <h3>
+          {!player?.playerId || player.playerId == -1
+            ? "Dodaj gracza"
+            : "Edytuj gracza"}
+        </h3>
         <form onSubmit={(e) => e.preventDefault()}>
           <div>
             <label htmlFor="playerName">Imie</label>
@@ -136,32 +146,38 @@ export const AddPlayer = () => {
               </button>
             </div>
           </div>
-          {(!player?.playerId || player.playerId == -1) &&
-          <div className="checkbox">
-            <input type="checkbox" id="statute" checked={checkbox} onChange={(e) => {setCheckbox(e.target.checked)}}/>
-            <label htmlFor="statute">Zapoznałem się i akceptuję regulamin</label>
-          </div>}
+          {(!player?.playerId || player.playerId == -1) && (
+            <div className="checkbox">
+              <input
+                type="checkbox"
+                id="statute"
+                checked={checkbox}
+                onChange={(e) => {
+                  setCheckbox(e.target.checked);
+                }}
+              />
+              <label htmlFor="statute">
+                Zapoznałem się i akceptuję regulamin
+              </label>
+            </div>
+          )}
           <div className="d-flex" style={{ gap: "10px" }}>
             <button
               className="btn btn-primary"
               onClick={() => {
-                  if (!player?.playerId || player.playerId == -1) {
-                    if(checkbox) {
-                      createPlayerMutate.mutate(player);
-                      SetPlayer(resetPlayerData());
-                      setCheckbox(false);
-                    }
-                    else {
-                      console.log("kliknij checkboxa");
-                    }
+                if (!player?.playerId || player.playerId == -1) {
+                  if (checkbox) {
+                    createPlayerMutate.mutate(player);
+                    setCheckbox(false);
+                  } else {
+                    console.log("kliknij checkboxa");
                   }
-                  else if (playerId) {
-                    updatePlayerMutation.mutate({
-                      ...player,
-                      birthDate: new Date(player.birthDate),
-                    });
-                    SetPlayer(resetPlayerData());
-                  }
+                } else if (playerId) {
+                  updatePlayerMutation.mutate({
+                    ...player,
+                    birthDate: new Date(player.birthDate),
+                  });
+                }
               }}
             >
               Zatwierdź
@@ -169,7 +185,13 @@ export const AddPlayer = () => {
             <button
               className="btn btn-danger"
               onClick={() => {
-                SetPlayer(resetPlayerData);
+                SetPlayer((prev) => ({
+                  ...prev,
+                  birthDate: new Date(),
+                  name: "",
+                  surname: "",
+                  schoolId: 1,
+                }));
               }}
             >
               Wyczyść formularz
