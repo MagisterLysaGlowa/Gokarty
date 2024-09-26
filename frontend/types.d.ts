@@ -17,6 +17,12 @@ export interface PlayerFormData {
   schoolId: number;
 }
 
+export interface SchoolFormData {
+  name: string;
+  city: string;
+  acronym: string;
+}
+
 export interface UserData {
   userId: number;
   login: string;
@@ -37,6 +43,13 @@ export interface PlayerData {
   surname: string;
   birthDate: Date;
   schoolId: number;
+}
+
+export interface SchoolData {
+  schoolId: number;
+  name: string;
+  city: string;
+  acronym: string;
 }
 
 export interface PlayerWithSchoolData {
