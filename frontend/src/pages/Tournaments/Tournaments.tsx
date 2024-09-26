@@ -18,6 +18,7 @@ const Tournaments = () => {
   const {
     data,
     isLoading,
+    isFetching,
     refetch: refetchTournament,
   } = useQuery("tournament", async () => await get_all_tournaments());
 
@@ -30,14 +31,17 @@ const Tournaments = () => {
     },
   });
 
-  if (isLoading) return;
   return (
     <div className="d-flex">
       <div className="w-75">
         <div className="tournamentList">
-          {data?.map((z) => (
-            <TournamentListElement data={z} key={z.tournamentId} />
-          ))}
+          {isLoading || isFetching ? (
+            <p>Loading...</p>
+          ) : (
+            data?.map((z) => (
+              <TournamentListElement data={z} key={z.tournamentId} />
+            ))
+          )}
         </div>
       </div>
       <div className="w-25 right" style={{ padding: "5px" }}>

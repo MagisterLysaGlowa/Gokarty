@@ -1,4 +1,4 @@
-.editTournamentForm form{
+.editTournamentForm form,.editPlayerForm form{
     width: 300px;
     display: flex;
     flex-direction: column;
@@ -11,6 +11,7 @@
     flex-direction: column;
     gap: 15px;
 }
+
 .playersEditSection table{
     text-align: center;
     vertical-align: middle;
