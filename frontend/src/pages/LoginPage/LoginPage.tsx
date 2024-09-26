@@ -1,7 +1,15 @@
 import { useState } from "react";
-import { LoginFormData, TournamentFormData } from "../../../types";
+import { LoginFormData, PlayerFormData } from "../../../types";
 import { getUser, login, logout } from "../../services/auth";
-import { get_tournament } from "../../services/tournament";
+import {
+  create_player,
+  get_all_players,
+  get_player,
+  get_player_with_school,
+  get_players_for_tournament,
+  remove_player,
+  update_player,
+} from "../../services/player";
 
 const LoginPage = () => {
   const [loginFormData, setLoginFormData] = useState<LoginFormData>({
@@ -49,7 +57,13 @@ const LoginPage = () => {
 
   const testClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     try {
-      console.log(await get_tournament(5));
+      const player: PlayerFormData = {
+        name: "kacper",
+        surname: "eser",
+        birthDate: new Date(),
+        schoolId: 1,
+      };
+      console.log(await get_players_for_tournament(6));
     } catch (err) {
       console.log("getting user failed");
     }

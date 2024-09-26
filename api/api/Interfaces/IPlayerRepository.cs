@@ -9,6 +9,7 @@ namespace api.Interfaces
         PlayerSchool GetPlayerWithSchool(int playerId);
         int Remove(int playerId);
         List<Player> GetAll();
+        List<Player> GetAllForTournament(int tournamentId);
         Player Get(int playerId);
     }
 }

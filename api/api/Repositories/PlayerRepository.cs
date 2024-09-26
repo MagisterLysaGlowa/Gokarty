@@ -37,6 +37,12 @@ namespace api.Repositories
             return players;
         }
 
+        public List<Player> GetAllForTournament(int tournamentId)
+        {
+            var players = _context.PlayerTournaments.Where(pt => pt.TournamentsId == tournamentId).Select(pt => pt.Player).ToList();
+            return players;
+        }
+
         public PlayerSchool GetPlayerWithSchool(int playerId)
         {
             var player = _context.Players.Include(p => p.School)
