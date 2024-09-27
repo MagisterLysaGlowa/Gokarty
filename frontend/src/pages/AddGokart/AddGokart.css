@@ -1,0 +1,19 @@
+
+.gokartContainer{
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.gokartForm form{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 400px;
+}
+
+.gokartContainer table{
+    width: 400px;
+    text-align: center;
+    vertical-align: middle;
+}

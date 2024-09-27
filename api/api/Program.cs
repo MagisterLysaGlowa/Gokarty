@@ -20,6 +20,7 @@ namespace api
             builder.Services.AddScoped<ITournamentRepository, TournamentRepository>();
             builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
             builder.Services.AddScoped<ISchoolRepository, SchoolRepository>();
+            builder.Services.AddScoped<IGokartRepository, GokartRepository>();
             builder.Services.AddScoped<IJwtService, JwtService>();
 
             builder.Services.AddDbContext<AppDbContext>(options =>
