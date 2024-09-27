@@ -27,9 +27,9 @@ export const AddPlayer = () => {
   const updatePlayerMutation = useMutation(
     async (player: PlayerData) =>
       await promiseToast(update_player(player.playerId, player), {
-        error: "Błąd podczas usuwania zawodnika",
-        pending: "W trakcie usuwania zawodnika",
-        success: "Pomyślnie usunięto zawodnika",
+        error: "Błąd podczas aktualizacji zawodnika",
+        pending: "W trakcie aktualizacji zawodnika",
+        success: "Pomyślnie uaktualniono zawodnika",
       }),
     {
       onSuccess: async () => {

@@ -25,7 +25,12 @@ const Tournaments = () => {
   } = useQuery("tournament", async () => await get_all_tournaments());
 
   const { mutateAsync: createTournamentAsync } = useMutation(
-    create_tournament,
+    async (data: TournamentFormData) =>
+      await promiseToast(create_tournament(data), {
+        error: "Błąd podczas dodawania turnieju",
+        pending: "W trakcie dodawania turnieju",
+        success: "Pomyślnie dodano turniej",
+      }),
     {
       onSuccess: async () => {
         await refetchTournament();
@@ -75,11 +80,7 @@ const Tournaments = () => {
           <button
             className="btn btn-dark"
             onClick={async () => {
-              promiseToast(createTournamentAsync(tournament), {
-                error: "Wystąpił bład podczas dodawania turnieju!",
-                pending: "W trakcie dodawania",
-                success: "Pomyślnie dodano",
-              });
+              createTournamentAsync(tournament);
             }}
           >
             Dodaj
