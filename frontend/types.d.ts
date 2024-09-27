@@ -29,6 +29,10 @@ export interface SchoolFormData {
   acronym: string;
 }
 
+export interface GokartFormData {
+  name: string;
+}
+
 export interface UserData {
   userId: number;
   login: string;
@@ -64,4 +68,9 @@ export interface PlayerWithSchoolData {
   surname: string;
   birthDate: Date;
   school: SchoolData;
+}
+
+export interface GokartData {
+  gokartId: number;
+  name: string;
 }
