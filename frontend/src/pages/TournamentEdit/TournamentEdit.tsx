@@ -5,9 +5,9 @@ import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useQuery, useMutation } from "react-query";
 import { get_tournament, update_tournament } from "../../services/tournament";
 import { useState } from "react";
-import { PlayerData, TournamentData, TournamentFormData } from "../../../types";
+import { PlayerWithSchoolData, TournamentData, TournamentFormData } from "../../../types";
 import {
-  get_players_for_tournament,
+  get_players_for_tournament_with_school,
   remove_player,
 } from "../../services/player";
 import { handleChange } from "./TournamentEditUtils";
@@ -20,7 +20,7 @@ const TournamentEdit = () => {
     {} as TournamentData
   );
 
-  const [selectedPlayer, SetSelectedPlayer] = useState<PlayerData | null>(null);
+  const [selectedPlayer, SetSelectedPlayer] = useState<PlayerWithSchoolData | null>(null);
 
   const { isLoading, isFetching, refetch: refetchTournament } = useQuery(
     "editTournament",
@@ -43,7 +43,7 @@ const TournamentEdit = () => {
     refetch: refetchPlayers,
   } = useQuery(
     "tournamentPlayers",
-    async () => await get_players_for_tournament(Number(id))
+    async () => await get_players_for_tournament_with_school(Number(id))
   );
 
   const updateTournamentMutate = useMutation(
@@ -184,7 +184,7 @@ const TournamentEdit = () => {
                   <td>{element.name}</td>
                   <td>{element.surname}</td>
                   <td>{new Date(element.birthDate).toLocaleDateString()}</td>
-                  <td>{element.schoolId}</td>
+                  <td>{element.school.acronym}</td>
                   <td>
                     <button
                       className="btn btn-primary"

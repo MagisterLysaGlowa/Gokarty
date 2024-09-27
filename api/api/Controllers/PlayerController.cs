@@ -42,6 +42,12 @@ namespace api.Controllers
             return Ok(playerRepository.GetAllForTournament(tournamentId));
         }
 
+        [HttpGet("forTournament/withSchool/{tournamentId}")]
+        public IActionResult GetPlayerForTournamentWithSchool(int tournamentId)
+        {
+            return Ok(playerRepository.GetAllForTournamentWithSchool(tournamentId));
+        }
+
         [HttpPut("{playerId}")]
         public IActionResult Update(int playerId, PlayerDto dto)
         {

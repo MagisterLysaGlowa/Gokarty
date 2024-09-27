@@ -63,8 +63,5 @@ export interface PlayerWithSchoolData {
   name: string;
   surname: string;
   birthDate: Date;
-  schoolId: number;
-  schoolName: string;
-  city: string;
-  acronym: string;
+  school: SchoolData;
 }

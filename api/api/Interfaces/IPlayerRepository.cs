@@ -13,5 +13,6 @@ namespace api.Interfaces
         List<Player> GetAllForTournament(int tournamentId);
         Player Get(int playerId);
         List<Player> FilterPlayers(PlayerFilterDto dto);
+        List<PlayerSchool> GetAllForTournamentWithSchool(int tournamentId);
     }
 }

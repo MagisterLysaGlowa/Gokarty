@@ -66,10 +66,29 @@ namespace api.Repositories
             return players;
         }
 
+        public List<PlayerSchool> GetAllForTournamentWithSchool(int tournamentId)
+        {
+            var players = _context.PlayerTournaments.Where(pt => pt.TournamentsId == tournamentId).Select(pt => pt.Player).ToList();
+            var playersWithSchool = new List<PlayerSchool>();
+
+            foreach(var player in players)
+            {
+                playersWithSchool.Add(new PlayerSchool
+                {
+                    PlayerId = player.PlayerId,
+                    Name = player.Name,
+                    Surname = player.Surname,
+                    BirthDate = player.BirthDate,
+                    School = _context.Schools.FirstOrDefaultAsync(s => s.SchoolId == player.SchoolId).Result,
+                });
+            }
+
+            return playersWithSchool;
+        }
+
         public PlayerSchool GetPlayerWithSchool(int playerId)
         {
-            var player = _context.Players.Include(p => p.School)
-                                         .FirstOrDefaultAsync(p => p.PlayerId == playerId).Result;
+            var player = _context.Players.FirstOrDefaultAsync(p => p.PlayerId == playerId).Result;
             if (player == null) return null!;
             var playerSchool = new PlayerSchool
             {
@@ -77,10 +96,7 @@ namespace api.Repositories
                 Name = player.Name,
                 Surname = player.Surname,
                 BirthDate = player.BirthDate,
-                SchoolId = player.SchoolId,
-                SchoolName = player.School.Name,
-                City = player.School.City,
-                Acronym = player.School.Acronym,
+                School = _context.Schools.FirstOrDefaultAsync(s => s.SchoolId == player.SchoolId).Result,
             };
             return playerSchool;
         }

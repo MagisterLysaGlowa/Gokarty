@@ -104,6 +104,20 @@ export const get_players_for_tournament = async (
   return response.data;
 };
 
+export const get_players_for_tournament_with_school = async (
+  tournamentId: number
+): Promise<PlayerWithSchoolData[]> => {
+  const response = await apiClient.get<PlayerWithSchoolData[]>(
+    `/player/forTournament/withSchool/${tournamentId}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return response.data;
+};
+
 export const filter_players = async (
   data: PlayerFilterFormData
 ): Promise<PlayerData[]> => {
