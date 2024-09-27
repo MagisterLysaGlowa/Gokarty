@@ -48,6 +48,12 @@ namespace api.Data
                         .HasOne(ts => ts.TournamentState)
                         .WithMany(t => t.Tournaments)
                         .HasForeignKey(ts => ts.TournamentStateId);
+
+            modelBuilder.Entity<TournamentState>().HasData(
+                new TournamentState() { TournamentStateId = 1, State = "Zaplanowane" },
+                new TournamentState() { TournamentStateId = 2, State = "W trakcie" },
+                new TournamentState() { TournamentStateId = 3, State = "Zakończone" }
+            );
         }
     }
 }
