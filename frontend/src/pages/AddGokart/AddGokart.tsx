@@ -12,6 +12,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Modal } from "../../components/componentsExport";
+import { promiseToast } from "../../Utils/ToastNotifications";
 
 export const AddGokart = () => {
   const [gokart, Setgokart] = useState<GokartFormData>({} as GokartFormData);
@@ -24,38 +25,40 @@ export const AddGokart = () => {
   } = useQuery("getGokart", async () => await get_all_gokarts());
 
   const { mutate: createGokart } = useMutation(
-    async (data: GokartFormData) => await create_gokart(data),
+    async (data: GokartFormData) =>
+      await promiseToast(create_gokart(data), {
+        error: "Błąd podczas dodawania gokarta",
+        pending: "W trakcie dodawania gokarta",
+        success: "Pomyślnie dodano gokart",
+      }),
     {
       onSuccess: async () => {
-        console.log(1);
         await refetchGokarts();
-      },
-      onError: () => {
-        console.log(2);
       },
     }
   );
 
   const { mutate: removeGokart } = useMutation(
-    async (id: number) => await remove_gokart(id),
+    async (id: number) =>
+      await promiseToast(remove_gokart(id), {
+        error: "Błąd podczas usuwania gokarta",
+        pending: "W trakcie usuwania gokarta",
+        success: "Pomyślnie usunięto gokart",
+      }),
     {
       onSuccess: async () => {
         await refetchGokarts();
-      },
-      onError: () => {
-        console.log(2);
       },
     }
   );
 
   const { mutate: updateGokart } = useMutation(
-    async (data: GokartFormData) => await update_gokart(selectedGokartId, data),
-    {
-      onSuccess: async () => {
-        await refetchGokarts();
-      },
-      onError: () => {},
-    }
+    async (data: GokartFormData) =>
+      await promiseToast(update_gokart(selectedGokartId, data), {
+        error: "Błąd podczas aktualizowania gokarta",
+        pending: "W trakcie aktualizacji gokarta",
+        success: "Pomyślnie uaktualniono gokarta",
+      })
   );
 
   return (

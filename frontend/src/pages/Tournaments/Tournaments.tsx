@@ -7,6 +7,8 @@ import {
 } from "../../services/tournament";
 import { TournamentFormData } from "../../../types";
 import { useQuery, useMutation } from "react-query";
+import { promiseToast } from "../../Utils/ToastNotifications";
+
 const Tournaments = () => {
   const [tournament, SetTournament] = useState<TournamentFormData>({
     name: "",
@@ -22,14 +24,14 @@ const Tournaments = () => {
     refetch: refetchTournament,
   } = useQuery("tournament", async () => await get_all_tournaments());
 
-  const { mutate } = useMutation(create_tournament, {
-    onSuccess: () => {
-      refetchTournament();
-    },
-    onError: (error) => {
-      console.log(error);
-    },
-  });
+  const { mutateAsync: createTournamentAsync } = useMutation(
+    create_tournament,
+    {
+      onSuccess: async () => {
+        await refetchTournament();
+      },
+    }
+  );
 
   return (
     <div className="d-flex">
@@ -72,8 +74,12 @@ const Tournaments = () => {
           />
           <button
             className="btn btn-dark"
-            onClick={() => {
-              mutate(tournament);
+            onClick={async () => {
+              promiseToast(createTournamentAsync(tournament), {
+                error: "Wystąpił bład podczas dodawania turnieju!",
+                pending: "W trakcie dodawania",
+                success: "Pomyślnie dodano",
+              });
             }}
           >
             Dodaj

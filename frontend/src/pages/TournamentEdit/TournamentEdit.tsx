@@ -5,13 +5,18 @@ import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useQuery, useMutation } from "react-query";
 import { get_tournament, update_tournament } from "../../services/tournament";
 import { useState } from "react";
-import { PlayerWithSchoolData, TournamentData, TournamentFormData } from "../../../types";
+import {
+  PlayerWithSchoolData,
+  TournamentData,
+  TournamentFormData,
+} from "../../../types";
 import {
   get_players_for_tournament_with_school,
   remove_player,
 } from "../../services/player";
 import { handleChange } from "./TournamentEditUtils";
 import { Modal } from "./../../components/Modal/Modal";
+import { promiseToast } from "../../Utils/ToastNotifications";
 
 const TournamentEdit = () => {
   const { id } = useParams();
@@ -20,21 +25,22 @@ const TournamentEdit = () => {
     {} as TournamentData
   );
 
-  const [selectedPlayer, SetSelectedPlayer] = useState<PlayerWithSchoolData | null>(null);
+  const [selectedPlayer, SetSelectedPlayer] =
+    useState<PlayerWithSchoolData | null>(null);
 
-  const { isLoading, isFetching, refetch: refetchTournament } = useQuery(
-    "editTournament",
-    async () => await get_tournament(Number(id)),
-    {
-      onSuccess: (res) => {
-        SetTournament({
-          ...res,
-          endDate: new Date(res.endDate),
-          startDate: new Date(res.startDate),
-        });
-      },
-    }
-  );
+  const {
+    isLoading,
+    isFetching,
+    refetch: refetchTournament,
+  } = useQuery("editTournament", async () => await get_tournament(Number(id)), {
+    onSuccess: (res) => {
+      SetTournament({
+        ...res,
+        endDate: new Date(res.endDate),
+        startDate: new Date(res.startDate),
+      });
+    },
+  });
 
   const {
     data: tournamentPlayers,
@@ -47,26 +53,30 @@ const TournamentEdit = () => {
   );
 
   const updateTournamentMutate = useMutation(
-    (data: TournamentFormData) => update_tournament(Number(id), data),
+    async (data: TournamentFormData) =>
+      await promiseToast(update_tournament(Number(id), data), {
+        error: "Błąd podczas aktualizacji zawodów",
+        pending: "W trakcie aktualizacji zawodów",
+        success: "Pomyślnie uaktualniono zawody",
+      }),
     {
       onSuccess: () => {
-        console.log(1);
         refetchTournament();
-      },
-      onError: () => {
-        console.log(2);
       },
     }
   );
 
   const deletePlayerMutate = useMutation(
-    async (id: number) => await remove_player(id),
+    async (id: number) =>
+      await promiseToast(remove_player(id), {
+        error: "Błąd podczas usuwania zawodnika",
+        pending: "W trakcie usuwania zawodnika",
+        success: "Pomyślnie usunięto zawodnika",
+      }),
     {
       onSuccess: async () => {
-        console.log(1);
         await refetchPlayers();
       },
-      onError: () => {},
     }
   );
 
@@ -137,17 +147,23 @@ const TournamentEdit = () => {
         </div>
         <div className="manageTournamentForm">
           <h3>Zarządzaj zawodami</h3>
-          { tournament.tournamentStateId !=3 && 
-            <button type="button" 
+          {tournament.tournamentStateId != 3 && (
+            <button
+              type="button"
               className="btn btn-primary"
               data-bs-toggle="modal"
-              data-bs-target="#updateStateModal">
-                {tournament.tournamentStateId == 1 ? "Rozpocznij zawody" : "Zakończ zawody"}
+              data-bs-target="#updateStateModal"
+            >
+              {tournament.tournamentStateId == 1
+                ? "Rozpocznij zawody"
+                : "Zakończ zawody"}
             </button>
-          }
-          { tournament.tournamentStateId == 3 &&
-            <button className="btn btn-secondary disabled">Zawody zakończone</button>
-          }
+          )}
+          {tournament.tournamentStateId == 3 && (
+            <button className="btn btn-secondary disabled">
+              Zawody zakończone
+            </button>
+          )}
         </div>
       </div>
       <div className="playersEditSection">
@@ -226,9 +242,16 @@ const TournamentEdit = () => {
       <Modal
         id="updateStateModal"
         onConfirm={() => {
-            updateTournamentMutate.mutate({...tournament, tournamentStateId: tournament.tournamentStateId + 1});
-          }}
-        title={"Czy na pewno chcesz " + (tournament.tournamentStateId == 1 ? "rozpocząć" : "zakończyć") + " te zawody?"}
+          updateTournamentMutate.mutate({
+            ...tournament,
+            tournamentStateId: tournament.tournamentStateId + 1,
+          });
+        }}
+        title={
+          "Czy na pewno chcesz " +
+          (tournament.tournamentStateId == 1 ? "rozpocząć" : "zakończyć") +
+          " te zawody?"
+        }
         message={tournament.name}
       />
     </div>

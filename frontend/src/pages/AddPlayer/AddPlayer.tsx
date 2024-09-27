@@ -16,6 +16,7 @@ import {
 } from "../../services/player";
 import { get_all_schools } from "../../services/school";
 import "./AddPlayer.css";
+import { promiseToast } from "../../Utils/ToastNotifications";
 
 export const AddPlayer = () => {
   const [player, SetPlayer] = useState<PlayerData>(resetPlayerData());
@@ -24,14 +25,15 @@ export const AddPlayer = () => {
   const navigate = useNavigate();
 
   const updatePlayerMutation = useMutation(
-    async (player: PlayerData) => await update_player(player.playerId, player),
+    async (player: PlayerData) =>
+      await promiseToast(update_player(player.playerId, player), {
+        error: "Błąd podczas usuwania zawodnika",
+        pending: "W trakcie usuwania zawodnika",
+        success: "Pomyślnie usunięto zawodnika",
+      }),
     {
       onSuccess: async () => {
-        console.log(1);
         navigate(-1);
-      },
-      onError: () => {
-        console.log(2);
       },
     }
   );
@@ -47,14 +49,15 @@ export const AddPlayer = () => {
   );
 
   const createPlayerMutate = useMutation(
-    async (data: PlayerData) => await create_player(Number(id), data),
+    async (data: PlayerData) =>
+      await promiseToast(create_player(Number(id), data), {
+        error: "Błąd podczas tworzenia zawodnika",
+        pending: "W trakcie tworzenia zawodnika",
+        success: "Pomyślnie utworzono zawodnika",
+      }),
     {
       onSuccess: async () => {
-        console.log(1);
         navigate(-1);
-      },
-      onError: () => {
-        console.log(2);
       },
     }
   );
@@ -127,6 +130,9 @@ export const AddPlayer = () => {
                   value={player.schoolId}
                   onChange={(e) => handleChange(e, SetPlayer)}
                 >
+                  <option value="-1" disabled selected>
+                    Wybierz szkołe
+                  </option>
                   {schools
                     ?.sort((a, b) => compareFunction(a, b))
                     .map((z) => (
@@ -188,7 +194,7 @@ export const AddPlayer = () => {
                   birthDate: new Date(),
                   name: "",
                   surname: "",
-                  schoolId: 1,
+                  schoolId: -1,
                 }));
               }}
             >

@@ -22,7 +22,7 @@ export const resetPlayerData = () => {
     birthDate: new Date(),
     name: "",
     playerId: -1,
-    schoolId: 1,
+    schoolId: -1,
     surname: "",
   };
 };
