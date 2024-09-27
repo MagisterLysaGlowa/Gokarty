@@ -40,8 +40,6 @@ export const AddPlayer = () => {
     "getPlayer",
     async () => (playerId ? await get_player(Number(playerId)) : null),
     {
-      refetchOnWindowFocus: false,
-      refetchInterval: false,
       onSuccess: (res) => {
         SetPlayer(res ?? resetPlayerData());
       },

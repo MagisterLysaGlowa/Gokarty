@@ -1,6 +1,6 @@
 
 interface ModalProps {
-  onAbort: () => void;
+  onAbort?: () => void;
   onConfirm: () => void;
   title: string | undefined;
   message: string | undefined;
@@ -27,7 +27,7 @@ export const Modal: React.FC<ModalProps> = ({ onAbort, onConfirm, title, message
                 className="btn-close"
                 data-bs-dismiss="modal"
                 aria-label="Close"
-                onClick={() => onAbort()}
+                onClick={() => { if(onAbort) onAbort(); }}
               />
             </div>
             <div className="modal-body">
@@ -38,7 +38,7 @@ export const Modal: React.FC<ModalProps> = ({ onAbort, onConfirm, title, message
                 type="button"
                 className="btn btn-secondary"
                 data-bs-dismiss="modal"
-                onClick={() => onAbort()}
+                onClick={() => { if(onAbort) onAbort(); }}
               >
                 Nie
               </button>

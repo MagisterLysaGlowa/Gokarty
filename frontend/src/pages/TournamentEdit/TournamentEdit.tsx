@@ -22,7 +22,7 @@ const TournamentEdit = () => {
 
   const [selectedPlayer, SetSelectedPlayer] = useState<PlayerData | null>(null);
 
-  const { isLoading, isFetching } = useQuery(
+  const { isLoading, isFetching, refetch: refetchTournament } = useQuery(
     "editTournament",
     async () => await get_tournament(Number(id)),
     {
@@ -51,6 +51,7 @@ const TournamentEdit = () => {
     {
       onSuccess: () => {
         console.log(1);
+        refetchTournament();
       },
       onError: () => {
         console.log(2);
@@ -134,6 +135,20 @@ const TournamentEdit = () => {
             </button>
           </form>
         </div>
+        <div className="manageTournamentForm">
+          <h3>Zarządzaj zawodami</h3>
+          { tournament.tournamentStateId !=3 && 
+            <button type="button" 
+              className="btn btn-primary"
+              data-bs-toggle="modal"
+              data-bs-target="#updateStateModal">
+                {tournament.tournamentStateId == 1 ? "Rozpocznij zawody" : "Zakończ zawody"}
+            </button>
+          }
+          { tournament.tournamentStateId == 3 &&
+            <button className="btn btn-secondary disabled">Zawody zakończone</button>
+          }
+        </div>
       </div>
       <div className="playersEditSection">
         <div className="d-flex" style={{ gap: "10px" }}>
@@ -207,6 +222,14 @@ const TournamentEdit = () => {
         onAbort={() => SetSelectedPlayer(null)}
         title="Czy aby na pewno chcesz usunąć tego zawodnika?"
         message={selectedPlayer?.name + " " + selectedPlayer?.surname}
+      />
+      <Modal
+        id="updateStateModal"
+        onConfirm={() => {
+            updateTournamentMutate.mutate({...tournament, tournamentStateId: tournament.tournamentStateId + 1});
+          }}
+        title={"Czy na pewno chcesz " + (tournament.tournamentStateId == 1 ? "rozpocząć" : "zakończyć") + " te zawody?"}
+        message={tournament.name}
       />
     </div>
   );

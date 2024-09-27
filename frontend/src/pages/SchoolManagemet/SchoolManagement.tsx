@@ -132,16 +132,18 @@ export const SchoolManagement = () => {
                 <td>{school.city}</td>
                 <td>{school.acronym}</td>
                 <td>
-                  <button className="btn btn-primary">
-                    <FontAwesomeIcon icon={faEdit} onClick={() => {editClick(school.schoolId)}}/>
+                  <button className="btn btn-primary"
+                    onClick={() => {editClick(school.schoolId)}}>
+                    <FontAwesomeIcon icon={faEdit} />
                   </button>
                 </td>
                 <td>
                   <button
                     className="btn btn-danger"
                     data-bs-toggle="modal"
-                    data-bs-target="#deleteModal">
-                    <FontAwesomeIcon icon={faTrash} onClick={() => {setSchoolToDelete(school.schoolId)}} />
+                    data-bs-target="#deleteModal"
+                    onClick={() => {setSchoolToDelete(school.schoolId)}} >
+                    <FontAwesomeIcon icon={faTrash}/>
                   </button>
                 </td>
               </tr>

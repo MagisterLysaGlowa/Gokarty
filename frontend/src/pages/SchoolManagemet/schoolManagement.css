@@ -22,3 +22,8 @@
 .schoolsTable {
     margin: 20px 5%;
 }
+
+.schoolsTable table tr {
+    vertical-align: middle;
+    text-align: center;
+}
