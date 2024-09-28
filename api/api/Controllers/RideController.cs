@@ -31,7 +31,7 @@ namespace api.Controllers
         }
 
         [HttpPut("{rideId}")]
-        public IActionResult Update(int rideId,RideDto dto)
+        public IActionResult Update(int rideId, RideDto dto)
         {
             var ride = new Ride
             {

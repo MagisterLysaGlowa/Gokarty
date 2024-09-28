@@ -17,7 +17,7 @@ export const create_ride = async (data: RideFormData): Promise<string> => {
   return response.data;
 };
 
-export const update_queue = async (
+export const update_ride = async (
   rideId: number,
   data: RideFormData
 ): Promise<string> => {

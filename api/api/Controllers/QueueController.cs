@@ -37,6 +37,13 @@ namespace api.Controllers
             return Ok(queueRepository.GetAll());
         }
 
+        [HttpPut("{queueId}")]
+        public IActionResult UpdateRideState(int queueId)
+        {
+            if(queueRepository.ChangeQueueState(queueId))
+                return Ok();
+            return BadRequest();
+        }
 
         [HttpGet("full")]
         public IActionResult FullGetAll()
@@ -56,10 +63,12 @@ namespace api.Controllers
             return Ok(queueRepository.FullGet(queueId));
         }
 
-        [HttpDelete("{queueId}")]
-        public IActionResult Remove(int queueId)
+        [HttpDelete("{tournamentId}")]
+        public IActionResult Remove(int tournamentId)
         {
-            return Ok(queueRepository.Remove(queueId));
+            if(queueRepository.RemoveQueuesForTournament(tournamentId))
+                return Ok();
+            return BadRequest();
         }
     }
 }

@@ -10,6 +10,8 @@ namespace api.Models
         public int PlayerId { get; set; }
         public Player Player { get; set; } = default!;
         public int QueuePosition { get; set; }
+        public int GokartId { get; set; }
+        public Gokart Gokart { get; set; } = default!;
         public int RideStatusId { get; set; }
         public RideStatus RideStatus { get; set; } = default!;
     }

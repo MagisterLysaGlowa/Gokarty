@@ -8,6 +8,8 @@ namespace api.Models
         public string? Name { get; set; }
         [JsonIgnore]
         public ICollection<Ride> Rides { get; } = default!;
+        [JsonIgnore]
+        public ICollection<Queue> Queues { get; } = default!;
 
     }
 }

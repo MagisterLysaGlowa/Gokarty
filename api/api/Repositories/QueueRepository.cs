@@ -39,6 +39,7 @@ namespace api.Repositories
                         PlayerId = player.PlayerId,
                         QueuePosition = position,
                         RideStatusId = 1,
+                        GokartId = gokartNow,
                     });
                     players.Remove(player);
                 }
@@ -52,17 +53,17 @@ namespace api.Repositories
 
         public List<Queue> FullGetAllQueuesForTournament(int tournamentId)
         {
-            return _context.Queues.Include(q => q.Tournament).Include(q => q.Player).Include(p => p.RideStatus).Where(q => q.TournamentId == tournamentId && q.RideStatusId == 1).ToList();
+            return _context.Queues.Include(q => q.Tournament).Include(q => q.Player).ThenInclude(p => p.School).Include(q => q.RideStatus).Include(q => q.Gokart).Where(q => q.TournamentId == tournamentId && q.RideStatusId == 1).ToList();
         }
 
         public Queue FullGet(int queueId)
         {
-            return _context.Queues.Include(q => q.Tournament).Include(q => q.Player).Include(p => p.RideStatus).Where(q => q.QueueId == queueId).FirstOrDefault()!;
+            return _context.Queues.Include(q => q.Tournament).Include(q => q.Player).ThenInclude(p => p.School).Include(q => q.RideStatus).Include(q => q.Gokart).Where(q => q.QueueId == queueId).FirstOrDefault()!;
         }
 
         public List<Queue> FullGetAll()
         {
-            return _context.Queues.Include(q => q.Tournament).Include(q => q.Player).Include(q => q.RideStatus).ToList();
+            return _context.Queues.Include(q => q.Tournament).Include(q => q.Player).ThenInclude(p => p.School).Include(q => q.RideStatus).Include(q => q.Gokart).ToList();
         }
 
         public Queue Get(int queueId)
@@ -75,13 +76,30 @@ namespace api.Repositories
             return _context.Queues.ToList();
         }
 
-        public int Remove(int queueId)
+        public bool ChangeQueueState(int queueId)
         {
-            var queue = _context.Queues.Find(queueId);
-            if (queue == null) return 0;
-            _context.Queues.Remove(queue);
+            var queue = _context.Queues.Where(q => q.QueueId == queueId).First();
+            if (queue == null)
+                return false;
+            queue.RideStatusId++;
+            _context.Queues.Update(queue);
             _context.SaveChanges();
-            return queueId;
+            return true;
+        }
+
+        public bool RemoveQueuesForTournament(int tournamentId)
+        {
+            if(_context.Tournaments.Where(t => t.TournamentId == tournamentId).First() == null)
+                return false;
+            List<Queue> queues = _context.Queues.Where(q => q.TournamentId == tournamentId).ToList();
+            if(queues.Count == 0)
+                return false;
+            foreach (var queue in queues)
+            {
+                _context.Queues.Remove(queue);
+            }
+            _context.SaveChanges();
+            return true;
         }
     }
 }
