@@ -13,11 +13,42 @@ namespace api.Repositories
         {
             _context = context;
         }
-        public Queue Create(Queue queue)
+
+        public bool CreateQueues(int tournamentId, List<int> gokartIds, int numberOfRidesInOneGokart)
         {
-            _context.Queues.Add(queue);
+            if (gokartIds.Count == 0)
+                return false;
+            int gokartNow = gokartIds.First();
+            List<Player> players = _context.Players.ToList();
+            if (players.Count == 0)
+                return false;
+            Random rnd = new Random();
+            int j = 0;
+            while (players.Count > 0)
+            {
+                for (int i = 0; i < numberOfRidesInOneGokart && i < players.Count; i++)
+                {
+                    int player = players[rnd.Next(players.Count)].PlayerId;
+                    _context.Queues.Add(new Queue()
+                    {
+                        TournamentId = tournamentId,
+                        PlayerId = player,
+                        QueuePosition = i,
+                        RideStatusId = 1,
+                    });
+                    players.RemoveAt(player);
+                }
+                j++;
+                j = j % gokartIds.Count;
+                gokartNow = gokartIds[j];
+            }
             _context.SaveChanges();
-            return queue;
+            return true;
+        }
+
+        public List<Queue> FullGetAllQueuesForTournament(int tournamentId)
+        {
+            return _context.Queues.Include(q => q.Tournament).Include(q => q.Player).Include(p => p.RideStatus).Where(q => q.TournamentId == tournamentId && q.RideStatusId == 1).ToList();
         }
 
         public Queue FullGet(int queueId)
@@ -47,21 +78,6 @@ namespace api.Repositories
             _context.Queues.Remove(queue);
             _context.SaveChanges();
             return queueId;
-        }
-
-        public Queue Update(int queueId, Queue queue)
-        {
-            var queue_db = _context.Queues.Find(queueId);
-            if (queue_db == null) return null!;
-
-            queue_db.TournamentId = queue.TournamentId;
-            queue_db.PlayerId = queue.PlayerId;
-            queue_db.QueuePosition = queue.QueuePosition;
-            queue_db.RideStatusId = queue.RideStatusId;
-
-            _context.Queues.Update(queue_db);
-            _context.SaveChanges();
-            return queue_db;
         }
     }
 }

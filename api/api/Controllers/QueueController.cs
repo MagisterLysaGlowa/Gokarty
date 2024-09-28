@@ -18,29 +18,11 @@ namespace api.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(QueueDto dto)
+        public IActionResult CreateQueues(QueueDto dto)
         {
-            var queue = new Queue
-            {
-                TournamentId = dto.TournamentId,
-                PlayerId = dto.PlayerId,
-                QueuePosition = dto.QueuePosition,
-                RideStatusId = dto.RideStatusId,
-            };
-            return Ok(queueRepository.Create(queue));
-        }
-
-        [HttpPut("{queueId}")]
-        public IActionResult Update(int queueId, QueueDto dto)
-        {
-            var queue = new Queue
-            {
-                TournamentId = dto.TournamentId,
-                PlayerId = dto.PlayerId,
-                QueuePosition = dto.QueuePosition,
-                RideStatusId = dto.RideStatusId,
-            };
-            return Ok(queueRepository.Update(queueId, queue));
+            if(queueRepository.CreateQueues(dto.TournamentId, dto.GokartIds, dto.NumberOfRidesInOneGokart))
+                return Ok();
+            return BadRequest("Bad request");
         }
 
         [HttpGet("{queueId}")]
@@ -55,10 +37,17 @@ namespace api.Controllers
             return Ok(queueRepository.GetAll());
         }
 
+
         [HttpGet("full")]
         public IActionResult FullGetAll()
         {
             return Ok(queueRepository.FullGetAll());
+        }
+
+        [HttpGet("full/tournament/{tournamentId}")]
+        public IActionResult FullGetAllQuueuesForTournament(int tournamentId)
+        {
+            return Ok(queueRepository.FullGetAllQueuesForTournament(tournamentId));
         }
 
         [HttpGet("full/{queueId}")]

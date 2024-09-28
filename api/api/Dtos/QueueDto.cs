@@ -1,10 +1,11 @@
-﻿namespace api.Dtos
+﻿using api.Models;
+
+namespace api.Dtos
 {
     public class QueueDto
     {
         public int TournamentId { get; set; }
-        public int PlayerId { get; set; }
-        public int QueuePosition { get; set; }
-        public int RideStatusId { get; set; }
+        public List<int> GokartIds { get; set; }
+        public int NumberOfRidesInOneGokart { get; set; }
     }
 }
