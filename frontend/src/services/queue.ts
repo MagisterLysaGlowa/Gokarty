@@ -56,6 +56,15 @@ export const get_all_full_queues = async (): Promise<FullQueueData[]> => {
   return response.data;
 };
 
+export const get_all_full_queues_for_tournament = async (tournamentId: number): Promise<FullQueueData[]> => {
+  const response = await apiClient.get<FullQueueData[]>(`/queue/full/tournament${tournamentId}`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return response.data;
+};
+
 export const get_full_queue = async (
   queueId: number
 ): Promise<FullQueueData> => {
