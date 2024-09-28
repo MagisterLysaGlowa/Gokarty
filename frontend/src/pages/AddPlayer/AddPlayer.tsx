@@ -43,6 +43,7 @@ export const AddPlayer = () => {
     async () => (playerId ? await get_player(Number(playerId)) : null),
     {
       onSuccess: (res) => {
+        console.log(res);
         SetPlayer(res ?? resetPlayerData());
       },
     }

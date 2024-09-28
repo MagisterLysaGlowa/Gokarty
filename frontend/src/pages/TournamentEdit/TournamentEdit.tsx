@@ -100,7 +100,10 @@ const TournamentEdit = () => {
               />
             </div>
             <div>
-              <label htmlFor="startDate">Data rozpoczęcia</label>
+              {tournament.tournamentStateId == 1 
+                ? (<label htmlFor="startDate">Data planowanego rozpoczęcia</label>) 
+                : (<label htmlFor="startDate">Data rozpoczęcia</label>)
+              }
               <input
                 type="date"
                 className="startDate form-control"
@@ -120,20 +123,27 @@ const TournamentEdit = () => {
               />
             </div>
             <div>
-              <label htmlFor="endDate">Data zakończenia</label>
-              <input
-                type="date"
-                className="endDate form-control"
-                id="endDate"
-                name="endDate"
-                value={new Date(tournament.endDate).toISOString().split("T")[0]}
-                onChange={(e) => {
-                  SetTournament((prev) => ({
-                    ...prev,
-                    endDate: new Date(e.target.value),
-                  }));
-                }}
-              />
+              {tournament.tournamentStateId != 1 &&
+                <>
+                  {tournament.tournamentStateId == 2
+                    ? (<label htmlFor="endDate">Data planowanego zakończenia</label>) 
+                    : (<label htmlFor="endDate">Data zakończenia</label>)
+                  }
+                  <input
+                    type="date"
+                    className="endDate form-control"
+                    id="endDate"
+                    name="endDate"
+                    value={new Date(tournament.endDate).toISOString().split("T")[0]}
+                    onChange={(e) => {
+                      SetTournament((prev) => ({
+                        ...prev,
+                        endDate: new Date(e.target.value),
+                      }));
+                    }}
+                  />
+                </>
+              }
             </div>
             <button
               className="btn btn-primary"
@@ -242,10 +252,19 @@ const TournamentEdit = () => {
       <Modal
         id="updateStateModal"
         onConfirm={() => {
-          updateTournamentMutate.mutate({
-            ...tournament,
-            tournamentStateId: tournament.tournamentStateId + 1,
-          });
+          if(tournament.tournamentStateId == 1) {
+            updateTournamentMutate.mutate({
+              ...tournament,
+              tournamentStateId: tournament.tournamentStateId + 1,
+              startDate: new Date(),
+            });
+          } else if(tournament.tournamentStateId == 2) {
+            updateTournamentMutate.mutate({
+              ...tournament,
+              tournamentStateId: tournament.tournamentStateId + 1,
+              endDate: new Date(),
+            });
+          }
         }}
         title={
           "Czy na pewno chcesz " +

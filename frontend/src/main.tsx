@@ -2,7 +2,7 @@ import ReactDOM from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./routes/Routes";
 import { QueryClientProvider } from "react-query";
-import { queryClient } from "./Utils/ReactQueryConfig";
+import { queryClient } from "./Utils/ReactQueryConfig"
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
