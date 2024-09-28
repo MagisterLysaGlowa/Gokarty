@@ -4,12 +4,12 @@ namespace api.Interfaces
 {
     public interface IQueueRepository
     {
-        Queue Create(Queue queue);
-        Queue Update(int queueId,Queue queue);
+        bool CreateQueues(int tournamentId, List<int> gokartIds, int numberOfRidesInOneGokart);
         int Remove(int queueId);
         List<Queue> GetAll ();
         Queue Get (int queueId);
         List<Queue> FullGetAll();
         Queue FullGet(int queueId);
+        List<Queue> FullGetAllQueuesForTournament(int tournamentId);
     }
 }

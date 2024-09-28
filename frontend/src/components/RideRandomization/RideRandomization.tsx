@@ -1,26 +1,56 @@
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import "./RideRandomization.css";
 import { useState } from "react";
 import { get_all_gokarts } from "../../services/gokart";
 import { sortListElements } from "./RideRandomizationUtils";
+import { create_queue } from "../../services/queue";
+import { useParams } from "react-router-dom";
+import { promiseToast } from "../../Utils/ToastNotifications";
 
-const RideRandomization = () => {
+interface Props {
+  refetch: () => void;
+}
+
+const RideRandomization: React.FC<Props> = ({ refetch }) => {
   const {
     data: allGokarts,
     isLoading: gokartsLoading,
     isFetching: gokartFetching,
   } = useQuery("getAllGokarts", async () => await get_all_gokarts());
-
+  const { id } = useParams();
   const [selectedGokarts, SetSelectedGokarts] = useState<number[]>([]);
+  const [gokartsPerRides, SetGokartsPerRides] = useState<number>();
+  const { mutateAsync: createQueue } = useMutation(
+    async () =>
+      await promiseToast(
+        create_queue({
+          gokartIds: selectedGokarts,
+          numberOfRidesInOneGokart: Number(gokartsPerRides),
+          tournamentId: Number(id),
+        }),
+        { error: "Błąd", pending: "W trakcie", success: "Dodano" }
+      ),
+    {
+      onSuccess: () => {
+        refetch();
+      },
+    }
+  );
+
   return (
     <div
       className="p-3 d-flex flex-column randomizeContainer"
       style={{ gap: "10px" }}
     >
+      {JSON.stringify(gokartsPerRides)}
       <h3>Losowanie przejazdów</h3>
       <div>
         <label className="p-1">Ile przejazdów na gokart</label>
-        <input type="number" className="form-control" />
+        <input
+          type="number"
+          className="form-control"
+          onChange={(e) => SetGokartsPerRides(Number(e.target.value))}
+        />
       </div>
       <div className="d-flex flex-column" style={{ gap: "8px" }}>
         <label className="p-1">Wybierz gokarty do przejazdów</label>
@@ -30,6 +60,7 @@ const RideRandomization = () => {
               ?.sort((a, b) => sortListElements(selectedGokarts, a, b))
               .map((gokart) => (
                 <div
+                  key={gokart.gokartId}
                   className="d-flex align-items-center gokartListElement"
                   style={{ gap: "10px" }}
                   onClick={() => {
@@ -52,7 +83,13 @@ const RideRandomization = () => {
             <p>Loading...</p>
           )}
         </div>
-        <button className="btn btn-primary" style={{ width: "200px" }}>
+        <button
+          className="btn btn-primary"
+          style={{ width: "200px" }}
+          onClick={async () => {
+            await createQueue();
+          }}
+        >
           Wylosuj
         </button>
       </div>

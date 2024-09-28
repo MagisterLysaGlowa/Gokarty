@@ -43,9 +43,8 @@ export interface RideFormData {
 
 export interface QueueFormData {
   tournamentId: number;
-  playerId: number;
-  queuePosition: number;
-  rideStatusId: number;
+  gokartIds: Array<number>;
+  numberOfRidesInOneGokart: number;
 }
 
 export interface UserData {
