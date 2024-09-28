@@ -33,6 +33,14 @@ export interface GokartFormData {
   name: string;
 }
 
+export interface RideFormData {
+  tournamentId: number;
+  playerId: number;
+  gokartId: number;
+  time: string;
+  rideNumber: number;
+}
+
 export interface UserData {
   userId: number;
   login: string;
@@ -73,4 +81,23 @@ export interface PlayerWithSchoolData {
 export interface GokartData {
   gokartId: number;
   name: string;
+}
+
+export interface RideData {
+  tournamentId: number;
+  playerId: number;
+  gokartId: number;
+  time: string;
+  rideNumber: number;
+}
+
+export interface FullRideData {
+  tournamentId: number;
+  playerId: number;
+  gokartId: number;
+  time: string;
+  rideNumber: number;
+  tournament: TournamentData;
+  player: PlayerData;
+  gokart: GokartData;
 }

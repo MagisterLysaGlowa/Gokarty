@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   LoginFormData,
   PlayerFilterFormData,
@@ -23,12 +23,17 @@ import {
   remove_school,
   update_school,
 } from "../../services/school";
+import { get_all_full_rides, get_full_ride } from "../../services/ride";
 
 const LoginPage = () => {
   const [loginFormData, setLoginFormData] = useState<LoginFormData>({
     login: "",
     password: "",
   });
+
+  useEffect(() => {
+    console.log(get_full_ride(1));
+  }, []);
 
   const [error, setError] = useState<string>("");
 

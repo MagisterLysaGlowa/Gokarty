@@ -14,5 +14,9 @@ namespace api.Models
         public TournamentState TournamentState { get; set; } = default!;
         [JsonIgnore]
         public List<PlayerTournament> PlayerTournaments { get; set; } = new();
+        [JsonIgnore]
+        public ICollection<Ride> Rides { get; } = default!;
+        [JsonIgnore]
+        public ICollection<Queue> Queues { get; } = default!;
     }
 }
