@@ -131,7 +131,7 @@ export interface FullQueueData {
   queuePosition: number;
   rideStatusId: number;
   tournament: TournamentData;
-  player: PlayerData;
+  player: PlayerWithSchoolData;
   rideStatus: RideStatusData;
   gokartId: number;
   gokart: GokartData;

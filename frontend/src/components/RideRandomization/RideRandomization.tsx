@@ -4,8 +4,10 @@ import { useState } from "react";
 import { get_all_gokarts } from "../../services/gokart";
 import { sortListElements } from "./RideRandomizationUtils";
 import { create_queue } from "../../services/queue";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { promiseToast } from "../../Utils/ToastNotifications";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
 interface Props {
   refetch: () => void;
@@ -20,6 +22,7 @@ const RideRandomization: React.FC<Props> = ({ refetch }) => {
   const { id } = useParams();
   const [selectedGokarts, SetSelectedGokarts] = useState<number[]>([]);
   const [gokartsPerRides, SetGokartsPerRides] = useState<number>();
+  const navigate = useNavigate();
   const { mutateAsync: createQueue } = useMutation(
     async () =>
       await promiseToast(
@@ -42,10 +45,9 @@ const RideRandomization: React.FC<Props> = ({ refetch }) => {
       className="p-3 d-flex flex-column randomizeContainer"
       style={{ gap: "10px" }}
     >
-      {JSON.stringify(gokartsPerRides)}
       <h3>Losowanie przejazdów</h3>
       <div>
-        <label className="p-1">Ile przejazdów na gokart</label>
+        <label className="p-1">Ilość przejazdów na gokart</label>
         <input
           type="number"
           className="form-control"
@@ -53,7 +55,15 @@ const RideRandomization: React.FC<Props> = ({ refetch }) => {
         />
       </div>
       <div className="d-flex flex-column" style={{ gap: "8px" }}>
-        <label className="p-1">Wybierz gokarty do przejazdów</label>
+        <div className="d-flex gap-1 align-items-center">
+          <label className="p-1">Wybierz gokarty do przejazdów</label>
+          <button
+            className="btn btn-primary"
+            onClick={() => navigate("/gokart")}
+          >
+            <FontAwesomeIcon icon={faPlus} />
+          </button>
+        </div>
         <div className="gokartListContainer">
           {!gokartFetching && !gokartsLoading ? (
             allGokarts

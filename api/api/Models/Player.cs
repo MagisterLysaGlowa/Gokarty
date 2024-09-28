@@ -9,7 +9,6 @@ namespace api.Models
         public string? Surname { get; set; }
         public DateTime BirthDate { get; set; }
         public int SchoolId { get; set; }
-        [JsonIgnore]
         public School School { get; set; } = default!;
         [JsonIgnore]
         public List<PlayerTournament> PlayerTournaments { get; set; }

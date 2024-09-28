@@ -10,7 +10,6 @@ namespace api.Models
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public int TournamentStateId { get; set; }
-        [JsonIgnore]
         public TournamentState TournamentState { get; set; } = default!;
         [JsonIgnore]
         public List<PlayerTournament> PlayerTournaments { get; set; } = new();
