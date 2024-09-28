@@ -41,6 +41,13 @@ export interface RideFormData {
   rideNumber: number;
 }
 
+export interface QueueFormData {
+  tournamentId: number;
+  playerId: number;
+  queuePosition: number;
+  rideStatusId: number;
+}
+
 export interface UserData {
   userId: number;
   login: string;
@@ -84,6 +91,7 @@ export interface GokartData {
 }
 
 export interface RideData {
+  rideId: number;
   tournamentId: number;
   playerId: number;
   gokartId: number;
@@ -92,6 +100,7 @@ export interface RideData {
 }
 
 export interface FullRideData {
+  rideId: number;
   tournamentId: number;
   playerId: number;
   gokartId: number;
@@ -100,4 +109,28 @@ export interface FullRideData {
   tournament: TournamentData;
   player: PlayerData;
   gokart: GokartData;
+}
+
+export interface RideStatusData {
+  rideStatusId: number;
+  state: string;
+}
+
+export interface QueueData {
+  queueId: number;
+  tournamentId: number;
+  playerId: number;
+  queuePosition: number;
+  rideStatusId: number;
+}
+
+export interface FullQueueData {
+  queueId: number;
+  tournamentId: number;
+  playerId: number;
+  queuePosition: number;
+  rideStatusId: number;
+  tournament: TournamentData;
+  player: PlayerData;
+  rideStatus: RideStatusData;
 }

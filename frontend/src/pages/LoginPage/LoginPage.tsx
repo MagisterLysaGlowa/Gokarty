@@ -24,6 +24,7 @@ import {
   update_school,
 } from "../../services/school";
 import { get_all_full_rides, get_full_ride } from "../../services/ride";
+import { get_full_queue } from "../../services/queue";
 
 const LoginPage = () => {
   const [loginFormData, setLoginFormData] = useState<LoginFormData>({
@@ -32,7 +33,7 @@ const LoginPage = () => {
   });
 
   useEffect(() => {
-    console.log(get_full_ride(1));
+    console.log(get_full_queue(1));
   }, []);
 
   const [error, setError] = useState<string>("");

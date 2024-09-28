@@ -22,6 +22,7 @@ namespace api
             builder.Services.AddScoped<ISchoolRepository, SchoolRepository>();
             builder.Services.AddScoped<IGokartRepository, GokartRepository>();
             builder.Services.AddScoped<IRideRepository, RideRepository>();
+            builder.Services.AddScoped<IQueueRepository, QueueRepository>();
             builder.Services.AddScoped<IJwtService, JwtService>();
 
             builder.Services.AddDbContext<AppDbContext>(options =>
