@@ -79,6 +79,20 @@ export const get_full_queue = async (
   return response.data;
 };
 
+export const get_full_active_queue_for_tournament = async (
+  tournamentId: number
+): Promise<FullQueueData> => {
+  const response = await apiClient.get<FullQueueData>(
+    `/queue/full/tournament/${tournamentId}/active`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return response.data;
+};
+
 export const update_queue_ride_status = async (
   queueId: number,
 ): Promise<string> => {

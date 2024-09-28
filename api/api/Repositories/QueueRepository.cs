@@ -97,5 +97,10 @@ namespace api.Repositories
             _context.SaveChanges();
             return true;
         }
+
+        public Queue FullGetActiveQueueForTournament(int tournamentId)
+        {
+            return _context.Queues.Include(q => q.Tournament).Include(q => q.Player).ThenInclude(p => p.School).Include(q => q.RideStatus).Include(q => q.Gokart).Where(q => q.TournamentId == tournamentId).FirstOrDefault()!;
+        }
     }
 }

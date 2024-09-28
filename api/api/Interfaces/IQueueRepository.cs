@@ -12,5 +12,6 @@ namespace api.Interfaces
         List<Queue> FullGetAllQueuesForTournament(int tournamentId);
         bool ChangeQueueState(int queueId);
         bool RemoveQueuesForTournament(int tournamentId);
+        Queue FullGetActiveQueueForTournament(int tournamentId);
     }
 }

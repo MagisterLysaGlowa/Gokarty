@@ -57,6 +57,12 @@ namespace api.Controllers
             return Ok(queueRepository.FullGetAllQueuesForTournament(tournamentId));
         }
 
+        [HttpGet("full/tournament/{tournamentId}/active")]
+        public IActionResult FullGetActiveQueueForTournament(int tournamentId)
+        {
+            return Ok(queueRepository.FullGetActiveQueueForTournament(tournamentId));
+        }
+
         [HttpGet("full/{queueId}")]
         public IActionResult FullGetAll(int queueId)
         {
