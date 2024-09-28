@@ -21,8 +21,8 @@ export const create_queue = async (data: QueueFormData): Promise<string> => {
   return response.data;
 };
 
-export const remove_queue = async (queueId: number): Promise<void> => {
-  await apiClient.delete<string>(`/queue/${queueId}`, {
+export const remove_queues_for_tournament = async (tournamentId: number): Promise<void> => {
+  await apiClient.delete<string>(`/queue/${tournamentId}`, {
     headers: {
       "Content-Type": "application/json",
     },
@@ -76,5 +76,17 @@ export const get_full_queue = async (
       },
     }
   );
+  return response.data;
+};
+
+export const update_queue_ride_status = async (
+  queueId: number,
+): Promise<string> => {
+  const formData = new FormData();
+  const response = await apiClient.put<string>(`/ride/${queueId}`, formData, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
   return response.data;
 };
