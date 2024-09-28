@@ -1,8 +1,4 @@
-import {
-  FullQueueData,
-  QueueData,
-  QueueFormData,
-} from "../../types";
+import { FullQueueData, QueueData, QueueFormData } from "../../types";
 import apiClient from "./apiClient";
 
 export const create_queue = async (data: QueueFormData): Promise<string> => {
@@ -11,7 +7,10 @@ export const create_queue = async (data: QueueFormData): Promise<string> => {
   data.gokartIds.forEach((id, index) => {
     formData.append(`gokartIds[${index}]`, id.toString());
   });
-  formData.append("numberOfRidesInOneGokart", data.numberOfRidesInOneGokart.toString());
+  formData.append(
+    "numberOfRidesInOneGokart",
+    data.numberOfRidesInOneGokart.toString()
+  );
 
   const response = await apiClient.post<string>("/queue", formData, {
     headers: {
@@ -56,12 +55,17 @@ export const get_all_full_queues = async (): Promise<FullQueueData[]> => {
   return response.data;
 };
 
-export const get_all_full_queues_for_tournament = async (tournamentId: number): Promise<FullQueueData[]> => {
-  const response = await apiClient.get<FullQueueData[]>(`/queue/full/tournament${tournamentId}`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+export const get_all_full_queues_for_tournament = async (
+  tournamentId: number
+): Promise<FullQueueData[]> => {
+  const response = await apiClient.get<FullQueueData[]>(
+    `/queue/full/tournament/${tournamentId}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
   return response.data;
 };
 

@@ -17,6 +17,7 @@ import { promiseToast } from "../../Utils/ToastNotifications";
 export const AddGokart = () => {
   const [gokart, Setgokart] = useState<GokartFormData>({} as GokartFormData);
   const [selectedGokartId, SetSelectedGokartId] = useState<number>(-1);
+  const [toDelete, SetToDelete] = useState<number | null>(null);
   const {
     isLoading: isGokartsLoading,
     isFetching: isGokartsFetching,
@@ -134,7 +135,7 @@ export const AddGokart = () => {
                       className="btn btn-danger"
                       data-bs-toggle="modal"
                       data-bs-target="#deleteModal"
-                      onClick={() => SetSelectedGokartId(gokart.gokartId)}
+                      onClick={() => SetToDelete(gokart.gokartId)}
                     >
                       <FontAwesomeIcon icon={faTrash} />
                     </button>
@@ -149,12 +150,13 @@ export const AddGokart = () => {
       </div>
       <Modal
         id="deleteModal"
-        onConfirm={() => removeGokart(Number(selectedGokartId))}
+        onConfirm={() => removeGokart(Number(toDelete))}
         onAbort={() => {
           SetSelectedGokartId(-1);
+          SetToDelete(null);
         }}
         title="Czy na pewno chcesz usunąć tego gokarta?"
-        message={allGokart?.find((z) => z.gokartId == selectedGokartId)?.name}
+        message={allGokart?.find((z) => z.gokartId == toDelete)?.name}
       />
     </div>
   );

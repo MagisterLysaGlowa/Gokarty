@@ -1,0 +1,123 @@
+.randomizeContainer{
+    width: 500px;
+}
+
+.gokartListElement {
+    border-bottom: 1px dashed gray;
+    padding: 10px;
+
+}
+
+.gokartListContainer {
+    border: 2px solid gray;
+    height: 300px;
+    overflow-y: auto;
+    border-radius: 10px;
+    width: 300px;
+}
+
+.gokartListElement:hover {
+    background-color: lightgray;
+}
+
+.gokartListElement input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    appearance: none;
+    background-color: #fff;
+    border: 1px solid #000;
+    cursor: pointer;
+    border-radius: 5px;
+    position: relative;
+}
+
+.gokartListElement input[type="checkbox"]:checked {
+    background-color: rgb(1, 177, 1);
+    border: 2px solid green;
+}
+
+
+.gokartListElement input[type="checkbox"]:checked::before {
+    content: "✓";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 10px;
+    display: block;
+}
+
+.gokartListElement ::-webkit-scrollbar {
+    width: 10px;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.gokartListElement ::-webkit-scrollbar-track {
+    background: gainsboro;
+    border-radius: 10px;
+    border-left: 1px solid gray;
+}
+
+.gokartListElement ::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.gokartListElement ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+
+/*  */
+
+.rideListElement{
+    width: 800px;
+    height: 80px;
+    background-color: yellow;
+    background-color: white;
+    border-radius: 20px;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.rideList header{
+    width: 800px;
+    display: flex;
+    justify-content: space-evenly;
+    background-color: black;
+    color: white;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 20px;
+}
+
+
+
+.fullContainer{
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    width: 500px;
+}
+
+.currentTime{
+    background-color: black;
+    padding: 10px;
+    color: white;
+    font-size: 30px;
+    text-align: center;
+}
+
+.currentRideContainer{
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.currentRide{
+    font-size: 20px;
+}

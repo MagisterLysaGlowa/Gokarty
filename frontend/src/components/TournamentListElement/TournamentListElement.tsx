@@ -29,7 +29,7 @@ const TournamentListElement: React.FC<TournamentListElementProps> = ({
           <button
             className="btn btn-dark"
             onClick={() => {
-              navigate("/zawody/wyniki/" + data.tournamentId);
+              navigate(`/zawody/${data.tournamentId}/wyniki`);
             }}
           >
             <FontAwesomeIcon icon={faTableList} />
@@ -38,7 +38,7 @@ const TournamentListElement: React.FC<TournamentListElementProps> = ({
           <button
             className="btn btn-light"
             onClick={() => {
-              navigate("/zawody/edycja/" + data.tournamentId);
+              navigate(`/zawody/${data.tournamentId}/edycja/`);
             }}
           >
             <FontAwesomeIcon icon={faPenToSquare} />

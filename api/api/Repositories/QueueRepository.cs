@@ -8,10 +8,12 @@ namespace api.Repositories
     public class QueueRepository : IQueueRepository
     {
         private readonly AppDbContext _context;
+        private readonly IPlayerRepository _playerRepository;
 
-        public QueueRepository(AppDbContext context)
+        public QueueRepository(AppDbContext context,IPlayerRepository playerRepository)
         {
             _context = context;
+            _playerRepository = playerRepository;
         }
 
         public bool CreateQueues(int tournamentId, List<int> gokartIds, int numberOfRidesInOneGokart)
@@ -19,25 +21,27 @@ namespace api.Repositories
             if (gokartIds.Count == 0)
                 return false;
             int gokartNow = gokartIds.First();
-            List<Player> players = _context.Players.ToList();
+            List<Player> players = _playerRepository.GetAllForTournament(tournamentId);
             if (players.Count == 0)
                 return false;
             Random rnd = new Random();
             int j = 0;
+            int position = 0;
+            if (numberOfRidesInOneGokart == 0) return false;
             while (players.Count > 0)
             {
-                for (int i = 0; i < numberOfRidesInOneGokart && i < players.Count; i++)
+                for (int i = 0; i < numberOfRidesInOneGokart && i < players.Count; i++,position++)
                 {
-                    int player = players[rnd.Next(players.Count)].PlayerId;
+                    var player = players[rnd.Next(players.Count)];
                     _context.Queues.Add(new Queue()
                     {
                         TournamentId = tournamentId,
-                        PlayerId = player,
-                        QueuePosition = i,
+                        PlayerId = player.PlayerId,
+                        QueuePosition = position,
                         RideStatusId = 1,
                         GokartId = gokartNow,
                     });
-                    players.RemoveAt(player);
+                    players.Remove(player);
                 }
                 j++;
                 j = j % gokartIds.Count;
