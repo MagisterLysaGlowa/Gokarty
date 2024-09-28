@@ -94,6 +94,13 @@ namespace api.Data
                         .WithMany(rs => rs.Queues)
                         .HasForeignKey(q => q.RideStatusId);
 
+            //QUEUE TO GOKART (ONE TO MANY)
+
+            modelBuilder.Entity<Queue>()
+                        .HasOne(q => q.Gokart)
+                        .WithMany(g => g.Queues)
+                        .HasForeignKey(q => q.GokartId);
+
             modelBuilder.Entity<TournamentState>().HasData(
                 new TournamentState() { TournamentStateId = 1, State = "Zaplanowane" },
                 new TournamentState() { TournamentStateId = 2, State = "W trakcie" },
