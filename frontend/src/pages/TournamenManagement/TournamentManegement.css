@@ -1,0 +1,67 @@
+.gokartListElement {
+    border-bottom: 1px dashed gray;
+    padding: 10px;
+
+}
+
+.gokartListContainer {
+    border: 2px solid gray;
+    height: 300px;
+    overflow-y: auto;
+    border-radius: 10px;
+    width: 300px;
+}
+
+.gokartListElement:hover{
+    background-color: lightgray;
+}
+
+input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    appearance: none;
+    background-color: #fff;
+    border: 1px solid #000;
+    cursor: pointer;
+    border-radius: 5px;
+    position: relative;
+}
+
+input[type="checkbox"]:checked {
+    background-color: rgb(1, 177, 1);
+    border: 2px solid green;
+}
+
+
+input[type="checkbox"]:checked::before {
+    content: "✓";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 10px;
+    display: block;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: gainsboro;
+    border-radius: 10px;
+    border-left: 1px solid gray;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
