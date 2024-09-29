@@ -25,7 +25,7 @@ namespace api.Controllers
                 PlayerId = dto.PlayerId,
                 GokartId = dto.GokartId,
                 Time = dto.Time,
-                RideNumber = dto.RideNumber,
+                RideNumber = rideRepository.FindRideNumber(dto.TournamentId, dto.PlayerId)
             };
             return Ok(rideRepository.Create(ride));
         }
@@ -39,7 +39,7 @@ namespace api.Controllers
                 PlayerId = dto.PlayerId,
                 GokartId = dto.GokartId,
                 Time = dto.Time,
-                RideNumber = dto.RideNumber,
+                RideNumber = rideRepository.Get(rideId).RideNumber
             };
             return Ok(rideRepository.Update(rideId,ride));
         }
@@ -66,6 +66,12 @@ namespace api.Controllers
         public IActionResult FullGetAll(int rideId)
         {
             return Ok(rideRepository.FullGet(rideId));
+        }
+
+        [HttpGet("full/tournament/{tournamentId}")]
+        public IActionResult FullGetBestForTournament(int tournamentId)
+        {
+            return Ok(rideRepository.FullGetBestForTournament(tournamentId));
         }
 
         [HttpDelete("{rideId}")]

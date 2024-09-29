@@ -56,7 +56,7 @@ namespace api.Controllers
         {
             var queue = queueRepository.FullGetActiveQueueForTournament(tournamentId);
             if(queue != null)
-                return Ok();
+                return Ok(queue);
             return NotFound();
         }
 

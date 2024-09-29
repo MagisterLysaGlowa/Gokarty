@@ -53,7 +53,7 @@ namespace api.Repositories
 
         public List<Queue> FullGetAllQueuesForTournament(int tournamentId)
         {
-            return _context.Queues.Include(q => q.Tournament).Include(q => q.Player).ThenInclude(p => p.School).Include(q => q.RideStatus).Include(q => q.Gokart).Where(q => q.TournamentId == tournamentId && q.RideStatusId == 1).ToList();
+            return _context.Queues.Include(q => q.Tournament).Include(q => q.Player).ThenInclude(p => p.School).Include(q => q.RideStatus).Include(q => q.Gokart).Where(q => q.TournamentId == tournamentId && q.RideStatusId == 1).OrderBy(q => q.QueuePosition).ToList();
         }
 
         public Queue FullGet(int queueId)

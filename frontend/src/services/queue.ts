@@ -101,7 +101,7 @@ export const update_queue_ride_status = async (
   queueId: number,
 ): Promise<string> => {
   const formData = new FormData();
-  const response = await apiClient.put<string>(`/ride/${queueId}`, formData, {
+  const response = await apiClient.put<string>(`/queue/${queueId}`, formData, {
     headers: {
       "Content-Type": "application/json",
     },

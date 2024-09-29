@@ -12,8 +12,8 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240927172431_SeedDatabase")]
-    partial class SeedDatabase
+    [Migration("20240929104513_emigracja")]
+    partial class emigracja
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -39,6 +39,18 @@ namespace api.Migrations
                     b.HasKey("GokartId");
 
                     b.ToTable("Gokarts");
+
+                    b.HasData(
+                        new
+                        {
+                            GokartId = 1,
+                            Name = "Czarny 1"
+                        },
+                        new
+                        {
+                            GokartId = 2,
+                            Name = "Czarny 2"
+                        });
                 });
 
             modelBuilder.Entity("api.Models.Player", b =>
@@ -66,6 +78,24 @@ namespace api.Migrations
                     b.HasIndex("SchoolId");
 
                     b.ToTable("Players");
+
+                    b.HasData(
+                        new
+                        {
+                            PlayerId = 1,
+                            BirthDate = new DateTime(2024, 10, 5, 12, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Maciej",
+                            SchoolId = 1,
+                            Surname = "Traktor"
+                        },
+                        new
+                        {
+                            PlayerId = 2,
+                            BirthDate = new DateTime(2024, 10, 5, 12, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Michalina",
+                            SchoolId = 1,
+                            Surname = "Ciągnik"
+                        });
                 });
 
             modelBuilder.Entity("api.Models.PlayerTournament", b =>
@@ -81,6 +111,121 @@ namespace api.Migrations
                     b.HasIndex("TournamentsId");
 
                     b.ToTable("PlayerTournaments");
+
+                    b.HasData(
+                        new
+                        {
+                            PlayersId = 1,
+                            TournamentsId = 1
+                        },
+                        new
+                        {
+                            PlayersId = 2,
+                            TournamentsId = 1
+                        });
+                });
+
+            modelBuilder.Entity("api.Models.Queue", b =>
+                {
+                    b.Property<int>("QueueId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("QueueId"));
+
+                    b.Property<int>("GokartId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PlayerId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("QueuePosition")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RideStatusId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TournamentId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("QueueId");
+
+                    b.HasIndex("GokartId");
+
+                    b.HasIndex("PlayerId");
+
+                    b.HasIndex("RideStatusId");
+
+                    b.HasIndex("TournamentId");
+
+                    b.ToTable("Queues");
+                });
+
+            modelBuilder.Entity("api.Models.Ride", b =>
+                {
+                    b.Property<int>("RideId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("RideId"));
+
+                    b.Property<int>("GokartId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PlayerId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RideNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Time")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TournamentId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("RideId");
+
+                    b.HasIndex("GokartId");
+
+                    b.HasIndex("PlayerId");
+
+                    b.HasIndex("TournamentId");
+
+                    b.ToTable("Rides");
+                });
+
+            modelBuilder.Entity("api.Models.RideStatus", b =>
+                {
+                    b.Property<int>("RideStatusId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("RideStatusId"));
+
+                    b.Property<string>("State")
+                        .HasColumnType("text");
+
+                    b.HasKey("RideStatusId");
+
+                    b.ToTable("RideStatuses");
+
+                    b.HasData(
+                        new
+                        {
+                            RideStatusId = 1,
+                            State = "Oczekuje"
+                        },
+                        new
+                        {
+                            RideStatusId = 2,
+                            State = "W trakcie"
+                        },
+                        new
+                        {
+                            RideStatusId = 3,
+                            State = "Zakończył"
+                        });
                 });
 
             modelBuilder.Entity("api.Models.School", b =>
@@ -103,6 +248,15 @@ namespace api.Migrations
                     b.HasKey("SchoolId");
 
                     b.ToTable("Schools");
+
+                    b.HasData(
+                        new
+                        {
+                            SchoolId = 1,
+                            Acronym = "ZSTIO",
+                            City = "Limanowa",
+                            Name = "ZSTIO"
+                        });
                 });
 
             modelBuilder.Entity("api.Models.Tournament", b =>
@@ -130,6 +284,16 @@ namespace api.Migrations
                     b.HasIndex("TournamentStateId");
 
                     b.ToTable("Tournaments");
+
+                    b.HasData(
+                        new
+                        {
+                            TournamentId = 1,
+                            EndDate = new DateTime(2024, 10, 5, 12, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Wyścig",
+                            StartDate = new DateTime(2024, 10, 5, 12, 0, 0, 0, DateTimeKind.Utc),
+                            TournamentStateId = 1
+                        });
                 });
 
             modelBuilder.Entity("api.Models.TournamentState", b =>
@@ -217,6 +381,68 @@ namespace api.Migrations
                     b.Navigation("Tournament");
                 });
 
+            modelBuilder.Entity("api.Models.Queue", b =>
+                {
+                    b.HasOne("api.Models.Gokart", "Gokart")
+                        .WithMany("Queues")
+                        .HasForeignKey("GokartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("api.Models.Player", "Player")
+                        .WithMany("Queues")
+                        .HasForeignKey("PlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("api.Models.RideStatus", "RideStatus")
+                        .WithMany("Queues")
+                        .HasForeignKey("RideStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("api.Models.Tournament", "Tournament")
+                        .WithMany("Queues")
+                        .HasForeignKey("TournamentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Gokart");
+
+                    b.Navigation("Player");
+
+                    b.Navigation("RideStatus");
+
+                    b.Navigation("Tournament");
+                });
+
+            modelBuilder.Entity("api.Models.Ride", b =>
+                {
+                    b.HasOne("api.Models.Gokart", "Gokart")
+                        .WithMany("Rides")
+                        .HasForeignKey("GokartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("api.Models.Player", "Player")
+                        .WithMany("Rides")
+                        .HasForeignKey("PlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("api.Models.Tournament", "Tournament")
+                        .WithMany("Rides")
+                        .HasForeignKey("TournamentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Gokart");
+
+                    b.Navigation("Player");
+
+                    b.Navigation("Tournament");
+                });
+
             modelBuilder.Entity("api.Models.Tournament", b =>
                 {
                     b.HasOne("api.Models.TournamentState", "TournamentState")
@@ -228,9 +454,25 @@ namespace api.Migrations
                     b.Navigation("TournamentState");
                 });
 
+            modelBuilder.Entity("api.Models.Gokart", b =>
+                {
+                    b.Navigation("Queues");
+
+                    b.Navigation("Rides");
+                });
+
             modelBuilder.Entity("api.Models.Player", b =>
                 {
                     b.Navigation("PlayerTournaments");
+
+                    b.Navigation("Queues");
+
+                    b.Navigation("Rides");
+                });
+
+            modelBuilder.Entity("api.Models.RideStatus", b =>
+                {
+                    b.Navigation("Queues");
                 });
 
             modelBuilder.Entity("api.Models.School", b =>
@@ -241,6 +483,10 @@ namespace api.Migrations
             modelBuilder.Entity("api.Models.Tournament", b =>
                 {
                     b.Navigation("PlayerTournaments");
+
+                    b.Navigation("Queues");
+
+                    b.Navigation("Rides");
                 });
 
             modelBuilder.Entity("api.Models.TournamentState", b =>

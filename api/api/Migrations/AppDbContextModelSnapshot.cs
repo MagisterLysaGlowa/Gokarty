@@ -36,6 +36,18 @@ namespace api.Migrations
                     b.HasKey("GokartId");
 
                     b.ToTable("Gokarts");
+
+                    b.HasData(
+                        new
+                        {
+                            GokartId = 1,
+                            Name = "Czarny 1"
+                        },
+                        new
+                        {
+                            GokartId = 2,
+                            Name = "Czarny 2"
+                        });
                 });
 
             modelBuilder.Entity("api.Models.Player", b =>
@@ -63,6 +75,24 @@ namespace api.Migrations
                     b.HasIndex("SchoolId");
 
                     b.ToTable("Players");
+
+                    b.HasData(
+                        new
+                        {
+                            PlayerId = 1,
+                            BirthDate = new DateTime(2024, 10, 5, 12, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Maciej",
+                            SchoolId = 1,
+                            Surname = "Traktor"
+                        },
+                        new
+                        {
+                            PlayerId = 2,
+                            BirthDate = new DateTime(2024, 10, 5, 12, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Michalina",
+                            SchoolId = 1,
+                            Surname = "Ciągnik"
+                        });
                 });
 
             modelBuilder.Entity("api.Models.PlayerTournament", b =>
@@ -78,6 +108,18 @@ namespace api.Migrations
                     b.HasIndex("TournamentsId");
 
                     b.ToTable("PlayerTournaments");
+
+                    b.HasData(
+                        new
+                        {
+                            PlayersId = 1,
+                            TournamentsId = 1
+                        },
+                        new
+                        {
+                            PlayersId = 2,
+                            TournamentsId = 1
+                        });
                 });
 
             modelBuilder.Entity("api.Models.Queue", b =>
@@ -133,8 +175,8 @@ namespace api.Migrations
                     b.Property<int>("RideNumber")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Time")
-                        .HasColumnType("text");
+                    b.Property<int?>("Time")
+                        .HasColumnType("integer");
 
                     b.Property<int>("TournamentId")
                         .HasColumnType("integer");
@@ -203,6 +245,15 @@ namespace api.Migrations
                     b.HasKey("SchoolId");
 
                     b.ToTable("Schools");
+
+                    b.HasData(
+                        new
+                        {
+                            SchoolId = 1,
+                            Acronym = "ZSTIO",
+                            City = "Limanowa",
+                            Name = "ZSTIO"
+                        });
                 });
 
             modelBuilder.Entity("api.Models.Tournament", b =>
@@ -230,6 +281,16 @@ namespace api.Migrations
                     b.HasIndex("TournamentStateId");
 
                     b.ToTable("Tournaments");
+
+                    b.HasData(
+                        new
+                        {
+                            TournamentId = 1,
+                            EndDate = new DateTime(2024, 10, 5, 12, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Wyścig",
+                            StartDate = new DateTime(2024, 10, 5, 12, 0, 0, 0, DateTimeKind.Utc),
+                            TournamentStateId = 1
+                        });
                 });
 
             modelBuilder.Entity("api.Models.TournamentState", b =>

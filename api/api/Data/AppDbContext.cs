@@ -108,9 +108,32 @@ namespace api.Data
             );
 
             modelBuilder.Entity<RideStatus>().HasData(
-                new RideStatus() { RideStatusId = 1, State = "Oczekuje"},
+                new RideStatus() { RideStatusId = 1, State = "Oczekuje" },
                 new RideStatus() { RideStatusId = 2, State = "W trakcie" },
                 new RideStatus() { RideStatusId = 3, State = "Zakończył" }
+            );
+
+            modelBuilder.Entity<Gokart>().HasData(
+                new Gokart() { GokartId = 1, Name = "Czarny 1" },
+                new Gokart() { GokartId = 2, Name = "Czarny 2" }
+            );
+
+            modelBuilder.Entity<School>().HasData(
+                new School() { SchoolId = 1, Name = "ZSTIO", Acronym = "ZSTIO", City = "Limanowa" }
+            );
+
+            modelBuilder.Entity<Player>().HasData(
+                new Player() { PlayerId = 1, Name = "Maciej", Surname = "Traktor", BirthDate = new DateTime(2024, 10, 5, 12, 0, 0, DateTimeKind.Utc), SchoolId = 1 },
+                new Player() { PlayerId = 2, Name = "Michalina", Surname = "Ciągnik", BirthDate = new DateTime(2024, 10, 5, 12, 0, 0, DateTimeKind.Utc), SchoolId = 1 }
+            );
+
+            modelBuilder.Entity<Tournament>().HasData(
+                new Tournament() { TournamentId = 1, Name = "Wyścig", StartDate = new DateTime(2024, 10, 5, 12, 0, 0, DateTimeKind.Utc), EndDate = new DateTime(2024, 10, 5, 12, 0, 0, DateTimeKind.Utc), TournamentStateId = 1 }
+            );
+
+            modelBuilder.Entity<PlayerTournament>().HasData(
+                new PlayerTournament() { PlayersId = 1, TournamentsId = 1 },
+                new PlayerTournament() { PlayersId = 2, TournamentsId = 1 }
             );
         }
     }

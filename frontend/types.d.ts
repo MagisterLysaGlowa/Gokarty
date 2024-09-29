@@ -37,8 +37,7 @@ export interface RideFormData {
   tournamentId: number;
   playerId: number;
   gokartId: number;
-  time: string;
-  rideNumber: number;
+  time: number;
 }
 
 export interface QueueFormData {
@@ -54,6 +53,14 @@ export interface UserData {
 }
 
 export interface TournamentData {
+  tournamentId: number;
+  name: string;
+  startDate: Date;
+  endDate: Date;
+  tournamentStateId: number;
+}
+
+export interface TournamentFullData {
   tournamentId: number;
   name: string;
   startDate: Date;
@@ -94,7 +101,7 @@ export interface RideData {
   tournamentId: number;
   playerId: number;
   gokartId: number;
-  time: string;
+  time: number;
   rideNumber: number;
 }
 
@@ -103,10 +110,10 @@ export interface FullRideData {
   tournamentId: number;
   playerId: number;
   gokartId: number;
-  time: string;
+  time: number;
   rideNumber: number;
   tournament: TournamentData;
-  player: PlayerData;
+  player: PlayerWithSchoolData;
   gokart: GokartData;
 }
 
@@ -135,4 +142,21 @@ export interface FullQueueData {
   rideStatus: RideStatusData;
   gokartId: number;
   gokart: GokartData;
+}
+
+export interface Time {
+    ms: number;
+    s: number;
+    m: number;
+    h: number;
+}
+
+export interface PhotoCellData {
+  lapCount: number;
+  lapsLeft: number;
+  time: Time;
+  startPermission: boolean;
+  photocell1Activ: boolean;
+  photocell2Activ: boolean;
+  photocell3Activ: boolean;
 }

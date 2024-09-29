@@ -79,7 +79,10 @@ export const AddGokart = () => {
               <>
                 <button
                   className="btn btn-secondary"
-                  onClick={() => SetSelectedGokartId(-1)}
+                  onClick={() => {
+                    SetSelectedGokartId(-1);
+                    Setgokart({name: ""});
+                  }}
                 >
                   Anuluj
                 </button>

@@ -11,5 +11,7 @@ namespace api.Interfaces
         Ride Get(int rideId);
         List<Ride> FullGetAll();
         Ride FullGet(int rideId);
+        List<Ride> FullGetBestForTournament(int tournamentId);
+        int FindRideNumber(int tournamentId, int playerId);
     }
 }

@@ -6,8 +6,7 @@ export const create_ride = async (data: RideFormData): Promise<string> => {
   formData.append("tournamentId", data.tournamentId.toString());
   formData.append("playerId", data.playerId.toString());
   formData.append("gokartId", data.gokartId.toString());
-  formData.append("time", data.time);
-  formData.append("rideNumber", data.rideNumber.toString());
+  formData.append("time", data.time.toString());
 
   const response = await apiClient.post<string>("/ride", formData, {
     headers: {
@@ -25,8 +24,7 @@ export const update_ride = async (
   formData.append("tournamentId", data.tournamentId.toString());
   formData.append("playerId", data.playerId.toString());
   formData.append("gokartId", data.gokartId.toString());
-  formData.append("time", data.time);
-  formData.append("rideNumber", data.rideNumber.toString());
+  formData.append("time", data.time.toString());
 
   const response = await apiClient.put<string>(`/ride/${rideId}`, formData, {
     headers: {
@@ -64,6 +62,15 @@ export const get_ride = async (rideId: number): Promise<RideData> => {
 
 export const get_all_full_rides = async (): Promise<FullRideData[]> => {
   const response = await apiClient.get<FullRideData[]>(`/ride/full`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return response.data;
+};
+
+export const get_tournament_best_full_rides = async (tournamentId: number): Promise<FullRideData[]> => {
+  const response = await apiClient.get<FullRideData[]>(`/ride/full/tournament/${tournamentId}`, {
     headers: {
       "Content-Type": "application/json",
     },

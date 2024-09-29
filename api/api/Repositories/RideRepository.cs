@@ -32,6 +32,11 @@ namespace api.Repositories
             return rides;
         }
 
+        public List<Ride> FullGetBestForTournament(int tournamentId)
+        {
+            return _context.Rides.Include(r => r.Tournament).Include(r => r.Player).ThenInclude(p => p.School).Include(r => r.Gokart).Where(r => r.TournamentId == tournamentId).GroupBy(r => r.PlayerId).Select(g => g.OrderBy(r => r.Time).FirstOrDefault()).ToList()!;
+        }
+
         public Ride Get(int rideId)
         {
             return _context.Rides.Find(rideId)!;
@@ -66,6 +71,11 @@ namespace api.Repositories
             _context.SaveChanges();
             return ride_db;
 
+        }
+
+        public int FindRideNumber(int tournamentId, int playerId)
+        {
+            return _context.Rides.Where(r => r.TournamentId == tournamentId).Where(r => r.PlayerId == playerId).Count() + 1;
         }
     }
 }

@@ -1,12 +1,17 @@
 import "./TournamentManegement.css";
 import { RideRandomization } from "../../components/componentsExport";
-import { useQuery } from "react-query";
-import { get_all_full_queues_for_tournament, get_full_active_queue_for_tournament } from "../../services/queue";
+import { useMutation, useQuery } from "react-query";
+import { get_all_full_queues_for_tournament, get_full_active_queue_for_tournament, update_queue_ride_status } from "../../services/queue";
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { convertRawToPhotoCellData, convertTimeFromMilisecondsToObject, getTimeInMs } from "../../Utils/TimeUtils";
+import { create_ride } from "../../services/ride";
+import { RideFormData } from "../../../types";
+
 export const TournamentManegement = () => {
   const { id } = useParams();
-  const [peanltyPoints, setPenaltyPoints] = useState<number>(0);
+  const [penaltyPoints, setPenaltyPoints] = useState<number>(0);
   const {
     data: queueData,
     isLoading: isQueueLoading,
@@ -21,10 +26,72 @@ export const TournamentManegement = () => {
     data: activeQueueData,
     isLoading: isActiveQueueLoading,
     isFetching: isAcitveQueueFetching,
+    refetch: activeQueueRefetch,
   } = useQuery(
     "getActiveQueues",
     async () => await get_full_active_queue_for_tournament(Number(id))
   );
+
+  const [time, setTime] = useState<number>(0);
+  const [timerActive, setTimerActive] = useState<boolean>(false);
+  const [photocellStartSeeker, setPhotocellStartSeeker] = useState<boolean>(false);
+  const [photocellEndSeeker, setPhotocellEndSeeker] = useState<boolean>(false);
+  const [rideFinished, setRideFinished] = useState<boolean>(false);
+  
+  useEffect(() => {
+    let interval: any;
+    if (timerActive) {
+      interval = setInterval(() => {
+        setTime((prev) => prev + 10);
+      }, 10);
+    }
+    return () => clearInterval(interval);
+  }, [timerActive]);
+
+  useQuery(
+    "getPhotoCellData",
+    async () => (await axios.get("http://192.168.0.1/awp/1/index.html")).data, {
+      onSuccess: (res) => {
+        const html = new DOMParser().parseFromString(String(res), "text/html");
+        const pageFields = Array.from(html.querySelectorAll("p")).map(z=>z.textContent);
+        const data = convertRawToPhotoCellData(pageFields);
+        if(photocellStartSeeker && data.photocell1Activ) {
+          setPhotocellStartSeeker(false);
+          setPhotocellEndSeeker(true);
+          setTimerActive(true);
+          
+        }
+        if(photocellEndSeeker && data.photocell3Activ) {
+          setPhotocellEndSeeker(false);
+          setTimerActive(false);
+          setTime(getTimeInMs(data.time));
+          setRideFinished(true);
+        }
+
+      },
+      onError: () => {
+        console.log("Dasdas");
+      },
+      retry: true,
+      refetchInterval: (photocellStartSeeker || photocellEndSeeker) ? 100 : false,
+      refetchOnWindowFocus: true,
+    }
+  )
+
+  const { mutateAsync: queueStatusUpdate } = useMutation(async () => await update_queue_ride_status(Number(queueData?.[0].queueId)), {
+    onSuccess: async () => {
+      await activeQueueRefetch();
+      await queuesRefetch();
+    }
+  });
+
+  const { mutateAsync: timeSave } = useMutation(async (data: RideFormData) => await create_ride(data), {
+    onSuccess: async () => {
+      setRideFinished(false);
+      await activeQueueRefetch();
+      await queuesRefetch();
+    }
+  })
 
   if (isQueueLoading || isQueueFetching || isActiveQueueLoading || isAcitveQueueFetching)
     return <p>Loading...</p>;
@@ -57,8 +124,8 @@ export const TournamentManegement = () => {
             </tbody>
           </table>
         </div>
-        {activeQueueData && 
-          <div className="col-4">
+        {activeQueueData ?
+          (<div className="col-4">
             <h3 className="bg-dark text-white p-3">Aktualny przejazd</h3>
             <div className="currentRideContainer">
               <div className="currentRide d-flex flex-column">
@@ -72,22 +139,41 @@ export const TournamentManegement = () => {
               <div className="d-flex flex-column align-items-center py-2">
                 <h5>Czas przejazdu</h5>
                 <div className="d-flex align-items-center">
-                  <input type="text" className="form-control" placeholder="min" />
+                  <input type="text" className="form-control text-center" disabled={!rideFinished} placeholder="min" value={convertTimeFromMilisecondsToObject(time).m.toString().padStart(2, "0")}/>
                   :
-                  <input type="text" className="form-control" placeholder="sek" />
+                  <input type="text" className="form-control text-center" disabled={!rideFinished} placeholder="sek" value={convertTimeFromMilisecondsToObject(time).s.toString().padStart(2, "0")} />
                   :
-                  <input type="text" className="form-control" placeholder="ms" />
+                  <input type="text" className="form-control text-center" disabled={!rideFinished} placeholder="ms" value={convertTimeFromMilisecondsToObject(time).ms.toString().padStart(3, "0")}/>
                 </div>
               </div>
               <div className="d-flex flex-column text-center gap-3">
                 <div>
                   <h5>Punkty karne</h5>
-                  <input type="number" className="form-control" value={peanltyPoints} onChange={(e) => setPenaltyPoints(parseInt(e.target.value))}/>
+                  <input type="number" className="form-control" disabled={!rideFinished} value={penaltyPoints} onChange={(e) => setPenaltyPoints(parseInt(e.target.value))}/>
                 </div>
-                <button className="btn btn-primary">Zatwierdź</button>
+                <button
+                  className="btn btn-primary"
+                  disabled={!rideFinished}
+                  onClick={ async () => {
+                    await timeSave({tournamentId: Number(id), playerId: activeQueueData.playerId, gokartId: activeQueueData.gokartId, time: time})
+                  }}>
+                  Zatwierdź
+                </button>
               </div>
             </div>
+          </div>) : (
+          <div className="col-4 d-flex justify-content-center align-items-start">
+            <button 
+              type="button"
+              className="btn btn-primary fs-5"
+              onClick={async () => {
+                await queueStatusUpdate();
+                setPhotocellStartSeeker(true);
+                }}>
+              Rozpocznij przejazd kolejnego zawodnika w kolejce
+            </button>
           </div>
+          )
         }
       </div>
     </div>
