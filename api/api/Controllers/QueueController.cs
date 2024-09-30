@@ -55,9 +55,10 @@ namespace api.Controllers
         public IActionResult FullGetActiveQueueForTournament(int tournamentId)
         {
             var queue = queueRepository.FullGetActiveQueueForTournament(tournamentId);
-            if(queue != null)
+            if (queue != null)
                 return Ok(queue);
-            return NotFound();
+            else
+                return Ok(null);
         }
 
         [HttpGet("full/tournament/{tournamentId}")]

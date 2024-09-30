@@ -27,10 +27,11 @@ namespace api.Repositories
             Random rnd = new Random();
             int j = 0;
             int position = 0;
-            if (numberOfRidesInOneGokart == 0) return false;
+            if (numberOfRidesInOneGokart == 0)
+                return false;
             while (players.Count > 0)
             {
-                for (int i = 0; i < numberOfRidesInOneGokart && i < players.Count; i++,position++)
+                for (int i = 0; i < numberOfRidesInOneGokart; i++,position++)
                 {
                     var player = players[rnd.Next(players.Count)];
                     _context.Queues.Add(new Queue()
@@ -42,6 +43,8 @@ namespace api.Repositories
                         GokartId = gokartNow,
                     });
                     players.Remove(player);
+                    if (players.Count == 0)
+                        break;
                 }
                 j++;
                 j = j % gokartIds.Count;

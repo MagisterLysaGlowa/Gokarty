@@ -10,6 +10,7 @@ import { SchoolManagement } from "../pages/SchoolManagemet/SchoolManagement";
 import { AddPlayer } from "../pages/AddPlayer/AddPlayer";
 import { AddGokart } from "../pages/AddGokart/AddGokart";
 import { TournamentManegement } from "../pages/TournamenManagement/TournamentManegement";
+import { RideEdit } from "../pages/RideEdit/RideEdit";
 
 export const router = createBrowserRouter([
   {
@@ -21,6 +22,7 @@ export const router = createBrowserRouter([
       { path: "register", element: <RegisterPage /> },
       { path: "zawody", element: <Tournaments /> },
       { path: "gokart", element: <AddGokart /> },
+      { path: "przejazd/:id/edytuj", element: <RideEdit /> },
       { path: "zawody/:id/zarzadzanie", element: <TournamentManegement /> },
       { path: "zawody/:id/wyniki", element: <TournamentTable /> },
       { path: "zawody/:id/edycja", element: <TournamentEdit /> },

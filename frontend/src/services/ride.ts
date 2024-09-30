@@ -3,10 +3,13 @@ import apiClient from "./apiClient";
 
 export const create_ride = async (data: RideFormData): Promise<string> => {
   const formData = new FormData();
+  
   formData.append("tournamentId", data.tournamentId.toString());
   formData.append("playerId", data.playerId.toString());
   formData.append("gokartId", data.gokartId.toString());
   formData.append("time", data.time.toString());
+  formData.append("isDisqualified", data.isDisqualified.toString());
+  
 
   const response = await apiClient.post<string>("/ride", formData, {
     headers: {
@@ -25,6 +28,8 @@ export const update_ride = async (
   formData.append("playerId", data.playerId.toString());
   formData.append("gokartId", data.gokartId.toString());
   formData.append("time", data.time.toString());
+  formData.append("isDisqualified", data.isDisqualified.toString());
+  
 
   const response = await apiClient.put<string>(`/ride/${rideId}`, formData, {
     headers: {

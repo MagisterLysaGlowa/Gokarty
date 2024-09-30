@@ -56,11 +56,9 @@ export const AddPlayer = () => {
         pending: "W trakcie tworzenia zawodnika",
         success: "Pomyślnie utworzono zawodnika",
       }),
-    {
-      onSuccess: async () => {
-        navigate(-1);
-      },
-    }
+      {
+        onSuccess:()=>SetPlayer(resetPlayerData())
+      }
   );
 
   const {

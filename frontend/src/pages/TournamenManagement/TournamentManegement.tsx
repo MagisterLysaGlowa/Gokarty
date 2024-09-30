@@ -1,35 +1,49 @@
 import "./TournamentManegement.css";
 import { RideRandomization } from "../../components/componentsExport";
 import { useMutation, useQuery } from "react-query";
-import { get_all_full_queues_for_tournament, get_full_active_queue_for_tournament, update_queue_ride_status } from "../../services/queue";
+import { get_all_full_queues_for_tournament, get_full_active_queue_for_tournament, remove_queues_for_tournament, update_queue_ride_status } from "../../services/queue";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { convertRawToPhotoCellData, convertTimeFromMilisecondsToObject, getTimeInMs } from "../../Utils/TimeUtils";
 import { create_ride } from "../../services/ride";
-import { RideFormData } from "../../../types";
+import { FullQueueData, RideFormData } from "../../../types";
+import apiClient from "../../services/apiClient";
 
 export const TournamentManegement = () => {
   const { id } = useParams();
   const [penaltyPoints, setPenaltyPoints] = useState<number>(0);
+  const [queueData, setQueueData] = useState<FullQueueData[] | null>(null);
+  const [activeQueueData, setActiveQueueData] = useState<FullQueueData | null>(null);
   const {
-    data: queueData,
     isLoading: isQueueLoading,
     isFetching: isQueueFetching,
     refetch: queuesRefetch,
   } = useQuery(
     "getQueues",
-    async () => await get_all_full_queues_for_tournament(Number(id))
+    async () => await get_all_full_queues_for_tournament(Number(id)), {
+      onSuccess: (res) => {
+        setQueueData(res);
+      },
+      onError: () => {
+        setQueueData(null);
+      }
+    }
   );
 
   const {
-    data: activeQueueData,
     isLoading: isActiveQueueLoading,
     isFetching: isAcitveQueueFetching,
     refetch: activeQueueRefetch,
   } = useQuery(
     "getActiveQueues",
-    async () => await get_full_active_queue_for_tournament(Number(id))
+    async () => await get_full_active_queue_for_tournament(Number(id)), {
+      onSuccess: (res) => {
+        setActiveQueueData(res);
+      },
+      onError: () => {
+        setActiveQueueData(null);
+      }
+    }
   );
 
   const [time, setTime] = useState<number>(0);
@@ -50,8 +64,8 @@ export const TournamentManegement = () => {
 
   useQuery(
     "getPhotoCellData",
-    async () => (await axios.get("http://192.168.0.1/awp/1/index.html")).data, {
-      onSuccess: (res) => {
+    async () => (await apiClient.get("photoCell")).data, {
+      onSuccess: (res: string) => {
         const html = new DOMParser().parseFromString(String(res), "text/html");
         const pageFields = Array.from(html.querySelectorAll("p")).map(z=>z.textContent);
         const data = convertRawToPhotoCellData(pageFields);
@@ -59,7 +73,6 @@ export const TournamentManegement = () => {
           setPhotocellStartSeeker(false);
           setPhotocellEndSeeker(true);
           setTimerActive(true);
-          
         }
         if(photocellEndSeeker && data.photocell3Activ) {
           setPhotocellEndSeeker(false);
@@ -69,30 +82,40 @@ export const TournamentManegement = () => {
         }
 
       },
-      onError: () => {
-        console.log("Dasdas");
-      },
       retry: true,
       refetchInterval: (photocellStartSeeker || photocellEndSeeker) ? 100 : false,
       refetchOnWindowFocus: true,
+      enabled: photocellStartSeeker || photocellEndSeeker,
     }
   )
 
-  const { mutateAsync: queueStatusUpdate } = useMutation(async () => await update_queue_ride_status(Number(queueData?.[0].queueId)), {
+  const { mutateAsync: queueStatusUpdate } = useMutation(async (queueId: number) => await update_queue_ride_status(queueId), {
     onSuccess: async () => {
       await activeQueueRefetch();
       await queuesRefetch();
+      
     }
   });
 
   const { mutateAsync: timeSave } = useMutation(async (data: RideFormData) => await create_ride(data), {
     onSuccess: async () => {
       setRideFinished(false);
-      await activeQueueRefetch();
-      await queuesRefetch();
+      await queueStatusUpdate(Number(activeQueueData?.queueId));
+      setTime(0);
+      setPenaltyPoints(0);
+      if(queueData?.length == 0)
+        await deleteQueue();
     }
   })
 
+  const { mutateAsync: deleteQueue } = useMutation(async () => await remove_queues_for_tournament(Number(id)), {
+    retry: false,
+    onError: async () => {
+      await deleteQueue();
+    }
+  })
+
+  
   if (isQueueLoading || isQueueFetching || isActiveQueueLoading || isAcitveQueueFetching)
     return <p>Loading...</p>;
   if (queueData?.length == 0 && activeQueueData == null)
@@ -155,9 +178,17 @@ export const TournamentManegement = () => {
                   className="btn btn-primary"
                   disabled={!rideFinished}
                   onClick={ async () => {
-                    await timeSave({tournamentId: Number(id), playerId: activeQueueData.playerId, gokartId: activeQueueData.gokartId, time: time})
+                    await timeSave({tournamentId: Number(id), playerId: activeQueueData.playerId, gokartId: activeQueueData.gokartId, time: time + penaltyPoints * 1000, isDisqualified: penaltyPoints >= 4 ? 1 : 0})
                   }}>
                   Zatwierdź
+                </button>
+                <button
+                  className="btn btn-danger"
+                  disabled={!rideFinished}
+                  onClick={ async () => {
+                    await timeSave({tournamentId: Number(id), playerId: activeQueueData.playerId, gokartId: activeQueueData.gokartId, time: time, isDisqualified: 1})
+                  }}>
+                  Dyskwalifikuj przejazd
                 </button>
               </div>
             </div>
@@ -165,10 +196,11 @@ export const TournamentManegement = () => {
           <div className="col-4 d-flex justify-content-center align-items-start">
             <button 
               type="button"
+              disabled={photocellStartSeeker}
               className="btn btn-primary fs-5"
               onClick={async () => {
-                await queueStatusUpdate();
-                setPhotocellStartSeeker(true);
+                  await queueStatusUpdate(Number(queueData?.[0].queueId));
+                  setPhotocellStartSeeker(true);
                 }}>
               Rozpocznij przejazd kolejnego zawodnika w kolejce
             </button>

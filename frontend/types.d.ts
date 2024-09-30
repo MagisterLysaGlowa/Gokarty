@@ -38,6 +38,7 @@ export interface RideFormData {
   playerId: number;
   gokartId: number;
   time: number;
+  isDisqualified: number;
 }
 
 export interface QueueFormData {
@@ -103,6 +104,7 @@ export interface RideData {
   gokartId: number;
   time: number;
   rideNumber: number;
+  isDisqualified: boolean;
 }
 
 export interface FullRideData {
@@ -115,6 +117,7 @@ export interface FullRideData {
   tournament: TournamentData;
   player: PlayerWithSchoolData;
   gokart: GokartData;
+  isDisqualified: boolean;
 }
 
 export interface RideStatusData {

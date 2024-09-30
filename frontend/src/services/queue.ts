@@ -86,7 +86,7 @@ export const get_full_queue = async (
 export const get_full_active_queue_for_tournament = async (
   tournamentId: number
 ): Promise<FullQueueData> => {
-  const response = await apiClient.get<FullQueueData>(
+  const response = await apiClient.get(
     `/queue/full/tournament/${tournamentId}/active`,
     {
       headers: {
@@ -94,7 +94,7 @@ export const get_full_active_queue_for_tournament = async (
       },
     }
   );
-  return response.data;
+  return response.data == "" ? null : response.data;
 };
 
 export const update_queue_ride_status = async (

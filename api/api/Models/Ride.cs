@@ -11,7 +11,8 @@ namespace api.Models
         public Player Player { get; set; } = default!;
         public int GokartId { get; set; }
         public Gokart Gokart { get; set; } = default!;
-        public int? Time { get; set; }
+        public int Time { get; set; }
         public int RideNumber { get; set; }
+        public bool IsDisqualified { get; set; }
     }
 }

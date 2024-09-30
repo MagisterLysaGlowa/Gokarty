@@ -25,6 +25,7 @@ namespace api.Controllers
                 PlayerId = dto.PlayerId,
                 GokartId = dto.GokartId,
                 Time = dto.Time,
+                IsDisqualified = dto.IsDisqualified == 1,
                 RideNumber = rideRepository.FindRideNumber(dto.TournamentId, dto.PlayerId)
             };
             return Ok(rideRepository.Create(ride));
@@ -39,6 +40,7 @@ namespace api.Controllers
                 PlayerId = dto.PlayerId,
                 GokartId = dto.GokartId,
                 Time = dto.Time,
+                IsDisqualified = dto.IsDisqualified == 1,
                 RideNumber = rideRepository.Get(rideId).RideNumber
             };
             return Ok(rideRepository.Update(rideId,ride));

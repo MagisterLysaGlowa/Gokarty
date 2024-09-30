@@ -8,6 +8,7 @@ namespace api.Dtos
         public int TournamentId { get; set; }
         public int PlayerId { get; set; }
         public int GokartId { get; set; }
-        public int? Time { get; set; }
+        public int Time { get; set; }
+        public int IsDisqualified { get; set; }
     }
 }
