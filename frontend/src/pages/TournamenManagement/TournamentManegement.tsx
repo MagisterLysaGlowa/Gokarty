@@ -176,7 +176,7 @@ export const TournamentManegement = () => {
                 </div>
                 <button
                   className="btn btn-primary"
-                  disabled={!rideFinished}
+                  // disabled={!rideFinished}
                   onClick={ async () => {
                     await timeSave({tournamentId: Number(id), playerId: activeQueueData.playerId, gokartId: activeQueueData.gokartId, time: time + penaltyPoints * 1000, isDisqualified: penaltyPoints >= 4 ? 1 : 0})
                   }}>

@@ -58,6 +58,7 @@ const TournamentTable = () => {
     {
       onSuccess: (res) => SetLastRide(res),
       onError: () => SetLastRide(null),
+      refetchInterval: 3000,
     }
   );
 
@@ -112,7 +113,7 @@ const TournamentTable = () => {
                       ? convertTimeToString(element.time)
                       : "+" +
                         convertTimeToString(
-                          element.time - data[index - 1].time
+                          element.time - data[0].time
                         )}
                   </td>
                   <td>
@@ -204,11 +205,10 @@ const TournamentTable = () => {
             </label>
             <label
               style={{
-                color: data[0].time - lastRide?.time < 0 ? "blue" : "red",
+                color: data[0].time - lastRide?.time > 0 ? "blue" : "red",
               }}
             >
-              {(data[0].time - lastRide?.time < 0 ? "-" : "+") +
-                convertTimeToString(data[0].time - lastRide?.time)}
+              {lastRide.isDisqualified ? "DSQ" : data[0].time - lastRide?.time > 0 ? "-" : "+" + convertTimeToString(lastRide.time - data[0].time)}
             </label>
           </div>
         </div>

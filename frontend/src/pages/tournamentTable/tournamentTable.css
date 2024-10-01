@@ -19,8 +19,8 @@
 
 .lastRide {
     position: fixed;
-    bottom: 150px;
-    left: 50px;
+    bottom: 100px;
+    right: 10px;
     padding: 20px;
     border-radius: 20px;
     border: 1px solid gray;

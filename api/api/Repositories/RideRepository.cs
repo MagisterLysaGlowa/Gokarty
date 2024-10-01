@@ -66,6 +66,7 @@ namespace api.Repositories
             ride_db.GokartId = ride.GokartId;
             ride_db.Time = ride.Time;
             ride_db.RideNumber = ride.RideNumber;
+            ride_db.IsDisqualified = ride.IsDisqualified;
 
             _context.Rides.Update(ride_db);
             _context.SaveChanges();

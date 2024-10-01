@@ -14,6 +14,7 @@ export const RideEdit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [time, SetTime] = useState<Time>({ h: 0, m: 0, ms: 0, s: 0 });
+  const [isDisqualified, SetIsDisqualified] = useState<boolean>(false);
   const {
     data: rideData,
     isLoading,
@@ -21,6 +22,7 @@ export const RideEdit = () => {
   } = useQuery("getRide", async () => await get_full_ride(Number(id)), {
     onSuccess: (res) => {
       SetTime(convertTimeFromMilisecondsToObject(res.time));
+      SetIsDisqualified(res.isDisqualified);
     },
   });
 
@@ -32,6 +34,7 @@ export const RideEdit = () => {
           playerId: Number(rideData?.playerId),
           time: convertTimeToMs(time),
           tournamentId: Number(rideData?.tournamentId),
+          isDisqualified: isDisqualified ? 1 : 0
         }),
         {
           error: "Błąd podczas aktualizacji przejazdu",
@@ -42,10 +45,7 @@ export const RideEdit = () => {
     {
       onSuccess: () => {
         navigate(-1);
-      },
-      onMutate: () => {
-        console.log(rideData);
-      },
+      }
     }
   );
 
@@ -98,6 +98,10 @@ export const RideEdit = () => {
           name="ms"
           onChange={(e) => SetTime({ ...time, ms: Number(e.target.value) })}
         />
+      </div>
+      <div className="d-flex gap-1 align-items-center">
+        <input type="checkbox" id="isDsq" checked={isDisqualified} onChange={(e) => SetIsDisqualified(e.target.checked)}/>
+        <label htmlFor="isDsq">Dyskwalifikacja</label>
       </div>
       <button
         className="btn btn-primary"
