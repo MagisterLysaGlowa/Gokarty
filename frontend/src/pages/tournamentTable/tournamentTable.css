@@ -1,0 +1,42 @@
+.currentRideContainer header {
+    padding: 10px;
+    font-size: 30px;
+    color: white;
+    text-align: center;
+}
+
+.queueList div:last-child {
+    border: none !important;
+}
+
+.queueList {
+    overflow: hidden;
+}
+
+.queueList div {
+    background-color: rgb(224, 224, 224);
+}
+
+.lastRide {
+    position: fixed;
+    bottom: 150px;
+    left: 50px;
+    padding: 20px;
+    border-radius: 20px;
+    border: 1px solid gray;
+    -webkit-box-shadow: 8px 8px 24px -7px rgba(66, 68, 90, 1);
+    -moz-box-shadow: 8px 8px 24px -7px rgba(66, 68, 90, 1);
+    box-shadow: 8px 8px 24px -7px rgba(66, 68, 90, 1);
+    background-color: white;
+}
+
+.lastRide div {
+    display: flex;
+    gap: 50px;
+    font-size: 20px;
+
+}
+
+.currentRideDetails input{
+    font-size: 20px;
+}

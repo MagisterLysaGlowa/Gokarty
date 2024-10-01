@@ -80,7 +80,7 @@ namespace api.Repositories
 
         public Ride? FullGetLastAddedForTournament(int tournamentId)
         {
-            return _context.Rides.Where(r => r.TournamentId == tournamentId).OrderByDescending(r => r.RideId).FirstOrDefault();
+            return _context.Rides.Include(r => r.Tournament).Include(r => r.Player).ThenInclude(p => p.School).Include(r => r.Gokart).Where(r => r.TournamentId == tournamentId).OrderByDescending(r => r.RideId).FirstOrDefault();
         }
     }
 }
