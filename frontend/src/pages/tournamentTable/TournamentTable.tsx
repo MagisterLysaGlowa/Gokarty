@@ -26,7 +26,9 @@ const TournamentTable = () => {
             <th>Imie</th>
             <th>Nazwisko</th>
             <th>Szkoła</th>
+            <th>Gokart</th>
             <th>Czas</th>
+            <th>Różnica</th>
             <th>Edytuj</th>
           </tr>
         </thead>
@@ -41,7 +43,21 @@ const TournamentTable = () => {
               <td>{element.player.name}</td>
               <td>{element.player.surname}</td>
               <td>{element.player.school.acronym}</td>
+              <td>{element.gokart.name}</td>
               <td style={element.isDisqualified ? {color: "red"} : {}}>{element.isDisqualified ? "DSQ" : convertTimeToString(element.time)}</td>
+              <td
+                style={{
+                  color:
+                    index != 0 || element.isDisqualified ? "red" : "blue",
+                }}
+              >
+                {element.isDisqualified
+                  ? "DSQ"
+                  : index == 0
+                  ? convertTimeToString(element.time)
+                  : "+" +
+                    convertTimeToString(element.time - data[index - 1].time)}
+              </td>
               <td>
                 <button
                   className="btn btn-primary"

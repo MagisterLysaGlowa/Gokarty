@@ -77,5 +77,10 @@ namespace api.Repositories
         {
             return _context.Rides.Where(r => r.TournamentId == tournamentId).Where(r => r.PlayerId == playerId).Count() + 1;
         }
+
+        public Ride? FullGetLastAddedForTournament(int tournamentId)
+        {
+            return _context.Rides.Where(r => r.TournamentId == tournamentId).OrderByDescending(r => r.RideId).FirstOrDefault();
+        }
     }
 }

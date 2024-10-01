@@ -76,6 +76,12 @@ namespace api.Controllers
             return Ok(rideRepository.FullGetBestForTournament(tournamentId));
         }
 
+        [HttpGet("full/tournament/{tournamentId}/last")]
+        public IActionResult FullGetLastAddedForTournament(int tournamentId)
+        {
+            return Ok(rideRepository.FullGetLastAddedForTournament(tournamentId));
+        }
+
         [HttpDelete("{rideId}")]
         public IActionResult Remove(int rideId)
         {

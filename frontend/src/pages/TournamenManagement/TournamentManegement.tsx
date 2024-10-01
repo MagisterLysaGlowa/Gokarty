@@ -183,6 +183,18 @@ export const TournamentManegement = () => {
                   Zatwierdź
                 </button>
                 <button
+                  className="btn btn-secondary"
+                  disabled={!rideFinished}
+                  onClick={() => {
+                    setPhotocellEndSeeker(false);
+                    setPhotocellStartSeeker(false);
+                    setTimerActive(false);
+                    setTime(0);
+                    setRideFinished(false);
+                  }}>
+                  Rozpocznij ponownie
+                </button>
+                <button
                   className="btn btn-danger"
                   disabled={!rideFinished}
                   onClick={ async () => {

@@ -13,5 +13,6 @@ namespace api.Interfaces
         Ride FullGet(int rideId);
         List<Ride> FullGetBestForTournament(int tournamentId);
         int FindRideNumber(int tournamentId, int playerId);
+        Ride? FullGetLastAddedForTournament(int tournamentId);
     }
 }

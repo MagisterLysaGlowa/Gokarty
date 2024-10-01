@@ -83,6 +83,15 @@ export const get_tournament_best_full_rides = async (tournamentId: number): Prom
   return response.data;
 };
 
+export const get_tournament_last_full_ride = async (tournamentId: number): Promise<FullRideData> => {
+  const response = await apiClient.get<FullRideData>(`/ride/full/tournament/${tournamentId}/last`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return response.data;
+};
+
 export const get_full_ride = async (rideId: number): Promise<FullRideData> => {
   const response = await apiClient.get<FullRideData>(`/ride/full/${rideId}`, {
     headers: {
