@@ -25,8 +25,8 @@ import {
   removeTournamentTexts,
   updateTournamentTexts,
 } from "../../Utils/ToastNotifications";
-import { useModal } from "../../Utils/Modal/useModal";
-import { buildButton } from "../../Utils/Modal/Utils";
+import { useModal } from "../../components/Modal/useModal";
+import { buildButton } from "../../components/Modal/Utils";
 
 const TournamentEdit = () => {
   const modal = useModal();

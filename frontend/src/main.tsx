@@ -5,7 +5,7 @@ import { QueryClientProvider } from "react-query";
 import { queryClient } from "./Utils/ReactQueryConfig";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { ModalProvider } from "./Utils/Modal/ModalContext";
+import { ModalProvider } from "./components/Modal/ModalContext";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={queryClient}>
