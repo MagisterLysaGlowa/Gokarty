@@ -34,7 +34,7 @@ namespace api.Repositories
 
         public List<Ride> FullGetBestForTournament(int tournamentId)
         {
-            return _context.Rides.Include(r => r.Tournament).Include(r => r.Player).ThenInclude(p => p.School).Include(r => r.Gokart).Where(r => r.TournamentId == tournamentId).GroupBy(r => r.PlayerId).Select(g => g.OrderBy(r => r.Time).FirstOrDefault()).ToList().OrderBy(r=>r.Time).ToList()!;
+            return _context.Rides.Include(r => r.Tournament).Include(r => r.Player).ThenInclude(p => p.School).Include(r => r.Gokart).Where(r => r.TournamentId == tournamentId && r.IsDisqualified==false).GroupBy(r => r.PlayerId).Select(g => g.OrderBy(r => r.Time).FirstOrDefault()).ToList().OrderBy(r=>r.Time).ToList()!;
         }
 
         public Ride Get(int rideId)

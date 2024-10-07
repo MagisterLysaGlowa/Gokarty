@@ -16,7 +16,11 @@ import {
 } from "../../services/player";
 import { get_all_schools } from "../../services/school";
 import "./AddPlayer.css";
-import { promiseToast } from "../../Utils/ToastNotifications";
+import {
+  createPlayerTexts,
+  promiseToast,
+  updatePlayerTexts,
+} from "../../Utils/ToastNotifications";
 
 export const AddPlayer = () => {
   const [player, SetPlayer] = useState<PlayerData>(resetPlayerData());
@@ -26,15 +30,12 @@ export const AddPlayer = () => {
 
   const updatePlayerMutation = useMutation(
     async (player: PlayerData) =>
-      await promiseToast(update_player(player.playerId, player), {
-        error: "Błąd podczas aktualizacji zawodnika",
-        pending: "W trakcie aktualizacji zawodnika",
-        success: "Pomyślnie uaktualniono zawodnika",
-      }),
+      await promiseToast(
+        update_player(player.playerId, player),
+        updatePlayerTexts
+      ),
     {
-      onSuccess: async () => {
-        navigate(-1);
-      },
+      onSuccess: async () => navigate(-1),
     }
   );
 
@@ -42,23 +43,16 @@ export const AddPlayer = () => {
     "getPlayer",
     async () => (playerId ? await get_player(Number(playerId)) : null),
     {
-      onSuccess: (res) => {
-        console.log(res);
-        SetPlayer(res ?? resetPlayerData());
-      },
+      onSuccess: (res) => SetPlayer(res ?? resetPlayerData()),
     }
   );
 
   const createPlayerMutate = useMutation(
     async (data: PlayerData) =>
-      await promiseToast(create_player(Number(id), data), {
-        error: "Błąd podczas tworzenia zawodnika",
-        pending: "W trakcie tworzenia zawodnika",
-        success: "Pomyślnie utworzono zawodnika",
-      }),
-      {
-        onSuccess:()=>SetPlayer(resetPlayerData())
-      }
+      await promiseToast(create_player(Number(id), data), createPlayerTexts),
+    {
+      onSuccess: () => SetPlayer(resetPlayerData()),
+    }
   );
 
   const {

@@ -42,12 +42,8 @@ const TournamentTable = () => {
     "getQueues",
     async () => await get_all_full_queues_for_tournament(Number(id)),
     {
-      onSuccess: (res) => {
-        setQueueData(res);
-      },
-      onError: () => {
-        setQueueData(null);
-      },
+      onSuccess: (res) => setQueueData(res),
+      onError: () => setQueueData(null),
       refetchInterval: 3000,
     }
   );
@@ -111,10 +107,7 @@ const TournamentTable = () => {
                       ? "DSQ"
                       : index == 0
                       ? convertTimeToString(element.time)
-                      : "+" +
-                        convertTimeToString(
-                          element.time - data[0].time
-                        )}
+                      : "+" + convertTimeToString(element.time - data[0].time)}
                   </td>
                   <td>
                     <button
@@ -208,7 +201,11 @@ const TournamentTable = () => {
                 color: data[0].time - lastRide?.time > 0 ? "blue" : "red",
               }}
             >
-              {lastRide.isDisqualified ? "DSQ" : data[0].time - lastRide?.time > 0 ? "-" : "+" + convertTimeToString(lastRide.time - data[0].time)}
+              {lastRide.isDisqualified
+                ? "DSQ"
+                : data[0].time - lastRide?.time > 0
+                ? "-"
+                : "+" + convertTimeToString(lastRide.time - data[0].time)}
             </label>
           </div>
         </div>

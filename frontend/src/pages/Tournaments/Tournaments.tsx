@@ -7,7 +7,10 @@ import {
 } from "../../services/tournament";
 import { TournamentFormData } from "../../../types";
 import { useQuery, useMutation } from "react-query";
-import { promiseToast } from "../../Utils/ToastNotifications";
+import {
+  createTournamentTexts,
+  promiseToast,
+} from "../../Utils/ToastNotifications";
 
 const Tournaments = () => {
   const [tournament, SetTournament] = useState<TournamentFormData>({
@@ -26,15 +29,9 @@ const Tournaments = () => {
 
   const { mutateAsync: createTournamentAsync } = useMutation(
     async (data: TournamentFormData) =>
-      await promiseToast(create_tournament(data), {
-        error: "Błąd podczas dodawania turnieju",
-        pending: "W trakcie dodawania turnieju",
-        success: "Pomyślnie dodano turniej",
-      }),
+      await promiseToast(create_tournament(data), createTournamentTexts),
     {
-      onSuccess: async () => {
-        await refetchTournament();
-      },
+      onSuccess: async () => await refetchTournament(),
     }
   );
 

@@ -9,28 +9,32 @@ import {
   update_tournament,
 } from "../../services/tournament";
 import { useState } from "react";
-import {
-  PlayerWithSchoolData,
-  TournamentData,
-  TournamentFormData,
-} from "../../../types";
+import { TournamentData, TournamentFormData } from "../../../types";
 import {
   get_players_for_tournament_with_school,
   remove_player,
 } from "../../services/player";
-import { handleChange } from "./TournamentEditUtils";
-import { Modal } from "./../../components/Modal/Modal";
-import { promiseToast } from "../../Utils/ToastNotifications";
+import {
+  handleChange,
+  tournamentStringFromState,
+  updateTournamentState,
+} from "./TournamentEditUtils";
+import {
+  promiseToast,
+  removePlayerTexts,
+  removeTournamentTexts,
+  updateTournamentTexts,
+} from "../../Utils/ToastNotifications";
+import { useModal } from "../../Utils/Modal/useModal";
+import { buildButton } from "../../Utils/Modal/Utils";
 
 const TournamentEdit = () => {
+  const modal = useModal();
   const { id } = useParams();
   const navigate = useNavigate();
   const [tournament, SetTournament] = useState<TournamentData>(
     {} as TournamentData
   );
-
-  const [selectedPlayer, SetSelectedPlayer] =
-    useState<PlayerWithSchoolData | null>(null);
 
   const {
     isLoading,
@@ -58,39 +62,29 @@ const TournamentEdit = () => {
 
   const updateTournamentMutate = useMutation(
     async (data: TournamentFormData) =>
-      await promiseToast(update_tournament(Number(id), data), {
-        error: "Błąd podczas aktualizacji zawodów",
-        pending: "W trakcie aktualizacji zawodów",
-        success: "Pomyślnie uaktualniono zawody",
-      }),
+      await promiseToast(
+        update_tournament(Number(id), data),
+        updateTournamentTexts
+      ),
     {
-      onSuccess: () => {
-        refetchTournament();
-      },
+      onSuccess: () => refetchTournament(),
     }
   );
 
   const deletePlayerMutate = useMutation(
     async (id: number) =>
-      await promiseToast(remove_player(id), {
-        error: "Błąd podczas usuwania zawodnika",
-        pending: "W trakcie usuwania zawodnika",
-        success: "Pomyślnie usunięto zawodnika",
-      }),
+      await promiseToast(remove_player(id), removePlayerTexts),
     {
-      onSuccess: async () => {
-        await refetchPlayers();
-      },
+      onSuccess: async () => await refetchPlayers(),
     }
   );
 
   const { mutateAsync: deleteTournamentAsync } = useMutation(
     async () =>
-      await promiseToast(remove_tournament(tournament.tournamentId), {
-        error: "Błąd podczas usuwania zawodów",
-        pending: "W trakcie usuwania zawodów",
-        success: "Pomyślnie usunięto zawody",
-      }),
+      await promiseToast(
+        remove_tournament(tournament.tournamentId),
+        removeTournamentTexts
+      ),
     {
       onSuccess: () => navigate(-1),
     }
@@ -130,8 +124,6 @@ const TournamentEdit = () => {
                   new Date(tournament.startDate).toISOString().split("T")[0]
                 }
                 onChange={(e) => {
-                  console.log(new Date(e.target.value));
-
                   SetTournament((prev) => ({
                     ...prev,
                     startDate: new Date(e.target.value),
@@ -186,8 +178,24 @@ const TournamentEdit = () => {
                 className={`btn btn-${
                   tournament.tournamentStateId == 1 ? "primary" : "danger"
                 }`}
-                data-bs-toggle="modal"
-                data-bs-target="#updateStateModal"
+                onClick={() =>
+                  modal.openModal({
+                    title: tournamentStringFromState(tournament),
+                    content: tournament.name,
+                    buttons: [
+                      buildButton("btn btn-secondary", "Nie"),
+                      buildButton(
+                        "btn btn-primary",
+                        "Tak",
+                        async () =>
+                          await updateTournamentState(
+                            tournament,
+                            updateTournamentMutate
+                          )
+                      ),
+                    ],
+                  })
+                }
               >
                 {tournament.tournamentStateId == 1 ? "Rozpocznij" : "Zakończ"}
               </button>
@@ -207,9 +215,18 @@ const TournamentEdit = () => {
             )}
             <button
               className="btn btn-danger"
-              data-bs-toggle="modal"
-              data-bs-target="#deleteTournament"
-              onClick={() => {}}
+              onClick={() =>
+                modal.openModal({
+                  title: "Czy napewno chcesz usunąć zawody?",
+                  content: tournament.name,
+                  buttons: [
+                    buildButton("btn btn-secondary", "Anuluj"),
+                    buildButton("btn btn-primary", "Usuń", async () =>
+                      deleteTournamentAsync()
+                    ),
+                  ],
+                })
+              }
             >
               Usuń
             </button>
@@ -266,9 +283,18 @@ const TournamentEdit = () => {
                   <td>
                     <button
                       className="btn btn-danger"
-                      data-bs-toggle="modal"
-                      data-bs-target="#deleteModal"
-                      onClick={() => SetSelectedPlayer(element)}
+                      onClick={() =>
+                        modal.openModal({
+                          title: "Czy napewno chcesz usunąć zawodnika?",
+                          content: element.name + " " + element.surname,
+                          buttons: [
+                            buildButton("btn btn-secondary", "Anuluj"),
+                            buildButton("btn btn-primary", "Usuń", async () =>
+                              deletePlayerMutate.mutateAsync(element.playerId)
+                            ),
+                          ],
+                        })
+                      }
                     >
                       <FontAwesomeIcon icon={faTrash} />
                     </button>
@@ -279,46 +305,6 @@ const TournamentEdit = () => {
           </tbody>
         </table>
       </div>
-      <Modal
-        id="deleteModal"
-        onConfirm={() => {
-          deletePlayerMutate.mutate(Number(selectedPlayer?.playerId));
-          SetSelectedPlayer(null);
-        }}
-        onAbort={() => SetSelectedPlayer(null)}
-        title="Czy aby na pewno chcesz usunąć tego zawodnika?"
-        message={selectedPlayer?.name + " " + selectedPlayer?.surname}
-      />
-      <Modal
-        id="updateStateModal"
-        onConfirm={() => {
-          if (tournament.tournamentStateId == 1) {
-            updateTournamentMutate.mutate({
-              ...tournament,
-              tournamentStateId: tournament.tournamentStateId + 1,
-              startDate: new Date(),
-            });
-          } else if (tournament.tournamentStateId == 2) {
-            updateTournamentMutate.mutate({
-              ...tournament,
-              tournamentStateId: tournament.tournamentStateId + 1,
-              endDate: new Date(),
-            });
-          }
-        }}
-        title={
-          "Czy na pewno chcesz " +
-          (tournament.tournamentStateId == 1 ? "rozpocząć" : "zakończyć") +
-          " te zawody?"
-        }
-        message={tournament.name}
-      />
-      <Modal
-        id="deleteTournament"
-        message={tournament.name}
-        title="Czy napewno chcesz usunąc te zawody?"
-        onConfirm={async () => await deleteTournamentAsync()}
-      />
     </div>
   );
 };

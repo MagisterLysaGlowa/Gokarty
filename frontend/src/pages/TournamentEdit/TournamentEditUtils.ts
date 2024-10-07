@@ -1,4 +1,5 @@
-import { SchoolData } from "../../../types";
+import { UseMutationResult } from "react-query";
+import { SchoolData, TournamentData, TournamentFormData } from "../../../types";
 
 export const handleChange = <T extends object>(
   e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -25,4 +26,36 @@ export const resetPlayerData = () => {
     schoolId: -1,
     surname: "",
   };
+};
+
+export const updateTournamentState = async (
+  tournament: TournamentData,
+  updateTournamentMutate: UseMutationResult<
+    unknown,
+    unknown,
+    TournamentFormData,
+    unknown
+  >
+) => {
+  if (tournament.tournamentStateId == 1) {
+    await updateTournamentMutate.mutateAsync({
+      ...tournament,
+      tournamentStateId: tournament.tournamentStateId + 1,
+      startDate: new Date(),
+    });
+  } else if (tournament.tournamentStateId == 2) {
+    await updateTournamentMutate.mutateAsync({
+      ...tournament,
+      tournamentStateId: tournament.tournamentStateId + 1,
+      endDate: new Date(),
+    });
+  }
+};
+
+export const tournamentStringFromState = (tournament: TournamentData) => {
+  return (
+    "Czy na pewno chcesz " +
+    (tournament.tournamentStateId == 1 ? "rozpocząć" : "zakończyć") +
+    " te zawody?"
+  );
 };

@@ -11,13 +11,21 @@ import {
 } from "../../services/gokart";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { Modal } from "../../components/componentsExport";
-import { promiseToast } from "../../Utils/ToastNotifications";
+
+import {
+  createGokartTexts,
+  promiseToast,
+  removeGokartTexts,
+  updateGokartTexts,
+} from "../../Utils/ToastNotifications";
+import { useModal } from "../../Utils/Modal/useModal";
+import { buildButton } from "../../Utils/Modal/Utils";
 
 export const AddGokart = () => {
+  const modal = useModal();
   const [gokart, Setgokart] = useState<GokartFormData>({} as GokartFormData);
   const [selectedGokartId, SetSelectedGokartId] = useState<number>(-1);
-  const [toDelete, SetToDelete] = useState<number | null>(null);
+
   const {
     isLoading: isGokartsLoading,
     isFetching: isGokartsFetching,
@@ -27,39 +35,26 @@ export const AddGokart = () => {
 
   const { mutate: createGokart } = useMutation(
     async (data: GokartFormData) =>
-      await promiseToast(create_gokart(data), {
-        error: "Błąd podczas dodawania gokarta",
-        pending: "W trakcie dodawania gokarta",
-        success: "Pomyślnie dodano gokart",
-      }),
+      await promiseToast(create_gokart(data), createGokartTexts),
     {
-      onSuccess: async () => {
-        await refetchGokarts();
-      },
+      onSuccess: async () => await refetchGokarts(),
     }
   );
 
-  const { mutate: removeGokart } = useMutation(
+  const { mutateAsync: removeGokart } = useMutation(
     async (id: number) =>
-      await promiseToast(remove_gokart(id), {
-        error: "Błąd podczas usuwania gokarta",
-        pending: "W trakcie usuwania gokarta",
-        success: "Pomyślnie usunięto gokart",
-      }),
+      await promiseToast(remove_gokart(id), removeGokartTexts),
     {
-      onSuccess: async () => {
-        await refetchGokarts();
-      },
+      onSuccess: async () => await refetchGokarts(),
     }
   );
 
   const { mutate: updateGokart } = useMutation(
     async (data: GokartFormData) =>
-      await promiseToast(update_gokart(selectedGokartId, data), {
-        error: "Błąd podczas aktualizowania gokarta",
-        pending: "W trakcie aktualizacji gokarta",
-        success: "Pomyślnie uaktualniono gokarta",
-      })
+      await promiseToast(
+        update_gokart(selectedGokartId, data),
+        updateGokartTexts
+      )
   );
 
   return (
@@ -81,7 +76,7 @@ export const AddGokart = () => {
                   className="btn btn-secondary"
                   onClick={() => {
                     SetSelectedGokartId(-1);
-                    Setgokart({name: ""});
+                    Setgokart({ name: "" });
                   }}
                 >
                   Anuluj
@@ -136,9 +131,20 @@ export const AddGokart = () => {
                   <td>
                     <button
                       className="btn btn-danger"
-                      data-bs-toggle="modal"
-                      data-bs-target="#deleteModal"
-                      onClick={() => SetToDelete(gokart.gokartId)}
+                      onClick={() => {
+                        modal.openModal({
+                          title: "Czy napewno chcesz usunąć gokart?",
+                          content: gokart.name,
+                          buttons: [
+                            buildButton("btn btn-secondary", "Anuluj"),
+                            buildButton(
+                              "btn btn-primary",
+                              "Usuń",
+                              async () => await removeGokart(gokart.gokartId)
+                            ),
+                          ],
+                        });
+                      }}
                     >
                       <FontAwesomeIcon icon={faTrash} />
                     </button>
@@ -151,16 +157,6 @@ export const AddGokart = () => {
           <p>Loading...</p>
         )}
       </div>
-      <Modal
-        id="deleteModal"
-        onConfirm={() => removeGokart(Number(toDelete))}
-        onAbort={() => {
-          SetSelectedGokartId(-1);
-          SetToDelete(null);
-        }}
-        title="Czy na pewno chcesz usunąć tego gokarta?"
-        message={allGokart?.find((z) => z.gokartId == toDelete)?.name}
-      />
     </div>
   );
 };

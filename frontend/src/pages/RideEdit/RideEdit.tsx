@@ -8,7 +8,7 @@ import {
   convertTimeFromMilisecondsToObject,
   convertTimeToMs,
 } from "../../Utils/TimeUtils";
-import { promiseToast } from "../../Utils/ToastNotifications";
+import { promiseToast, updateRideTexts } from "../../Utils/ToastNotifications";
 
 export const RideEdit = () => {
   const { id } = useParams();
@@ -34,18 +34,12 @@ export const RideEdit = () => {
           playerId: Number(rideData?.playerId),
           time: convertTimeToMs(time),
           tournamentId: Number(rideData?.tournamentId),
-          isDisqualified: isDisqualified ? 1 : 0
+          isDisqualified: isDisqualified ? 1 : 0,
         }),
-        {
-          error: "Błąd podczas aktualizacji przejazdu",
-          pending: "W trakcie aktualizacji przejazdu",
-          success: "Pomyślnie uaktualniono przejazd",
-        }
+        updateRideTexts
       ),
     {
-      onSuccess: () => {
-        navigate(-1);
-      }
+      onSuccess: () => navigate(-1),
     }
   );
 
@@ -100,7 +94,12 @@ export const RideEdit = () => {
         />
       </div>
       <div className="d-flex gap-1 align-items-center">
-        <input type="checkbox" id="isDsq" checked={isDisqualified} onChange={(e) => SetIsDisqualified(e.target.checked)}/>
+        <input
+          type="checkbox"
+          id="isDsq"
+          checked={isDisqualified}
+          onChange={(e) => SetIsDisqualified(e.target.checked)}
+        />
         <label htmlFor="isDsq">Dyskwalifikacja</label>
       </div>
       <button

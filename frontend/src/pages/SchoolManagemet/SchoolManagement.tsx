@@ -11,10 +11,18 @@ import { SchoolData, SchoolFormData } from "../../../types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-regular-svg-icons/faEdit";
 import { faTrash } from "@fortawesome/free-solid-svg-icons/faTrash";
-import Modal from "../../components/Modal/Modal";
-import { promiseToast } from "../../Utils/ToastNotifications";
+// import Modal from "../../components/Modal/Modal";
+import {
+  createSchoolTexts,
+  promiseToast,
+  removeSchoolTexts,
+  updateSchoolTexts,
+} from "../../Utils/ToastNotifications";
+import { useModal } from "../../Utils/Modal/useModal";
+import { buildButton } from "../../Utils/Modal/Utils";
 
 export const SchoolManagement = () => {
+  const modal = useModal();
   const [schools, setSchools] = useState<Array<SchoolData>>([]);
   const [formEditId, setFormEditId] = useState<number>(-1);
   const [formData, setFormData] = useState<SchoolFormData>({
@@ -22,7 +30,6 @@ export const SchoolManagement = () => {
     city: "",
     acronym: "",
   } as SchoolFormData);
-  const [schoolToDelete, setSchoolToDelete] = useState<number | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -37,18 +44,15 @@ export const SchoolManagement = () => {
     isFetching,
     refetch: refetchSchools,
   } = useQuery("schoolManagementGetSchools", async () => get_all_schools(), {
-    onSuccess: (res) => {
-      setSchools(res);
-    },
+    onSuccess: (res) => setSchools(res),
   });
 
   const updateSchool = useMutation(
     async (data: SchoolFormData) =>
-      await promiseToast(update_school(Number(formEditId), data), {
-        error: "Błąd podczas aktualizacji szkoły",
-        pending: "W trakcie aktualizowania szkoły",
-        success: "Pomyślnie uaktualniono szkołe",
-      }),
+      await promiseToast(
+        update_school(Number(formEditId), data),
+        updateSchoolTexts
+      ),
     {
       onSuccess: async () => {
         await refetchSchools();
@@ -60,11 +64,7 @@ export const SchoolManagement = () => {
 
   const insertSchool = useMutation(
     async (data: SchoolFormData) =>
-      await promiseToast(create_school(data), {
-        error: "Błąd podczas tworzenia szkoły",
-        pending: "W trakcie tworzenia szkoły",
-        success: "Pomyślnie utworzono szkołe",
-      }),
+      await promiseToast(create_school(data), createSchoolTexts),
     {
       onSuccess: async () => {
         await refetchSchools();
@@ -75,15 +75,9 @@ export const SchoolManagement = () => {
 
   const deleteSchool = useMutation(
     async (id: number) =>
-      await promiseToast(remove_school(id), {
-        error: "Błąd podczas usuwania szkoły",
-        pending: "W trakcie usuwania szkoły",
-        success: "Pomyślnie usunięto szkołe",
-      }),
+      await promiseToast(remove_school(id), removeSchoolTexts),
     {
-      onSuccess: async () => {
-        await refetchSchools();
-      },
+      onSuccess: async () => await refetchSchools(),
     }
   );
 
@@ -196,10 +190,17 @@ export const SchoolManagement = () => {
                   <td>
                     <button
                       className="btn btn-danger"
-                      data-bs-toggle="modal"
-                      data-bs-target="#deleteModal"
                       onClick={() => {
-                        setSchoolToDelete(school.schoolId);
+                        modal.openModal({
+                          title: "Czy napewno chcesz usunąć szkołe?",
+                          content: school.name,
+                          buttons: [
+                            buildButton("btn btn-secondary", "Anuluj"),
+                            buildButton("btn btn-primary", "Usuń", async () =>
+                              deleteSchool.mutateAsync(school.schoolId)
+                            ),
+                          ],
+                        });
                       }}
                     >
                       <FontAwesomeIcon icon={faTrash} />
@@ -211,20 +212,6 @@ export const SchoolManagement = () => {
           </tbody>
         </table>
       </div>
-      <Modal
-        id="deleteModal"
-        onConfirm={() => {
-          if (schoolToDelete != null)
-            deleteSchool.mutate(schoolToDelete as number);
-        }}
-        onAbort={() => {
-          setSchoolToDelete(null);
-        }}
-        title="Czy na pewno chcesz usunąć tą szkołę"
-        message={
-          schools.find((school) => school.schoolId == schoolToDelete)?.name
-        }
-      />
     </div>
   );
 };
