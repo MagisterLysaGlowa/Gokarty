@@ -27,6 +27,7 @@ import {
 } from "../../Utils/ToastNotifications";
 import { useModal } from "../../components/Modal/useModal";
 import { buildButton } from "../../components/Modal/Utils";
+import { tournamentValidate } from "../../validations/tournamentValidation";
 
 const TournamentEdit = () => {
   const modal = useModal();
@@ -161,8 +162,9 @@ const TournamentEdit = () => {
             </div>
             <button
               className="btn btn-primary"
-              onClick={() => {
-                updateTournamentMutate.mutate(tournament);
+              onClick={async () => {
+                if (await tournamentValidate(tournament))
+                  await updateTournamentMutate.mutateAsync(tournament);
               }}
             >
               Zatwierdź
@@ -221,8 +223,10 @@ const TournamentEdit = () => {
                   content: tournament.name,
                   buttons: [
                     buildButton("btn btn-secondary", "Anuluj"),
-                    buildButton("btn btn-primary", "Usuń", async () =>
-                      deleteTournamentAsync()
+                    buildButton(
+                      "btn btn-primary",
+                      "Usuń",
+                      async () => await deleteTournamentAsync()
                     ),
                   ],
                 })

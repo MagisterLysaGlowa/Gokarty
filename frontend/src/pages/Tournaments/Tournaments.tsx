@@ -11,6 +11,7 @@ import {
   createTournamentTexts,
   promiseToast,
 } from "../../Utils/ToastNotifications";
+import { tournamentValidate } from "../../validations/tournamentValidation";
 
 const Tournaments = () => {
   const [tournament, SetTournament] = useState<TournamentFormData>({
@@ -77,7 +78,8 @@ const Tournaments = () => {
           <button
             className="btn btn-dark"
             onClick={async () => {
-              createTournamentAsync(tournament);
+              if (await tournamentValidate(tournament))
+                await createTournamentAsync(tournament);
             }}
           >
             Dodaj

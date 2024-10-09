@@ -20,6 +20,7 @@ import {
 } from "../../Utils/ToastNotifications";
 import { useModal } from "../../components/Modal/useModal";
 import { buildButton } from "../../components/Modal/Utils";
+import { gokartValidate } from "../../validations/GokartValidation";
 
 export const AddGokart = () => {
   const modal = useModal();
@@ -33,7 +34,7 @@ export const AddGokart = () => {
     refetch: refetchGokarts,
   } = useQuery("getGokart", async () => await get_all_gokarts());
 
-  const { mutate: createGokart } = useMutation(
+  const { mutateAsync: createGokart } = useMutation(
     async (data: GokartFormData) =>
       await promiseToast(create_gokart(data), createGokartTexts),
     {
@@ -49,7 +50,7 @@ export const AddGokart = () => {
     }
   );
 
-  const { mutate: updateGokart } = useMutation(
+  const { mutateAsync: updateGokart } = useMutation(
     async (data: GokartFormData) =>
       await promiseToast(
         update_gokart(selectedGokartId, data),
@@ -83,7 +84,10 @@ export const AddGokart = () => {
                 </button>
                 <button
                   className="btn btn-primary"
-                  onClick={() => updateGokart(gokart)}
+                  onClick={async () => {
+                    if (await gokartValidate(gokart))
+                      await updateGokart(gokart);
+                  }}
                 >
                   Zatwierdź
                 </button>
@@ -91,7 +95,9 @@ export const AddGokart = () => {
             ) : (
               <button
                 className="btn btn-primary"
-                onClick={() => createGokart(gokart)}
+                onClick={async () => {
+                  if (await gokartValidate(gokart)) await createGokart(gokart);
+                }}
               >
                 Zatwierdź
               </button>

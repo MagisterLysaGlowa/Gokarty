@@ -20,6 +20,7 @@ import {
 } from "../../Utils/ToastNotifications";
 import { useModal } from "../../components/Modal/useModal";
 import { buildButton } from "../../components/Modal/Utils";
+import { schoolValidate } from "../../validations/SchoolValidation";
 
 export const SchoolManagement = () => {
   const modal = useModal();
@@ -81,13 +82,13 @@ export const SchoolManagement = () => {
     }
   );
 
-  function formSubmit(e: React.FormEvent) {
+  async function formSubmit(e: React.FormEvent) {
     e.preventDefault();
-    console.log(formData);
+    if (!(await schoolValidate(formData))) return;
     if (formEditId != -1) {
-      updateSchool.mutate(formData);
+      await updateSchool.mutateAsync(formData);
     } else {
-      insertSchool.mutate(formData);
+      await insertSchool.mutateAsync(formData);
     }
   }
 

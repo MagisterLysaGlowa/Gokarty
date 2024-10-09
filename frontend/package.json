@@ -17,7 +17,8 @@
     "react-bootstrap": "^2.10.4",
     "react-dom": "^18.3.1",
     "react-query": "^3.39.3",
-    "react-toastify": "^10.0.5"
+    "react-toastify": "^10.0.5",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
@@ -37,7 +38,6 @@
     "react-router-dom": "^6.26.2",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
-    "vite": "^5.4.1",
-    "proxy" : "http://192.168.0.1"
+    "vite": "^5.4.1"
   }
 }

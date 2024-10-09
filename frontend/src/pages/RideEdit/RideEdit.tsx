@@ -9,6 +9,7 @@ import {
   convertTimeToMs,
 } from "../../Utils/TimeUtils";
 import { promiseToast, updateRideTexts } from "../../Utils/ToastNotifications";
+import { validateRide } from "../../validations/RideEditValidation";
 
 export const RideEdit = () => {
   const { id } = useParams();
@@ -104,7 +105,18 @@ export const RideEdit = () => {
       </div>
       <button
         className="btn btn-primary"
-        onClick={async () => await updateRide()}
+        onClick={async () => {
+          if (
+            await validateRide({
+              gokartId: Number(rideData?.gokartId),
+              playerId: Number(rideData?.playerId),
+              time: convertTimeToMs(time),
+              tournamentId: Number(rideData?.tournamentId),
+              isDisqualified: isDisqualified ? 1 : 0,
+            })
+          )
+            await updateRide();
+        }}
       >
         Zatwierdź
       </button>

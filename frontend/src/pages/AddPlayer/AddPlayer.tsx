@@ -21,6 +21,7 @@ import {
   promiseToast,
   updatePlayerTexts,
 } from "../../Utils/ToastNotifications";
+import { validatePlayer } from "../../validations/PlayerValidation";
 
 export const AddPlayer = () => {
   const [player, SetPlayer] = useState<PlayerData>(resetPlayerData());
@@ -161,7 +162,9 @@ export const AddPlayer = () => {
           <div className="d-flex" style={{ gap: "10px" }}>
             <button
               className="btn btn-primary"
-              onClick={() => {
+              onClick={async () => {
+                if (!(await validatePlayer(player))) return;
+
                 if (!player?.playerId || player.playerId == -1) {
                   if (checkbox) {
                     createPlayerMutate.mutate(player);
