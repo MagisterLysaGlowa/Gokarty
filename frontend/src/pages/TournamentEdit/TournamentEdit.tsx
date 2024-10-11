@@ -8,7 +8,7 @@ import {
   remove_tournament,
   update_tournament,
 } from "../../services/tournament";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TournamentData, TournamentFormData } from "../../../types";
 import {
   get_players_for_tournament_with_school,
@@ -27,7 +27,9 @@ import {
 } from "../../Utils/ToastNotifications";
 import { useModal } from "../../components/Modal/useModal";
 import { buildButton } from "../../components/Modal/Utils";
-import { tournamentValidate } from "../../validations/tournamentValidation";
+import { tournamentValidate } from "../../validations/TournamentValidation";
+import { removePlayerFromList } from "../AddPlayer/AddPlayerUtils";
+import { updateTournament } from "../Tournaments/TournamentUtils";
 
 const TournamentEdit = () => {
   const modal = useModal();
@@ -37,25 +39,24 @@ const TournamentEdit = () => {
     {} as TournamentData
   );
 
-  const {
-    isLoading,
-    isFetching,
-    refetch: refetchTournament,
-  } = useQuery("editTournament", async () => await get_tournament(Number(id)), {
-    onSuccess: (res) => {
-      SetTournament({
-        ...res,
-        endDate: new Date(res.endDate),
-        startDate: new Date(res.startDate),
-      });
-    },
-  });
+  const { isLoading, isFetching } = useQuery(
+    "editTournament",
+    async () => await get_tournament(Number(id)),
+    {
+      onSuccess: (res) => {
+        SetTournament({
+          ...res,
+          endDate: new Date(res.endDate),
+          startDate: new Date(res.startDate),
+        });
+      },
+    }
+  );
 
   const {
     data: tournamentPlayers,
     isLoading: tournamentPlayersLoading,
     isFetching: tournamentPlayerFetching,
-    refetch: refetchPlayers,
   } = useQuery(
     "tournamentPlayers",
     async () => await get_players_for_tournament_with_school(Number(id))
@@ -68,7 +69,7 @@ const TournamentEdit = () => {
         updateTournamentTexts
       ),
     {
-      onSuccess: () => refetchTournament(),
+      onSuccess: (res) => updateTournament(res),
     }
   );
 
@@ -76,7 +77,7 @@ const TournamentEdit = () => {
     async (id: number) =>
       await promiseToast(remove_player(id), removePlayerTexts),
     {
-      onSuccess: async () => await refetchPlayers(),
+      onSuccess: async (removeId) => removePlayerFromList(removeId),
     }
   );
 
@@ -90,6 +91,21 @@ const TournamentEdit = () => {
       onSuccess: () => navigate(-1),
     }
   );
+
+  /*
+    Ustawia date zakończenia zawodów na date rozpoczęcia zawodów
+    gdy aktualizujesz zawody które są w fazie planowania.
+    Wynika to z walidacji dat turnieju gdzie data końca
+    nie może być mniejsza niż data startu.
+  */
+
+  useEffect(() => {
+    const setEndDate = () => {
+      if (tournament.tournamentStateId == 1)
+        SetTournament((prev) => ({ ...prev, endDate: prev.startDate }));
+    };
+    setEndDate();
+  }, [tournament.startDate, tournament.tournamentStateId]);
 
   if (isLoading || isFetching) return;
   return (

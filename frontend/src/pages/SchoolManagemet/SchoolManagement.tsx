@@ -11,7 +11,7 @@ import { SchoolData, SchoolFormData } from "../../../types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-regular-svg-icons/faEdit";
 import { faTrash } from "@fortawesome/free-solid-svg-icons/faTrash";
-// import Modal from "../../components/Modal/Modal";
+
 import {
   createSchoolTexts,
   promiseToast,
@@ -21,16 +21,16 @@ import {
 import { useModal } from "../../components/Modal/useModal";
 import { buildButton } from "../../components/Modal/Utils";
 import { schoolValidate } from "../../validations/SchoolValidation";
+import {
+  addSchoolToList,
+  removeSchoolFromList,
+  resetSchoolValues,
+  updateCertainSchool,
+} from "./SchoolManagementUtils";
 
 export const SchoolManagement = () => {
   const modal = useModal();
-  const [schools, setSchools] = useState<Array<SchoolData>>([]);
-  const [formEditId, setFormEditId] = useState<number>(-1);
-  const [formData, setFormData] = useState<SchoolFormData>({
-    name: "",
-    city: "",
-    acronym: "",
-  } as SchoolFormData);
+  const [formData, setFormData] = useState<SchoolData>(resetSchoolValues);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -41,24 +41,21 @@ export const SchoolManagement = () => {
   };
 
   const {
+    data: schools,
     isLoading,
     isFetching,
-    refetch: refetchSchools,
-  } = useQuery("schoolManagementGetSchools", async () => get_all_schools(), {
-    onSuccess: (res) => setSchools(res),
-  });
+  } = useQuery("schoolManagementGetSchools", async () => get_all_schools());
 
   const updateSchool = useMutation(
     async (data: SchoolFormData) =>
       await promiseToast(
-        update_school(Number(formEditId), data),
+        update_school(Number(formData.schoolId), data),
         updateSchoolTexts
       ),
     {
-      onSuccess: async () => {
-        await refetchSchools();
-        setFormData({ name: "", city: "", acronym: "" } as SchoolFormData);
-        setFormEditId(-1);
+      onSuccess: async (school) => {
+        updateCertainSchool(school);
+        setFormData(resetSchoolValues);
       },
     }
   );
@@ -67,9 +64,9 @@ export const SchoolManagement = () => {
     async (data: SchoolFormData) =>
       await promiseToast(create_school(data), createSchoolTexts),
     {
-      onSuccess: async () => {
-        await refetchSchools();
-        setFormData({ name: "", city: "", acronym: "" } as SchoolFormData);
+      onSuccess: async (school) => {
+        addSchoolToList(school);
+        setFormData(resetSchoolValues);
       },
     }
   );
@@ -78,38 +75,25 @@ export const SchoolManagement = () => {
     async (id: number) =>
       await promiseToast(remove_school(id), removeSchoolTexts),
     {
-      onSuccess: async () => await refetchSchools(),
+      onSuccess: async (id) => removeSchoolFromList(id),
     }
   );
 
   async function formSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!(await schoolValidate(formData))) return;
-    if (formEditId != -1) {
+    if (formData.schoolId != -1) {
       await updateSchool.mutateAsync(formData);
     } else {
       await insertSchool.mutateAsync(formData);
     }
   }
 
-  function editClick(schoolId: number) {
-    setFormEditId(schoolId);
-    setFormData(
-      schools.find((school) => school.schoolId == schoolId) ??
-        ({ name: "", city: "", acronym: "" } as SchoolFormData)
-    );
-  }
-
-  function editCancel() {
-    setFormEditId(-1);
-    setFormData({ name: "", city: "", acronym: "" } as SchoolFormData);
-  }
-
   if (isLoading || isFetching) return;
   return (
     <div className="schoolManagement">
       <form onSubmit={formSubmit}>
-        <h3>{formEditId == -1 ? "Dodaj szkołę" : "Edytuj szkołę"}</h3>
+        <h3>{formData.schoolId == -1 ? "Dodaj szkołę" : "Edytuj szkołę"}</h3>
         <div>
           <label htmlFor="name">Nazwa szkoły</label>
           <input
@@ -143,12 +127,12 @@ export const SchoolManagement = () => {
             onChange={handleChange}
           />
         </div>
-        {formEditId != -1 && (
+        {formData.schoolId != -1 && (
           <button
             type="button"
             className="btn btn-secondary"
             onClick={() => {
-              editCancel();
+              setFormData(resetSchoolValues);
             }}
           >
             Anuluj
@@ -171,7 +155,7 @@ export const SchoolManagement = () => {
             </tr>
           </thead>
           <tbody>
-            {schools.map((school, i) => {
+            {schools?.map((school, i) => {
               return (
                 <tr key={school.schoolId}>
                   <td>{i + 1}</td>
@@ -182,7 +166,7 @@ export const SchoolManagement = () => {
                     <button
                       className="btn btn-primary"
                       onClick={() => {
-                        editClick(school.schoolId);
+                        setFormData(school);
                       }}
                     >
                       <FontAwesomeIcon icon={faEdit} />

@@ -3,7 +3,7 @@ import apiClient from "./apiClient";
 
 export const create_tournament = async (
   data: TournamentFormData
-): Promise<string> => {
+): Promise<TournamentData> => {
   const formData = new FormData();
   formData.append("name", data.name);
   formData.append("startDate", data.startDate.toJSON());
@@ -11,18 +11,22 @@ export const create_tournament = async (
   formData.append("tournamentStateId", data.tournamentStateId.toString());
   console.log(formData);
 
-  const response = await apiClient.post<string>("/tournament", formData, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  const response = await apiClient.post<TournamentData>(
+    "/tournament",
+    formData,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
   return response.data;
 };
 
 export const update_tournament = async (
   tournamentId: number,
   data: TournamentFormData
-): Promise<string> => {
+): Promise<TournamentData> => {
   const formData = new FormData();
   formData.append("name", data.name);
   formData.append("startDate", data.startDate.toJSON());
@@ -30,7 +34,7 @@ export const update_tournament = async (
   formData.append("tournamentStateId", data.tournamentStateId.toString());
   console.log(formData);
 
-  const response = await apiClient.put<string>(
+  const response = await apiClient.put<TournamentData>(
     `/tournament/${tournamentId}`,
     formData,
     {

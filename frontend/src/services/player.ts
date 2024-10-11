@@ -9,14 +9,14 @@ import apiClient from "./apiClient";
 export const create_player = async (
   tournamentId: number,
   data: PlayerFormData
-): Promise<string> => {
+): Promise<PlayerData> => {
   const formData = new FormData();
   formData.append("name", data.name);
   formData.append("surname", data.surname);
   formData.append("birthDate", data.birthDate.toJSON());
   formData.append("schoolId", data.schoolId.toString());
 
-  const response = await apiClient.post<string>(
+  const response = await apiClient.post<PlayerData>(
     `/player/${tournamentId}`,
     formData,
     {
@@ -31,14 +31,14 @@ export const create_player = async (
 export const update_player = async (
   playerId: number,
   data: PlayerFormData
-): Promise<string> => {
+): Promise<PlayerData> => {
   const formData = new FormData();
   formData.append("name", data.name);
   formData.append("surname", data.surname);
   formData.append("birthDate", data.birthDate.toJSON());
   formData.append("schoolId", data.schoolId.toString());
 
-  const response = await apiClient.put<string>(
+  const response = await apiClient.put<PlayerData>(
     `/player/${playerId}`,
     formData,
     {
@@ -50,12 +50,13 @@ export const update_player = async (
   return response.data;
 };
 
-export const remove_player = async (playerId: number): Promise<void> => {
-  await apiClient.delete<string>(`/player/${playerId}`, {
+export const remove_player = async (playerId: number): Promise<number> => {
+  const data = await apiClient.delete<string>(`/player/${playerId}`, {
     headers: {
       "Content-Type": "application/json",
     },
   });
+  return Number(data.data);
 };
 
 export const get_all_players = async (): Promise<PlayerData[]> => {

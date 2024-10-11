@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TournamentListElement } from "../../components/componentsExport";
 import "./tournaments.css";
 import {
@@ -11,30 +11,39 @@ import {
   createTournamentTexts,
   promiseToast,
 } from "../../Utils/ToastNotifications";
-import { tournamentValidate } from "../../validations/tournamentValidation";
+import { tournamentValidate } from "../../validations/TournamentValidation";
+import { addTournamentToList, resetTournamentValues } from "./TournamentUtils";
 
 const Tournaments = () => {
-  const [tournament, SetTournament] = useState<TournamentFormData>({
-    name: "",
-    endDate: new Date(),
-    startDate: new Date(),
-    tournamentStateId: 1,
-  });
+  const [tournament, SetTournament] = useState<TournamentFormData>(
+    resetTournamentValues
+  );
 
-  const {
-    data,
-    isLoading,
-    isFetching,
-    refetch: refetchTournament,
-  } = useQuery("tournament", async () => await get_all_tournaments());
+  const { data, isLoading, isFetching } = useQuery(
+    "getTournaments",
+    async () => await get_all_tournaments()
+  );
 
   const { mutateAsync: createTournamentAsync } = useMutation(
     async (data: TournamentFormData) =>
       await promiseToast(create_tournament(data), createTournamentTexts),
     {
-      onSuccess: async () => await refetchTournament(),
+      onSuccess: async (tournament) => addTournamentToList(tournament),
     }
   );
+
+  /*
+    Ustawia date zakończenia zawodów na date rozpoczęcia zawodów
+    gdy tworzysz zawody. Wynika to z walidacji dat turnieju gdzie 
+    data końca nie może być mniejsza niż data startu.
+  */
+
+  useEffect(() => {
+    const changeEndDate = () => {
+      SetTournament((prev) => ({ ...prev, endDate: prev.startDate }));
+    };
+    changeEndDate();
+  }, [tournament.startDate]);
 
   return (
     <div className="d-flex">

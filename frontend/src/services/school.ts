@@ -1,13 +1,15 @@
 import { SchoolData, SchoolFormData } from "../../types";
 import apiClient from "./apiClient";
 
-export const create_school = async (data: SchoolFormData): Promise<string> => {
+export const create_school = async (
+  data: SchoolFormData
+): Promise<SchoolData> => {
   const formData = new FormData();
   formData.append("name", data.name);
   formData.append("city", data.city);
   formData.append("acronym", data.acronym);
 
-  const response = await apiClient.post<string>("/school", formData, {
+  const response = await apiClient.post<SchoolData>("/school", formData, {
     headers: {
       "Content-Type": "application/json",
     },
@@ -18,13 +20,13 @@ export const create_school = async (data: SchoolFormData): Promise<string> => {
 export const update_school = async (
   schoolId: number,
   data: SchoolFormData
-): Promise<string> => {
+): Promise<SchoolData> => {
   const formData = new FormData();
   formData.append("name", data.name);
   formData.append("city", data.city);
   formData.append("acronym", data.acronym);
 
-  const response = await apiClient.put<string>(
+  const response = await apiClient.put<SchoolData>(
     `/school/${schoolId}`,
     formData,
     {
@@ -36,12 +38,13 @@ export const update_school = async (
   return response.data;
 };
 
-export const remove_school = async (schoolId: number): Promise<void> => {
-  await apiClient.delete<string>(`/school/${schoolId}`, {
+export const remove_school = async (schoolId: number): Promise<number> => {
+  const data = await apiClient.delete<string>(`/school/${schoolId}`, {
     headers: {
       "Content-Type": "application/json",
     },
   });
+  return Number(data.data);
 };
 
 export const get_all_schools = async (): Promise<SchoolData[]> => {

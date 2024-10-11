@@ -21,7 +21,7 @@ const playerValidationSchema = yup.object().shape({
   birthDate: yup
     .date()
     .required()
-    .test("is-valid", function (value) {
+    .test("is-valid", "Niepoprawna data urodzenia", function (value) {
       return value <= new Date();
     }),
 });

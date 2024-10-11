@@ -18,16 +18,6 @@ export const compareFunction = (a: SchoolData, b: SchoolData) => {
   return textA < textB ? -1 : textA > textB ? 1 : 0;
 };
 
-export const resetPlayerData = () => {
-  return {
-    birthDate: new Date(),
-    name: "",
-    playerId: -1,
-    schoolId: -1,
-    surname: "",
-  };
-};
-
 export const updateTournamentState = async (
   tournament: TournamentData,
   updateTournamentMutate: UseMutationResult<
@@ -41,13 +31,11 @@ export const updateTournamentState = async (
     await updateTournamentMutate.mutateAsync({
       ...tournament,
       tournamentStateId: tournament.tournamentStateId + 1,
-      startDate: new Date(),
     });
   } else if (tournament.tournamentStateId == 2) {
     await updateTournamentMutate.mutateAsync({
       ...tournament,
       tournamentStateId: tournament.tournamentStateId + 1,
-      endDate: new Date(),
     });
   }
 };

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./AddGokart.css";
-import { GokartFormData } from "../../../types";
+import { GokartData, GokartFormData } from "../../../types";
 import { handleChange } from "../TournamentEdit/TournamentEditUtils";
 import { useMutation, useQuery } from "react-query";
 import {
@@ -11,7 +11,6 @@ import {
 } from "../../services/gokart";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
-
 import {
   createGokartTexts,
   promiseToast,
@@ -21,24 +20,33 @@ import {
 import { useModal } from "../../components/Modal/useModal";
 import { buildButton } from "../../components/Modal/Utils";
 import { gokartValidate } from "../../validations/GokartValidation";
+import {
+  AddCreatedGokartToList,
+  EditCertainGokartInList,
+  RemoveCreatedGokartFromList,
+  resetGokartValues,
+} from "./AddGokartUtils";
 
 export const AddGokart = () => {
   const modal = useModal();
-  const [gokart, Setgokart] = useState<GokartFormData>({} as GokartFormData);
-  const [selectedGokartId, SetSelectedGokartId] = useState<number>(-1);
+  const [gokart, Setgokart] = useState<GokartData>({
+    name: "",
+    gokartId: -1,
+  });
 
-  const {
-    isLoading: isGokartsLoading,
-    isFetching: isGokartsFetching,
-    data: allGokart,
-    refetch: refetchGokarts,
-  } = useQuery("getGokart", async () => await get_all_gokarts());
+  const { data: allGokarts } = useQuery(
+    "getGokarts",
+    async () => await get_all_gokarts()
+  );
 
   const { mutateAsync: createGokart } = useMutation(
     async (data: GokartFormData) =>
       await promiseToast(create_gokart(data), createGokartTexts),
     {
-      onSuccess: async () => await refetchGokarts(),
+      onSuccess: async (res) => {
+        await AddCreatedGokartToList(res);
+        Setgokart(resetGokartValues);
+      },
     }
   );
 
@@ -46,16 +54,22 @@ export const AddGokart = () => {
     async (id: number) =>
       await promiseToast(remove_gokart(id), removeGokartTexts),
     {
-      onSuccess: async () => await refetchGokarts(),
+      onSuccess: async (id) => await RemoveCreatedGokartFromList(id),
     }
   );
 
   const { mutateAsync: updateGokart } = useMutation(
     async (data: GokartFormData) =>
       await promiseToast(
-        update_gokart(selectedGokartId, data),
+        update_gokart(gokart.gokartId, data),
         updateGokartTexts
-      )
+      ),
+    {
+      onSuccess: async (gokart) => {
+        await EditCertainGokartInList(gokart);
+        Setgokart(resetGokartValues);
+      },
+    }
   );
 
   return (
@@ -63,7 +77,7 @@ export const AddGokart = () => {
       <div className="gokartContainer">
         <div className="gokartForm" onSubmit={(e) => e.preventDefault()}>
           <form>
-            <h3>{(selectedGokartId == -1 ? "Dodaj" : "Edytuj") + " gokart"}</h3>
+            <h3>{(gokart.gokartId == -1 ? "Dodaj" : "Edytuj") + " gokart"}</h3>
             <input
               type="text"
               name="name"
@@ -71,13 +85,12 @@ export const AddGokart = () => {
               value={gokart.name}
               onChange={(e) => handleChange(e, Setgokart)}
             />
-            {selectedGokartId != -1 ? (
+            {gokart.gokartId != -1 ? (
               <>
                 <button
                   className="btn btn-secondary"
                   onClick={() => {
-                    SetSelectedGokartId(-1);
-                    Setgokart({ name: "" });
+                    Setgokart(resetGokartValues);
                   }}
                 >
                   Anuluj
@@ -85,8 +98,9 @@ export const AddGokart = () => {
                 <button
                   className="btn btn-primary"
                   onClick={async () => {
-                    if (await gokartValidate(gokart))
+                    if (await gokartValidate(gokart)) {
                       await updateGokart(gokart);
+                    }
                   }}
                 >
                   Zatwierdź
@@ -96,7 +110,9 @@ export const AddGokart = () => {
               <button
                 className="btn btn-primary"
                 onClick={async () => {
-                  if (await gokartValidate(gokart)) await createGokart(gokart);
+                  if (await gokartValidate(gokart)) {
+                    await createGokart(gokart);
+                  }
                 }}
               >
                 Zatwierdź
@@ -104,64 +120,57 @@ export const AddGokart = () => {
             )}
           </form>
         </div>
-        {!isGokartsLoading && !isGokartsFetching ? (
-          <table className="table table-striped">
-            <thead className="table-dark">
-              <tr>
-                <th>Lp.</th>
-                <th>Name</th>
-                <th>Edytuj</th>
-                <th>Usuń</th>
+        <table className="table table-striped">
+          <thead className="table-dark">
+            <tr>
+              <th>Lp.</th>
+              <th>Name</th>
+              <th>Edytuj</th>
+              <th>Usuń</th>
+            </tr>
+          </thead>
+          <tbody>
+            {allGokarts?.map((gokart) => (
+              <tr key={gokart.gokartId}>
+                <td>{gokart.gokartId}</td>
+                <td>{gokart.name}</td>
+                <td>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => {
+                      Setgokart(
+                        allGokarts.find((z) => z.gokartId == gokart.gokartId)!
+                      );
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faEdit} />
+                  </button>
+                </td>
+                <td>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => {
+                      modal.openModal({
+                        title: "Czy napewno chcesz usunąć gokart?",
+                        content: gokart.name,
+                        buttons: [
+                          buildButton("btn btn-secondary", "Anuluj"),
+                          buildButton(
+                            "btn btn-primary",
+                            "Usuń",
+                            async () => await removeGokart(gokart.gokartId)
+                          ),
+                        ],
+                      });
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faTrash} />
+                  </button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {allGokart?.map((gokart) => (
-                <tr key={gokart.gokartId}>
-                  <td>{gokart.gokartId}</td>
-                  <td>{gokart.name}</td>
-                  <td>
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => {
-                        Setgokart(
-                          allGokart.find(
-                            (z) => z.gokartId == gokart.gokartId
-                          ) ?? { name: "" }
-                        );
-                        SetSelectedGokartId(gokart.gokartId);
-                      }}
-                    >
-                      <FontAwesomeIcon icon={faEdit} />
-                    </button>
-                  </td>
-                  <td>
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => {
-                        modal.openModal({
-                          title: "Czy napewno chcesz usunąć gokart?",
-                          content: gokart.name,
-                          buttons: [
-                            buildButton("btn btn-secondary", "Anuluj"),
-                            buildButton(
-                              "btn btn-primary",
-                              "Usuń",
-                              async () => await removeGokart(gokart.gokartId)
-                            ),
-                          ],
-                        });
-                      }}
-                    >
-                      <FontAwesomeIcon icon={faTrash} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <p>Loading...</p>
-        )}
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

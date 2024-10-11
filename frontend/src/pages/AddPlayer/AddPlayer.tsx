@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   compareFunction,
   handleChange,
-  resetPlayerData,
 } from "../TournamentEdit/TournamentEditUtils";
 import { useState } from "react";
 import { PlayerData } from "../../../types";
@@ -18,13 +17,15 @@ import { get_all_schools } from "../../services/school";
 import "./AddPlayer.css";
 import {
   createPlayerTexts,
+  errorToast,
   promiseToast,
   updatePlayerTexts,
 } from "../../Utils/ToastNotifications";
 import { validatePlayer } from "../../validations/PlayerValidation";
+import { resetPlayerValues } from "./AddPlayerUtils";
 
 export const AddPlayer = () => {
-  const [player, SetPlayer] = useState<PlayerData>(resetPlayerData());
+  const [player, SetPlayer] = useState<PlayerData>(resetPlayerValues);
   const [checkbox, setCheckbox] = useState<boolean>(false);
   const { id, playerId } = useParams();
   const navigate = useNavigate();
@@ -34,17 +35,16 @@ export const AddPlayer = () => {
       await promiseToast(
         update_player(player.playerId, player),
         updatePlayerTexts
-      ),
-    {
-      onSuccess: async () => navigate(-1),
-    }
+      )
   );
 
   const { isLoading: isLoadingPlayer, isFetching: isFetchingPlayer } = useQuery(
-    "getPlayer",
+    "getPlayers",
     async () => (playerId ? await get_player(Number(playerId)) : null),
     {
-      onSuccess: (res) => SetPlayer(res ?? resetPlayerData()),
+      onSuccess: (res) => {
+        SetPlayer(res ?? resetPlayerValues);
+      },
     }
   );
 
@@ -52,15 +52,17 @@ export const AddPlayer = () => {
     async (data: PlayerData) =>
       await promiseToast(create_player(Number(id), data), createPlayerTexts),
     {
-      onSuccess: () => SetPlayer(resetPlayerData()),
+      onSuccess: () => {
+        SetPlayer(resetPlayerValues);
+        setCheckbox(false);
+      },
     }
   );
 
-  const {
-    data: schools,
-    isLoading: schoolLoading,
-    isFetching: schoolfetching,
-  } = useQuery("getSchools", async () => await get_all_schools());
+  const { data: schools } = useQuery(
+    "getSchools",
+    async () => await get_all_schools()
+  );
 
   if (isLoadingPlayer || isFetchingPlayer) return <p>Loading...</p>;
   return (
@@ -114,28 +116,24 @@ export const AddPlayer = () => {
           <div>
             <label htmlFor="school">Szkoła</label>
             <div className="d-flex" style={{ gap: "5px" }}>
-              {schoolLoading || schoolfetching ? (
-                <p>Loading...</p>
-              ) : (
-                <select
-                  name="schoolId"
-                  id="school"
-                  className="form-control"
-                  value={player.schoolId}
-                  onChange={(e) => handleChange(e, SetPlayer)}
-                >
-                  <option value="-1" disabled selected>
-                    Wybierz szkołe
-                  </option>
-                  {schools
-                    ?.sort((a, b) => compareFunction(a, b))
-                    .map((z) => (
-                      <option value={z.schoolId} key={z.name}>
-                        {z.acronym}
-                      </option>
-                    ))}
-                </select>
-              )}
+              <select
+                name="schoolId"
+                id="school"
+                className="form-control"
+                value={player.schoolId}
+                onChange={(e) => handleChange(e, SetPlayer)}
+              >
+                <option value="-1" disabled selected>
+                  Wybierz szkołe
+                </option>
+                {schools
+                  ?.sort((a, b) => compareFunction(a, b))
+                  .map((z) => (
+                    <option value={z.schoolId} key={z.name}>
+                      {z.acronym}
+                    </option>
+                  ))}
+              </select>
               <button
                 className="btn btn-primary"
                 onClick={() => navigate("/szkoly")}
@@ -165,15 +163,11 @@ export const AddPlayer = () => {
               onClick={async () => {
                 if (!(await validatePlayer(player))) return;
 
-                if (!player?.playerId || player.playerId == -1) {
-                  if (checkbox) {
-                    createPlayerMutate.mutate(player);
-                    setCheckbox(false);
-                  } else {
-                    console.log("kliknij checkboxa");
-                  }
+                if (player.playerId == -1) {
+                  if (checkbox) await createPlayerMutate.mutateAsync(player);
+                  else errorToast("Zapoznaj się z regulaminem");
                 } else if (playerId) {
-                  updatePlayerMutation.mutate({
+                  await updatePlayerMutation.mutateAsync({
                     ...player,
                     birthDate: new Date(player.birthDate),
                   });

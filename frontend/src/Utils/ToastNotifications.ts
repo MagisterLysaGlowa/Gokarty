@@ -19,7 +19,10 @@ export const infoToast = (text: string) => toast.info(text, options);
 export const promiseToast = async <T>(
   promiese: Promise<T>,
   texts: promiseToastStatesText
-) => await toast.promise(promiese, texts, options);
+) =>
+  await toast
+    .promise(promiese, texts, options)
+    .then(async (res) => (await res) as T);
 
 //Gokarty
 export const createGokartTexts: promiseToastStatesText = {
