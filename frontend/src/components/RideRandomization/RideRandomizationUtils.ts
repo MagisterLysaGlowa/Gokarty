@@ -1,4 +1,4 @@
-import { GokartData } from "../../../types";
+import { GokartData, QueueFormData } from "../../../types";
 
 export const sortListElements = (
   selectedGokarts: number[],
@@ -16,4 +16,15 @@ export const sortListElements = (
   )
     return 1;
   return 0;
+};
+
+export const gokartCheckboxChangeHandler = (
+  queue: QueueFormData,
+  SetQueue: React.Dispatch<React.SetStateAction<QueueFormData>>,
+  gokart: GokartData
+) => {
+  const queueGokarts = queue.gokartIds.includes(gokart.gokartId)
+    ? queue.gokartIds.filter((z) => z != gokart.gokartId)
+    : [...queue.gokartIds, gokart.gokartId];
+  SetQueue((prev) => ({ ...prev, gokartIds: queueGokarts }));
 };

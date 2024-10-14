@@ -33,7 +33,7 @@ const TournamentListElement: React.FC<TournamentListElementProps> = ({
             }}
           >
             <FontAwesomeIcon icon={faTableList} />
-            Tabela
+            <span>Tabela</span>
           </button>
           <button
             className="btn btn-light"
@@ -42,7 +42,7 @@ const TournamentListElement: React.FC<TournamentListElementProps> = ({
             }}
           >
             <FontAwesomeIcon icon={faPenToSquare} />
-            Modyfikacja
+            <span>Modyfikacja</span>
           </button>
         </div>
       </div>

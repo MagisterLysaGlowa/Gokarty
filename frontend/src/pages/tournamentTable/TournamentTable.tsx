@@ -86,7 +86,7 @@ const TournamentTable = () => {
                 return 0;
               })
               .map((element, index) => (
-                <tr>
+                <tr key={element.rideId}>
                   <td>{index + 1}</td>
                   <td>{element.player.name}</td>
                   <td>{element.player.surname}</td>

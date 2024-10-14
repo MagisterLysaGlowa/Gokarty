@@ -58,7 +58,7 @@ const Tournaments = () => {
           )}
         </div>
       </div>
-      <div className="w-25 right" style={{ padding: "5px" }}>
+      <div className="w-25 right" style={{ margin: "5px" }}>
         <form
           className="d-flex flex-column tournamentForm"
           style={{ gap: "10px" }}

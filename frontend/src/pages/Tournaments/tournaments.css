@@ -2,3 +2,9 @@
     display: grid;
     grid-template-columns: repeat(2,50%);
 }
+
+@media screen and (max-width:1200px){
+    .tournamentList{
+        grid-template-columns: 100%;
+    }
+}

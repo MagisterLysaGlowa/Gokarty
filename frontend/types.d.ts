@@ -148,10 +148,10 @@ export interface FullQueueData {
 }
 
 export interface Time {
-    ms: number;
-    s: number;
-    m: number;
-    h: number;
+  ms: number;
+  s: number;
+  m: number;
+  h: number;
 }
 
 export interface PhotoCellData {

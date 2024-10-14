@@ -118,3 +118,11 @@ export const removeRideTexts: promiseToastStatesText = {
   pending: "W trakcie usuwania przejazd.",
   success: "Pomyślnie usunięto przejazd.",
 };
+
+//Kolejka
+
+export const createQueueTexts: promiseToastStatesText = {
+  error: "Błąd podczas tworzenia kolejki",
+  pending: "W trakcie tworzenia kolejki",
+  success: "Pomyślnie utworzono kolejke",
+};
