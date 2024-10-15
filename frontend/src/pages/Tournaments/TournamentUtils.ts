@@ -6,6 +6,7 @@ export const resetTournamentValues: TournamentFormData = {
   endDate: new Date(),
   startDate: new Date(),
   tournamentStateId: 1,
+  tournamentTypeId: 1,
 };
 
 export const addTournamentToList = (tournament: TournamentData) => {

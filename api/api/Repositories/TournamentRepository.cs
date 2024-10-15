@@ -29,6 +29,7 @@ namespace api.Repositories
             tournament_db.StartDate = tournament.StartDate;
             tournament_db.EndDate = tournament.EndDate;
             tournament_db.TournamentStateId = tournament.TournamentStateId;
+            tournament_db.TournamentTypeId = tournament.TournamentTypeId;
 
             _context.Tournaments.Update(tournament_db);
             _context.SaveChanges();

@@ -39,6 +39,7 @@ namespace api.Controllers
                 StartDate = dto.StartDate.Date.ToUniversalTime(),
                 EndDate = dto.EndDate.Date.ToUniversalTime(),
                 TournamentStateId = dto.TournamentStateId,
+                TournamentTypeId=dto.TournamentTypeId,
             };
             return Ok(tournamentRepository.Create(tournament));
         }
@@ -52,6 +53,7 @@ namespace api.Controllers
                 StartDate = dto.StartDate.Date.ToUniversalTime(),
                 EndDate = dto.EndDate.Date.ToUniversalTime(),
                 TournamentStateId = dto.TournamentStateId,
+                TournamentTypeId=dto.TournamentTypeId
             };
             return Ok(tournamentRepository.Update(tournamentId, tournament));
         }

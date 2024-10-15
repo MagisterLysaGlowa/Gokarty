@@ -83,5 +83,14 @@ namespace api.Controllers
         {
             return Ok(playerRepository.FilterPlayers(dto));
         }
+
+        [HttpPost("addplayertotournament/{tournamentId}")]
+        public IActionResult AddPlayerToTournament(int tournamentId,[FromBody]int playerId) {
+            return Ok(playerRepository.AddPlayerToTournament(tournamentId, playerId));
+        }
+        [HttpPost("removeplayerfromtournament/{tournamentId}")]
+        public IActionResult RemovePlayerFromTournament(int tournamentId, [FromBody] int playerId) {
+            return Ok(playerRepository.RemovePlayerFromTournament(tournamentId, playerId));
+        }
     }
 }

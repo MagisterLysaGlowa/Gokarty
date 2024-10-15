@@ -93,10 +93,6 @@ const RideRandomization: React.FC<Props> = ({ refetch }) => {
             <p>Loading...</p>
           )}
         </div>
-        <div className="d-flex gap-3 align-items-center">
-          <input type="checkbox" name="" id="queueType" onChange={() => {}} />
-          <label htmlFor="queueType">Nieskończona kolejka</label>
-        </div>
         <button
           className="btn btn-primary"
           style={{ width: "200px" }}

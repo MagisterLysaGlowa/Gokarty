@@ -1,12 +1,9 @@
 ﻿using api.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace api.Data
-{
-    public class AppDbContext : DbContext
-    {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-        {
+namespace api.Data {
+    public class AppDbContext :DbContext {
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {
 
         }
 
@@ -20,9 +17,9 @@ namespace api.Data
         public DbSet<Queue> Queues { get; set; } = default!;
         public DbSet<TournamentState> TournamentStates { get; set; } = default!;
         public DbSet<User> Users { get; set; } = default!;
+        public DbSet<TournamentType> TournamentTypes { get; set; } = default!;
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
+        protected override void OnModelCreating(ModelBuilder modelBuilder) {
             /*PLAYER TO TOURNAMENT (MANY TO MANY)*/
 
             modelBuilder.Entity<PlayerTournament>()
@@ -41,7 +38,7 @@ namespace api.Data
             //PLAYER TO SCHOOL (ONE TO MANY)
 
             modelBuilder.Entity<Player>()
-                        .HasOne(s => s.School) 
+                        .HasOne(s => s.School)
                         .WithMany(p => p.Players)
                         .HasForeignKey(s => s.SchoolId);
 
@@ -51,6 +48,13 @@ namespace api.Data
                         .HasOne(ts => ts.TournamentState)
                         .WithMany(t => t.Tournaments)
                         .HasForeignKey(ts => ts.TournamentStateId);
+
+            //TOURNAMEN TO TOURNAMENT TYPE (ONE TO MANY)
+
+            modelBuilder.Entity<Tournament>()
+                        .HasOne(t=>t.TournamentType)
+                        .WithMany(tt=>tt.Tournaments)
+                        .HasForeignKey(t=>t.TournamentTypeId);
 
             //RIDE TO TOURNAMENT (ONE TO MANY)
 
@@ -126,14 +130,18 @@ namespace api.Data
                 new Player() { PlayerId = 1, Name = "Maciej", Surname = "Traktor", BirthDate = new DateTime(2024, 10, 5, 12, 0, 0, DateTimeKind.Utc), SchoolId = 1 },
                 new Player() { PlayerId = 2, Name = "Michalina", Surname = "Ciągnik", BirthDate = new DateTime(2024, 10, 5, 12, 0, 0, DateTimeKind.Utc), SchoolId = 1 }
             );
-
-            modelBuilder.Entity<Tournament>().HasData(
-                new Tournament() { TournamentId = 1, Name = "Wyścig", StartDate = new DateTime(2024, 10, 5, 12, 0, 0, DateTimeKind.Utc), EndDate = new DateTime(2024, 10, 5, 12, 0, 0, DateTimeKind.Utc), TournamentStateId = 1 }
-            );
-
             modelBuilder.Entity<PlayerTournament>().HasData(
                 new PlayerTournament() { PlayersId = 1, TournamentsId = 1 },
                 new PlayerTournament() { PlayersId = 2, TournamentsId = 1 }
+            );
+
+            modelBuilder.Entity<TournamentType>().HasData(
+                   new TournamentType() { TournamentTypeId = 1, Name = "Zapętlony" },
+                   new TournamentType() { TournamentTypeId = 2, Name = "Nieskończony" }
+            );
+
+            modelBuilder.Entity<Tournament>().HasData(
+                new Tournament() { TournamentId = 1, Name = "Wyścig", StartDate = new DateTime(2024, 10, 5, 12, 0, 0, DateTimeKind.Utc), EndDate = new DateTime(2024, 10, 5, 12, 0, 0, DateTimeKind.Utc), TournamentStateId = 1}
             );
         }
     }

@@ -4,77 +4,90 @@ using api.Interfaces;
 using api.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace api.Repositories
-{
-    public class PlayerRepository : IPlayerRepository
-    {
+namespace api.Repositories {
+    public class PlayerRepository :IPlayerRepository {
         private readonly AppDbContext _context;
 
-        public PlayerRepository(AppDbContext context)
-        {
+        public PlayerRepository(AppDbContext context) {
             _context = context;
         }
-        public Player Create(Player player, int tournamentId)
-        {
+
+        public int AddPlayerToTournament(int tournamentId, int playerId) {
+            var playerTournament = new PlayerTournament() {
+                PlayersId = playerId,
+                TournamentsId = tournamentId
+            };
+            if(!_context.PlayerTournaments.Any(e => e.TournamentsId == tournamentId && e.PlayersId == playerId)) {
+                _context.PlayerTournaments.Add(playerTournament);
+                _context.SaveChanges();
+                return playerId;
+            }
+            throw new InvalidOperationException("Something went wrong");
+        }
+
+        public Player Create(Player player, int tournamentId) {
             var tournament = _context.Tournaments.Find(tournamentId);
-            if (tournament == null) return null!;
+            if(tournament == null)
+                return null!;
             _context.Add(player);
             tournament?.PlayerTournaments.Add(new PlayerTournament { Player = player });
             _context.SaveChanges();
             return player;
         }
 
-        public List<Player> FilterPlayers(PlayerFilterDto dto)
-        {
-            var players = _context.Players.ToList();
+        public List<Player> FilterPlayers(PlayerFilterDto dto) {
+            var players = _context.Players.Include(z => z.School).ToList();
 
-            if(dto.Name != "" && dto.Name != null)
-            {
+            if(dto.Name != "" && dto.Name != null) {
                 players = players.Where(p => p.Name!.ToLower().Contains(dto.Name.ToLower())).ToList();
             }
 
-            if (dto.Surname != "" && dto.Surname != null)
-            {
+            if(dto.Surname != "" && dto.Surname != null) {
                 players = players.Where(p => p.Surname!.ToLower().Contains(dto.Surname.ToLower())).ToList();
             }
 
-            if (dto.SchoolId != 0)
-            {
+            if(dto.SchoolId != 0) {
                 players = players.Where(p => p.SchoolId == dto.SchoolId).ToList();
             }
 
+            var playersInThisTournament = _context.PlayerTournaments
+                .Where(t => t.TournamentsId == dto.TournamentId)
+                .Select(t => t.PlayersId)
+                .ToList();
+
+            players = players.Where(p => !playersInThisTournament.Contains(p.PlayerId)).ToList();
+
             return players;
         }
 
-        public Player Get(int playerId)
-        {
+        public Player Get(int playerId) {
             var player = _context.Players.Find(playerId);
-            if(player == null) return null!;
+            if(player == null)
+                return null!;
             return player;
         }
 
-        public List<Player> GetAll()
-        {
+        public List<Player> GetAll() {
             var players = _context.Players.ToList();
-            if(players == null) return null!;
+            if(players == null)
+                return null!;
             return players;
         }
 
-        public List<Player> GetAllForTournament(int tournamentId)
-        {
-            var players = _context.PlayerTournaments.Where(pt => pt.TournamentsId == tournamentId).Select(pt => pt.Player).ToList();
+        public List<Player> GetAllForTournament(int tournamentId) {
+            var players = _context.PlayerTournaments
+                            .Where(pt => pt.TournamentsId == tournamentId)
+                            .Select(pt => pt.Player)
+                            .ToList();
             return players;
         }
 
-        public List<PlayerSchool> GetAllForTournamentWithSchool(int tournamentId)
-        {
+        public List<PlayerSchool> GetAllForTournamentWithSchool(int tournamentId) {
             var players = _context.PlayerTournaments.Where(pt => pt.TournamentsId == tournamentId).Select(pt => pt.Player).ToList();
             var playersWithSchool = new List<PlayerSchool>();
 
-            foreach(var player in players)
-            {
-                playersWithSchool.Add(new PlayerSchool
-                {
+            foreach(var player in players) {
+                playersWithSchool.Add(new PlayerSchool {
                     PlayerId = player.PlayerId,
                     Name = player.Name,
                     Surname = player.Surname,
@@ -86,12 +99,11 @@ namespace api.Repositories
             return playersWithSchool;
         }
 
-        public PlayerSchool GetPlayerWithSchool(int playerId)
-        {
+        public PlayerSchool GetPlayerWithSchool(int playerId) {
             var player = _context.Players.FirstOrDefaultAsync(p => p.PlayerId == playerId).Result;
-            if (player == null) return null!;
-            var playerSchool = new PlayerSchool
-            {
+            if(player == null)
+                return null!;
+            var playerSchool = new PlayerSchool {
                 PlayerId = player.PlayerId,
                 Name = player.Name,
                 Surname = player.Surname,
@@ -101,19 +113,32 @@ namespace api.Repositories
             return playerSchool;
         }
 
-        public int Remove(int playerId)
-        {
+        public int Remove(int playerId) {
             var player = _context.Players.Find(playerId);
-            if (player == null) return 0;
+            if(player == null)
+                return 0;
             _context.Remove(player);
             _context.SaveChanges();
             return playerId;
         }
 
-        public Player Update(int playerId, Player player)
-        {
+        public int RemovePlayerFromTournament(int tournamentId, int playerId) {
+            var playerTournament = _context.PlayerTournaments
+                .FirstOrDefault(pt => pt.PlayersId == playerId && pt.TournamentsId == tournamentId);
+            if(playerTournament == null) {
+                throw new InvalidCastException("Something went wrong");
+            }
+            _context.PlayerTournaments.Remove(playerTournament);
+            _context.SaveChanges();
+
+            return playerTournament.PlayersId;
+        }
+
+
+        public Player Update(int playerId, Player player) {
             var player_db = _context.Players.Find(playerId);
-            if(player_db == null) return null!;
+            if(player_db == null)
+                return null!;
 
             player_db.Name = player.Name;
             player_db.Surname = player.Surname;

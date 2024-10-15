@@ -121,9 +121,9 @@ export const get_players_for_tournament_with_school = async (
 
 export const filter_players = async (
   data: PlayerFilterFormData
-): Promise<PlayerData[]> => {
-  const response = await apiClient.get<PlayerData[]>(
-    `/player/filter?name=${data.name}&surname=${data.surname}&schoolId=${data.schoolId}`,
+): Promise<PlayerWithSchoolData[]> => {
+  const response = await apiClient.get<PlayerWithSchoolData[]>(
+    `/player/filter?name=${data.name}&surname=${data.surname}&schoolId=${data.schoolId}&tournamentId=${data.tournamentId}`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -131,4 +131,36 @@ export const filter_players = async (
     }
   );
   return response.data;
+};
+
+export const add_player_to_tournament = async (
+  tournamentId: number,
+  playerId: number
+): Promise<number> => {
+  const data = await apiClient.post(
+    `/player/addplayertotournament/${tournamentId}`,
+    playerId,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return Number(data.data);
+};
+
+export const remove_player_to_tournament = async (
+  tournamentId: number,
+  playerId: number
+): Promise<number> => {
+  const data = await apiClient.post(
+    `/player/removeplayerfromtournament/${tournamentId}`,
+    playerId,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return Number(data.data);
 };

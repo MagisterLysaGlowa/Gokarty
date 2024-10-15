@@ -8,6 +8,12 @@ export interface TournamentFormData {
   startDate: Date;
   endDate: Date;
   tournamentStateId: number;
+  tournamentTypeId: number;
+}
+
+export interface TournamentType {
+  tournamentTypeId: number;
+  name: string;
 }
 
 export interface PlayerFormData {
@@ -21,6 +27,7 @@ export interface PlayerFilterFormData {
   name: string;
   surname: string;
   schoolId: number;
+  tournamentId: number;
 }
 
 export interface SchoolFormData {
@@ -59,6 +66,8 @@ export interface TournamentData {
   startDate: Date;
   endDate: Date;
   tournamentStateId: number;
+  tournamentTypeId: number;
+  tournamentType: TournamentType;
 }
 
 export interface TournamentFullData {

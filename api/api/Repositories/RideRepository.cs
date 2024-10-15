@@ -22,19 +22,38 @@ namespace api.Repositories
 
         public Ride FullGet(int rideId)
         {
-            var ride = _context.Rides.Include(r => r.Tournament).Include(r => r.Player).Include(r => r.Gokart).Where(r => r.RideId == rideId).FirstOrDefault();
+            var ride = _context.Rides
+                .Include(r => r.Tournament)
+                .Include(r => r.Player)
+                .Include(r => r.Gokart)
+                .Where(r => r.RideId == rideId)
+                .FirstOrDefault();
             return ride!;
         }
 
         public List<Ride> FullGetAll()
         {
-            var rides = _context.Rides.Include(r => r.Tournament).Include(r => r.Player).Include(r => r.Gokart).ToList();
+            var rides = _context.Rides
+                    .Include(r => r.Tournament)
+                    .Include(r => r.Player)
+                    .Include(r => r.Gokart)
+                    .ToList();
             return rides;
         }
 
         public List<Ride> FullGetBestForTournament(int tournamentId)
         {
-            return _context.Rides.Include(r => r.Tournament).Include(r => r.Player).ThenInclude(p => p.School).Include(r => r.Gokart).Where(r => r.TournamentId == tournamentId && r.IsDisqualified==false).GroupBy(r => r.PlayerId).Select(g => g.OrderBy(r => r.Time).FirstOrDefault()).ToList().OrderBy(r=>r.Time).ToList()!;
+            return _context.Rides
+                    .Include(r => r.Tournament)
+                    .Include(r => r.Player)
+                    .ThenInclude(p => p.School)
+                    .Include(r => r.Gokart)
+                    .Where(r => r.TournamentId == tournamentId && r.IsDisqualified==false)
+                    .GroupBy(r => r.PlayerId)
+                    .Select(g => g.OrderBy(r => r.Time)
+                    .FirstOrDefault())
+                    .ToList()
+                    .OrderBy(r=>r.Time).ToList()!;
         }
 
         public Ride Get(int rideId)
@@ -76,12 +95,22 @@ namespace api.Repositories
 
         public int FindRideNumber(int tournamentId, int playerId)
         {
-            return _context.Rides.Where(r => r.TournamentId == tournamentId).Where(r => r.PlayerId == playerId).Count() + 1;
+            return _context.Rides
+                .Where(r => r.TournamentId == tournamentId)
+                .Where(r => r.PlayerId == playerId)
+                .Count() + 1;
         }
 
         public Ride? FullGetLastAddedForTournament(int tournamentId)
         {
-            return _context.Rides.Include(r => r.Tournament).Include(r => r.Player).ThenInclude(p => p.School).Include(r => r.Gokart).Where(r => r.TournamentId == tournamentId).OrderByDescending(r => r.RideId).FirstOrDefault();
+            return _context.Rides
+                .Include(r => r.Tournament)
+                .Include(r => r.Player)
+                .ThenInclude(p => p.School)
+                .Include(r => r.Gokart)
+                .Where(r => r.TournamentId == tournamentId)
+                .OrderByDescending(r => r.RideId)
+                .FirstOrDefault();
         }
     }
 }

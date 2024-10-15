@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { TournamentData, TournamentFormData } from "../../../types";
 import {
   get_players_for_tournament_with_school,
-  remove_player,
+  remove_player_to_tournament,
 } from "../../services/player";
 import {
   handleChange,
@@ -74,8 +74,11 @@ const TournamentEdit = () => {
   );
 
   const deletePlayerMutate = useMutation(
-    async (id: number) =>
-      await promiseToast(remove_player(id), removePlayerTexts),
+    async (playerId: number) =>
+      await promiseToast(
+        remove_player_to_tournament(Number(id), playerId),
+        removePlayerTexts
+      ),
     {
       onSuccess: async (removeId) => removePlayerFromList(removeId),
     }
@@ -176,6 +179,22 @@ const TournamentEdit = () => {
                 </>
               )}
             </div>
+            <div>
+              <label>Rodzaj kolejki</label>
+              <select
+                defaultValue={tournament.tournamentTypeId}
+                className="form-control"
+                onChange={(e) => {
+                  SetTournament((prev) => ({
+                    ...prev,
+                    tournamentTypeId: Number(e.target.value),
+                  }));
+                }}
+              >
+                <option value="1">Zapętlona</option>
+                <option value="2">Nieskończona</option>
+              </select>
+            </div>
             <button
               className="btn btn-primary"
               onClick={async () => {
@@ -226,7 +245,11 @@ const TournamentEdit = () => {
             {tournament.tournamentStateId == 2 && (
               <button
                 className="btn btn-primary"
-                onClick={() => navigate(`/zawody/${id}/zarzadzanie`)}
+                onClick={() => {
+                  if (tournament.tournamentTypeId == 2) {
+                    window.open(`/zawody/${id}/zarzadzanie`);
+                  } else navigate(`/zawody/${id}/zarzadzanie`);
+                }}
               >
                 Zarządzaj
               </button>
@@ -260,7 +283,18 @@ const TournamentEdit = () => {
             className="btn btn-primary"
             onClick={() => navigate(`/zawody/${id}/edycja/zawodnik`)}
           >
-            Dodaj zawodnika
+            Dodaj nowego zawodnika
+          </button>
+          <button
+            className="btn btn-primary"
+            onClick={() =>
+              window.open(
+                `/zawody/${id}/edycja/dodaj_istniejacych_zawodnikow`,
+                "_blank"
+              )
+            }
+          >
+            Dodaj istniejącego zawodnika
           </button>
         </div>
         <table className="table table-striped">

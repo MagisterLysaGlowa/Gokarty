@@ -9,6 +9,7 @@ export const create_tournament = async (
   formData.append("startDate", data.startDate.toJSON());
   formData.append("endDate", data.endDate.toJSON());
   formData.append("tournamentStateId", data.tournamentStateId.toString());
+  formData.append("tournamentTypeId", data.tournamentTypeId.toString());
   console.log(formData);
 
   const response = await apiClient.post<TournamentData>(
@@ -32,7 +33,7 @@ export const update_tournament = async (
   formData.append("startDate", data.startDate.toJSON());
   formData.append("endDate", data.endDate.toJSON());
   formData.append("tournamentStateId", data.tournamentStateId.toString());
-  console.log(formData);
+  formData.append("tournamentTypeId", data.tournamentTypeId.toString());
 
   const response = await apiClient.put<TournamentData>(
     `/tournament/${tournamentId}`,
