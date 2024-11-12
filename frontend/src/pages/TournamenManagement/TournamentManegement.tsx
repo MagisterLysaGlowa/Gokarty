@@ -17,6 +17,8 @@ import {
 import { create_ride } from "../../services/ride";
 import { FullQueueData, RideFormData } from "../../../types";
 import apiClient from "../../services/apiClient";
+import { get_tournament } from "../../services/tournament";
+import { get_all_gokarts } from "../../services/gokart";
 
 export const TournamentManegement = () => {
   const { id } = useParams();
@@ -25,6 +27,7 @@ export const TournamentManegement = () => {
   const [activeQueueData, setActiveQueueData] = useState<FullQueueData | null>(
     null
   );
+  const [selectedGokart, setSelectedGokart] = useState<number>(1);
   const {
     isLoading: isQueueLoading,
     isFetching: isQueueFetching,
@@ -36,6 +39,11 @@ export const TournamentManegement = () => {
       onSuccess: (res) => setQueueData(res),
       onError: () => setQueueData(null),
     }
+  );
+
+  const { data: tournament } = useQuery(
+    "currentTournament",
+    async () => await get_tournament(Number(id))
   );
 
   const {
@@ -54,6 +62,8 @@ export const TournamentManegement = () => {
       },
     }
   );
+
+  const { data: cars } = useQuery("cars", async () => await get_all_gokarts());
 
   const [time, setTime] = useState<number>(0);
   const [timerActive, setTimerActive] = useState<boolean>(false);
@@ -120,7 +130,8 @@ export const TournamentManegement = () => {
         await queueStatusUpdate(Number(activeQueueData?.queueId));
         setTime(0);
         setPenaltyPoints(0);
-        if (queueData?.length == 0) await deleteQueue();
+        if (queueData?.length == 0 && tournament?.tournamentTypeId == 1)
+          await deleteQueue();
       },
     }
   );
@@ -134,7 +145,6 @@ export const TournamentManegement = () => {
       },
     }
   );
-
   if (
     isQueueLoading ||
     isQueueFetching ||
@@ -142,7 +152,11 @@ export const TournamentManegement = () => {
     isAcitveQueueFetching
   )
     return <p>Loading...</p>;
-  if (queueData?.length == 0 && activeQueueData == null)
+  if (
+    queueData?.length == 0 &&
+    activeQueueData == null &&
+    tournament?.tournamentTypeId == 1
+  )
     return <RideRandomization refetch={queuesRefetch} />;
   return (
     <div className="p-3">
@@ -256,6 +270,22 @@ export const TournamentManegement = () => {
                     onChange={(e) => setPenaltyPoints(parseInt(e.target.value))}
                   />
                 </div>
+                {tournament && tournament.tournamentTypeId == 2 && (
+                  <div>
+                    <h5>Pojazd</h5>
+                    <select
+                      className="form-control"
+                      onChange={(e) =>
+                        setSelectedGokart(Number(e.target.value))
+                      }
+                      value={selectedGokart}
+                    >
+                      {cars?.map((z) => (
+                        <option value={z.gokartId}>{z.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
                 <button
                   className="btn btn-primary"
                   // disabled={!rideFinished}
@@ -263,9 +293,12 @@ export const TournamentManegement = () => {
                     await timeSave({
                       tournamentId: Number(id),
                       playerId: activeQueueData.playerId,
-                      gokartId: activeQueueData.gokartId,
+                      gokartId:
+                        tournament?.tournamentTypeId == 2
+                          ? selectedGokart
+                          : activeQueueData.gokartId,
                       time: time + penaltyPoints * 1000,
-                      isDisqualified: penaltyPoints >= 4 ? 1 : 0,
+                      isDisqualified: 0,
                     });
                   }}
                 >

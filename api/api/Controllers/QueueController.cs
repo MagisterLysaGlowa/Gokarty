@@ -80,5 +80,14 @@ namespace api.Controllers
                 return Ok();
             return BadRequest();
         }
+        [HttpGet("tournament/{tournamentID}/players")]
+        public IActionResult getPlayers(int tournamentID) {
+            return Ok(queueRepository.GetPlayersForQueue(tournamentID));
+        }
+        [HttpPost("tournament/{tournamentID}/player/{playerID}")]
+        public IActionResult AddPlayerToQueue(int tournamentID,int playerID) {
+            return Ok(queueRepository.AddPlayerToQueue(tournamentID,playerID));
+        }
+
     }
 }

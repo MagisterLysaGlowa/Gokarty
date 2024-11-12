@@ -12,6 +12,7 @@ import { AddGokart } from "../pages/AddGokart/AddGokart";
 import { TournamentManegement } from "../pages/TournamenManagement/TournamentManegement";
 import { RideEdit } from "../pages/RideEdit/RideEdit";
 import { AddExistingPlayerToTournament } from "../pages/AddExistingPlayerToTournament/AddExistingPlayerToTournament";
+import { QueueEdit } from "../pages/QueueEdit/QueueEdit";
 
 export const router = createBrowserRouter([
   {
@@ -33,6 +34,10 @@ export const router = createBrowserRouter([
       {
         path: "zawody/:id/edycja/dodaj_istniejacych_zawodnikow",
         element: <AddExistingPlayerToTournament />,
+      },
+      {
+        path: "zawody/:id/kolejka",
+        element: <QueueEdit />,
       },
     ],
   },

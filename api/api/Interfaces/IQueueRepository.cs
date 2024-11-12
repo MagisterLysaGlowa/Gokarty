@@ -13,5 +13,7 @@ namespace api.Interfaces
         bool ChangeQueueState(int queueId);
         bool RemoveQueuesForTournament(int tournamentId);
         Queue FullGetActiveQueueForTournament(int tournamentId);
+        List<Player> GetPlayersForQueue(int tournamentId);
+        bool AddPlayerToQueue(int tournamentId, int playerId);
     }
 }

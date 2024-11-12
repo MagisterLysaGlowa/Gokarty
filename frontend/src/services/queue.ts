@@ -1,4 +1,9 @@
-import { FullQueueData, QueueData, QueueFormData } from "../../types";
+import {
+  FullQueueData,
+  PlayerData,
+  QueueData,
+  QueueFormData,
+} from "../../types";
 import apiClient from "./apiClient";
 
 export const create_queue = async (data: QueueFormData): Promise<string> => {
@@ -108,5 +113,32 @@ export const update_queue_ride_status = async (
       "Content-Type": "application/json",
     },
   });
+  return response.data;
+};
+
+export const playersForQueue = async (tournamentId: number) => {
+  const response = await apiClient.get<PlayerData[]>(
+    `/queue/tournament/${tournamentId}/players`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return response.data;
+};
+
+export const addPlayerToQueue = async (
+  tournamentId: number,
+  playerId: number
+) => {
+  const response = await apiClient.post<boolean>(
+    `/queue/tournament/${tournamentId}/player/${playerId}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
   return response.data;
 };

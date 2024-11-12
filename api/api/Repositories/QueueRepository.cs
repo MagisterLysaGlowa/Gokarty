@@ -116,5 +116,27 @@ namespace api.Repositories
         {
             return _context.Queues.Include(q => q.Tournament).Include(q => q.Player).ThenInclude(p => p.School).Include(q => q.RideStatus).Include(q => q.Gokart).Where(q => q.TournamentId == tournamentId && q.RideStatusId == 2).FirstOrDefault()!;
         }
+
+        public List<Player> GetPlayersForQueue(int tournamentId) {
+            var players=_playerRepository.GetAllForTournament(tournamentId).ToList();
+            var queues = _context.Queues.Include(y=>y.Player).Where(z => z.RideStatusId <3).Select(j=>j.Player).ToList(); 
+
+            return players.Where(z=>!queues.Contains(z)).ToList();
+        }
+
+        public bool AddPlayerToQueue(int tournamentId, int playerId) {
+            int? position = _context.Queues.Where(z => z.TournamentId == tournamentId)?.OrderByDescending(z => z.QueuePosition)?.FirstOrDefault()?.QueuePosition+1;
+
+            _context.Queues.Add(new Queue {
+                TournamentId = tournamentId,
+                PlayerId = playerId,
+                QueuePosition = position??0,
+                GokartId = 1,
+                RideStatusId=1,
+            });
+
+            _context.SaveChanges();
+            return true;
+        }
     }
 }
