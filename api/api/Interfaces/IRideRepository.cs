@@ -4,15 +4,15 @@ namespace api.Interfaces
 {
     public interface IRideRepository
     {
-        Ride Create(Ride ride);
-        Ride Update(int rideId,Ride ride);
-        int Remove(int rideId);
-        List<Ride> GetAll();
-        Ride Get(int rideId);
-        List<Ride> FullGetAll();
-        Ride FullGet(int rideId);
-        List<Ride> FullGetBestForTournament(int tournamentId);
-        int FindRideNumber(int tournamentId, int playerId);
-        Ride? FullGetLastAddedForTournament(int tournamentId);
+        Task<Ride> CreateAsync(Ride ride);
+        Task<Ride?> UpdateAsync(int rideId,Ride ride);
+        Task<int?> RemoveAsync(int rideId);
+        Task<List<Ride>> GetAllAsync();
+        Task<Ride?> GetAsync(int rideId);
+        Task<List<Ride>> FullGetAllAsync();
+        Task<Ride?> FullGetAsync(int rideId);
+        Task<List<Ride>> FullGetBestForTournamentAsync(int tournamentId);
+        Task<int?> FindRideNumberAsync(int tournamentId, int playerId);
+        Task<Ride?> FullGetLastAddedForTournamentAsync(int tournamentId);
     }
 }

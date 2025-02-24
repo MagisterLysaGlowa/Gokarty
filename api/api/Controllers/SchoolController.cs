@@ -12,50 +12,72 @@ namespace api.Controllers
     {
         private readonly ISchoolRepository schoolRepository;
 
-        public SchoolController(ISchoolRepository schoolRepository)
-        {
-            this.schoolRepository = schoolRepository;
-        }
+        public SchoolController(ISchoolRepository schoolRepository)=>this.schoolRepository = schoolRepository;
+        
         [HttpPost]
-        public IActionResult Create(SchoolDto dto)
+        public async Task<IActionResult> Create(SchoolDto dto)
         {
-            var school = new School()
-            {
-                Name = dto.Name,
-                City = dto.City,
-                Acronym = dto.Acronym,
-            };
-            return Ok(schoolRepository.Create(school));
+            try {
+                var school = new School() {
+                    Name = dto.Name,
+                    City = dto.City,
+                    Acronym = dto.Acronym,
+                };
+                return Created("",await schoolRepository.CreateAsync(school));
+            } catch (Exception) {
+                return BadRequest();
+            }
         }
 
         [HttpPut("{schoolId}")]
-        public IActionResult Update(int schoolId, SchoolDto dto)
+        public async Task<IActionResult> Update(int schoolId, SchoolDto dto)
         {
-            var school = new School()
-            {
-                Name = dto.Name,
-                City = dto.City,
-                Acronym = dto.Acronym,
-            };
-            return Ok(schoolRepository.Update(schoolId, school));
+            try {
+                var school = new School() {
+                    Name = dto.Name,
+                    City = dto.City,
+                    Acronym = dto.Acronym,
+                };
+                if(await schoolRepository.UpdateAsync(schoolId, school) is School _school)
+                    return Ok(_school);
+                return NotFound();
+            } catch (Exception) {
+                return BadRequest();
+            }
         }
 
         [HttpDelete("{schoolId}")]
-        public IActionResult Remove(int schoolId)
+        public async Task<IActionResult> Remove(int schoolId)
         {
-            return Ok(schoolRepository.Remove(schoolId));
+            try {
+                if(await schoolRepository.RemoveAsync(schoolId) is int sId)
+                    return Ok(sId);
+                return NotFound();
+            } catch (Exception) {
+                return BadRequest();
+            }
         }
 
         [HttpGet("{schoolId}")]
-        public IActionResult Get(int schoolId)
+        public async Task<IActionResult> Get(int schoolId)
         {
-            return Ok(schoolRepository.Get(schoolId));
+            try {
+                if(await schoolRepository.GetOneAsync(schoolId) is School _school)
+                    return Ok(_school);
+                return NotFound();
+            } catch (Exception) {
+                return BadRequest();
+            }
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            return Ok(schoolRepository.GetAll());
+            try {
+                return Ok(await schoolRepository.GetAllAsync());
+            } catch (Exception) {
+                return BadRequest();
+            }
         }
     }
 }

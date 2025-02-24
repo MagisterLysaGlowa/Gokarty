@@ -3,114 +3,102 @@ using api.Interfaces;
 using api.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace api.Repositories
-{
-    public class RideRepository : IRideRepository
-    {
+namespace api.Repositories {
+    public class RideRepository : IRideRepository {
         private readonly AppDbContext _context;
 
-        public RideRepository(AppDbContext context)
-        {
+        public RideRepository(AppDbContext context) {
             _context = context;
         }
-        public Ride Create(Ride ride)
-        {
-            _context.Rides.Add(ride);
-            _context.SaveChanges();
+        public async Task<Ride> CreateAsync(Ride ride) {
+            await _context.Rides.AddAsync(ride);
+            await _context.SaveChangesAsync();
             return ride;
         }
 
-        public Ride FullGet(int rideId)
-        {
-            var ride = _context.Rides
+        public async Task<Ride?> FullGetAsync(int rideId) {
+            return await _context.Rides
                 .Include(r => r.Tournament)
                 .Include(r => r.Player)
                 .Include(r => r.Gokart)
                 .Where(r => r.RideId == rideId)
-                .FirstOrDefault();
-            return ride!;
+                .FirstOrDefaultAsync();
         }
 
-        public List<Ride> FullGetAll()
-        {
-            var rides = _context.Rides
+        public async Task<List<Ride>> FullGetAllAsync() {
+            return await _context.Rides
                     .Include(r => r.Tournament)
                     .Include(r => r.Player)
                     .Include(r => r.Gokart)
-                    .ToList();
-            return rides;
+                    .ToListAsync();
         }
 
-        public List<Ride> FullGetBestForTournament(int tournamentId)
-        {
-            return _context.Rides
-                    .Include(r => r.Tournament)
-                    .Include(r => r.Player)
+        public async Task<List<Ride>> FullGetBestForTournamentAsync(int tournamentId) {
+            var rides = await _context.Rides
+                .Include(r => r.Tournament)
+                .Include(r => r.Player)
                     .ThenInclude(p => p.School)
-                    .Include(r => r.Gokart)
-                    .Where(r => r.TournamentId == tournamentId && r.IsDisqualified==false)
-                    .GroupBy(r => r.PlayerId)
-                    .Select(g => g.OrderBy(r => r.Time)
-                    .FirstOrDefault())
-                    .ToList()
-                    .OrderBy(r=>r.Time).ToList()!;
+                .Include(r => r.Gokart)
+                .Where(r => r.TournamentId == tournamentId && !r.IsDisqualified)
+                .ToListAsync();
+
+            return rides
+                .GroupBy(r => r.PlayerId)
+                .Select(g => g.OrderBy(r => r.Time).First())
+                .OrderBy(r => r.Time)
+                .ToList();
         }
 
-        public Ride Get(int rideId)
-        {
-            return _context.Rides.Find(rideId)!;
+
+
+        public async Task<Ride?> GetAsync(int rideId) {
+            return await _context.Rides.FindAsync(rideId)!;
         }
 
-        public List<Ride> GetAll()
-        {
-            return _context.Rides.ToList();
+        public async Task<List<Ride>> GetAllAsync() {
+            return await _context.Rides.ToListAsync();
         }
 
-        public int Remove(int rideId)
-        {
-            var ride = _context.Rides.Find(rideId);
-            if (ride == null) return 0;
-            _context.Rides.Remove(ride);
-            _context.SaveChanges();
-            return rideId;
+        public async Task<int?> RemoveAsync(int rideId) {
+            if (await _context.Rides.FindAsync(rideId) is Ride ride) {
+                _context.Rides.Remove(ride);
+                await _context.SaveChangesAsync();
+                return rideId;
+            }
+            return null;
         }
 
-        public Ride Update(int rideId, Ride ride)
-        {
-            var ride_db = _context.Rides.Find(rideId);
-            if (ride_db == null) return null!;
-
-            ride_db.TournamentId = ride.TournamentId;
-            ride_db.PlayerId = ride.PlayerId;
-            ride_db.GokartId = ride.GokartId;
-            ride_db.Time = ride.Time;
-            ride_db.RideNumber = ride.RideNumber;
-            ride_db.IsDisqualified = ride.IsDisqualified;
-
-            _context.Rides.Update(ride_db);
-            _context.SaveChanges();
-            return ride_db;
-
+        public async Task<Ride?> UpdateAsync(int rideId, Ride ride) {
+            if (await _context.Rides.FindAsync(rideId) is Ride rideDb) {
+                rideDb.TournamentId = ride.TournamentId;
+                rideDb.PlayerId = ride.PlayerId;
+                rideDb.GokartId = ride.GokartId;
+                rideDb.Time = ride.Time;
+                rideDb.RideNumber = ride.RideNumber;
+                rideDb.IsDisqualified = ride.IsDisqualified;
+                _context.Rides.Update(rideDb);
+                await _context.SaveChangesAsync();
+                return rideDb;
+            }
+            return null;
         }
 
-        public int FindRideNumber(int tournamentId, int playerId)
-        {
-            return _context.Rides
+        public async Task<int?> FindRideNumberAsync(int tournamentId, int playerId) {
+            return await _context.Rides
                 .Where(r => r.TournamentId == tournamentId)
                 .Where(r => r.PlayerId == playerId)
-                .Count() + 1;
+                .CountAsync() + 1;
         }
 
-        public Ride? FullGetLastAddedForTournament(int tournamentId)
-        {
-            return _context.Rides
+        public async Task<Ride?> FullGetLastAddedForTournamentAsync(int tournamentId) {
+            return await _context.Rides
                 .Include(r => r.Tournament)
                 .Include(r => r.Player)
                 .ThenInclude(p => p.School)
                 .Include(r => r.Gokart)
                 .Where(r => r.TournamentId == tournamentId)
                 .OrderByDescending(r => r.RideId)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
         }
     }
 }

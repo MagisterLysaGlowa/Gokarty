@@ -4,11 +4,11 @@ namespace api.Interfaces
 {
     public interface ISchoolRepository
     {
-        School Create(School school);
-        School Update(int schoolId,School school);
-        int Remove(int schoolId); 
-        List<School> GetAll();
-        School Get(int schoolId);
+        Task<School> CreateAsync(School school);
+        Task<School?> UpdateAsync(int schoolId,School school);
+        Task<int?> RemoveAsync(int schoolId); 
+        Task<List<School>> GetAllAsync();
+        Task<School?> GetOneAsync(int schoolId);
 
     }
 }

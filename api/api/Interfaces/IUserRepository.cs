@@ -4,9 +4,9 @@ namespace api.Interfaces
 {
     public interface IUserRepository
     {
-        User Create(User user);
-        User GetByLogin(string login);
-        User GetById(int id);
-        bool LoginFree(string login);
+        Task<User> CreateAsync(User user);
+        Task<User?> GetByLoginAsync(string login);
+        Task<User?> GetByIdAsync(int id);
+        Task<bool> LoginFreeAsync(string login);
     }
 }

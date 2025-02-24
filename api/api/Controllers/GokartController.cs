@@ -1,56 +1,71 @@
 ﻿using api.Dtos;
 using api.Interfaces;
 using api.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
-namespace api.Controllers
-{
+namespace api.Controllers {
     [Route("api/[controller]")]
     [ApiController]
-    public class GokartController : ControllerBase
-    {
+    public class GokartController : ControllerBase {
         private readonly IGokartRepository gokartRepository;
 
-        public GokartController(IGokartRepository gokartRepository)
-        {
+        public GokartController(IGokartRepository gokartRepository) {
             this.gokartRepository = gokartRepository;
         }
         [HttpPost]
-        public IActionResult Create(GokartDto dto)
-        {
-            var gokart = new Gokart()
-            {
-                Name = dto.Name
-            };
-            return Ok(gokartRepository.Create(gokart));
+        public async Task<IActionResult> Create(GokartDto dto) {
+            try {
+                var gokart = new Gokart() {
+                    Name = dto.Name
+                };
+                return Created("",await gokartRepository.CreateAsync(gokart));
+            } catch (Exception) {
+                return BadRequest();
+            }
         }
 
         [HttpPut("{gokartId}")]
-        public IActionResult Update(int gokartId, GokartDto dto)
-        {
-            var gokart = new Gokart()
-            {
-                Name = dto.Name
-            };
-            return Ok(gokartRepository.Update(gokartId, gokart));
+        public async Task<IActionResult> Update(int gokartId, GokartDto dto) {
+            try {
+                var gokart = new Gokart() {
+                    Name = dto.Name
+                };
+                return Ok(await gokartRepository.UpdateAsync(gokartId, gokart));
+            } catch (Exception) {
+                return BadRequest();
+            }
         }
 
         [HttpDelete("{gokartId}")]
-        public IActionResult Remove(int gokartId)
-        {
-            return Ok(gokartRepository.Remove(gokartId));
+        public async Task<IActionResult> Remove(int gokartId) {
+            try {
+                if (await gokartRepository.RemoveAsync(gokartId) is int id)
+                    return Ok(id);
+                return NotFound();
+            } catch (Exception) {
+                return BadRequest();
+            }
         }
 
         [HttpGet("{gokartId}")]
-        public IActionResult Get(int gokartId)
-        {
-            return Ok(gokartRepository.Get(gokartId));
+        public async Task<IActionResult> Get(int gokartId) {
+            try {
+                if (await gokartRepository.GetAsync(gokartId) is Gokart gokart)
+                    return Ok(gokart);
+                return NotFound();
+            } catch (Exception) {
+                return BadRequest();
+            }
         }
 
         [HttpGet]
-        public IActionResult GetAll()
-        {
-            return Ok(gokartRepository.GetAll());
+        public async Task<IActionResult> GetAll() {
+            try {
+                return Ok(await gokartRepository.GetAllAsync());
+            } catch (Exception) {
+                return BadRequest();
+            }
         }
     }
 }

@@ -1,58 +1,49 @@
 ﻿using api.Data;
 using api.Interfaces;
 using api.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace api.Repositories
-{
-    public class SchoolRepository : ISchoolRepository
-    {
+namespace api.Repositories {
+    public class SchoolRepository : ISchoolRepository {
         private readonly AppDbContext _context;
 
-        public SchoolRepository(AppDbContext context)
-        {
-            _context = context;
-        }
-        public School Create(School school)
-        {
-            _context.Schools.Add(school);
-            _context.SaveChanges();
+        public SchoolRepository(AppDbContext context) => _context = context;
+
+        public async Task<School> CreateAsync(School school) {
+            await _context.Schools.AddAsync(school);
+            await _context.SaveChangesAsync();
             return school;
         }
 
-        public School Get(int schoolId)
-        {
-            var school = _context.Schools.Find(schoolId);
-            if (school == null) return null!;
-            return school;
+        public async Task<School?> GetOneAsync(int schoolId) {
+            return await _context.Schools.FindAsync(schoolId);
         }
 
-        public List<School> GetAll()
-        {
-            return _context.Schools.ToList();
+        public async Task<List<School>> GetAllAsync() {
+            return await _context.Schools.ToListAsync();
         }
 
-        public int Remove(int schoolId)
-        {
-            var school = _context.Schools.Find(schoolId);
-            if (school == null) return 0;
-            _context.Schools.Remove(school);
-            _context.SaveChanges();
-            return schoolId;
+        public async Task<int?> RemoveAsync(int schoolId) {
+            if (await _context.Schools.FindAsync(schoolId) is School school) {
+                _context.Schools.Remove(school);
+                await _context.SaveChangesAsync();
+                return schoolId;
+            }
+            return null;
         }
 
-        public School Update(int schoolId, School school)
-        {
-            var school_db = _context.Schools.Find(schoolId);
+        public async Task<School?> UpdateAsync(int schoolId, School school) {
+            if (await _context.Schools.FindAsync(schoolId) is School school_db) {
+                school_db.Name = school.Name;
+                school_db.City = school.City;
+                school_db.Acronym = school.Acronym;
 
-            if(school_db == null) return null!;
-
-            school_db.Name = school.Name;
-            school_db.City = school.City;
-            school_db.Acronym = school.Acronym;
-
-            _context.Update(school_db);
-            _context.SaveChanges();
-            return school_db;
+                _context.Update(school_db);
+                await _context.SaveChangesAsync();
+                return school_db;
+            }
+            return null;
         }
+
     }
 }

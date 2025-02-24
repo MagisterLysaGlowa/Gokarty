@@ -1,6 +1,7 @@
 ﻿using api.Data;
 using api.Interfaces;
 using api.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Repositories
 {
@@ -8,30 +9,28 @@ namespace api.Repositories
     {
         private readonly AppDbContext _context;
 
-        public UserRepository(AppDbContext context)
+        public UserRepository(AppDbContext context) => _context = context;
+        
+        public async Task<User> CreateAsync(User user)
         {
-            _context = context;
-        }
-        public User Create(User user)
-        {
-            _context.Users.Add(user);
-            _context.SaveChanges();
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
             return user;
         }
 
-        public User GetById(int id)
+        public async Task<User?> GetByIdAsync(int id)
         {
-            return _context.Users.FirstOrDefault(u => u.UserId == id);
+            return await _context.Users.FirstOrDefaultAsync(u => u.UserId == id);
         }
 
-        public User GetByLogin(string login)
+        public async Task<User?> GetByLoginAsync(string login)
         {
-            return _context.Users.FirstOrDefault(u => u.Login == login);
+            return await _context.Users.FirstOrDefaultAsync(u => u.Login == login);
         }
 
-        public bool LoginFree(string login)
+        public async Task<bool> LoginFreeAsync(string login)
         {
-            return _context.Users.Any(u => u.Login == login);
+            return await _context.Users.AnyAsync(u => u.Login == login);
         }
     }
 }

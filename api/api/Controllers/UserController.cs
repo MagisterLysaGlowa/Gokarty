@@ -9,14 +9,13 @@ namespace api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //ToDo: Dorobić endpointy
     public class UserController : ControllerBase
     {
         private readonly IUserRepository userRepository;
 
-        public UserController(IUserRepository userRepository)
-        {
-            this.userRepository = userRepository;
-        }
+        public UserController(IUserRepository userRepository) => this.userRepository = userRepository;
+        
 
         // GET: api/<UserController>
         [HttpGet]
@@ -34,15 +33,18 @@ namespace api.Controllers
 
         // POST api/<UserController>
         [HttpPost]
-        public IActionResult Create(UserDto dto)
+        public async Task<IActionResult> Create(UserDto dto)
         {
-            var user = new User
-            {
-                Login = dto.Login,
-                Password = dto.Password,
-                Access = "user"
-            };
-            return Ok(userRepository.Create(user));
+            try {
+                var user = new User {
+                    Login = dto.Login,
+                    Password = dto.Password,
+                    Access = "user"
+                };
+                return Created("", await userRepository.CreateAsync(user));
+            } catch (Exception) {
+                return BadRequest();
+            }
         }
 
         // PUT api/<UserController>/5

@@ -4,16 +4,16 @@ namespace api.Interfaces
 {
     public interface IQueueRepository
     {
-        bool CreateQueues(int tournamentId, List<int> gokartIds, int numberOfRidesInOneGokart);
-        List<Queue> GetAll ();
-        Queue Get (int queueId);
-        List<Queue> FullGetAll();
-        Queue FullGet(int queueId);
-        List<Queue> FullGetAllQueuesForTournament(int tournamentId);
-        bool ChangeQueueState(int queueId);
-        bool RemoveQueuesForTournament(int tournamentId);
-        Queue FullGetActiveQueueForTournament(int tournamentId);
-        List<Player> GetPlayersForQueue(int tournamentId);
-        bool AddPlayerToQueue(int tournamentId, int playerId);
+        Task<bool> CreateQueuesAsync(int tournamentId, List<int> gokartIds, int numberOfRidesInOneGokart);
+        Task<List<Queue>> GetAllAsync();
+        Task<Queue?> GetAsync (int queueId);
+        Task<List<Queue>> FullGetAllAsync();
+        Task<Queue?> FullGetAsync(int queueId);
+        Task<List<Queue>> FullGetAllQueuesForTournamentAsync(int tournamentId);
+        Task<bool> ChangeQueueStateAsync(int queueId);
+        Task<bool> RemoveQueuesForTournamentAsync(int tournamentId);
+        Task<Queue?> FullGetActiveQueueForTournamentAsync(int tournamentId);
+        Task<List<Player>> GetPlayersForQueueAsync(int tournamentId);
+        Task<bool> AddPlayerToQueueAsync(int tournamentId, int playerId);
     }
 }

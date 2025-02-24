@@ -4,88 +4,121 @@ using api.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace api.Controllers
-{
+namespace api.Controllers {
     [Route("api/[controller]")]
     [ApiController]
-    public class RideController : ControllerBase
-    {
+    public class RideController : ControllerBase {
         private readonly IRideRepository rideRepository;
 
-        public RideController(IRideRepository rideRepository)
-        {
-            this.rideRepository = rideRepository;
-        }
+        public RideController(IRideRepository rideRepository) => this.rideRepository = rideRepository;
+
         [HttpPost]
-        public IActionResult Create(RideDto dto)
-        {
-            var ride = new Ride
-            {
-                TournamentId = dto.TournamentId,
-                PlayerId = dto.PlayerId,
-                GokartId = dto.GokartId,
-                Time = dto.Time,
-                IsDisqualified = dto.IsDisqualified == 1,
-                RideNumber = rideRepository.FindRideNumber(dto.TournamentId, dto.PlayerId)
-            };
-            return Ok(rideRepository.Create(ride));
+        public async Task<IActionResult> Create(RideDto dto) {
+            try {
+                if (await rideRepository.FindRideNumberAsync(dto.TournamentId, dto.PlayerId) is int last) {
+                    var ride = new Ride {
+                        TournamentId = dto.TournamentId,
+                        PlayerId = dto.PlayerId,
+                        GokartId = dto.GokartId,
+                        Time = dto.Time,
+                        IsDisqualified = dto.IsDisqualified == 1,
+                        RideNumber = last
+                    };
+                    return Created("",await rideRepository.CreateAsync(ride));
+                }
+                return NotFound();
+            } catch (Exception) {
+                return BadRequest();
+            }
         }
 
         [HttpPut("{rideId}")]
-        public IActionResult Update(int rideId, RideDto dto)
-        {
-            var ride = new Ride
-            {
-                TournamentId = dto.TournamentId,
-                PlayerId = dto.PlayerId,
-                GokartId = dto.GokartId,
-                Time = dto.Time,
-                IsDisqualified = dto.IsDisqualified == 1,
-                RideNumber = rideRepository.Get(rideId).RideNumber
-            };
-            return Ok(rideRepository.Update(rideId,ride));
+        public async Task<IActionResult> Update(int rideId, RideDto dto) {
+            try {
+                if (await rideRepository.GetAsync(rideId) is Ride _ride) {
+                    var ride = new Ride {
+                        TournamentId = dto.TournamentId,
+                        PlayerId = dto.PlayerId,
+                        GokartId = dto.GokartId,
+                        Time = dto.Time,
+                        IsDisqualified = dto.IsDisqualified == 1,
+                        RideNumber = _ride.RideNumber
+                    };
+                    return Ok(rideRepository.UpdateAsync(rideId, ride));
+                }
+                return NotFound();
+            } catch (Exception) {
+                return BadRequest();
+            }
         }
 
         [HttpGet("{rideId}")]
-        public IActionResult Get(int rideId)
-        {
-            return Ok(rideRepository.Get(rideId));
+        public async Task<IActionResult> Get(int rideId) {
+            try {
+                if (await rideRepository.GetAsync(rideId) is Ride ride)
+                    return Ok(ride);
+                return NotFound();
+            } catch (Exception) {
+                return BadRequest();
+            }
         }
 
         [HttpGet]
-        public IActionResult GetAll()
-        {
-            return Ok(rideRepository.GetAll());
+        public async Task<IActionResult> GetAllAsync() {
+            try {
+                return Ok(await rideRepository.GetAllAsync());
+            } catch (Exception) {
+                return BadRequest();
+            }
         }
 
         [HttpGet("full")]
-        public IActionResult FullGetAll()
-        {
-            return Ok(rideRepository.FullGetAll());
+        public async Task<IActionResult> FullGetAll() {
+            try {
+                return Ok(await rideRepository.FullGetAllAsync());
+            } catch (Exception) {
+                return BadRequest();
+            }
         }
 
         [HttpGet("full/{rideId}")]
-        public IActionResult FullGetAll(int rideId)
-        {
-            return Ok(rideRepository.FullGet(rideId));
+        public async Task<IActionResult> FullGetAll(int rideId) {
+            try {
+                return Ok(await rideRepository.FullGetAsync(rideId));
+            } catch (Exception) {
+                return BadRequest();
+            }
         }
 
         [HttpGet("full/tournament/{tournamentId}")]
-        public IActionResult FullGetBestForTournament(int tournamentId)
-        {
-            return Ok(rideRepository.FullGetBestForTournament(tournamentId));
+        public async Task<IActionResult> FullGetBestForTournament(int tournamentId) {
+            try {
+                return Ok(await rideRepository.FullGetBestForTournamentAsync(tournamentId));
+            } catch (Exception) {
+                return BadRequest();
+            }
         }
 
         [HttpGet("full/tournament/{tournamentId}/last")]
-        public IActionResult FullGetLastAddedForTournament(int tournamentId)
-        {
-            return Ok(rideRepository.FullGetLastAddedForTournament(tournamentId));
+        public async Task<IActionResult> FullGetLastAddedForTournament(int tournamentId) {
+            try {
+                if (await rideRepository.FullGetLastAddedForTournamentAsync(tournamentId) is Ride ride)
+                    return Ok(ride);
+                return NotFound();
+            } catch (Exception) {
+                return BadRequest();
+            }
         }
 
         [HttpDelete("{rideId}")]
-        public IActionResult Remove(int rideId)
-        {
-            return Ok(rideRepository.Remove(rideId));
+        public async Task<IActionResult> Remove(int rideId) {
+            try {
+                if (await rideRepository.RemoveAsync(rideId) is int id)
+                    return Ok(id);
+                return NotFound();
+            } catch (Exception) {
+                return BadRequest();
+            }
         }
     }
 }

@@ -4,89 +4,116 @@ using api.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace api.Controllers
-{
+namespace api.Controllers {
     [Route("api/[controller]")]
     [ApiController]
-    public class QueueController : ControllerBase
-    {
+    public class QueueController : ControllerBase {
         private readonly IQueueRepository queueRepository;
 
-        public QueueController(IQueueRepository queueRepository)
-        {
+        public QueueController(IQueueRepository queueRepository) {
             this.queueRepository = queueRepository;
         }
 
         [HttpPost]
-        public IActionResult CreateQueues(QueueDto dto)
-        {
-            if(queueRepository.CreateQueues(dto.TournamentId, dto.GokartIds, dto.NumberOfRidesInOneGokart))
-                return Ok();
-            return BadRequest("Bad request");
+        public async Task<IActionResult> CreateQueues(QueueDto dto) {
+            try {
+                if (await queueRepository.CreateQueuesAsync(dto.TournamentId, dto.GokartIds, dto.NumberOfRidesInOneGokart))
+                    return Created("",true);
+                return BadRequest("Bad request");
+            } catch (Exception) {
+                return BadRequest();
+            }
         }
 
         [HttpGet("{queueId}")]
-        public IActionResult Get(int queueId)
-        {
-            return Ok(queueRepository.Get(queueId));
+        public async Task<IActionResult> Get(int queueId) {
+            try {
+                if (await queueRepository.GetAsync(queueId) is Queue queue)
+                    return Ok(queue);
+                return NotFound();
+            } catch (Exception) {
+                return BadRequest();
+            }
         }
 
         [HttpGet]
-        public IActionResult GetAll()
-        {
-            return Ok(queueRepository.GetAll());
+        public async Task<IActionResult> GetAll() {
+            try {
+                return Ok(await queueRepository.GetAllAsync());
+            } catch (Exception) {
+                return NotFound();
+            }
         }
 
         [HttpPut("{queueId}")]
-        public IActionResult UpdateRideState(int queueId)
-        {
-            if(queueRepository.ChangeQueueState(queueId))
-                return Ok();
-            return BadRequest();
+        public async Task<IActionResult> UpdateRideState(int queueId) {
+            try {
+                return Ok(await queueRepository.ChangeQueueStateAsync(queueId));
+            } catch (Exception) {
+                return BadRequest();
+            }
         }
 
         [HttpGet("full")]
-        public IActionResult FullGetAll()
-        {
-            return Ok(queueRepository.FullGetAll());
+        public async Task<IActionResult> FullGetAll() {
+            try {
+                return Ok(await queueRepository.FullGetAllAsync());
+            } catch (Exception) {
+                return BadRequest();
+            }
         }
 
         [HttpGet("full/tournament/{tournamentId}/active")]
-        public IActionResult FullGetActiveQueueForTournament(int tournamentId)
-        {
-            var queue = queueRepository.FullGetActiveQueueForTournament(tournamentId);
-            if (queue != null)
-                return Ok(queue);
-            else
-                return Ok(null);
+        public async Task<IActionResult> FullGetActiveQueueForTournament(int tournamentId) {
+            try {
+                //ToDo do sprawdzenia
+                return Ok(await queueRepository.FullGetActiveQueueForTournamentAsync(tournamentId));
+            } catch (Exception) {
+                return BadRequest();
+            }
         }
 
         [HttpGet("full/tournament/{tournamentId}")]
-        public IActionResult FullGetAllQuueuesForTournament(int tournamentId)
-        {
-            return Ok(queueRepository.FullGetAllQueuesForTournament(tournamentId));
+        public async Task<IActionResult> FullGetAllQuueuesForTournament(int tournamentId) {
+            try {
+                return Ok(await queueRepository.FullGetAllQueuesForTournamentAsync(tournamentId));
+            } catch (Exception) {
+                return BadRequest();
+            }
         }
 
         [HttpGet("full/{queueId}")]
-        public IActionResult FullGetAll(int queueId)
-        {
-            return Ok(queueRepository.FullGet(queueId));
+        public async Task<IActionResult> FullGetAll(int queueId) {
+            try {
+                return Ok(await queueRepository.FullGetAsync(queueId));
+            } catch (Exception) {
+                return BadRequest();
+            }
         }
 
         [HttpDelete("{tournamentId}")]
-        public IActionResult Remove(int tournamentId)
-        {
-            if(queueRepository.RemoveQueuesForTournament(tournamentId))
-                return Ok();
-            return BadRequest();
+        public async Task<IActionResult> Remove(int tournamentId) {
+            try {
+                return Ok(await queueRepository.RemoveQueuesForTournamentAsync(tournamentId));
+            } catch (Exception) {
+                return BadRequest();
+            }
         }
         [HttpGet("tournament/{tournamentID}/players")]
-        public IActionResult getPlayers(int tournamentID) {
-            return Ok(queueRepository.GetPlayersForQueue(tournamentID));
+        public async Task<IActionResult> GetPlayers(int tournamentID) {
+            try {
+                return Ok(await queueRepository.GetPlayersForQueueAsync(tournamentID));
+            } catch (Exception) {
+                return BadRequest();
+            }
         }
         [HttpPost("tournament/{tournamentID}/player/{playerID}")]
-        public IActionResult AddPlayerToQueue(int tournamentID,int playerID) {
-            return Ok(queueRepository.AddPlayerToQueue(tournamentID,playerID));
+        public async Task<IActionResult> AddPlayerToQueue(int tournamentID, int playerID) {
+            try {
+                return Created("",await queueRepository.AddPlayerToQueueAsync(tournamentID, playerID));
+            } catch (Exception) {
+                return BadRequest();
+            }
         }
 
     }
