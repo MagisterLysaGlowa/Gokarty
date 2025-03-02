@@ -44,10 +44,11 @@ namespace api.Controllers {
                         IsDisqualified = dto.IsDisqualified == 1,
                         RideNumber = _ride.RideNumber
                     };
-                    return Ok(rideRepository.UpdateAsync(rideId, ride));
+                    return Ok(await rideRepository.UpdateAsync(rideId, ride));
                 }
                 return NotFound();
-            } catch (Exception) {
+            } catch (Exception e) {
+                Console.WriteLine(e.Message);
                 return BadRequest();
             }
         }

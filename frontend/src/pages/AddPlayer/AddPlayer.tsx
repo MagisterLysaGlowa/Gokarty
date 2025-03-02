@@ -7,22 +7,12 @@ import {
 import { useState } from "react";
 import { PlayerData } from "../../../types";
 import { useNavigate, useParams } from "react-router-dom";
-import { useMutation, useQuery } from "react-query";
-import {
-  create_player,
-  get_player,
-  update_player,
-} from "../../services/player";
-import { get_all_schools } from "../../services/school";
 import "./AddPlayer.css";
-import {
-  createPlayerTexts,
-  errorToast,
-  promiseToast,
-  updatePlayerTexts,
-} from "../../Utils/ToastNotifications";
+import { errorToast } from "../../Utils/ToastNotifications";
 import { validatePlayer } from "../../validations/PlayerValidation";
 import { resetPlayerValues } from "./AddPlayerUtils";
+import { PlayerQueries } from "../../queries/playerQuery";
+import { SchoolQueries } from "../../queries/schoolQuery";
 
 export const AddPlayer = () => {
   const [player, SetPlayer] = useState<PlayerData>(resetPlayerValues);
@@ -30,39 +20,23 @@ export const AddPlayer = () => {
   const { id, playerId } = useParams();
   const navigate = useNavigate();
 
-  const updatePlayerMutation = useMutation(
-    async (player: PlayerData) =>
-      await promiseToast(
-        update_player(player.playerId, player),
-        updatePlayerTexts
-      )
-  );
+  const { mutateAsync: updatePlayer } = PlayerQueries.updatePlayer();
 
-  const { isLoading: isLoadingPlayer, isFetching: isFetchingPlayer } = useQuery(
-    "getPlayers",
-    async () => (playerId ? await get_player(Number(playerId)) : null),
-    {
+  const { isLoading: isLoadingPlayer, isFetching: isFetchingPlayer } =
+    PlayerQueries.getPlayer(Number(id), {
       onSuccess: (res) => {
-        SetPlayer(res ?? resetPlayerValues);
+        console.log(typeof res.birthDate);
       },
-    }
-  );
+    });
 
-  const createPlayerMutate = useMutation(
-    async (data: PlayerData) =>
-      await promiseToast(create_player(Number(id), data), createPlayerTexts),
-    {
-      onSuccess: () => {
-        SetPlayer(resetPlayerValues);
-        setCheckbox(false);
-      },
-    }
-  );
+  const { mutateAsync: createPlayer } = PlayerQueries.createPlayer({
+    onSuccess: () => {
+      SetPlayer(resetPlayerValues);
+      setCheckbox(false);
+    },
+  });
 
-  const { data: schools } = useQuery(
-    "getSchools",
-    async () => await get_all_schools()
-  );
+  const { data: schools } = SchoolQueries.getAllSchools();
 
   if (isLoadingPlayer || isFetchingPlayer) return <p>Loading...</p>;
   return (
@@ -164,12 +138,16 @@ export const AddPlayer = () => {
                 if (!(await validatePlayer(player))) return;
 
                 if (player.playerId == -1) {
-                  if (checkbox) await createPlayerMutate.mutateAsync(player);
+                  if (checkbox)
+                    await createPlayer({
+                      tournamentId: Number(id),
+                      data: player,
+                    });
                   else errorToast("Zapoznaj się z regulaminem");
                 } else if (playerId) {
-                  await updatePlayerMutation.mutateAsync({
-                    ...player,
-                    birthDate: new Date(player.birthDate),
+                  await updatePlayer({
+                    playerId: player.playerId,
+                    data: { ...player, birthDate: new Date(player.birthDate) },
                   });
                 }
               }}

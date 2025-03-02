@@ -1,18 +1,14 @@
 import { useEffect, useState } from "react";
 import "./AddExistingPlayerToTournament.css";
-import { PlayerData, PlayerFilterFormData } from "../../../types";
-import { useMutation, useQuery } from "react-query";
-import { get_all_schools } from "../../services/school";
-import {
-  add_player_to_tournament,
-  filter_players,
-} from "../../services/player";
+import { PlayerFilterFormData } from "../../../types";
 import { useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { queryClient } from "../../Utils/ReactQueryConfig";
 import { useModal } from "../../components/Modal/useModal";
 import { buildButton } from "../../components/Modal/Utils";
+import { PlayerQueries } from "../../queries/playerQuery";
+import { SchoolQueries } from "../../queries/schoolQuery";
+
 export const AddExistingPlayerToTournament = () => {
   const modal = useModal();
   const { id } = useParams();
@@ -27,27 +23,13 @@ export const AddExistingPlayerToTournament = () => {
     data: schools,
     isLoading: schoolsLoading,
     isFetching: schoolFetching,
-  } = useQuery("schools", async () => await get_all_schools());
+  } = SchoolQueries.getAllSchools();
 
-  const { data: players, refetch: filterRefetch } = useQuery(
-    "filterPlayers",
-    async () => await filter_players(playerFilter)
-  );
+  const { data: players, refetch: filterRefetch } =
+    PlayerQueries.filterPlayers(playerFilter);
 
-  const { mutateAsync: addPlayerToTournament } = useMutation(
-    async (playerId: number) =>
-      await add_player_to_tournament(Number(id), playerId),
-    {
-      onSuccess: (res) => {
-        queryClient.setQueryData(
-          "filterPlayers",
-          (prev: PlayerData[] | undefined) => {
-            return prev ? prev.filter((z) => z.playerId != res) : [];
-          }
-        );
-      },
-    }
-  );
+  const { mutateAsync: addPlayerToTournament } =
+    PlayerQueries.addPlayerToTournament(playerFilter);
 
   useEffect(() => {
     filterRefetch();
@@ -73,8 +55,6 @@ export const AddExistingPlayerToTournament = () => {
           <label htmlFor="">Nazwisko</label>
           <input
             type="text"
-            name=""
-            id=""
             className="form-control"
             placeholder="Nazwisko"
             onChange={(e) =>
@@ -138,7 +118,10 @@ export const AddExistingPlayerToTournament = () => {
                           "btn btn-primary",
                           "Tak",
                           async () =>
-                            await addPlayerToTournament(player.playerId)
+                            await addPlayerToTournament({
+                              playerId: player.playerId,
+                              tournamentId: Number(id),
+                            })
                         ),
                       ],
                     })

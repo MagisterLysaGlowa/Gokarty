@@ -1,62 +1,37 @@
 import { GokartData, GokartFormData } from "../../types";
 import apiClient from "./apiClient";
 
-export const create_gokart = async (
-  data: GokartFormData
-): Promise<GokartData> => {
-  const formData = new FormData();
-  formData.append("name", data.name);
+class GokartService {
+  static async createGokart(data: GokartFormData): Promise<GokartData> {
+    const response = await apiClient.post<GokartData>("/gokart", data);
+    return response.data;
+  }
 
-  const response = await apiClient.post<GokartData>("/gokart", formData, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  return response.data;
-};
+  static async updateGokart(
+    gokartId: number,
+    data: GokartFormData
+  ): Promise<GokartData> {
+    const response = await apiClient.put<GokartData>(
+      `/gokart/${gokartId}`,
+      data
+    );
+    return response.data;
+  }
 
-export const update_gokart = async (
-  gokartId: number,
-  data: GokartFormData
-): Promise<GokartData> => {
-  const formData = new FormData();
-  formData.append("name", data.name);
+  static async removeGokart(gokartId: number): Promise<number> {
+    const response = await apiClient.delete<string>(`/gokart/${gokartId}`);
+    return Number(response.data);
+  }
 
-  const response = await apiClient.put<GokartData>(
-    `/gokart/${gokartId}`,
-    formData,
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
-  return response.data;
-};
+  static async getAllGokarts(): Promise<GokartData[]> {
+    const response = await apiClient.get<GokartData[]>("/gokart");
+    return response.data;
+  }
 
-export const remove_gokart = async (gokartId: number): Promise<number> => {
-  const data = await apiClient.delete<string>(`/gokart/${gokartId}`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  return Number(data.data);
-};
+  static async getGokart(gokartId: number): Promise<GokartData> {
+    const response = await apiClient.get<GokartData>(`/gokart/${gokartId}`);
+    return response.data;
+  }
+}
 
-export const get_all_gokarts = async (): Promise<GokartData[]> => {
-  const response = await apiClient.get<GokartData[]>(`/gokart`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  return response.data;
-};
-
-export const get_gokart = async (gokartId: number): Promise<GokartData> => {
-  const response = await apiClient.get<GokartData>(`/gokart/${gokartId}`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  return response.data;
-};
+export default GokartService;

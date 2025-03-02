@@ -6,139 +6,86 @@ import {
 } from "../../types";
 import apiClient from "./apiClient";
 
-export const create_queue = async (data: QueueFormData): Promise<string> => {
-  const formData = new FormData();
-  formData.append("tournamentId", data.tournamentId.toString());
-  data.gokartIds.forEach((id, index) => {
-    formData.append(`gokartIds[${index}]`, id.toString());
-  });
-  formData.append(
-    "numberOfRidesInOneGokart",
-    data.numberOfRidesInOneGokart.toString()
-  );
+class QueueService {
+  static async createQueue(data: QueueFormData): Promise<string> {
+    const formData = new FormData();
+    formData.append("tournamentId", data.tournamentId.toString());
+    data.gokartIds.forEach((id, index) => {
+      formData.append(`gokartIds[${index}]`, id.toString());
+    });
+    formData.append(
+      "numberOfRidesInOneGokart",
+      data.numberOfRidesInOneGokart.toString()
+    );
 
-  const response = await apiClient.post<string>("/queue", formData, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  return response.data;
-};
+    return (await apiClient.post<string>("/queue", formData)).data;
+  }
 
-export const remove_queues_for_tournament = async (
-  tournamentId: number
-): Promise<void> => {
-  await apiClient.delete<string>(`/queue/${tournamentId}`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-};
+  static async removeQueuesForTournament(
+    tournamentId: number
+  ): Promise<number> {
+    const response = await apiClient.delete<number>(`/queue/${tournamentId}`);
+    return response.data;
+  }
 
-export const get_all_queues = async (): Promise<QueueData[]> => {
-  const response = await apiClient.get<QueueData[]>(`/queue`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  return response.data;
-};
+  static async getAllQueues(): Promise<QueueData[]> {
+    return (await apiClient.get<QueueData[]>("/queue")).data;
+  }
 
-export const get_queue = async (queueId: number): Promise<QueueData> => {
-  const response = await apiClient.get<QueueData>(`/queue/${queueId}`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  return response.data;
-};
+  static async getQueue(queueId: number): Promise<QueueData> {
+    return (await apiClient.get<QueueData>(`/queue/${queueId}`)).data;
+  }
 
-export const get_all_full_queues = async (): Promise<FullQueueData[]> => {
-  const response = await apiClient.get<FullQueueData[]>(`/queue/full`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  return response.data;
-};
+  static async getAllFullQueues(): Promise<FullQueueData[]> {
+    return (await apiClient.get<FullQueueData[]>("/queue/full")).data;
+  }
 
-export const get_all_full_queues_for_tournament = async (
-  tournamentId: number
-): Promise<FullQueueData[]> => {
-  const response = await apiClient.get<FullQueueData[]>(
-    `/queue/full/tournament/${tournamentId}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
-  return response.data;
-};
+  static async getAllFullQueuesForTournament(
+    tournamentId: number
+  ): Promise<FullQueueData[]> {
+    return (
+      await apiClient.get<FullQueueData[]>(
+        `/queue/full/tournament/${tournamentId}`
+      )
+    ).data;
+  }
 
-export const get_full_queue = async (
-  queueId: number
-): Promise<FullQueueData> => {
-  const response = await apiClient.get<FullQueueData>(
-    `/queue/full/${queueId}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
-  return response.data;
-};
+  static async getFullQueue(queueId: number): Promise<FullQueueData> {
+    return (await apiClient.get<FullQueueData>(`/queue/full/${queueId}`)).data;
+  }
 
-export const get_full_active_queue_for_tournament = async (
-  tournamentId: number
-): Promise<FullQueueData> => {
-  const response = await apiClient.get(
-    `/queue/full/tournament/${tournamentId}/active`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
-  return response.data == "" ? null : response.data;
-};
+  static async getFullActiveQueueForTournament(
+    tournamentId: number
+  ): Promise<FullQueueData | null> {
+    const response = await apiClient.get(
+      `/queue/full/tournament/${tournamentId}/active`
+    );
+    return response.data;
+  }
 
-export const update_queue_ride_status = async (
-  queueId: number
-): Promise<string> => {
-  const formData = new FormData();
-  const response = await apiClient.put<string>(`/queue/${queueId}`, formData, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  return response.data;
-};
+  static async updateQueueRideStatus(queueId: number): Promise<string> {
+    return (await apiClient.put<string>(`/queue/${queueId}`, new FormData()))
+      .data;
+  }
 
-export const playersForQueue = async (tournamentId: number) => {
-  const response = await apiClient.get<PlayerData[]>(
-    `/queue/tournament/${tournamentId}/players`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
-  return response.data;
-};
+  static async playersForQueue(tournamentId: number): Promise<PlayerData[]> {
+    return (
+      await apiClient.get<PlayerData[]>(
+        `/queue/tournament/${tournamentId}/players`
+      )
+    ).data;
+  }
 
-export const addPlayerToQueue = async (
-  tournamentId: number,
-  playerId: number
-) => {
-  const response = await apiClient.post<boolean>(
-    `/queue/tournament/${tournamentId}/player/${playerId}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
-  return response.data;
-};
+  static async addPlayerToQueue(
+    tournamentId: number,
+    playerId: number
+  ): Promise<boolean> {
+    return (
+      await apiClient.post<boolean>(
+        `/queue/tournament/${tournamentId}/player/${playerId}`
+      )
+    ).data;
+  }
+}
+
+export default QueueService;

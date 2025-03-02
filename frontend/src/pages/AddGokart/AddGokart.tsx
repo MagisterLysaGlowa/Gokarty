@@ -1,31 +1,14 @@
 import { useState } from "react";
 import "./AddGokart.css";
-import { GokartData, GokartFormData } from "../../../types";
+import { GokartData } from "../../../types";
 import { handleChange } from "../TournamentEdit/TournamentEditUtils";
-import { useMutation, useQuery } from "react-query";
-import {
-  create_gokart,
-  get_all_gokarts,
-  remove_gokart,
-  update_gokart,
-} from "../../services/gokart";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
-import {
-  createGokartTexts,
-  promiseToast,
-  removeGokartTexts,
-  updateGokartTexts,
-} from "../../Utils/ToastNotifications";
 import { useModal } from "../../components/Modal/useModal";
 import { buildButton } from "../../components/Modal/Utils";
 import { gokartValidate } from "../../validations/GokartValidation";
-import {
-  AddCreatedGokartToList,
-  EditCertainGokartInList,
-  RemoveCreatedGokartFromList,
-  resetGokartValues,
-} from "./AddGokartUtils";
+import { resetGokartValues } from "./AddGokartUtils";
+import { GokartQueries } from "../../queries/gokartQuery";
 
 export const AddGokart = () => {
   const modal = useModal();
@@ -34,46 +17,25 @@ export const AddGokart = () => {
     gokartId: -1,
   });
 
-  const { data: allGokarts } = useQuery(
-    "getGokarts",
-    async () => await get_all_gokarts()
-  );
+  const { data: allGokarts } = GokartQueries.getAllGokarts();
 
-  const { mutateAsync: createGokart } = useMutation(
-    async (data: GokartFormData) =>
-      await promiseToast(create_gokart(data), createGokartTexts),
-    {
-      onSuccess: async (res) => {
-        await AddCreatedGokartToList(res);
-        Setgokart(resetGokartValues);
-      },
-    }
-  );
+  const { mutateAsync: createGokart } = GokartQueries.createGokart({
+    onSuccess: () => {
+      Setgokart(resetGokartValues);
+    },
+  });
 
-  const { mutateAsync: removeGokart } = useMutation(
-    async (id: number) =>
-      await promiseToast(remove_gokart(id), removeGokartTexts),
-    {
-      onSuccess: async (id) => await RemoveCreatedGokartFromList(id),
-    }
-  );
+  const { mutateAsync: removeGokart } = GokartQueries.removeGokart();
 
-  const { mutateAsync: updateGokart } = useMutation(
-    async (data: GokartFormData) =>
-      await promiseToast(
-        update_gokart(gokart.gokartId, data),
-        updateGokartTexts
-      ),
-    {
-      onSuccess: async (gokart) => {
-        await EditCertainGokartInList(gokart);
-        Setgokart(resetGokartValues);
-      },
-    }
-  );
+  const { mutateAsync: updateGokart } = GokartQueries.updateGokart({
+    onSuccess: () => {
+      Setgokart(resetGokartValues);
+    },
+  });
 
   return (
     <div className="p-5">
+      {JSON.stringify(gokart)}
       <div className="gokartContainer">
         <div className="gokartForm" onSubmit={(e) => e.preventDefault()}>
           <form>

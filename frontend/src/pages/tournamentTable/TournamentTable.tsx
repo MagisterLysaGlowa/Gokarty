@@ -1,19 +1,12 @@
-import { useQuery } from "react-query";
 import "./tournamentTable.css";
-import {
-  get_tournament_best_full_rides,
-  get_tournament_last_full_ride,
-} from "../../services/ride";
 import { useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { convertTimeToString } from "../../Utils/TimeUtils";
-import {
-  get_all_full_queues_for_tournament,
-  get_full_active_queue_for_tournament,
-} from "../../services/queue";
 import { useState } from "react";
 import { FullQueueData, FullRideData } from "../../../types";
+import { RideQueries } from "../../queries/rideQuery";
+import { QueueQueries } from "../../queries/queueQuery";
 
 const TournamentTable = () => {
   const { id } = useParams();
@@ -22,41 +15,27 @@ const TournamentTable = () => {
   );
   const [queueData, setQueueData] = useState<FullQueueData[] | null>(null);
   const [lastRide, SetLastRide] = useState<FullRideData | null>(null);
-  const { data } = useQuery(
-    "getTableForTurnament",
-    async () => await get_tournament_best_full_rides(Number(id)),
-    { refetchInterval: 3000 }
-  );
+  const { data } = RideQueries.getTournamentBestFullRides(Number(id), {
+    refetchInterval: 3000,
+  });
 
-  useQuery(
-    "getLastRide",
-    async () => await get_full_active_queue_for_tournament(Number(id)),
-    {
-      onSuccess: (res) => SetCurrentPlayer(res),
-      onError: () => SetCurrentPlayer(null),
-      refetchInterval: 3000,
-    }
-  );
+  QueueQueries.getFullActiveQueueForTournament(Number(id), {
+    onSuccess: (res) => SetCurrentPlayer(res),
+    onError: () => SetCurrentPlayer(null),
+    refetchInterval: 3000,
+  });
 
-  useQuery(
-    "getQueues",
-    async () => await get_all_full_queues_for_tournament(Number(id)),
-    {
-      onSuccess: (res) => setQueueData(res),
-      onError: () => setQueueData(null),
-      refetchInterval: 3000,
-    }
-  );
+  QueueQueries.getAllFullQueuesForTournament(Number(id), {
+    onSuccess: (res) => setQueueData(res),
+    onError: () => setQueueData(null),
+    refetchInterval: 3000,
+  });
 
-  useQuery(
-    "lastRide",
-    async () => await get_tournament_last_full_ride(Number(id)),
-    {
-      onSuccess: (res) => SetLastRide(res),
-      onError: () => SetLastRide(null),
-      refetchInterval: 3000,
-    }
-  );
+  RideQueries.getTournamentLastFullRide(Number(id), {
+    onSuccess: (res) => SetLastRide(res),
+    onError: () => SetLastRide(null),
+    refetchInterval: 3000,
+  });
 
   const navigate = useNavigate();
 

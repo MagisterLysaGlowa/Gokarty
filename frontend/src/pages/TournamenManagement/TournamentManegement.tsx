@@ -1,12 +1,6 @@
 import "./TournamentManegement.css";
 import { RideRandomization } from "../../components/componentsExport";
-import { useMutation, useQuery } from "react-query";
-import {
-  get_all_full_queues_for_tournament,
-  get_full_active_queue_for_tournament,
-  remove_queues_for_tournament,
-  update_queue_ride_status,
-} from "../../services/queue";
+import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import {
@@ -14,11 +8,15 @@ import {
   convertTimeFromMilisecondsToObject,
   getTimeInMs,
 } from "../../Utils/TimeUtils";
-import { create_ride } from "../../services/ride";
-import { FullQueueData, RideFormData } from "../../../types";
+
+import { FullQueueData } from "../../../types";
 import apiClient from "../../services/apiClient";
-import { get_tournament } from "../../services/tournament";
-import { get_all_gokarts } from "../../services/gokart";
+import { GokartQueries } from "../../queries/gokartQuery";
+import { TournamentQueries } from "../../queries/tournamentQuery";
+import { RideQueries } from "../../queries/rideQuery";
+import { QueueQueries } from "../../queries/queueQuery";
+
+// ToDo: duzo do zbadania
 
 export const TournamentManegement = () => {
   const { id } = useParams();
@@ -32,38 +30,23 @@ export const TournamentManegement = () => {
     isLoading: isQueueLoading,
     isFetching: isQueueFetching,
     refetch: queuesRefetch,
-  } = useQuery(
-    "getQueues",
-    async () => await get_all_full_queues_for_tournament(Number(id)),
-    {
-      onSuccess: (res) => setQueueData(res),
-      onError: () => setQueueData(null),
-    }
-  );
+  } = QueueQueries.getAllFullQueuesForTournament(Number(id), {
+    onSuccess: (res) => setQueueData(res),
+    onError: () => setQueueData(null),
+  });
 
-  const { data: tournament } = useQuery(
-    "currentTournament",
-    async () => await get_tournament(Number(id))
-  );
+  const { data: tournament } = TournamentQueries.getTournament(Number(id));
 
   const {
     isLoading: isActiveQueueLoading,
     isFetching: isAcitveQueueFetching,
     refetch: activeQueueRefetch,
-  } = useQuery(
-    "getActiveQueues",
-    async () => await get_full_active_queue_for_tournament(Number(id)),
-    {
-      onSuccess: (res) => {
-        setActiveQueueData(res);
-      },
-      onError: () => {
-        setActiveQueueData(null);
-      },
-    }
-  );
+  } = QueueQueries.getFullActiveQueueForTournament(Number(id), {
+    onSuccess: (res) => setActiveQueueData(res),
+    onError: () => setActiveQueueData(null),
+  });
 
-  const { data: cars } = useQuery("cars", async () => await get_all_gokarts());
+  const { data: cars } = GokartQueries.getAllGokarts();
 
   const [time, setTime] = useState<number>(0);
   const [timerActive, setTimerActive] = useState<boolean>(false);
@@ -112,8 +95,7 @@ export const TournamentManegement = () => {
     }
   );
 
-  const { mutateAsync: queueStatusUpdate } = useMutation(
-    async (queueId: number) => await update_queue_ride_status(queueId),
+  const { mutateAsync: queueStatusUpdate } = QueueQueries.updateQueueRideStatus(
     {
       onSuccess: async () => {
         await activeQueueRefetch();
@@ -122,29 +104,22 @@ export const TournamentManegement = () => {
     }
   );
 
-  const { mutateAsync: timeSave } = useMutation(
-    async (data: RideFormData) => await create_ride(data),
-    {
-      onSuccess: async () => {
-        setRideFinished(false);
-        await queueStatusUpdate(Number(activeQueueData?.queueId));
-        setTime(0);
-        setPenaltyPoints(0);
-        if (queueData?.length == 0 && tournament?.tournamentTypeId == 1)
-          await deleteQueue();
-      },
-    }
-  );
+  const { mutateAsync: timeSave } = RideQueries.createRide({
+    onSuccess: async () => {
+      setRideFinished(false);
+      await queueStatusUpdate(Number(activeQueueData?.queueId));
+      setTime(0);
+      setPenaltyPoints(0);
+      if (queueData?.length == 0 && tournament?.tournamentTypeId == 1)
+        await deleteQueue(Number(id));
+    },
+  });
 
-  const { mutateAsync: deleteQueue } = useMutation(
-    async () => await remove_queues_for_tournament(Number(id)),
-    {
-      retry: false,
-      onError: async () => {
-        await deleteQueue();
-      },
-    }
-  );
+  const { mutateAsync: deleteQueue } = QueueQueries.removeQueuesForTournament({
+    retry: false,
+    onError: async () => await deleteQueue(Number(id)),
+  });
+
   if (
     isQueueLoading ||
     isQueueFetching ||

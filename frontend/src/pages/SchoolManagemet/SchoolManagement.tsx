@@ -1,32 +1,14 @@
-import { useMutation, useQuery } from "react-query";
 import "./schoolManagement.css";
-import {
-  create_school,
-  get_all_schools,
-  remove_school,
-  update_school,
-} from "../../services/school";
 import { useState } from "react";
-import { SchoolData, SchoolFormData } from "../../../types";
+import { SchoolData } from "../../../types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-regular-svg-icons/faEdit";
 import { faTrash } from "@fortawesome/free-solid-svg-icons/faTrash";
-
-import {
-  createSchoolTexts,
-  promiseToast,
-  removeSchoolTexts,
-  updateSchoolTexts,
-} from "../../Utils/ToastNotifications";
 import { useModal } from "../../components/Modal/useModal";
 import { buildButton } from "../../components/Modal/Utils";
 import { schoolValidate } from "../../validations/SchoolValidation";
-import {
-  addSchoolToList,
-  removeSchoolFromList,
-  resetSchoolValues,
-  updateCertainSchool,
-} from "./SchoolManagementUtils";
+import { addSchoolToList, resetSchoolValues } from "./SchoolManagementUtils";
+import { SchoolQueries } from "../../queries/schoolQuery";
 
 export const SchoolManagement = () => {
   const modal = useModal();
@@ -44,48 +26,25 @@ export const SchoolManagement = () => {
     data: schools,
     isLoading,
     isFetching,
-  } = useQuery("schoolManagementGetSchools", async () => get_all_schools());
+  } = SchoolQueries.getAllSchools();
 
-  const updateSchool = useMutation(
-    async (data: SchoolFormData) =>
-      await promiseToast(
-        update_school(Number(formData.schoolId), data),
-        updateSchoolTexts
-      ),
-    {
-      onSuccess: async (school) => {
-        updateCertainSchool(school);
-        setFormData(resetSchoolValues);
-      },
-    }
-  );
+  const { mutateAsync: updateSchool } = SchoolQueries.updateSchool({
+    onSuccess: async () => setFormData(resetSchoolValues),
+  });
 
-  const insertSchool = useMutation(
-    async (data: SchoolFormData) =>
-      await promiseToast(create_school(data), createSchoolTexts),
-    {
-      onSuccess: async (school) => {
-        addSchoolToList(school);
-        setFormData(resetSchoolValues);
-      },
-    }
-  );
+  const { mutateAsync: createSchool } = SchoolQueries.createSchool({
+    onSuccess: async (school) => addSchoolToList(school),
+  });
 
-  const deleteSchool = useMutation(
-    async (id: number) =>
-      await promiseToast(remove_school(id), removeSchoolTexts),
-    {
-      onSuccess: async (id) => removeSchoolFromList(id),
-    }
-  );
+  const { mutateAsync: deleteSchool } = SchoolQueries.removeSchool();
 
   async function formSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!(await schoolValidate(formData))) return;
     if (formData.schoolId != -1) {
-      await updateSchool.mutateAsync(formData);
+      await updateSchool({ schoolId: formData.schoolId, data: formData });
     } else {
-      await insertSchool.mutateAsync(formData);
+      await createSchool(formData);
     }
   }
 
@@ -182,7 +141,7 @@ export const SchoolManagement = () => {
                           buttons: [
                             buildButton("btn btn-secondary", "Anuluj"),
                             buildButton("btn btn-primary", "Usuń", async () =>
-                              deleteSchool.mutateAsync(school.schoolId)
+                              deleteSchool(school.schoolId)
                             ),
                           ],
                         });

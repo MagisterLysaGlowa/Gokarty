@@ -1,15 +1,13 @@
 import { useNavigate, useParams } from "react-router-dom";
 import "./RideEdit.css";
-import { useMutation, useQuery } from "react-query";
-import { get_full_ride, update_ride } from "../../services/ride";
 import { useState } from "react";
 import { Time } from "../../../types";
 import {
   convertTimeFromMilisecondsToObject,
   convertTimeToMs,
 } from "../../Utils/TimeUtils";
-import { promiseToast, updateRideTexts } from "../../Utils/ToastNotifications";
 import { validateRide } from "../../validations/RideEditValidation";
+import { RideQueries } from "../../queries/rideQuery";
 
 export const RideEdit = () => {
   const { id } = useParams();
@@ -20,29 +18,16 @@ export const RideEdit = () => {
     data: rideData,
     isLoading,
     isFetching,
-  } = useQuery("getRide", async () => await get_full_ride(Number(id)), {
+  } = RideQueries.getFullRide(Number(id), {
     onSuccess: (res) => {
       SetTime(convertTimeFromMilisecondsToObject(res.time));
       SetIsDisqualified(res.isDisqualified);
     },
   });
 
-  const { mutateAsync: updateRide } = useMutation(
-    async () =>
-      await promiseToast(
-        update_ride(Number(id), {
-          gokartId: Number(rideData?.gokartId),
-          playerId: Number(rideData?.playerId),
-          time: convertTimeToMs(time),
-          tournamentId: Number(rideData?.tournamentId),
-          isDisqualified: isDisqualified ? 1 : 0,
-        }),
-        updateRideTexts
-      ),
-    {
-      onSuccess: () => navigate(-1),
-    }
-  );
+  const { mutateAsync: updateRide } = RideQueries.updateRide({
+    onSuccess: () => navigate(-1),
+  });
 
   if (isLoading || isFetching) return <p className="m-3">Loading...</p>;
   return (
@@ -115,7 +100,16 @@ export const RideEdit = () => {
               isDisqualified: isDisqualified ? 1 : 0,
             })
           )
-            await updateRide();
+            await updateRide({
+              rideId: Number(id),
+              data: {
+                gokartId: Number(rideData?.gokartId),
+                playerId: Number(rideData?.playerId),
+                time: convertTimeToMs(time),
+                tournamentId: Number(rideData?.tournamentId),
+                isDisqualified: isDisqualified ? 1 : 0,
+              },
+            });
         }}
       >
         Zatwierdź

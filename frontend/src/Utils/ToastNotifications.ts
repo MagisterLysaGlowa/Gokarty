@@ -62,6 +62,18 @@ export const removePlayerTexts: promiseToastStatesText = {
   success: "Pomyślnie usunięto zawodnika.",
 };
 
+export const addPlayerToTournament: promiseToastStatesText = {
+  error: "Błąd podczas dodawania do turnieju.",
+  pending: "W trakcie dodawania do turnieju.",
+  success: "Pomyślnie dodano do turnieju.",
+};
+
+export const removePlayerFromTournament: promiseToastStatesText = {
+  error: "Błąd podczas usuwania do turnieju.",
+  pending: "W trakcie usuwania do turnieju.",
+  success: "Pomyślnie usunięto do turnieju.",
+};
+
 //Szkoła
 export const createSchoolTexts: promiseToastStatesText = {
   error: "Błąd podczas dodawania szkoły.",

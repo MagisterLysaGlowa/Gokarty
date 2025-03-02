@@ -1,39 +1,24 @@
-import { useMutation, useQuery } from "react-query";
-import {
-  addPlayerToQueue,
-  get_all_full_queues_for_tournament,
-  playersForQueue,
-} from "../../services/queue";
 import { useParams } from "react-router-dom";
+import { QueueQueries } from "../../queries/queueQuery";
 
 export const QueueEdit = () => {
   const { id } = useParams();
 
-  const { data: queue, refetch: refetchQueue } = useQuery(
-    "queue",
-    async () => await get_all_full_queues_for_tournament(Number(id)),
-    {
-      onSuccess: (res) => console.log(res),
-    }
+  const { data: queue, refetch: refetchQueue } =
+    QueueQueries.getAllFullQueuesForTournament(Number(id));
+
+  const { data, refetch: refetchPlayers } = QueueQueries.getPlayersForQueue(
+    Number(id)
   );
 
-  const { data, refetch: refetchPlayers } = useQuery(
-    "players",
-    async () => await playersForQueue(Number(id)),
-    {
-      onSuccess: (res) => console.log(res),
-    }
-  );
+  //Todo: zrob to na kluczach
 
-  const { mutateAsync: addPlayer } = useMutation(
-    async (playerId: number) => await addPlayerToQueue(Number(id), playerId),
-    {
-      onSuccess: async () => {
-        await refetchPlayers();
-        await refetchQueue();
-      },
-    }
-  );
+  const { mutateAsync: addPlayer } = QueueQueries.addPlayerToQueue({
+    onSuccess: async () => {
+      await refetchPlayers();
+      await refetchQueue();
+    },
+  });
 
   return (
     <div className="d-flex p-3 gap-3">
@@ -84,7 +69,10 @@ export const QueueEdit = () => {
                     <button
                       className="btn btn-primary"
                       onClick={() => {
-                        addPlayer(player.playerId);
+                        addPlayer({
+                          playerId: player.playerId,
+                          tournamentId: Number(id),
+                        });
                       }}
                     >
                       Dodaj

@@ -1,18 +1,16 @@
-import { useMutation, useQuery } from "react-query";
 import "./RideRandomization.css";
 import { useState } from "react";
-import { get_all_gokarts } from "../../services/gokart";
 import {
   gokartCheckboxChangeHandler,
   sortListElements,
 } from "./RideRandomizationUtils";
-import { create_queue } from "../../services/queue";
 import { useNavigate, useParams } from "react-router-dom";
-import { createQueueTexts, promiseToast } from "../../Utils/ToastNotifications";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { queueValidation } from "../../validations/QueueRandomizationValidation";
 import { QueueFormData } from "../../../types";
+import { GokartQueries } from "../../queries/gokartQuery";
+import { QueueQueries } from "../../queries/queueQuery";
 
 interface Props {
   refetch: () => void;
@@ -23,22 +21,19 @@ const RideRandomization: React.FC<Props> = ({ refetch }) => {
     data: allGokarts,
     isLoading: gokartsLoading,
     isFetching: gokartFetching,
-  } = useQuery("getAllGokarts", async () => await get_all_gokarts());
+  } = GokartQueries.getAllGokarts();
   const { id } = useParams();
+
   const [queue, SetQueue] = useState<QueueFormData>({
     gokartIds: [],
     numberOfRidesInOneGokart: -1,
     tournamentId: Number(id),
   });
+
   const navigate = useNavigate();
-  const { mutateAsync: createQueue } = useMutation(
-    async () => await promiseToast(create_queue(queue), createQueueTexts),
-    {
-      onSuccess: () => {
-        refetch();
-      },
-    }
-  );
+  const { mutateAsync: createQueue } = QueueQueries.createQueue({
+    onSuccess: () => refetch(),
+  });
 
   return (
     <div
@@ -97,7 +92,7 @@ const RideRandomization: React.FC<Props> = ({ refetch }) => {
           className="btn btn-primary"
           style={{ width: "200px" }}
           onClick={async () => {
-            if (await queueValidation(queue)) createQueue();
+            if (await queueValidation(queue)) createQueue(queue);
           }}
         >
           Wylosuj

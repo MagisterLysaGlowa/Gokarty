@@ -1,5 +1,5 @@
-import { UseMutationResult } from "react-query";
-import { SchoolData, TournamentData, TournamentFormData } from "../../../types";
+import { UseMutateAsyncFunction } from "react-query";
+import { SchoolData, TournamentData } from "../../../types";
 
 export const handleChange = <T extends object>(
   e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -20,20 +20,20 @@ export const compareFunction = (a: SchoolData, b: SchoolData) => {
 
 export const updateTournamentState = async (
   tournament: TournamentData,
-  updateTournamentMutate: UseMutationResult<
-    unknown,
-    unknown,
-    TournamentFormData,
+  updateTournamentMutate: UseMutateAsyncFunction<
+    TournamentData,
+    Error,
+    TournamentData,
     unknown
   >
 ) => {
   if (tournament.tournamentStateId == 1) {
-    await updateTournamentMutate.mutateAsync({
+    await updateTournamentMutate({
       ...tournament,
       tournamentStateId: tournament.tournamentStateId + 1,
     });
   } else if (tournament.tournamentStateId == 2) {
-    await updateTournamentMutate.mutateAsync({
+    await updateTournamentMutate({
       ...tournament,
       tournamentStateId: tournament.tournamentStateId + 1,
     });

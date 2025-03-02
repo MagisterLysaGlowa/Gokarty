@@ -1,81 +1,46 @@
 import { TournamentData, TournamentFormData } from "../../types";
 import apiClient from "./apiClient";
 
-export const create_tournament = async (
-  data: TournamentFormData
-): Promise<TournamentData> => {
-  const formData = new FormData();
-  formData.append("name", data.name);
-  formData.append("startDate", data.startDate.toJSON());
-  formData.append("endDate", data.endDate.toJSON());
-  formData.append("tournamentStateId", data.tournamentStateId.toString());
-  formData.append("tournamentTypeId", data.tournamentTypeId.toString());
-  console.log(formData);
+class TournamentService {
+  // Tworzenie turnieju
+  static async createTournament(
+    data: TournamentFormData
+  ): Promise<TournamentData> {
+    const response = await apiClient.post<TournamentData>("/tournament", data);
+    return response.data;
+  }
 
-  const response = await apiClient.post<TournamentData>(
-    "/tournament",
-    formData,
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
-  return response.data;
-};
+  // Aktualizacja turnieju
+  static async updateTournament(
+    tournamentId: number,
+    data: TournamentFormData
+  ): Promise<TournamentData> {
+    const response = await apiClient.put<TournamentData>(
+      `/tournament/${tournamentId}`,
+      data
+    );
+    return response.data;
+  }
 
-export const update_tournament = async (
-  tournamentId: number,
-  data: TournamentFormData
-): Promise<TournamentData> => {
-  const formData = new FormData();
-  formData.append("name", data.name);
-  formData.append("startDate", data.startDate.toJSON());
-  formData.append("endDate", data.endDate.toJSON());
-  formData.append("tournamentStateId", data.tournamentStateId.toString());
-  formData.append("tournamentTypeId", data.tournamentTypeId.toString());
+  // Usuwanie turnieju
+  static async removeTournament(tournamentId: number): Promise<number> {
+    const data = await apiClient.delete(`/tournament/${tournamentId}`);
+    return data.data;
+  }
 
-  const response = await apiClient.put<TournamentData>(
-    `/tournament/${tournamentId}`,
-    formData,
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
-  return response.data;
-};
+  // Pobieranie wszystkich turniejów
+  static async getAllTournaments(): Promise<TournamentData[]> {
+    const response = await apiClient.get<TournamentData[]>(`/tournament`);
+    return response.data;
+  }
 
-export const remove_tournament = async (
-  tournamentId: number
-): Promise<void> => {
-  await apiClient.delete<string>(`/tournament/${tournamentId}`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-};
+  // Pobieranie pojedynczego turnieju
+  static async getTournament(tournamentId: number): Promise<TournamentData> {
+    const response = await apiClient.get<TournamentData>(
+      `/tournament/${tournamentId}`
+    );
+    return response.data;
+  }
+}
 
-export const get_all_tournaments = async (): Promise<TournamentData[]> => {
-  const response = await apiClient.get<TournamentData[]>(`/tournament`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  return response.data;
-};
-
-export const get_tournament = async (
-  tournamentId: number
-): Promise<TournamentData> => {
-  const response = await apiClient.get<TournamentData>(
-    `/tournament/${tournamentId}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
-  return response.data;
-};
+export default TournamentService;

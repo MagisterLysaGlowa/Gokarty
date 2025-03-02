@@ -2,34 +2,18 @@ import { useNavigate, useParams } from "react-router-dom";
 import "./tournamentEdit.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { useQuery, useMutation } from "react-query";
-import {
-  get_tournament,
-  remove_tournament,
-  update_tournament,
-} from "../../services/tournament";
 import { useEffect, useState } from "react";
-import { TournamentData, TournamentFormData } from "../../../types";
-import {
-  get_players_for_tournament_with_school,
-  remove_player_to_tournament,
-} from "../../services/player";
+import { TournamentData } from "../../../types";
 import {
   handleChange,
   tournamentStringFromState,
   updateTournamentState,
 } from "./TournamentEditUtils";
-import {
-  promiseToast,
-  removePlayerTexts,
-  removeTournamentTexts,
-  updateTournamentTexts,
-} from "../../Utils/ToastNotifications";
 import { useModal } from "../../components/Modal/useModal";
 import { buildButton } from "../../components/Modal/Utils";
 import { tournamentValidate } from "../../validations/TournamentValidation";
-import { removePlayerFromList } from "../AddPlayer/AddPlayerUtils";
-import { updateTournament } from "../Tournaments/TournamentUtils";
+import { TournamentQueries } from "../../queries/tournamentQuery";
+import { PlayerQueries } from "../../queries/playerQuery";
 
 const TournamentEdit = () => {
   const modal = useModal();
@@ -39,9 +23,8 @@ const TournamentEdit = () => {
     {} as TournamentData
   );
 
-  const { isLoading, isFetching } = useQuery(
-    "editTournament",
-    async () => await get_tournament(Number(id)),
+  const { isLoading, isFetching } = TournamentQueries.getTournament(
+    Number(id),
     {
       onSuccess: (res) => {
         SetTournament({
@@ -57,43 +40,18 @@ const TournamentEdit = () => {
     data: tournamentPlayers,
     isLoading: tournamentPlayersLoading,
     isFetching: tournamentPlayerFetching,
-  } = useQuery(
-    "tournamentPlayers",
-    async () => await get_players_for_tournament_with_school(Number(id))
-  );
+  } = PlayerQueries.getPlayersForTournamentWithSchool(Number(id));
 
-  const updateTournamentMutate = useMutation(
-    async (data: TournamentFormData) =>
-      await promiseToast(
-        update_tournament(Number(id), data),
-        updateTournamentTexts
-      ),
-    {
-      onSuccess: (res) => updateTournament(res),
-    }
-  );
+  const { mutateAsync: updateTournamentAsync } =
+    TournamentQueries.updateTournament();
 
-  const deletePlayerMutate = useMutation(
-    async (playerId: number) =>
-      await promiseToast(
-        remove_player_to_tournament(Number(id), playerId),
-        removePlayerTexts
-      ),
-    {
-      onSuccess: async (removeId) => removePlayerFromList(removeId),
-    }
-  );
+  const { mutate: deletePlayerFromTournament } =
+    PlayerQueries.removePlayerFromTournament();
 
-  const { mutateAsync: deleteTournamentAsync } = useMutation(
-    async () =>
-      await promiseToast(
-        remove_tournament(tournament.tournamentId),
-        removeTournamentTexts
-      ),
-    {
+  const { mutateAsync: deleteTournamentAsync } =
+    TournamentQueries.removeTournament({
       onSuccess: () => navigate(-1),
-    }
-  );
+    });
 
   /*
     Ustawia date zakończenia zawodów na date rozpoczęcia zawodów
@@ -101,7 +59,6 @@ const TournamentEdit = () => {
     Wynika to z walidacji dat turnieju gdzie data końca
     nie może być mniejsza niż data startu.
   */
-
   useEffect(() => {
     const setEndDate = () => {
       if (tournament.tournamentStateId == 1)
@@ -199,7 +156,7 @@ const TournamentEdit = () => {
               className="btn btn-primary"
               onClick={async () => {
                 if (await tournamentValidate(tournament))
-                  await updateTournamentMutate.mutateAsync(tournament);
+                  await updateTournamentAsync(tournament);
               }}
             >
               Zatwierdź
@@ -227,7 +184,7 @@ const TournamentEdit = () => {
                         async () =>
                           await updateTournamentState(
                             tournament,
-                            updateTournamentMutate
+                            updateTournamentAsync
                           )
                       ),
                     ],
@@ -265,7 +222,8 @@ const TournamentEdit = () => {
                     buildButton(
                       "btn btn-primary",
                       "Usuń",
-                      async () => await deleteTournamentAsync()
+                      async () =>
+                        await deleteTournamentAsync(tournament.tournamentId)
                     ),
                   ],
                 })
@@ -344,7 +302,10 @@ const TournamentEdit = () => {
                           buttons: [
                             buildButton("btn btn-secondary", "Anuluj"),
                             buildButton("btn btn-primary", "Usuń", async () =>
-                              deletePlayerMutate.mutateAsync(element.playerId)
+                              deletePlayerFromTournament({
+                                tournamentId: Number(id),
+                                playerId: element.playerId,
+                              })
                             ),
                           ],
                         })
