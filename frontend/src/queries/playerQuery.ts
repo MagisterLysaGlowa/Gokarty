@@ -142,7 +142,6 @@ const useFilterPlayers = (
 };
 
 const useAddPlayerToTournament = (
-  filter?: PlayerFilterFormData,
   options?: UseMutationOptions<
     number,
     Error,
@@ -159,13 +158,8 @@ const useAddPlayerToTournament = (
     },
     //Todo: do sprawdzenia
     onSuccess: (r, v, c) => {
-      console.log(filter);
-
       handleSuccessWithRefreshOnSuccess(
-        [
-          ["players" + "tournament" + "withSchool"],
-          ["players" + "filter", filter],
-        ],
+        [["players" + "tournament" + "withSchool"]],
         options?.onSuccess
       )(r, v, c);
     },

@@ -50,7 +50,7 @@ namespace api.Repositories {
                 selectedPlayers.Remove(player);
             }
 
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             return true;
         }
 
@@ -98,6 +98,8 @@ namespace api.Repositories {
         public async Task<bool> ChangeQueueStateAsync(int queueId) {
             if (await _context.Queues.FirstAsync(q => q.QueueId == queueId) is Queue queue) {
                 queue.RideStatusId++;
+                if (queue.RideStatusId > 3)
+                    queue.RideStatusId = 3;
                 _context.Queues.Update(queue);
                 _context.SaveChanges();
                 return true;

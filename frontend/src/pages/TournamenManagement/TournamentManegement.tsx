@@ -8,20 +8,16 @@ import {
   convertTimeFromMilisecondsToObject,
   getTimeInMs,
 } from "../../Utils/TimeUtils";
-
 import { FullQueueData } from "../../../types";
 import apiClient from "../../services/apiClient";
-import { GokartQueries } from "../../queries/gokartQuery";
 import { TournamentQueries } from "../../queries/tournamentQuery";
-import { RideQueries } from "../../queries/rideQuery";
+import { GokartQueries } from "../../queries/gokartQuery";
 import { QueueQueries } from "../../queries/queueQuery";
-
-// ToDo: duzo do zbadania
+import { RideQueries } from "../../queries/rideQuery";
 
 export const TournamentManegement = () => {
   const { id } = useParams();
   const [penaltyPoints, setPenaltyPoints] = useState<number>(0);
-  const [queueData, setQueueData] = useState<FullQueueData[] | null>(null);
   const [activeQueueData, setActiveQueueData] = useState<FullQueueData | null>(
     null
   );
@@ -30,10 +26,8 @@ export const TournamentManegement = () => {
     isLoading: isQueueLoading,
     isFetching: isQueueFetching,
     refetch: queuesRefetch,
-  } = QueueQueries.getAllFullQueuesForTournament(Number(id), {
-    onSuccess: (res) => setQueueData(res),
-    onError: () => setQueueData(null),
-  });
+    data: queueData,
+  } = QueueQueries.getAllFullQueuesForTournament(Number(id));
 
   const { data: tournament } = TournamentQueries.getTournament(Number(id));
 
@@ -42,8 +36,12 @@ export const TournamentManegement = () => {
     isFetching: isAcitveQueueFetching,
     refetch: activeQueueRefetch,
   } = QueueQueries.getFullActiveQueueForTournament(Number(id), {
-    onSuccess: (res) => setActiveQueueData(res),
-    onError: () => setActiveQueueData(null),
+    onSuccess: (res) => {
+      setActiveQueueData(res);
+    },
+    onError: () => {
+      setActiveQueueData(null);
+    },
   });
 
   const { data: cars } = GokartQueries.getAllGokarts();
@@ -115,11 +113,7 @@ export const TournamentManegement = () => {
     },
   });
 
-  const { mutateAsync: deleteQueue } = QueueQueries.removeQueuesForTournament({
-    retry: false,
-    onError: async () => await deleteQueue(Number(id)),
-  });
-
+  const { mutateAsync: deleteQueue } = QueueQueries.removeQueuesForTournament();
   if (
     isQueueLoading ||
     isQueueFetching ||

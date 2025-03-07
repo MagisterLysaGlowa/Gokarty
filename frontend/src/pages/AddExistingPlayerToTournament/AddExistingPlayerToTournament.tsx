@@ -8,6 +8,7 @@ import { useModal } from "../../components/Modal/useModal";
 import { buildButton } from "../../components/Modal/Utils";
 import { PlayerQueries } from "../../queries/playerQuery";
 import { SchoolQueries } from "../../queries/schoolQuery";
+import { queryClient } from "../../Utils/ReactQueryConfig";
 
 export const AddExistingPlayerToTournament = () => {
   const modal = useModal();
@@ -29,7 +30,11 @@ export const AddExistingPlayerToTournament = () => {
     PlayerQueries.filterPlayers(playerFilter);
 
   const { mutateAsync: addPlayerToTournament } =
-    PlayerQueries.addPlayerToTournament(playerFilter);
+    PlayerQueries.addPlayerToTournament({
+      onSuccess: () => {
+        queryClient.invalidateQueries(["playersfilter", playerFilter]);
+      },
+    });
 
   useEffect(() => {
     filterRefetch();

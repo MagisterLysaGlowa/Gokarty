@@ -11,7 +11,7 @@ export const refreshQueries = (
   queryKeys: QueryKey[]
 ) => {
   queryKeys.forEach((key) => {
-    queryClient.refetchQueries(key);
+    queryClient.invalidateQueries(key);
   });
 };
 

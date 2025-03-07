@@ -3,7 +3,7 @@ import "./tournamentEdit.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
-import { TournamentData } from "../../../types";
+import { TournamentData, TournamentType } from "../../../types";
 import {
   handleChange,
   tournamentStringFromState,
@@ -14,33 +14,30 @@ import { buildButton } from "../../components/Modal/Utils";
 import { tournamentValidate } from "../../validations/TournamentValidation";
 import { TournamentQueries } from "../../queries/tournamentQuery";
 import { PlayerQueries } from "../../queries/playerQuery";
+import { convertDateToInputValue } from "../../Utils/gloablUtils";
 
 const TournamentEdit = () => {
   const modal = useModal();
   const { id } = useParams();
   const navigate = useNavigate();
-  const [tournament, SetTournament] = useState<TournamentData>(
-    {} as TournamentData
-  );
+  const [tournament, SetTournament] = useState<TournamentData>({
+    endDate: new Date(),
+    startDate: new Date(),
+    name: "",
+    tournamentId: -1,
+    tournamentStateId: -1,
+    tournamentType: {} as TournamentType,
+    tournamentTypeId: -1,
+  });
 
-  const { isLoading, isFetching } = TournamentQueries.getTournament(
-    Number(id),
-    {
-      onSuccess: (res) => {
-        SetTournament({
-          ...res,
-          endDate: new Date(res.endDate),
-          startDate: new Date(res.startDate),
-        });
-      },
-    }
-  );
+  const { isLoading } = TournamentQueries.getTournament(Number(id), {
+    onSuccess: (res) => {
+      SetTournament(res);
+    },
+  });
 
-  const {
-    data: tournamentPlayers,
-    isLoading: tournamentPlayersLoading,
-    isFetching: tournamentPlayerFetching,
-  } = PlayerQueries.getPlayersForTournamentWithSchool(Number(id));
+  const { data: tournamentPlayers, isLoading: tournamentPlayersLoading } =
+    PlayerQueries.getPlayersForTournamentWithSchool(Number(id));
 
   const { mutateAsync: updateTournamentAsync } =
     TournamentQueries.updateTournament();
@@ -67,7 +64,7 @@ const TournamentEdit = () => {
     setEndDate();
   }, [tournament.startDate, tournament.tournamentStateId]);
 
-  if (isLoading || isFetching) return;
+  if (isLoading) return;
   return (
     <div className="p-5">
       <div className="d-flex justify-content-evenly">
@@ -97,9 +94,7 @@ const TournamentEdit = () => {
                 className="startDate form-control"
                 id="startDate"
                 name="startDate"
-                value={
-                  new Date(tournament.startDate).toISOString().split("T")[0]
-                }
+                value={convertDateToInputValue(tournament.startDate)}
                 onChange={(e) => {
                   SetTournament((prev) => ({
                     ...prev,
@@ -123,9 +118,7 @@ const TournamentEdit = () => {
                     className="endDate form-control"
                     id="endDate"
                     name="endDate"
-                    value={
-                      new Date(tournament.endDate).toISOString().split("T")[0]
-                    }
+                    value={convertDateToInputValue(tournament.endDate)}
                     onChange={(e) => {
                       SetTournament((prev) => ({
                         ...prev,
@@ -268,7 +261,7 @@ const TournamentEdit = () => {
             </tr>
           </thead>
           <tbody>
-            {tournamentPlayersLoading || tournamentPlayerFetching ? (
+            {tournamentPlayersLoading ? (
               <tr>
                 <td>Loading...</td>
               </tr>

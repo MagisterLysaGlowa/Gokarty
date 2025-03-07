@@ -4,21 +4,15 @@ import { QueueQueries } from "../../queries/queueQuery";
 export const QueueEdit = () => {
   const { id } = useParams();
 
-  const { data: queue, refetch: refetchQueue } =
-    QueueQueries.getAllFullQueuesForTournament(Number(id));
-
-  const { data, refetch: refetchPlayers } = QueueQueries.getPlayersForQueue(
+  const { data: queue } = QueueQueries.getAllFullQueuesForTournament(
     Number(id)
   );
 
+  const { data } = QueueQueries.getPlayersForQueue(Number(id));
+
   //Todo: zrob to na kluczach
 
-  const { mutateAsync: addPlayer } = QueueQueries.addPlayerToQueue({
-    onSuccess: async () => {
-      await refetchPlayers();
-      await refetchQueue();
-    },
-  });
+  const { mutateAsync: addPlayer } = QueueQueries.addPlayerToQueue();
 
   return (
     <div className="d-flex p-3 gap-3">

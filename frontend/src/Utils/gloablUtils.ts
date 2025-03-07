@@ -18,3 +18,6 @@ export const handleInputChange =
   (e: React.ChangeEvent<HTMLInputElement>) => {
     seter((prev) => ({ ...prev, [key]: value || e.target.value }));
   };
+
+export const convertDateToInputValue = (date: Date) =>
+  date.toISOString().split("T")[0];

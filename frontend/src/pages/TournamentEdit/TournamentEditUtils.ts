@@ -12,7 +12,7 @@ export const handleChange = <T extends object>(
   }));
 };
 
-export const compareFunction = (a: SchoolData, b: SchoolData) => {
+export const schoolOrder = (a: SchoolData, b: SchoolData) => {
   const textA = a.acronym.toUpperCase();
   const textB = b.acronym.toUpperCase();
   return textA < textB ? -1 : textA > textB ? 1 : 0;

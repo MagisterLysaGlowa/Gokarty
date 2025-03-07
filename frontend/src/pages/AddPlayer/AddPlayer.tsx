@@ -1,7 +1,7 @@
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  compareFunction,
+  schoolOrder,
   handleChange,
 } from "../TournamentEdit/TournamentEditUtils";
 import { useState } from "react";
@@ -13,6 +13,7 @@ import { validatePlayer } from "../../validations/PlayerValidation";
 import { resetPlayerValues } from "./AddPlayerUtils";
 import { PlayerQueries } from "../../queries/playerQuery";
 import { SchoolQueries } from "../../queries/schoolQuery";
+import { convertDateToInputValue } from "../../Utils/gloablUtils";
 
 export const AddPlayer = () => {
   const [player, SetPlayer] = useState<PlayerData>(resetPlayerValues);
@@ -23,10 +24,8 @@ export const AddPlayer = () => {
   const { mutateAsync: updatePlayer } = PlayerQueries.updatePlayer();
 
   const { isLoading: isLoadingPlayer, isFetching: isFetchingPlayer } =
-    PlayerQueries.getPlayer(Number(id), {
-      onSuccess: (res) => {
-        console.log(typeof res.birthDate);
-      },
+    PlayerQueries.getPlayer(Number(playerId), {
+      onSuccess: (res) => SetPlayer(res),
     });
 
   const { mutateAsync: createPlayer } = PlayerQueries.createPlayer({
@@ -77,11 +76,7 @@ export const AddPlayer = () => {
               type="date"
               id="birthDate_"
               className="form-control"
-              value={
-                (player.birthDate ? new Date(player.birthDate) : new Date())
-                  .toISOString()
-                  .split("T")[0]
-              }
+              value={convertDateToInputValue(player.birthDate)}
               onChange={(e) => {
                 handleChange(e, SetPlayer);
               }}
@@ -94,14 +89,14 @@ export const AddPlayer = () => {
                 name="schoolId"
                 id="school"
                 className="form-control"
-                value={player.schoolId}
+                defaultValue={player.schoolId}
                 onChange={(e) => handleChange(e, SetPlayer)}
               >
-                <option value="-1" disabled selected>
+                <option value="-1" disabled>
                   Wybierz szkołe
                 </option>
                 {schools
-                  ?.sort((a, b) => compareFunction(a, b))
+                  ?.sort((a, b) => schoolOrder(a, b))
                   .map((z) => (
                     <option value={z.schoolId} key={z.name}>
                       {z.acronym}
@@ -147,7 +142,7 @@ export const AddPlayer = () => {
                 } else if (playerId) {
                   await updatePlayer({
                     playerId: player.playerId,
-                    data: { ...player, birthDate: new Date(player.birthDate) },
+                    data: player,
                   });
                 }
               }}

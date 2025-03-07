@@ -133,6 +133,7 @@ const useGetPlayersForQueue = (
   });
 };
 
+//ToDo: popraw
 const useAddPlayerToQueue = (
   options?: UseMutationOptions<
     boolean,
@@ -143,10 +144,13 @@ const useAddPlayerToQueue = (
   return useMutation({
     mutationFn: ({ tournamentId, playerId }) =>
       QueueService.addPlayerToQueue(tournamentId, playerId),
-    onSuccess: handleSuccessWithRefreshOnSuccess(
-      [["playersForQueue"]],
-      options?.onSuccess
-    ),
+    onSuccess: (r, v, c) => {
+      console.log(r);
+      handleSuccessWithRefreshOnSuccess(
+        [["playersForQueue", r]],
+        options?.onSuccess
+      )(r, v, c);
+    },
     ...options,
   });
 };

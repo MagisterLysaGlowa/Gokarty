@@ -67,7 +67,9 @@ namespace api.Controllers {
         public async Task<IActionResult> FullGetActiveQueueForTournament(int tournamentId) {
             try {
                 //ToDo do sprawdzenia
-                return Ok(await queueRepository.FullGetActiveQueueForTournamentAsync(tournamentId));
+                if(await queueRepository.FullGetActiveQueueForTournamentAsync(tournamentId) is Queue q)
+                    return Ok(q);
+                return NotFound();
             } catch (Exception) {
                 return BadRequest();
             }
