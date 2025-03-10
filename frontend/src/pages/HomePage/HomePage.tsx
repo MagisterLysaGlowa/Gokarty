@@ -1,95 +1,90 @@
-import "./homePage.css";
+import { Button, Divider, Image, Tooltip } from "@heroui/react";
+import { FaArrowRight, FaInfoCircle } from "react-icons/fa";
+import { navElements } from "../../components/Navbar/navbarUtils";
+import { Link, useNavigate } from "react-router-dom";
+import "./HomePage.css";
+import React from "react";
+
 const HomePage = () => {
+  const navigate = useNavigate();
+  const useLess = ["Strona główna", "Zawody"];
+  const navigationElements = navElements.filter(
+    (z) => !useLess.includes(z.name)
+  );
+
   return (
-    <div className="mainPageContent">
-      <h1 className="text-center p-3">Zawody Kartingowe</h1>
-      <div
-        id="carouselExampleInterval"
-        className="carousel slide w-50 mx-auto"
-        data-bs-ride="carousel"
-      >
-        <div className="carousel-inner">
-          <div className="carousel-item active" data-bs-interval="10000">
-            <img
-              src="/images/mainPage.jpg"
-              className="d-block w-100"
-              alt="picture"
-            />
-          </div>
-          <div className="carousel-item" data-bs-interval="2000">
-            <img
-              src="/images/mainPage.jpg"
-              className="d-block w-100"
-              alt="picture"
-            />
-          </div>
-          <div className="carousel-item">
-            <img
-              src="/images/mainPage.jpg"
-              className="d-block w-100"
-              alt="picture"
-            />
-          </div>
-        </div>
-        <button
-          className="carousel-control-prev"
-          type="button"
-          data-bs-target="#carouselExampleInterval"
-          data-bs-slide="prev"
-        >
-          <span
-            className="carousel-control-prev-icon"
-            aria-hidden="true"
-          ></span>
-          <span className="visually-hidden">Previous</span>
-        </button>
-        <button
-          className="carousel-control-next"
-          type="button"
-          data-bs-target="#carouselExampleInterval"
-          data-bs-slide="next"
-        >
-          <span
-            className="carousel-control-next-icon"
-            aria-hidden="true"
-          ></span>
-          <span className="visually-hidden">Next</span>
-        </button>
+    <div className="flex flex-col justify-between h-full">
+      <div className="w-full text-center flex justify-between items-center p-3">
+        <Image src="images/gokart.png" height={60} />
+        <h1 className="text-[40px] flex items-center gap-2 font-medium">
+          <span>Gokarty</span>
+          <span className="bg-main-default text-black rounded-xl px-2">
+            hub
+          </span>
+        </h1>
+        <span>Zapodaj logowanie</span>
       </div>
-
-      <section className="text-justify m-5">
-        <p>
-          ZSTiO Limanowa słynie z wysokiego poziomy nauczania zawodowego wielu
-          profilu technicznych, jednym z nich jest technik pojazdów
-          samochodowych. W celu promocji tego profilu Nasza szkoła decyduje się
-          na organizację zawodów.
+      <div className="grid grid-cols-3 bg-white py-3 border-y-8 border-main-default ">
+        <Image src="images/mainPage.jpg" className="rounded-none" />
+        <Image src="images/mainPage.jpg" className="rounded-none" />
+        <Image src="images/mainPage.jpg" className="rounded-none" />
+      </div>
+      <div className="flex flex-col justify-evenly flex-1 items-center">
+        <h2 className="text-4xl font-bold text-center">Figma bols</h2>
+        <label className="text-balance text-[15px] w-2/3 text-center">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi
+          ullam tenetur quae delectus cum quisquam modi facere consequatur
+          voluptate sed culpa excepturi, expedita dolorum porro dolore earum
+          assumenda dicta eius?Lorem ipsum dolor sit amet consectetur
+          adipisicing elit. Eligendi ullam tenetur quae delectus cum quisquam
+          modi facere consequatur voluptate sed culpa excepturi, expedita
+          dolorum porro dolore earum assumenda dicta eius?Lorem ipsum dolor sit
+          amet consectetur adipisicing elit. Eligendi ullam tenetur quae
+          delectus cum quisquam modi facere consequatur voluptate sed culpa
+          excepturi, expedita dolorum porro dolore earum assumenda dicta eius?
+        </label>
+      </div>
+      <div className="menu flex flex-col justify-center items-center gap-7 flex-wrap">
+        <Button
+          color="warning"
+          className="text-white text-2xl h-[50px]"
+          size="lg"
+          endContent={<FaArrowRight />}
+          onPress={() => navigate("/zawody")}
+        >
+          Przejdź do durniejów
+        </Button>
+        <div className="navigation flex text-6xl gap-10 h-[100px] justify-center flex-wrap">
+          {navigationElements.map((el) => (
+            <React.Fragment key={el.id}>
+              <Tooltip content={el.name} showArrow>
+                <Link to={el.to} className="homeNavigationElement">
+                  <el.icon />
+                </Link>
+              </Tooltip>
+              <Divider
+                orientation="vertical"
+                className="w-[4px] h-[80%] my-auto rounded-3xl"
+              />
+            </React.Fragment>
+          ))}
+          <Tooltip content={"Informacje"} showArrow>
+            <Link to={"/about"} className="homeNavigationElement">
+              <FaInfoCircle />
+            </Link>
+          </Tooltip>
+        </div>
+        <div className="w-2/3 text-center mb-5">
+          Przed użyciem zapoznaj się z treścią ulotki dołączonej do opakowania
+          bądź skonsultuj się z lekarzem lub farmaceutą, gdyż każdy lek
+          niewłaściwie stosowany zagraża Twojemu życiu lub zdrowiu.
+        </div>
+      </div>
+      <div className="bg-white p-3 border-t-8 border-main-default w-full">
+        <p className="text-black font-bold text-center">
+          Mechanik OG full gangsta © {new Date().getFullYear()}
         </p>
-
-        <p>
-          Interesują cię gokarty? Myślisz, że to czas aby wygrać puchary? Chcesz
-          spróbować swoich sił? Dołącz do nas! Uczestnikami zawodów może być
-          każdy uczeń Naszej szkoły, bądź uczeń szkoły zaprzyjaźnionej.
-        </p>
-
-        <p>
-          Zawody kartingowe są idealną okazją aby odnaleźć w sobie ukryty
-          talelent kierowcy, sprawdzić swoje umiejętności, wzbudzić w sobie
-          pasję do motoryzacji lub po prostu dobrze się bawić. Zawody są
-          darmowe, odbywają się one dla różnych grup wiekowych, aby zachować
-          balans umiejętności pomiędzy zawodnikami.
-        </p>
-
-        <p>
-          Baczne oko sędziów jak zarówno zaangażowanych opiekunów czuwa nad
-          bezpieczeństwem i dokładnością przebiegu rywalizacji.
-        </p>
-      </section>
-      <section className="d-flex align-items-center flex-column py-3">
-        <h4>Spróbuj swoich sił!</h4>
-        <p className="m-0">
-          W celu zapisania się na zawody skontaktuj się z nami.
-        </p>
-      </section>
+      </div>
     </div>
   );
 };

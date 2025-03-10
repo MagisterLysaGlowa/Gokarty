@@ -1,9 +1,8 @@
 import "./tournamentListElement.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare, faTableList } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { TournamentData } from "../../../types";
-
+import { Image } from "@heroui/react";
+import { FaCalendar, FaEdit, FaTable } from "react-icons/fa";
 interface TournamentListElementProps {
   data: TournamentData;
 }
@@ -14,35 +13,37 @@ const TournamentListElement: React.FC<TournamentListElementProps> = ({
   const navigate = useNavigate();
 
   return (
-    <div style={{ padding: "5px", width: "100%" }}>
-      <div className="tournamentListElementContiner p-3">
-        <img
+    <div className="bg-nav-bg-hover p-5 rounded-xl flex gap-5 border-2 border-main-default">
+      <div className="w-1/4 flex justify-center items-center">
+        <Image
           src="https://t4.ftcdn.net/jpg/04/38/89/23/360_F_438892395_rBFn1ok5VpKxI9Qc3cP1ggypplEBkcJS.jpg"
-          alt="logo"
+          className="aspect-square w-[130px]"
         />
-        <div className="tournamentContent">
-          <h5>{data.name}</h5>
-          <p>{new Date(data.startDate).toLocaleDateString()}</p>
-          <p>{new Date(data.endDate).toLocaleDateString()}</p>
-        </div>
-        <div className="tournamentsControls">
+      </div>
+      <div className="w-3/4 flex flex-col gap-3 justify-center items-center">
+        <p className="text-2xl">{data.name}</p>
+        <span className="text-[13px] text-center flex items-center gap-2">
+          <span className="flex gap-2">
+            <span>{data.startDate.toLocaleDateString()}</span>
+            <span>-</span>
+            <span>{data.endDate.toLocaleDateString()}</span>
+          </span>
+          <FaCalendar />
+        </span>
+        <div className="flex gap-5">
           <button
-            className="btn btn-dark"
-            onClick={() => {
-              navigate(`/zawody/${data.tournamentId}/wyniki`);
-            }}
+            className="flex items-center justify-around w-[150px] bg-main-default p-2 rounded-lg text-black"
+            onClick={() => navigate(`/zawody/${data.tournamentId}/wyniki`)}
           >
-            <FontAwesomeIcon icon={faTableList} />
+            <FaTable />
             <span>Tabela</span>
           </button>
           <button
-            className="btn btn-light"
-            onClick={() => {
-              navigate(`/zawody/${data.tournamentId}/edycja/`);
-            }}
+            className="flex items-center justify-around w-[150px] p-2 rounded-lg bg-black"
+            onClick={() => navigate(`/zawody/${data.tournamentId}/edycja`)}
           >
-            <FontAwesomeIcon icon={faPenToSquare} />
-            <span>Modyfikacja</span>
+            <FaEdit />
+            <span>Edytuj</span>
           </button>
         </div>
       </div>

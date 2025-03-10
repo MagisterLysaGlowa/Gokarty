@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./Modal.css";
-import "bootstrap/dist/css/bootstrap.css";
+// import "bootstrap/dist/css/bootstrap.css";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { useModal } from "../useModal";
 import { ModalProps } from "../types";

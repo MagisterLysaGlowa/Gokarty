@@ -1,0 +1,12 @@
+@import url("https://fonts.googleapis.com/css2?family=Jura:wght@300..700&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  @apply p-0 m-0 box-border font-jura;
+}
+
+.page {
+  @apply h-full p-3 max-h-[calc(100dvh-12px)];
+}

@@ -1,5 +1,4 @@
-import { TournamentData, TournamentFormData } from "../../../types";
-import { queryClient } from "../../Utils/ReactQueryConfig";
+import { TournamentFormData } from "../../../types";
 
 export const resetTournamentValues: TournamentFormData = {
   name: "",
@@ -7,17 +6,4 @@ export const resetTournamentValues: TournamentFormData = {
   startDate: new Date(),
   tournamentStateId: 1,
   tournamentTypeId: 1,
-};
-
-export const addTournamentToList = (tournament: TournamentData) => {
-  queryClient.setQueryData(
-    "getTournaments",
-    (prev: TournamentData[] | undefined) => {
-      return prev ? [...prev, tournament] : [];
-    }
-  );
-};
-
-export const updateTournament = (tournament: TournamentData) => {
-  queryClient.setQueryData("editTournament", tournament);
 };

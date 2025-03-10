@@ -2,16 +2,19 @@ import { useEffect, useState } from "react";
 import { TournamentListElement } from "../../components/componentsExport";
 import "./tournaments.css";
 import { TournamentFormData } from "../../../types";
-import { tournamentValidate } from "../../validations/TournamentValidation";
 import { resetTournamentValues } from "./TournamentUtils";
 import { TournamentQueries } from "../../queries/tournamentQuery";
+import { Button, useDisclosure } from "@heroui/react";
+import { IoMdAdd } from "react-icons/io";
+import { PageHeader } from "../../components/PageHeader/PageHeader";
+import { CreateTournamentModal } from "./TournamentCreateModal";
 
 const Tournaments = () => {
   const [tournament, SetTournament] = useState<TournamentFormData>(
     resetTournamentValues
   );
 
-  const { data, isLoading, isFetching } = TournamentQueries.getAllTournaments();
+  const { data } = TournamentQueries.getAllTournaments();
 
   const { mutateAsync: createTournamentAsync } =
     TournamentQueries.createTournament();
@@ -29,56 +32,32 @@ const Tournaments = () => {
     changeEndDate();
   }, [tournament.startDate]);
 
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
   return (
-    <div className="d-flex">
-      <div className="w-75">
-        <div className="tournamentList">
-          {isLoading || isFetching ? (
-            <p>Loading...</p>
-          ) : (
-            data?.map((z) => (
-              <TournamentListElement data={z} key={z.tournamentId} />
-            ))
-          )}
+    <div className="flex page gap-2 flex-col h-screen overflow-hidden">
+      <PageHeader />
+      <div className="flex-1 overflow-y-auto">
+        <div className="grid 2xl:grid-cols-3 gap-3 xl:grid-cols-2 py-4">
+          {data?.map((z) => (
+            <TournamentListElement data={z} key={z.tournamentId} />
+          ))}
         </div>
       </div>
-      <div className="w-25 right" style={{ margin: "5px" }}>
-        <form
-          className="d-flex flex-column tournamentForm"
-          style={{ gap: "10px" }}
-          onSubmit={(e) => e.preventDefault()}
-        >
-          <h4 className="text-center">Dodaj turniej</h4>
-          <input
-            type="text"
-            className="form-control"
-            placeholder="nazwa"
-            onChange={(e) => {
-              SetTournament({ ...tournament, name: e.target.value });
-            }}
-          />
-          <input
-            type="date"
-            className="form-control"
-            placeholder="nazwa"
-            onChange={(e) =>
-              SetTournament({
-                ...tournament,
-                startDate: new Date(e.target.value),
-              })
-            }
-          />
-          <button
-            className="btn btn-dark"
-            onClick={async () => {
-              if (await tournamentValidate(tournament))
-                await createTournamentAsync(tournament);
-            }}
-          >
-            Dodaj
-          </button>
-        </form>
-      </div>
+      <CreateTournamentModal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        setTournament={SetTournament}
+        tournament={tournament}
+        createTournamentAsync={createTournamentAsync}
+      />
+      <Button
+        isIconOnly
+        className="rounded-[50%] bg-main-default w-[100px] h-[100px] text-[60px] fixed right-5 bottom-5"
+        size="lg"
+        endContent={<IoMdAdd />}
+        onPress={onOpen}
+      />
     </div>
   );
 };

@@ -130,7 +130,7 @@ export const TournamentManegement = () => {
   return (
     <div className="p-3">
       <div className="row">
-        <div className="col-8">
+        <div>
           <table className="table table-striped">
             <thead className="table-dark">
               <tr>
@@ -155,7 +155,7 @@ export const TournamentManegement = () => {
           </table>
         </div>
         {activeQueueData ? (
-          <div className="col-4">
+          <div>
             <h3 className="bg-dark text-white p-3">Aktualny przejazd</h3>
             <div className="currentRideContainer">
               <div className="currentRide d-flex flex-column">
@@ -305,7 +305,7 @@ export const TournamentManegement = () => {
             </div>
           </div>
         ) : (
-          <div className="col-4 d-flex justify-content-center align-items-start">
+          <div className="d-flex justify-content-center align-items-start">
             <button
               type="button"
               disabled={photocellStartSeeker}

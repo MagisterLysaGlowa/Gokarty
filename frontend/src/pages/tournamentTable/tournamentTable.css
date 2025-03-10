@@ -1,42 +1,19 @@
-.currentRideContainer header {
-    padding: 10px;
-    font-size: 30px;
-    color: white;
-    text-align: center;
+.table div {
+  @apply shadow-none bg-transparent;
 }
 
-.queueList div:last-child {
-    border: none !important;
+.table tr td:last-child {
+  @apply text-red-700;
 }
 
-.queueList {
-    overflow: hidden;
+.table tr:first-child td:last-child {
+  @apply hidden;
 }
 
-.queueList div {
-    background-color: rgb(224, 224, 224);
+.tableInfoBox {
+  @apply w-full bg-[#3F3E3E]/[0.09] rounded-xl p-5;
 }
 
-.lastRide {
-    position: fixed;
-    bottom: 100px;
-    right: 10px;
-    padding: 20px;
-    border-radius: 20px;
-    border: 1px solid gray;
-    -webkit-box-shadow: 8px 8px 24px -7px rgba(66, 68, 90, 1);
-    -moz-box-shadow: 8px 8px 24px -7px rgba(66, 68, 90, 1);
-    box-shadow: 8px 8px 24px -7px rgba(66, 68, 90, 1);
-    background-color: white;
-}
-
-.lastRide div {
-    display: flex;
-    gap: 50px;
-    font-size: 20px;
-
-}
-
-.currentRideDetails input{
-    font-size: 20px;
+.tableInfoBoxRowBorder {
+  @apply border-b-3 border-gray-500 w-full;
 }

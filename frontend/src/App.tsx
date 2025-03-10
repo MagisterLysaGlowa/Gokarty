@@ -1,24 +1,33 @@
-import "bootstrap/dist/css/bootstrap.min.css";
-import Navbar from "./components/Navbar/Navbar";
-import { Outlet } from "react-router-dom";
-import { Footer } from "./components/componentsExport";
+import { Outlet, useLocation } from "react-router-dom";
+import { Navbar } from "./components/componentsExport";
+import { HeroUIProvider } from "@heroui/react";
 
 function App() {
+  const location = useLocation();
+  const { pathname } = location;
+
+  const regex = /^\/(?:zawody\/\d+\/wyniki)?$/;
+
   return (
-    <>
-      <Navbar />
-      <div
-        className="window"
-        style={{
-          minHeight: "calc(100vh - 75px - 60px)",
-          overflowY: "auto",
-          backgroundColor: "#F7F7F7",
-        }}
-      >
-        <Outlet />
-      </div>
-      <Footer />
-    </>
+    <HeroUIProvider>
+      <main className="min-h-dvh flex w-full bg-[#141414]">
+        {!regex.test(pathname) && (
+          <>
+            <Navbar />
+            <div className="w-nav-w" />
+          </>
+        )}
+        <div
+          className={`${
+            !regex.test(pathname)
+              ? "w-[calc(100%-theme(width.nav-w))]"
+              : "w-full"
+          }`}
+        >
+          <Outlet />
+        </div>
+      </main>
+    </HeroUIProvider>
   );
 }
 

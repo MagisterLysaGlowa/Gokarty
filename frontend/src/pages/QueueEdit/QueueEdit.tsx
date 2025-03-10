@@ -16,7 +16,7 @@ export const QueueEdit = () => {
 
   return (
     <div className="d-flex p-3 gap-3">
-      <div className="col-6 ">
+      <div>
         <h3 className="text-center">Obecna kolejka</h3>
         {queue && queue.length > 0 && (
           <table className="table table-striped">
@@ -41,7 +41,7 @@ export const QueueEdit = () => {
           </table>
         )}
       </div>
-      <div className="col-4">
+      <div>
         <h3 className="text-center">Możliwość dodania</h3>
         {data && data.length > 0 && (
           <table className="table table-striped">
