@@ -4,14 +4,11 @@ import { SchoolData } from "../../../types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-regular-svg-icons/faEdit";
 import { faTrash } from "@fortawesome/free-solid-svg-icons/faTrash";
-import { useModal } from "../../components/Modal/useModal";
-import { buildButton } from "../../components/Modal/Utils";
 import { schoolValidate } from "../../validations/SchoolValidation";
 import { addSchoolToList, resetSchoolValues } from "./SchoolManagementUtils";
 import { SchoolQueries } from "../../queries/schoolQuery";
 
 export const SchoolManagement = () => {
-  const modal = useModal();
   const [formData, setFormData] = useState<SchoolData>(resetSchoolValues);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -132,21 +129,7 @@ export const SchoolManagement = () => {
                     </button>
                   </td>
                   <td>
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => {
-                        modal.openModal({
-                          title: "Czy napewno chcesz usunąć szkołe?",
-                          content: school.name,
-                          buttons: [
-                            buildButton("btn btn-secondary", "Anuluj"),
-                            buildButton("btn btn-primary", "Usuń", async () =>
-                              deleteSchool(school.schoolId)
-                            ),
-                          ],
-                        });
-                      }}
-                    >
+                    <button className="btn btn-danger">
                       <FontAwesomeIcon icon={faTrash} />
                     </button>
                   </td>

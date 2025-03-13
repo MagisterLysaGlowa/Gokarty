@@ -1,0 +1,19 @@
+.tournamentButton {
+  @apply !aspect-square 
+  !w-20 
+  !h-20
+  !rounded-[50%]
+  grid 
+  place-content-center 
+  !text-3xl 
+  transition-all 
+  duration-100;
+}
+
+.adminActions {
+  @apply fixed right-10 bottom-10 flex  gap-4;
+}
+
+.selectedNavIcon {
+  @apply border-2 border-main-default;
+}

@@ -4,14 +4,11 @@ import { PlayerFilterFormData } from "../../../types";
 import { useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { useModal } from "../../components/Modal/useModal";
-import { buildButton } from "../../components/Modal/Utils";
 import { PlayerQueries } from "../../queries/playerQuery";
 import { SchoolQueries } from "../../queries/schoolQuery";
 import { queryClient } from "../../Utils/ReactQueryConfig";
 
 export const AddExistingPlayerToTournament = () => {
-  const modal = useModal();
   const { id } = useParams();
   const [playerFilter, SetPlayerFilter] = useState<PlayerFilterFormData>({
     name: "",
@@ -109,29 +106,7 @@ export const AddExistingPlayerToTournament = () => {
               <td>{player.surname}</td>
               <td>{player.school.acronym}</td>
               <td>
-                <button
-                  className="btn btn-primary"
-                  onClick={async () =>
-                    modal.openModal({
-                      title: "Dodanie do zawodów",
-                      content: `Czy napewno chcesz dodać: ${
-                        player.name + " " + player.surname
-                      } do zawodów?`,
-                      buttons: [
-                        buildButton("btn btn-secondary", "Nie"),
-                        buildButton(
-                          "btn btn-primary",
-                          "Tak",
-                          async () =>
-                            await addPlayerToTournament({
-                              playerId: player.playerId,
-                              tournamentId: Number(id),
-                            })
-                        ),
-                      ],
-                    })
-                  }
-                >
+                <button className="btn btn-primary">
                   <FontAwesomeIcon icon={faPlus} />
                 </button>
               </td>

@@ -172,3 +172,15 @@ export interface PhotoCellData {
   photocell2Activ: boolean;
   photocell3Activ: boolean;
 }
+
+export interface Times {
+  gokart: GokartData;
+  rideNumber: number;
+  time: number;
+  rideId: number;
+}
+
+export interface PlayersWithTimes {
+  player: PlayerWithSchoolData;
+  times: Times[];
+}

@@ -1,4 +1,5 @@
 ﻿using api.Data;
+using api.Dtos;
 using api.Interfaces;
 using api.Models;
 using Microsoft.EntityFrameworkCore;
@@ -99,6 +100,40 @@ namespace api.Repositories {
                 .Where(r => r.TournamentId == tournamentId)
                 .OrderByDescending(r => r.RideId)
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task<List<PlayerRidesDto>> GetGroupedRidesForTournament(int tournamentId) {
+            var rides = await _context.Rides
+                .Include(r => r.Player)
+                    .ThenInclude(r=>r.School)
+                .Include(r => r.Gokart)
+                .Where(r => r.TournamentId == tournamentId)
+                .ToListAsync();
+
+            var groupedRides = rides
+                .GroupBy(r => r.Player)
+                .Select(g => new PlayerRidesDto {
+                    Player = g.Key,
+                    Times = g.Select(r => new RideInfoDto {
+                        RideId=r.RideId,
+                        Time = r.Time,
+                        Gokart = r.Gokart,
+                        RideNumber = r.RideNumber
+                    }).OrderBy(z=>z.RideNumber).ToList()
+                })
+                .ToList();
+
+            return groupedRides;
+        }
+        public class PlayerRidesDto {
+            public Player Player { get; set; } = default!;
+            public List<RideInfoDto> Times { get; set; } = new();
+        }
+        public class RideInfoDto {
+            public int RideId { get; set; }
+            public int Time { get; set; }
+            public Gokart Gokart { get; set; }=default!;
+            public int RideNumber { get; set; }
         }
     }
 }

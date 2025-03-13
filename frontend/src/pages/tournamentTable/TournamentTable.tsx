@@ -1,53 +1,79 @@
 import "./tournamentTable.css";
 import { useParams } from "react-router-dom";
-import { useState } from "react";
-import { FullQueueData, FullRideData } from "../../../types";
+import { useEffect, useRef, useState } from "react";
 import { RideQueries } from "../../queries/rideQuery";
 import { QueueQueries } from "../../queries/queueQuery";
 import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-  getKeyValue,
-} from "@heroui/react";
-import { columns, getRows, getTableTextColor } from "./tournamentTableUtils";
+  getPaginationLength,
+  getRows,
+  isAbleToRefetch,
+} from "./tournamentTableUtils";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
+import { convertTimeToString } from "../../Utils/TimeUtils";
+import { TournamentQueries } from "../../queries/tournamentQuery";
+import React from "react";
+import { RidesTable } from "./tournamentTableComponents/RidesTable";
+import { PaginationButtons } from "./tournamentTableComponents/PaginationButtons";
+import { PaginationProgressBar } from "./tournamentTableComponents/PaginationProgressBar";
 
 const TournamentTable = () => {
   const { id } = useParams();
-  const [currentPlayer, SetCurrentPlayer] = useState<FullQueueData | null>(
-    null
+  const [page, setPage] = useState(0);
+  const pos = 10;
+
+  const { data: tournament } = TournamentQueries.getTournament(Number(id));
+
+  const { data: currentRide } = QueueQueries.getFullActiveQueueForTournament(
+    Number(id),
+    {
+      refetchInterval: 3000,
+      enabled: !!isAbleToRefetch(tournament?.tournamentStateId),
+    }
   );
-  const [queueData, setQueueData] = useState<FullQueueData[] | null>(null);
-  const [lastRide, SetLastRide] = useState<FullRideData | null>(null);
-  const { data } = RideQueries.getTournamentBestFullRides(Number(id), {
+
+  const { data: queue } = QueueQueries.getAllFullQueuesForTournament(
+    Number(id),
+    {
+      refetchInterval: 3000,
+      enabled: !!isAbleToRefetch(tournament?.tournamentStateId),
+    }
+  );
+
+  const { data: lastRide } = RideQueries.getTournamentLastFullRide(Number(id), {
     refetchInterval: 3000,
+    enabled: !!isAbleToRefetch(tournament?.tournamentStateId),
   });
 
-  QueueQueries.getFullActiveQueueForTournament(Number(id), {
-    onSuccess: (res) => SetCurrentPlayer(res),
-    onError: () => SetCurrentPlayer(null),
-    refetchInterval: 3000,
+  const time = 5000;
+
+  const { data: rides } = RideQueries.getTournamentBestFullRides(Number(id), {
+    refetchInterval: tournament?.tournamentStateId === 2 ? time : false,
+    enabled: tournament?.tournamentStateId !== 1,
   });
 
-  QueueQueries.getAllFullQueuesForTournament(Number(id), {
-    onSuccess: (res) => setQueueData(res),
-    onError: () => setQueueData(null),
-    refetchInterval: 3000,
-  });
+  const [rows, setRows] = useState(getRows(rides, page, pos));
 
-  RideQueries.getTournamentLastFullRide(Number(id), {
-    onSuccess: (res) => SetLastRide(res),
-    onError: () => SetLastRide(null),
-    refetchInterval: 3000,
-  });
+  useEffect(() => {
+    if (rides) setRows(getRows(rides, page, pos));
+  }, [page, rides]);
 
-  // const navigate = useNavigate();
+  const intervalRef = useRef<number | null>(null);
 
-  const rows = getRows(data);
+  useEffect(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+
+    intervalRef.current = setInterval(() => {
+      setPage((p) => (p + 1) % getPaginationLength(rides?.length, pos));
+    }, time);
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [rides?.length, page]);
 
   return (
     <div className="flex flex-col overflow-auto min-h-full">
@@ -57,81 +83,124 @@ const TournamentTable = () => {
       </div>
       <div className="py-4 bg-white w-full border-y-8 border-main-default" />
       <div className="flex-1 flex p-3">
-        <Table
-          aria-label="Example table with dynamic content"
-          className="bg-transparent table w-8/12"
-          hideHeader
+        <div
+          className={`!overflow-hidden ${
+            tournament && tournament.tournamentStateId <= 2
+              ? "w-8/12"
+              : "w-full"
+          } flex flex-col`}
         >
-          <TableHeader columns={columns}>
-            {(column) => (
-              <TableColumn key={column.key}>{column.label}</TableColumn>
-            )}
-          </TableHeader>
-          <TableBody items={rows ?? []}>
-            {(item) => (
-              <TableRow key={item.key}>
-                {(columnKey) => (
-                  <TableCell
-                    className={`${getTableTextColor(item.key)} text-lg`}
-                  >
-                    {getKeyValue(item, columnKey)}
-                  </TableCell>
-                )}
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-        <div className="flex flex-col flex-1 gap-3 w-4/12">
-          <div className="h-4/6 grid grid-rows-3 tableInfoBox border-2 border-main-default">
-            <div className="tableInfoBoxRowBorder flex flex-col">
-              <span className="text-center text-main-default text-3xl">
-                Ostatni przejazd:
-              </span>
-              <div className="flex-1 flex-col flex justify-evenly">
-                <div className="w-full grid grid-cols-5 text-center text-gray-400">
-                  <div>Osoba</div>
-                  <div>Gokart</div>
-                  <div>Punkty Karne</div>
-                  <div>Czas</div>
-                  <div>Rożnica</div>
-                </div>
-                <div className="w-full grid grid-cols-5 text-center items-center text-md">
-                  <div className="flex flex-col">
-                    <span>Adam Kowalski</span>
-                    <span className="text-small">ZsijTo</span>
-                  </div>
-                  <div>Czerwony XDDDDD</div>
-                  <div className="text-red-400 text-2xl">2</div>
-                  <div>00:00:000</div>
-                  <div className="text-red-400">+00:00:000</div>
-                </div>
-              </div>
+          <RidesTable rows={rows} />
+          <div className="grid grid-cols-[25%_50%_25%] place-content-center justify-center items-center">
+            <div />
+            <div className="flex justify-center items-center gap-3">
+              <PaginationButtons
+                intervalRef={intervalRef}
+                pageState={[page, setPage]}
+                rides={rides}
+                time={time}
+                quantity={pos}
+              />
             </div>
-            <div className="tableInfoBoxRowBorder flex flex-col justify-center">
-              <span className="text-center text-main-default text-3xl">
-                Jedzie:
-              </span>
-              <div className="flex items-center justify-between flex-1">
-                <FaArrowRightLong className="text-4xl text-main-default" />
-                <div className="flex w-full justify-evenly text-2xl">
-                  <div>Imie Nazwisko</div>
-                  <div>Scenic 1.9TDI</div>
-                </div>
-                <FaArrowLeftLong className="text-4xl text-main-default" />
-              </div>
-            </div>
-            <div className="w-full flex flex-col justify-center items-center gap-3">
-              <span className="text-center w-full text-main-default text-3xl">
-                Nastepni:
-              </span>
-              <ol className="text-xl">
-                {Array.from({ length: 3 }).map((_, index) => (
-                  <li>{index + 1}. Adam Jakis</li>
-                ))}
-              </ol>
+            <div className="mx-auto">
+              <PaginationProgressBar page={page} time={time} />
             </div>
           </div>
-          <div className="h-2/6 w-full bg-[#3F3E3E] rounded-xl"></div>
+        </div>
+        <div className="flex flex-col flex-1 gap-3 w-4/12">
+          {tournament && tournament.tournamentStateId == 2 && (
+            <div className="h-full grid grid-rows-[40%_30%_30%] tableInfoBox border-2 border-main-default">
+              <div className="tableInfoBoxRowBorder flex flex-col">
+                <span className="text-center text-main-default text-3xl">
+                  Ostatni przejazd:
+                </span>
+                {lastRide && (
+                  <div className="flex-1 flex-col flex justify-evenly">
+                    <div className="flex flex-col gap-3">
+                      <div className="headers grid grid-cols-3 text-center content-center text-gray-500">
+                        <span>Osoba:</span>
+                        <span>Gokart:</span>
+                        <span>Punkty karne:</span>
+                      </div>
+                      <div className="grid grid-cols-3 text-center items-center text-xl">
+                        <React.Fragment key={lastRide.rideId}>
+                          <div className="flex flex-col">
+                            <span>
+                              {lastRide.player.name +
+                                " " +
+                                lastRide.player.surname}
+                            </span>
+                            <span className="text-sm">
+                              {lastRide.player.school.acronym}
+                            </span>
+                          </div>
+                          <span>{lastRide.gokart.name}</span>
+                          <span className="text-red-700">2</span>
+                        </React.Fragment>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-3">
+                      <div className="headers grid grid-cols-3 text-center items-centers text-gray-400">
+                        <span>Miejsce:</span>
+                        <span>Czas:</span>
+                        <span>Różnica:</span>
+                      </div>
+                      <div className="grid grid-cols-3 text-center text-xl">
+                        <React.Fragment key={lastRide.rideId}>
+                          <span>
+                            {rides && lastRide
+                              ? rides.findIndex(
+                                  (ride) => ride.playerId === lastRide.playerId
+                                ) + 1
+                              : "Brak pozycji"}
+                          </span>
+                          <span>{convertTimeToString(lastRide.time)}</span>
+                          <span className="text-red-700">
+                            +
+                            {convertTimeToString(
+                              lastRide.time -
+                                (rides && rides[0] ? rides[0].time : 0)
+                            )}
+                          </span>
+                        </React.Fragment>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div className="tableInfoBoxRowBorder flex flex-col justify-center">
+                <span className="text-center text-main-default text-3xl">
+                  Jedzie:
+                </span>
+                <div className="flex items-center justify-between flex-1">
+                  {currentRide && (
+                    <React.Fragment key={currentRide.queueId}>
+                      <FaArrowRightLong className="text-4xl text-main-default" />
+                      <div className="flex w-full justify-evenly text-2xl">
+                        <div>
+                          {currentRide.player.name +
+                            " " +
+                            currentRide.player.surname}
+                        </div>
+                        <div>{currentRide.gokart.name}</div>
+                      </div>
+                      <FaArrowLeftLong className="text-4xl text-main-default" />
+                    </React.Fragment>
+                  )}
+                </div>
+              </div>
+              <div className="w-full flex flex-col justify-center items-center gap-3">
+                <span className="text-center w-full text-main-default text-3xl">
+                  Nastepni:
+                </span>
+                <ol className="text-xl flex-1">
+                  {queue?.slice(0, 3).map(({ player }) => (
+                    <li>{`${player.name} ${player.surname}`}</li>
+                  ))}
+                </ol>
+              </div>
+            </div>
+          )}
         </div>
       </div>
       <div className="py-4 bg-white w-full border-y-8 border-main-default" />

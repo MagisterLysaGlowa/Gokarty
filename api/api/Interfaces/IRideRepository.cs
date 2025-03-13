@@ -1,4 +1,5 @@
 ﻿using api.Models;
+using static api.Repositories.RideRepository;
 
 namespace api.Interfaces
 {
@@ -14,5 +15,6 @@ namespace api.Interfaces
         Task<List<Ride>> FullGetBestForTournamentAsync(int tournamentId);
         Task<int?> FindRideNumberAsync(int tournamentId, int playerId);
         Task<Ride?> FullGetLastAddedForTournamentAsync(int tournamentId);
+        Task<List<PlayerRidesDto>> GetGroupedRidesForTournament(int tournamentId);
     }
 }

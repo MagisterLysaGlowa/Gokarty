@@ -1,317 +1,106 @@
-import { useNavigate, useParams } from "react-router-dom";
 import "./tournamentEdit.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useState } from "react";
-import { TournamentData, TournamentType } from "../../../types";
-import {
-  handleChange,
-  tournamentStringFromState,
-  updateTournamentState,
-} from "./TournamentEditUtils";
-import { useModal } from "../../components/Modal/useModal";
-import { buildButton } from "../../components/Modal/Utils";
-import { tournamentValidate } from "../../validations/TournamentValidation";
-import { TournamentQueries } from "../../queries/tournamentQuery";
-import { PlayerQueries } from "../../queries/playerQuery";
-import { convertDateToInputValue } from "../../Utils/gloablUtils";
+import { useState } from "react";
+
+import { AiOutlineUsergroupAdd } from "react-icons/ai";
+import { IconType } from "react-icons";
+import { FaCar, FaEdit, FaUsers } from "react-icons/fa";
+import React from "react";
+import { Divider, Tooltip } from "@heroui/react";
+import { PageHeader } from "../../components/PageHeader/PageHeader";
+import { TournamentInfo } from "./TournamentEditPages/TournamentInfo";
+import { TournamentRides } from "./TournamentEditPages/TournamentRides";
 
 const TournamentEdit = () => {
-  const modal = useModal();
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const [tournament, SetTournament] = useState<TournamentData>({
-    endDate: new Date(),
-    startDate: new Date(),
-    name: "",
-    tournamentId: -1,
-    tournamentStateId: -1,
-    tournamentType: {} as TournamentType,
-    tournamentTypeId: -1,
-  });
-
-  const { isLoading } = TournamentQueries.getTournament(Number(id), {
-    onSuccess: (res) => {
-      SetTournament(res);
-    },
-  });
-
-  const { data: tournamentPlayers, isLoading: tournamentPlayersLoading } =
-    PlayerQueries.getPlayersForTournamentWithSchool(Number(id));
-
-  const { mutateAsync: updateTournamentAsync } =
-    TournamentQueries.updateTournament();
-
-  const { mutate: deletePlayerFromTournament } =
-    PlayerQueries.removePlayerFromTournament();
-
-  const { mutateAsync: deleteTournamentAsync } =
-    TournamentQueries.removeTournament({
-      onSuccess: () => navigate(-1),
-    });
-
   /*
     Ustawia date zakończenia zawodów na date rozpoczęcia zawodów
     gdy aktualizujesz zawody które są w fazie planowania.
     Wynika to z walidacji dat turnieju gdzie data końca
     nie może być mniejsza niż data startu.
   */
-  useEffect(() => {
-    const setEndDate = () => {
-      if (tournament.tournamentStateId == 1)
-        SetTournament((prev) => ({ ...prev, endDate: prev.startDate }));
-    };
-    setEndDate();
-  }, [tournament.startDate, tournament.tournamentStateId]);
+  type NavList = {
+    id: number;
+    name: string;
+    icon: IconType;
+    element: options;
+  };
+  enum options {
+    Edycja = 0,
+    DodajGracza,
+    Gracze,
+    Przejazdy,
+  }
+  const navList: NavList[] = [
+    {
+      id: 0,
+      name: "Dodaj zawodnika",
+      icon: AiOutlineUsergroupAdd,
+      element: options.DodajGracza,
+    },
+    {
+      id: 1,
+      name: "Zawodnicy",
+      icon: FaUsers,
+      element: options.Gracze,
+    },
+    {
+      id: 2,
+      name: "Edycja turnieju",
+      icon: FaEdit,
+      element: options.Edycja,
+    },
+    {
+      id: 3,
+      name: "Przejazdy",
+      icon: FaCar,
+      element: options.Przejazdy,
+    },
+  ];
 
-  if (isLoading) return;
+  const getComponent = (path: options) => {
+    switch (path) {
+      case options.Edycja:
+        return <TournamentInfo />;
+      case options.DodajGracza:
+        return <h1>Cosik</h1>;
+      case options.Gracze:
+        return <h1>Gracze</h1>;
+      case options.Przejazdy:
+        return <TournamentRides />;
+      default:
+        return <h1>Syf</h1>;
+    }
+  };
+  const [path, setPath] = useState<options>(options.Edycja);
+
   return (
-    <div className="p-5">
-      <div className="d-flex justify-content-evenly">
-        <div className="editTournamentForm">
-          <h3>Edytuj dane turnieju</h3>
-          <form onSubmit={(e) => e.preventDefault()}>
-            <div>
-              <label htmlFor="name">Nazwa</label>
-              <input
-                type="text"
-                className="form-control"
-                placeholder="nazwa"
-                id="name"
-                value={tournament?.name}
-                name="name"
-                onChange={(e) => handleChange(e, SetTournament)}
-              />
-            </div>
-            <div>
-              {tournament.tournamentStateId == 1 ? (
-                <label htmlFor="startDate">Data planowanego rozpoczęcia</label>
-              ) : (
-                <label htmlFor="startDate">Data rozpoczęcia</label>
-              )}
-              <input
-                type="date"
-                className="startDate form-control"
-                id="startDate"
-                name="startDate"
-                value={convertDateToInputValue(tournament.startDate)}
-                onChange={(e) => {
-                  SetTournament((prev) => ({
-                    ...prev,
-                    startDate: new Date(e.target.value),
-                  }));
-                }}
-              />
-            </div>
-            <div>
-              {tournament.tournamentStateId != 1 && (
-                <>
-                  {tournament.tournamentStateId == 2 ? (
-                    <label htmlFor="endDate">
-                      Data planowanego zakończenia
-                    </label>
-                  ) : (
-                    <label htmlFor="endDate">Data zakończenia</label>
-                  )}
-                  <input
-                    type="date"
-                    className="endDate form-control"
-                    id="endDate"
-                    name="endDate"
-                    value={convertDateToInputValue(tournament.endDate)}
-                    onChange={(e) => {
-                      SetTournament((prev) => ({
-                        ...prev,
-                        endDate: new Date(e.target.value),
-                      }));
-                    }}
-                  />
-                </>
-              )}
-            </div>
-            <div>
-              <label>Rodzaj kolejki</label>
-              <select
-                defaultValue={tournament.tournamentTypeId}
-                className="form-control"
-                onChange={(e) => {
-                  SetTournament((prev) => ({
-                    ...prev,
-                    tournamentTypeId: Number(e.target.value),
-                  }));
-                }}
-              >
-                <option value="1">Zapętlona</option>
-                <option value="2">Nieskończona</option>
-              </select>
-            </div>
-            <button
-              className="btn btn-primary"
-              onClick={async () => {
-                if (await tournamentValidate(tournament))
-                  await updateTournamentAsync(tournament);
-              }}
-            >
-              Zatwierdź
-            </button>
-          </form>
-        </div>
-        <div className="manageTournamentForm">
-          <h3>Zarządzaj zawodami</h3>
-          <div className="d-flex flex-column" style={{ gap: "10px" }}>
-            {tournament.tournamentStateId != 3 && (
-              <button
-                type="button"
-                className={`btn btn-${
-                  tournament.tournamentStateId == 1 ? "primary" : "danger"
-                }`}
-                onClick={() =>
-                  modal.openModal({
-                    title: tournamentStringFromState(tournament),
-                    content: tournament.name,
-                    buttons: [
-                      buildButton("btn btn-secondary", "Nie"),
-                      buildButton(
-                        "btn btn-primary",
-                        "Tak",
-                        async () =>
-                          await updateTournamentState(
-                            tournament,
-                            updateTournamentAsync
-                          )
-                      ),
-                    ],
-                  })
-                }
-              >
-                {tournament.tournamentStateId == 1 ? "Rozpocznij" : "Zakończ"}
-              </button>
-            )}
-            {tournament.tournamentStateId == 3 && (
-              <button className="btn btn-secondary disabled">
-                Zawody zakończone
-              </button>
-            )}
-            {tournament.tournamentStateId == 2 && (
-              <button
-                className="btn btn-primary"
-                onClick={() => {
-                  if (tournament.tournamentTypeId == 2) {
-                    window.open(`/zawody/${id}/zarzadzanie`);
-                  } else navigate(`/zawody/${id}/zarzadzanie`);
-                }}
-              >
-                Zarządzaj
-              </button>
-            )}
-            <button
-              className="btn btn-danger"
-              onClick={() =>
-                modal.openModal({
-                  title: "Czy napewno chcesz usunąć zawody?",
-                  content: tournament.name,
-                  buttons: [
-                    buildButton("btn btn-secondary", "Anuluj"),
-                    buildButton(
-                      "btn btn-primary",
-                      "Usuń",
-                      async () =>
-                        await deleteTournamentAsync(tournament.tournamentId)
-                    ),
-                  ],
-                })
-              }
-            >
-              Usuń
-            </button>
-          </div>
-        </div>
+    <div className="page flex min-h-full max-h-full">
+      <div className="w-11/12 flex flex-col">
+        <PageHeader />
+        <div className="w-full flex-1 overflow-auto">{getComponent(path)}</div>
       </div>
-      <div className="playersEditSection">
-        <div className="d-flex" style={{ gap: "10px" }}>
-          <h3>Uczestnicy</h3>
-          <button
-            className="btn btn-primary"
-            onClick={() => navigate(`/zawody/${id}/edycja/zawodnik`)}
-          >
-            Dodaj nowego zawodnika
-          </button>
-          <button
-            className="btn btn-primary"
-            onClick={() =>
-              window.open(
-                `/zawody/${id}/edycja/dodaj_istniejacych_zawodnikow`,
-                "_blank"
-              )
-            }
-          >
-            Dodaj istniejącego zawodnika
-          </button>
+      <div className="flex items-center justify-center flex-col w-1/12">
+        <div className="flex justify-center items-center flex-col gap-10">
+          {navList.map((el, index) => (
+            <React.Fragment key={el.id}>
+              <Tooltip content={el.name} showArrow placement="left">
+                <button
+                  className={`homeNavigationElement !aspect-square ${
+                    path === el.element ? "selectedNavIcon" : ""
+                  }`}
+                  onClick={() => setPath(el.element)}
+                >
+                  <el.icon />
+                </button>
+              </Tooltip>
+              {index < navList.length - 1 && (
+                <Divider
+                  orientation="horizontal"
+                  className="h-[4px] rounded-lg"
+                />
+              )}
+            </React.Fragment>
+          ))}
         </div>
-        <table className="table table-striped">
-          <thead className="table-dark">
-            <tr>
-              <th>Lp</th>
-              <th>Imie</th>
-              <th>Nazwisko</th>
-              <th>Data urodzenia</th>
-              <th>Szkoła</th>
-              <th>Edytuj</th>
-              <th>Usuń</th>
-            </tr>
-          </thead>
-          <tbody>
-            {tournamentPlayersLoading ? (
-              <tr>
-                <td>Loading...</td>
-              </tr>
-            ) : (
-              tournamentPlayers?.map((element, index) => (
-                <tr key={element.playerId}>
-                  <td>{index + 1}</td>
-                  <td>{element.name}</td>
-                  <td>{element.surname}</td>
-                  <td>{new Date(element.birthDate).toLocaleDateString()}</td>
-                  <td>{element.school.acronym}</td>
-                  <td>
-                    <button
-                      className="btn btn-primary"
-                      onClick={() =>
-                        navigate(
-                          `/zawody/${id}/edycja/zawodnik/${element.playerId}`
-                        )
-                      }
-                    >
-                      <FontAwesomeIcon icon={faEdit} />
-                    </button>
-                  </td>
-                  <td>
-                    <button
-                      className="btn btn-danger"
-                      onClick={() =>
-                        modal.openModal({
-                          title: "Czy napewno chcesz usunąć zawodnika?",
-                          content: element.name + " " + element.surname,
-                          buttons: [
-                            buildButton("btn btn-secondary", "Anuluj"),
-                            buildButton("btn btn-primary", "Usuń", async () =>
-                              deletePlayerFromTournament({
-                                tournamentId: Number(id),
-                                playerId: element.playerId,
-                              })
-                            ),
-                          ],
-                        })
-                      }
-                    >
-                      <FontAwesomeIcon icon={faTrash} />
-                    </button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
       </div>
     </div>
   );

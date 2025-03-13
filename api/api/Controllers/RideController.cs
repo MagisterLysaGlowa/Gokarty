@@ -121,5 +121,14 @@ namespace api.Controllers {
                 return BadRequest();
             }
         }
+        [HttpGet("full/tournament/{tournamentId}/all")]
+        public async Task<IActionResult> GetFullAllForTournament(int tournamentId) {
+            try {
+                return Ok(await rideRepository.GetGroupedRidesForTournament(tournamentId));
+            } catch (Exception) {
+                return BadRequest();
+            }
+        }
     }
+    
 }

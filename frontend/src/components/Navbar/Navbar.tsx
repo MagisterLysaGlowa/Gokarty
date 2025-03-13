@@ -10,8 +10,12 @@ const Navbar = () => {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    if (selected != -1) return;
-    setSelected(() => navElements.find((z) => z.to == pathname)!.id);
+    setSelected(
+      () =>
+        navElements.find((z) =>
+          z.to.substring(1).startsWith(pathname.split("/")[1])
+        )?.id ?? -1
+    );
   }, [pathname, selected]);
 
   return (

@@ -57,6 +57,12 @@ class RideService {
     const response = await apiClient.get<FullRideData>(`/ride/full/${rideId}`);
     return response.data;
   }
+  static async getAllFullRidesForTournament(tournamentId: number) {
+    const response = await apiClient.get(
+      `/ride/full/tournament/${tournamentId}/all`
+    );
+    return response.data;
+  }
 }
 
 export default RideService;

@@ -1,16 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 // import "./AddGokart.css";
 import { GokartData } from "../../../types";
-import { handleChange } from "../TournamentEdit/TournamentEditUtils";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useModal } from "../../components/Modal/useModal";
-import { buildButton } from "../../components/Modal/Utils";
-import { gokartValidate } from "../../validations/GokartValidation";
 import { resetGokartValues } from "./AddGokartUtils";
 import { GokartQueries } from "../../queries/gokartQuery";
 import {
-  BreadcrumbItem,
-  Breadcrumbs,
   Button,
   Checkbox,
   Input,
@@ -24,7 +17,6 @@ import {
 } from "@heroui/react";
 
 export const AddGokart = () => {
-  const modal = useModal();
   const [gokart, Setgokart] = useState<GokartData>({
     name: "",
     gokartId: -1,

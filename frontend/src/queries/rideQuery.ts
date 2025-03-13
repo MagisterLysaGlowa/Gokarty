@@ -5,7 +5,13 @@ import {
   UseQueryOptions,
 } from "react-query";
 import RideService from "../services/ride";
-import { FullRideData, GokartData, RideData, RideFormData } from "../../types";
+import {
+  FullRideData,
+  GokartData,
+  PlayersWithTimes,
+  RideData,
+  RideFormData,
+} from "../../types";
 import {
   createRideTexts,
   promiseToast,
@@ -132,7 +138,20 @@ const useRemoveRide = (options?: UseMutationOptions<number, Error, number>) => {
   });
 };
 
+const useGetPlayersWithTimes = (
+  tournamentId: number,
+  options?: UseQueryOptions<PlayersWithTimes[], Error>
+) => {
+  return useQuery({
+    queryKey: "playersWithTimes",
+    queryFn: async () =>
+      await RideService.getAllFullRidesForTournament(tournamentId),
+    ...options,
+  });
+};
+
 export const RideQueries = {
+  getAllPlayersWithTimes: useGetPlayersWithTimes,
   getAllRides: useGetAllRides,
   getRide: useGetRideByID,
   getAllFullRides: useGetAllFullRides,
