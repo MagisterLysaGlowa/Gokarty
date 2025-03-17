@@ -25,7 +25,8 @@ export default {
         'support': 'rgb(217,217,217,0.1)'
       },
       width: {
-        'nav-w': "100px"
+        'nav-w': "100px",
+
       },
       minWidth: {
         'nav-w': "100px"

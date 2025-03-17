@@ -4,37 +4,68 @@ import HomePage from "../pages/HomePage/HomePage";
 import LoginPage from "../pages/LoginPage/LoginPage";
 import RegisterPage from "../pages/RegisterPage/RegisterPage";
 import Tournaments from "../pages/Tournaments/Tournaments";
-import TournamentEdit from "../pages/TournamentEdit/TournamentEdit";
 import TournamentTable from "../pages/tournamentTable/TournamentTable";
 import { SchoolManagement } from "../pages/SchoolManagemet/SchoolManagement";
-import { AddPlayer } from "../pages/AddPlayer/AddPlayer";
 import { AddGokart } from "../pages/AddGokart/AddGokart";
 import { TournamentManegement } from "../pages/TournamenManagement/TournamentManegement";
-import { RideEdit } from "../pages/RideEdit/RideEdit";
-import { AddExistingPlayerToTournament } from "../pages/AddExistingPlayerToTournament/AddExistingPlayerToTournament";
 import { QueueEdit } from "../pages/QueueEdit/QueueEdit";
+import { EmptyLayout } from "../layouts/EmptyLayout";
+import { MainNavigationLayout } from "../layouts/MainNavigationLayout";
+import { DualNavigationManagment } from "../layouts/DualNavigationManagment";
+import { TournamentRides } from "../pages/TournamentEdit/TournamentEditPages/tournamentRides/TournamentRides";
+import { TournamentInfo } from "../pages/TournamentEdit/TournamentEditPages/tournamentInfo/TournamentInfo";
+import { AddPlayerForTournament } from "../pages/TournamentEdit/TournamentEditPages/addPlayerForTournament/AddPlayerForTournament";
+import { PlayersForTournament } from "../pages/TournamentEdit/TournamentEditPages/playersForTournament/PlayersForTournament";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
     children: [
-      { path: "", element: <HomePage /> },
-      { path: "login", element: <LoginPage /> },
-      { path: "register", element: <RegisterPage /> },
-      { path: "zawody", element: <Tournaments /> },
-      { path: "gokart", element: <AddGokart /> },
-      { path: "przejazd/:id/edytuj", element: <RideEdit /> },
-      { path: "zawody/:id/zarzadzanie", element: <TournamentManegement /> },
-      { path: "zawody/:id/wyniki", element: <TournamentTable /> },
-      { path: "zawody/:id/edycja", element: <TournamentEdit /> },
-      { path: "szkoly", element: <SchoolManagement /> },
-      { path: "zawody/:id/edycja/zawodnik", element: <AddPlayer /> },
-      { path: "zawody/:id/edycja/zawodnik/:playerId", element: <AddPlayer /> },
       {
-        path: "zawody/:id/edycja/dodaj_istniejacych_zawodnikow",
-        element: <AddExistingPlayerToTournament />,
+        path: "/",
+        element: <EmptyLayout />,
+        children: [
+          { path: "", element: <HomePage /> },
+          { path: "login", element: <LoginPage /> },
+          { path: "register", element: <RegisterPage /> },
+          { path: "zawody/:id/wyniki", element: <TournamentTable /> },
+        ],
       },
+      {
+        path: "/",
+        element: <MainNavigationLayout />,
+        children: [
+          { path: "zawody", element: <Tournaments /> },
+          { path: "gokart", element: <AddGokart /> },
+          { path: "szkoly", element: <SchoolManagement /> },
+        ],
+      },
+      {
+        path: "zawody",
+        element: <DualNavigationManagment />,
+        children: [
+          { path: ":id/:tournamentName/", element: <TournamentInfo /> },
+          {
+            path: ":id/:tournamentName/przejazdy",
+            element: <TournamentRides />,
+          },
+          {
+            path: ":id/:tournamentName/zawodnicy",
+            element: <PlayersForTournament />,
+          },
+          {
+            path: ":id/:tournamentName/dodaj zawodnikow",
+            element: <AddPlayerForTournament />,
+          },
+        ],
+      },
+
+      // { path: "przejazd/:id/edytuj", element: <RideEdit /> },
+      { path: "zawody/:id/zarzadzanie", element: <TournamentManegement /> },
+      // { path: "zawody/:id/edycja/zawodnik", element: <AddPlayer /> },
+      // { path: "zawody/:id/edycja/zawodnik/:playerId", element: <AddPlayer /> },
+
       {
         path: "zawody/:id/kolejka",
         element: <QueueEdit />,

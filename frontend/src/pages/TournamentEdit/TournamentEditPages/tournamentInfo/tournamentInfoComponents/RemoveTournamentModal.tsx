@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { TournamentQueries } from "../../../queries/tournamentQuery";
+
 import {
   Modal,
   ModalContent,
@@ -8,21 +8,22 @@ import {
   ModalFooter,
   Button,
 } from "@heroui/react";
-import { TournamentData } from "../../../../types";
-import { useNavigate } from "react-router-dom";
 
-type ModalProsp = {
-  isOpen: boolean;
-  onOpenChange: () => void;
+import { useNavigate } from "react-router-dom";
+import { TournamentQueries } from "../../../../../queries/tournamentQuery";
+import { ModalProps, TournamentData } from "../../../../../../types";
+
+type RemoveTournamentProps = {
+  removeModalProps: ModalProps;
   tournament: TournamentData;
 };
 
-export const RemoveTournamentModal: FC<ModalProsp> = ({
-  isOpen,
-  onOpenChange,
+export const RemoveTournamentModal: FC<RemoveTournamentProps> = ({
+  removeModalProps,
   tournament,
 }) => {
   const navigate = useNavigate();
+  const { isOpen, onOpenChange } = removeModalProps;
   const { mutateAsync: removeTournamentAsync } =
     TournamentQueries.removeTournament({
       onSuccess: () => navigate(-1),

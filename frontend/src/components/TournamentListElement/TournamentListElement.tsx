@@ -40,7 +40,9 @@ const TournamentListElement: React.FC<TournamentListElementProps> = ({
           </button>
           <button
             className="flex items-center justify-around w-[150px] p-2 rounded-lg bg-black"
-            onClick={() => navigate(`/zawody/${data.tournamentId}/edycja`)}
+            onClick={() =>
+              navigate(`/zawody/${data.tournamentId}/${data.name}`)
+            }
           >
             <FaEdit />
             <span>Edytuj</span>

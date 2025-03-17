@@ -76,7 +76,7 @@ const TournamentTable = () => {
   }, [rides?.length, page]);
 
   return (
-    <div className="flex flex-col overflow-auto min-h-full">
+    <div className="flex flex-col overflow-auto min-h-full w-full">
       <div className="text-center text-5xl p-3 max-h-dvh font-jura flex gap-3 justify-center">
         <span>Tabela</span>
         <span className="text-main-default">Wyników</span>

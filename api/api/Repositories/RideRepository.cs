@@ -118,10 +118,11 @@ namespace api.Repositories {
                         RideId=r.RideId,
                         Time = r.Time,
                         Gokart = r.Gokart,
-                        RideNumber = r.RideNumber
+                        RideNumber = r.RideNumber,
+                        IsDSQ=r.IsDisqualified,
                     }).OrderBy(z=>z.RideNumber).ToList()
                 })
-                .ToList();
+                .OrderBy(z=>z.Player.PlayerId).ToList();
 
             return groupedRides;
         }
@@ -134,6 +135,7 @@ namespace api.Repositories {
             public int Time { get; set; }
             public Gokart Gokart { get; set; }=default!;
             public int RideNumber { get; set; }
+            public bool IsDSQ { get; set; }
         }
     }
 }

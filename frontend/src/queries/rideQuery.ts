@@ -143,7 +143,7 @@ const useGetPlayersWithTimes = (
   options?: UseQueryOptions<PlayersWithTimes[], Error>
 ) => {
   return useQuery({
-    queryKey: "playersWithTimes",
+    queryKey: ["playersWithTimes", tournamentId],
     queryFn: async () =>
       await RideService.getAllFullRidesForTournament(tournamentId),
     ...options,

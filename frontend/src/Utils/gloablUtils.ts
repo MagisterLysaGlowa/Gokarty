@@ -1,3 +1,5 @@
+import { SlotsToClasses } from "@heroui/react";
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type DeepKeys<T, Prefix extends string = ""> = {
   [K in keyof T]: T[K] extends object
@@ -21,3 +23,25 @@ export const handleInputChange =
 
 export const convertDateToInputValue = (date: Date) =>
   date.toISOString().split("T")[0];
+
+export const basicTableClasses:
+  | SlotsToClasses<
+      | "base"
+      | "table"
+      | "tbody"
+      | "td"
+      | "tfoot"
+      | "th"
+      | "thead"
+      | "tr"
+      | "wrapper"
+      | "sortIcon"
+      | "emptyWrapper"
+      | "loadingWrapper"
+    >
+  | undefined = {
+  wrapper: "bg-transparent shadow-none px-0",
+};
+
+export const defaultVariant: "flat" | "bordered" | "underlined" | "faded" =
+  "bordered";

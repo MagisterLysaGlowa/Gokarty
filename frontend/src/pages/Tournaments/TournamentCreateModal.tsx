@@ -11,6 +11,7 @@ import {
   Button,
 } from "@heroui/react";
 import { tournamentValidate } from "../../validations/TournamentValidation";
+import { defaultVariant } from "../../Utils/gloablUtils";
 
 type TournamentCreateModalParams = {
   tournament: TournamentFormData;
@@ -62,6 +63,7 @@ export const CreateTournamentModal: React.FC<TournamentCreateModalParams> = ({
                 label="Nazwa"
                 placeholder="Podaj nazwe turnieju"
                 value={tournament.name}
+                variant={defaultVariant}
                 onChange={(e) =>
                   setTournament((prev) => ({ ...prev, name: e.target.value }))
                 }

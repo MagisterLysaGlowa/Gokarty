@@ -59,3 +59,11 @@ export function convertTimeToMs(time: Time): number {
 
   return totalMs;
 }
+export const calculateTimeFromStringToMs = (time: string) => {
+  return time
+    .split(":")
+    .map(Number)
+    .reverse()
+    .map((value, index) => value * [1, 1000, 60000][index])
+    .reduce((sum, current) => sum + current, 0);
+};

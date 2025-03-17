@@ -134,7 +134,7 @@ const useFilterPlayers = (
   options?: UseQueryOptions<PlayerWithSchoolData[], Error>
 ) => {
   return useQuery({
-    queryKey: ["players" + "filter", data],
+    queryKey: ["players" + "filter"],
     queryFn: async () => await PlayerService.filterPlayers(data),
     enabled: !!data,
     ...options,
@@ -159,7 +159,7 @@ const useAddPlayerToTournament = (
     //Todo: do sprawdzenia
     onSuccess: (r, v, c) => {
       handleSuccessWithRefreshOnSuccess(
-        [["players" + "tournament" + "withSchool"]],
+        [["players" + "tournament" + "withSchool"], ["players" + "filter"]],
         options?.onSuccess
       )(r, v, c);
     },

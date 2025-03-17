@@ -123,9 +123,9 @@ export interface FullRideData {
   gokartId: number;
   time: number;
   rideNumber: number;
-  tournament: TournamentData;
-  player: PlayerWithSchoolData;
-  gokart: GokartData;
+  tournament?: TournamentData;
+  player?: PlayerWithSchoolData;
+  gokart?: GokartData;
   isDisqualified: boolean;
 }
 
@@ -178,9 +178,16 @@ export interface Times {
   rideNumber: number;
   time: number;
   rideId: number;
+  isDSQ: boolean;
 }
 
 export interface PlayersWithTimes {
   player: PlayerWithSchoolData;
   times: Times[];
 }
+
+export type ModalProps = {
+  isOpen: boolean;
+  onOpenChange: () => void;
+  onOpen: () => void;
+};

@@ -9,7 +9,3 @@
 .tableInfoBoxRowBorder {
   @apply border-b-3 border-gray-500 w-full;
 }
-
-table tr {
-  @apply grid grid-cols-[10%_45%_15%_15%_15%] items-center;
-}

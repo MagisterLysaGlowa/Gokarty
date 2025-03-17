@@ -15,6 +15,7 @@ import {
   ModalHeader,
   useDisclosure,
 } from "@heroui/react";
+import { defaultVariant } from "../../Utils/gloablUtils";
 
 export const AddGokart = () => {
   const [gokart, Setgokart] = useState<GokartData>({
@@ -52,13 +53,13 @@ export const AddGokart = () => {
                 <Input
                   label="Email"
                   placeholder="Enter your email"
-                  variant="bordered"
+                  variant={defaultVariant}
                 />
                 <Input
                   label="Password"
                   placeholder="Enter your password"
                   type="password"
-                  variant="bordered"
+                  variant={defaultVariant}
                 />
                 <div className="flex py-2 px-1 justify-between">
                   <Checkbox

@@ -10,25 +10,23 @@ import {
   Select,
   SelectItem,
 } from "@heroui/react";
-import { TournamentData } from "../../../../types";
 import { parseDate } from "@internationalized/date";
-import { TournamentQueries } from "../../../queries/tournamentQuery";
+import { TournamentQueries } from "../../../../../queries/tournamentQuery";
+import { tournamentValidate } from "../../../../../validations/TournamentValidation";
+import { ModalProps, TournamentData } from "../../../../../../types";
 
-import { tournamentValidate } from "../../../validations/TournamentValidation";
-
-type ModalProsp = {
-  isOpen: boolean;
-  onOpenChange: () => void;
+type EditModalProps = {
+  modalProps: ModalProps;
   tournament: TournamentData;
   setTournament: React.Dispatch<React.SetStateAction<TournamentData>>;
 };
 
-export const EditTournamentModal: React.FC<ModalProsp> = ({
-  isOpen,
-  onOpenChange,
+export const EditTournamentModal: React.FC<EditModalProps> = ({
+  modalProps,
   tournament,
   setTournament,
 }) => {
+  const { isOpen, onOpenChange } = modalProps;
   const { mutateAsync: updateTournamentAsync } =
     TournamentQueries.updateTournament();
 

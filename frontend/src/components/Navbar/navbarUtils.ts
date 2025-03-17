@@ -12,7 +12,7 @@ export const navElements: NavbarListElementSchema[] = [
     id: 1,
     name: "Strona główna",
     icon: FaHome,
-    to: "",
+    to: "/",
   },
   {
     id: 2,
