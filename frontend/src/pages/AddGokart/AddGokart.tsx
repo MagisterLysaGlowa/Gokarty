@@ -1,91 +1,67 @@
+import { Button, Input, useDisclosure } from "@heroui/react";
 import { useState } from "react";
-// import "./AddGokart.css";
-import { GokartData } from "../../../types";
-import { resetGokartValues } from "./AddGokartUtils";
-import { GokartQueries } from "../../queries/gokartQuery";
-import {
-  Button,
-  Checkbox,
-  Input,
-  Link,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  useDisclosure,
-} from "@heroui/react";
-import { defaultVariant } from "../../Utils/gloablUtils";
+import { EditGokartModal } from "./addGokartComponents/EditGokartModal";
+import { RemoveGokartModal } from "./addGokartComponents/RemoveGokartModal";
+import { GokartTable } from "./addGokartComponents/GokartTable";
+import { IoMdAdd } from "react-icons/io";
+import { AddGokartModal } from "./addGokartComponents/AddGokartModal";
+import { FaMagnifyingGlass } from "react-icons/fa6";
+
+export type GokartRow = {
+  lp: number;
+  key: number;
+  name: string;
+};
 
 export const AddGokart = () => {
-  const [gokart, Setgokart] = useState<GokartData>({
-    name: "",
-    gokartId: -1,
-  });
+  const [gokart, setGokart] = useState<GokartRow | undefined>(undefined);
+  const [filter, setFilter] = useState("");
 
-  const { data: allGokarts } = GokartQueries.getAllGokarts();
+  const editGokartModal = useDisclosure();
+  const removeGokartModal = useDisclosure();
+  const addGokartModal = useDisclosure();
 
-  const { mutateAsync: createGokart } = GokartQueries.createGokart({
-    onSuccess: () => {
-      Setgokart(resetGokartValues);
-    },
-  });
-
-  const { mutateAsync: removeGokart } = GokartQueries.removeGokart();
-
-  const { mutateAsync: updateGokart } = GokartQueries.updateGokart({
-    onSuccess: () => {
-      Setgokart(resetGokartValues);
-    },
-  });
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   return (
-    <div className="page">
-      <Button color="primary" onPress={onOpen}>
-        Open Modal
-      </Button>
-      <Modal isOpen={isOpen} placement="top-center" onOpenChange={onOpenChange}>
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">Log in</ModalHeader>
-              <ModalBody>
-                <Input
-                  label="Email"
-                  placeholder="Enter your email"
-                  variant={defaultVariant}
-                />
-                <Input
-                  label="Password"
-                  placeholder="Enter your password"
-                  type="password"
-                  variant={defaultVariant}
-                />
-                <div className="flex py-2 px-1 justify-between">
-                  <Checkbox
-                    classNames={{
-                      label: "text-small",
-                    }}
-                  >
-                    Remember me
-                  </Checkbox>
-                  <Link color="primary" href="#" size="sm">
-                    Forgot password?
-                  </Link>
-                </div>
-              </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="flat" onPress={onClose}>
-                  Close
-                </Button>
-                <Button color="primary" onPress={onClose}>
-                  Sign in
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
+    <div className="flex-1">
+      <div className="my-3">
+        <Input
+          className="w-1/3"
+          variant="bordered"
+          placeholder="Wyszukiwarka"
+          startContent={<FaMagnifyingGlass />}
+          onValueChange={(e) => setFilter(e)}
+          value={filter}
+        />
+      </div>
+      <GokartTable
+        editGokartModal={editGokartModal}
+        removeGokartModal={removeGokartModal}
+        setGokart={setGokart}
+        filter={filter}
+      />
+      {gokart && (
+        <>
+          <EditGokartModal
+            modalProps={editGokartModal}
+            gokart={gokart}
+            key={`edit-${gokart.key}`}
+          />
+          <RemoveGokartModal
+            modalProps={removeGokartModal}
+            gokart={gokart}
+            key={`remove-${gokart.key}`}
+          />
+        </>
+      )}
+      <AddGokartModal modalProps={addGokartModal} />
+      <div className="fixed right-10 bottom-10">
+        <Button
+          isIconOnly
+          endContent={<IoMdAdd />}
+          onPress={addGokartModal.onOpen}
+          className="rounded-[50%] bg-main-default w-[100px] h-[100px] text-[60px] fixed right-5 bottom-5"
+        />
+      </div>
     </div>
   );
 };

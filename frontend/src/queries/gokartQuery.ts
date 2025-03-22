@@ -64,7 +64,7 @@ const useUpdateGokart = (
     },
     onSuccess: (r, v, c) => {
       handleSuccessWithRefreshOnSuccess(
-        [["gokart", r.gokartId]],
+        [["gokart", r.gokartId], ["gokarts"]],
         options?.onSuccess
       )(r, v, c);
     },
