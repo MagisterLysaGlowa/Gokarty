@@ -1,10 +1,11 @@
-import { Button, useDisclosure } from "@heroui/react";
+import { Button, Input, useDisclosure } from "@heroui/react";
 import { useState } from "react";
 import { EditGokartModal } from "./addGokartComponents/EditGokartModal";
 import { RemoveGokartModal } from "./addGokartComponents/RemoveGokartModal";
 import { GokartTable } from "./addGokartComponents/GokartTable";
 import { IoMdAdd } from "react-icons/io";
 import { AddGokartModal } from "./addGokartComponents/AddGokartModal";
+import { FaMagnifyingGlass } from "react-icons/fa6";
 
 export type GokartRow = {
   lp: number;
@@ -14,6 +15,7 @@ export type GokartRow = {
 
 export const AddGokart = () => {
   const [gokart, setGokart] = useState<GokartRow | undefined>(undefined);
+  const [filter, setFilter] = useState("");
 
   const editGokartModal = useDisclosure();
   const removeGokartModal = useDisclosure();
@@ -21,10 +23,21 @@ export const AddGokart = () => {
 
   return (
     <div className="flex-1">
+      <div className="my-3">
+        <Input
+          className="w-1/3"
+          variant="bordered"
+          placeholder="Wyszukiwarka"
+          startContent={<FaMagnifyingGlass />}
+          onValueChange={(e) => setFilter(e)}
+          value={filter}
+        />
+      </div>
       <GokartTable
         editGokartModal={editGokartModal}
         removeGokartModal={removeGokartModal}
         setGokart={setGokart}
+        filter={filter}
       />
       {gokart && (
         <>

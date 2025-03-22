@@ -49,6 +49,12 @@ export const TournamentInfo = () => {
           className="tournamentButton bg-red-600"
           onPress={() => removeModal.onOpen()}
         />
+        <Button
+          isIconOnly
+          endContent={<FaTrash />}
+          className="tournamentButton bg-red-600"
+          onPress={() => removeModal.onOpen()}
+        />
       </div>
       <RemoveTournamentModal
         removeModalProps={removeModal}

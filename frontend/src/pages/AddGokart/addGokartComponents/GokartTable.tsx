@@ -18,12 +18,14 @@ type GokartTableProps = {
   removeGokartModal: ModalProps;
   editGokartModal: ModalProps;
   setGokart: Dispatch<SetStateAction<GokartRow | undefined>>;
+  filter: string;
 };
 
 export const GokartTable: FC<GokartTableProps> = ({
   editGokartModal,
   setGokart,
   removeGokartModal,
+  filter,
 }) => {
   const gokartCell = useGokartCell(
     editGokartModal,
@@ -32,7 +34,7 @@ export const GokartTable: FC<GokartTableProps> = ({
   );
   const columns = useGetGokartColumns();
   const { data: gokarts } = GokartQueries.getAllGokarts();
-  const rows = useGetGokartRows(gokarts);
+  const rows = useGetGokartRows(gokarts, filter);
   return (
     <Table
       aria-label="Example table with dynamic content"

@@ -20,13 +20,20 @@ export const useGetGokartColumns = () =>
     []
   );
 
-export const useGetGokartRows = (gokarts: GokartData[] | undefined) =>
+export const useGetGokartRows = (
+  gokarts: GokartData[] | undefined,
+  filter: string
+) =>
   useMemo(
     () =>
-      gokarts?.map((z, index) => ({
-        lp: index + 1,
-        key: z.gokartId,
-        name: z.name,
-      })) || [],
-    [gokarts]
+      gokarts
+        ?.map((z, index) => ({
+          lp: index + 1,
+          key: z.gokartId,
+          name: z.name,
+        }))
+        .filter((z) =>
+          z.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())
+        ) || [],
+    [gokarts, filter]
   );
