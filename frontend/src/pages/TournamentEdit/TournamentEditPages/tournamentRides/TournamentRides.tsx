@@ -19,7 +19,6 @@ export const TournamentRides = () => {
   );
 
   const removeModal = useDisclosure();
-
   const editModal = useDisclosure();
 
   const { data } = RideQueries.getAllPlayersWithTimes(Number(id), {

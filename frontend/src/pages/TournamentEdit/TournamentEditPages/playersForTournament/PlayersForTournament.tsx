@@ -9,6 +9,7 @@ import {
   TableRow,
   TableCell,
   Input,
+  useDisclosure,
 } from "@heroui/react";
 import {
   basicTableClasses,
@@ -21,6 +22,8 @@ import {
   useGetMemorizedData,
 } from "./playersForTournamentUtils";
 import { usePlayerForTournamentCell } from "./playersForTournamentComponents/playersForTournamentCell";
+import { RemovePlayersComponent } from "./playersForTournamentComponents/RemovePlayersFromTournamentComponent";
+import { PlayerWithSchoolData } from "../../../../../types";
 
 export const PlayersForTournament = () => {
   const { id } = useParams();
@@ -31,7 +34,13 @@ export const PlayersForTournament = () => {
   const filterSearch = useDebounce(filter);
   const memoizedData = useGetMemorizedData(data, filterSearch);
   const columns = useGetColumns();
-  const customCell = usePlayerForTournamentCell();
+  const removeModal = useDisclosure();
+
+  const [selectedPlayer, setSelectedPlayer] = useState<PlayerWithSchoolData | undefined>(
+    undefined
+  );
+  
+  const customCell = usePlayerForTournamentCell(setSelectedPlayer, removeModal);
 
   return (
     <div className="flex flex-col h-full max-h-full overflow-hidden gap-3">
@@ -70,6 +79,9 @@ export const PlayersForTournament = () => {
           </TableBody>
         </Table>
       </div>
+      {selectedPlayer &&
+        <RemovePlayersComponent removeModal={removeModal} player={selectedPlayer} />
+      }
     </div>
   );
 };

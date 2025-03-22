@@ -1,9 +1,12 @@
 import { Button } from "@heroui/react";
-import { FaEdit, FaTrash } from "react-icons/fa";
-import { PlayerWithSchoolData, SchoolData } from "../../../../../../types";
-import { useCallback } from "react";
+import { FaTrash } from "react-icons/fa";
+import { ModalProps, PlayerWithSchoolData, SchoolData } from "../../../../../../types";
+import { Dispatch, SetStateAction, useCallback } from "react";
 
-export const usePlayerForTournamentCell = () => {
+export const usePlayerForTournamentCell = (
+  setSelectedPlayer: Dispatch<SetStateAction<PlayerWithSchoolData | undefined>>,
+  removeModalProps: ModalProps,
+) => {
   return useCallback((data: PlayerWithSchoolData, columnKey: React.Key) => {
     const cellValue = data[columnKey as keyof PlayerWithSchoolData];
 
@@ -17,8 +20,11 @@ export const usePlayerForTournamentCell = () => {
       case "actions":
         return (
           <div className="flex gap-3 w-max text-xl">
-            <Button endContent={<FaEdit />} color="primary" variant="shadow" />
             <Button
+              onPress={() => {
+                setSelectedPlayer(data);
+                removeModalProps.onOpen();
+              }}
               endContent={<FaTrash />}
               className="bg-red-600"
               variant="shadow"
@@ -28,5 +34,5 @@ export const usePlayerForTournamentCell = () => {
       default:
         return <>{cellValue}</>;
     }
-  }, []);
+  }, [removeModalProps, setSelectedPlayer]);
 };
