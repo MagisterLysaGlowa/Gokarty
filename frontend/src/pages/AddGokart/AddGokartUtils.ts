@@ -1,27 +1,32 @@
+import { useMemo } from "react";
 import { GokartData } from "../../../types";
-import { queryClient } from "../../Utils/ReactQueryConfig";
 
-export const resetGokartValues: GokartData = {
-  gokartId: -1,
-  name: "",
-};
+export const useGetGokartColumns = () =>
+  useMemo(
+    () => [
+      {
+        label: "Lp",
+        key: "lp",
+      },
+      {
+        label: "Nazwa",
+        key: "name",
+      },
+      {
+        label: "Akcje",
+        key: "actions",
+      },
+    ],
+    []
+  );
 
-export const AddCreatedGokartToList = async (newGokart: GokartData) => {
-  queryClient.setQueryData("getGokarts", (prev: GokartData[] | undefined) => {
-    return prev ? [...prev, newGokart] : [newGokart];
-  });
-};
-
-export const RemoveCreatedGokartFromList = async (removeId: number) => {
-  queryClient.setQueryData("getGokarts", (prev: GokartData[] | undefined) => {
-    return prev ? prev.filter((gokart) => gokart.gokartId != removeId) : [];
-  });
-};
-
-export const EditCertainGokartInList = async (element: GokartData) => {
-  queryClient.setQueryData("getGokarts", (prev: GokartData[] | undefined) => {
-    return prev
-      ? prev.map((z) => (z.gokartId === element.gokartId ? element : z))
-      : [];
-  });
-};
+export const useGetGokartRows = (gokarts: GokartData[] | undefined) =>
+  useMemo(
+    () =>
+      gokarts?.map((z, index) => ({
+        lp: index + 1,
+        key: z.gokartId,
+        name: z.name,
+      })) || [],
+    [gokarts]
+  );
