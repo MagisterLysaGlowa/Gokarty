@@ -1,40 +1,31 @@
+import { useMemo } from "react";
 import { SchoolData } from "../../../types";
-import { queryClient } from "../../Utils/ReactQueryConfig";
 
-export const resetSchoolValues: SchoolData = {
-  acronym: "",
-  city: "",
-  name: "",
-  schoolId: -1,
-};
-
-export const removeSchoolFromList = (removeId: number) => {
-  queryClient.setQueryData(
-    "schoolManagementGetSchools",
-    (prev: SchoolData[] | undefined) => {
-      return prev ? prev.filter((school) => school.schoolId != removeId) : [];
-    }
+export const useGetColumns = () =>
+  useMemo(
+    () => [
+      { key: "lp", label: "LP" },
+      { key: "name", label: "Nazwa" },
+      { key: "city", label: "Miasto" },
+      { key: "acronym", label: "Skrót" },
+      { key: "actions", label: "Akcje" },
+    ],
+    []
   );
-};
 
-export const addSchoolToList = (school: SchoolData) => {
-  queryClient.setQueryData(
-    "schoolManagementGetSchools",
-    (prev: SchoolData[] | undefined) => {
-      return prev ? [...prev, school] : [];
-    }
-  );
-};
-
-export const updateCertainSchool = (updatedSchool: SchoolData) => {
-  queryClient.setQueryData(
-    "schoolManagementGetSchools",
-    (prev: SchoolData[] | undefined) => {
-      return prev
-        ? prev.map((school) =>
-            school.schoolId == updatedSchool.schoolId ? updatedSchool : school
-          )
-        : [];
-    }
-  );
+export const useMemorizedSchoolsData = (
+  data: SchoolData[] | undefined,
+  filter: string
+) => {
+  return useMemo(() => {
+    return (
+      data
+        ?.filter((z) =>
+          z.name
+          .toLocaleLowerCase()
+          .includes(filter.toLocaleLowerCase())
+        ).map((z, index) => ({lp: index + 1, ...z})
+      ) || []
+    );
+  }, [data, filter]);
 };

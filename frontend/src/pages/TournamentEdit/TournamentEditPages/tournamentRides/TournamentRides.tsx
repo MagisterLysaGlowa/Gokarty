@@ -5,9 +5,10 @@ import { FaMagnifyingGlass } from "react-icons/fa6";
 import { useState } from "react";
 import { useDebounce } from "../../../../Utils/debounce";
 import { defaultVariant } from "../../../../Utils/gloablUtils";
-import { RemoveRidesComponent } from "./tournamentRidesComponents/RemoveRidesComponent";
+import { RemoveRideModal } from "./tournamentRidesComponents/RemoveRideModal";
 import { EditRideModal } from "./tournamentRidesComponents/EditRideModal";
 import { TournamentRidesTable } from "./tournamentRidesComponents/TournamentRidesTable";
+import { Loading } from "../../../../components/Loading/Loading";
 
 export const TournamentRides = () => {
   const { id } = useParams();
@@ -21,7 +22,7 @@ export const TournamentRides = () => {
   const removeModal = useDisclosure();
   const editModal = useDisclosure();
 
-  const { data } = RideQueries.getAllPlayersWithTimes(Number(id), {
+  const { data, isLoading } = RideQueries.getAllPlayersWithTimes(Number(id), {
     refetchInterval: 10_000,
   });
 
@@ -36,14 +37,17 @@ export const TournamentRides = () => {
           value={filter}
         />
       </div>
-      <TournamentRidesTable
-        data={data}
-        editModal={editModal}
-        removeModal={removeModal}
-        searchFilter={search_filter}
-        setSelectedRide={setSelectedRide}
-      />
-      <RemoveRidesComponent removeModal={removeModal} rideId={selectedRide} />
+      {isLoading ? 
+        <Loading isLoading={isLoading}/> : 
+        <TournamentRidesTable
+          data={data}
+          editModal={editModal}
+          removeModal={removeModal}
+          searchFilter={search_filter}
+          setSelectedRide={setSelectedRide}
+        />
+      }
+      <RemoveRideModal removeModal={removeModal} rideId={selectedRide} />
       <EditRideModal editModal={editModal} rideId={Number(selectedRide)} />
     </div>
   );

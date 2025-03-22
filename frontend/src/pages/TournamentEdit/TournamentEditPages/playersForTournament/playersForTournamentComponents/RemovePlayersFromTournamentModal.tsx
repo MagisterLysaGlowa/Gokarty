@@ -6,49 +6,39 @@ import {
   ModalFooter,
   Button,
 } from "@heroui/react";
-import { ModalProps } from "../../../../../../types";
-import { RideQueries } from "../../../../../queries/rideQuery";
-import { convertTimeToString } from "../../../../../Utils/TimeUtils";
+import { ModalProps, PlayerWithSchoolData } from "../../../../../../types";
 import { queryClient } from "../../../../../Utils/ReactQueryConfig";
+import { PlayerQueries } from "../../../../../queries/playerQuery";
 import { useParams } from "react-router-dom";
 
-type RemoveRideProps = {
+type RemovePlayersProps = {
   removeModal: ModalProps;
-  rideId: number | undefined;
+  player: PlayerWithSchoolData;
 };
 
-export const RemoveRidesComponent: React.FC<RemoveRideProps> = ({
+export const RemovePlayersFromTournamentModal: React.FC<RemovePlayersProps> = ({
   removeModal,
-  rideId,
+  player,
 }) => {
   const { isOpen, onOpenChange } = removeModal;
   const { id: tournamentId } = useParams();
 
-  const {
-    data: ride,
-    isLoading,
-    isFetching,
-  } = RideQueries.getFullRide(Number(rideId));
-
-  const { mutateAsync: removeRide } = RideQueries.removeRide({
+  const { mutateAsync: removePlayerFromTournament } = PlayerQueries.removePlayerFromTournament({
     onSuccess: async () =>
-      await queryClient.invalidateQueries(["playersWithTimes", tournamentId]),
+      await queryClient.invalidateQueries(["playerstournamentwithSchool", tournamentId]),
   });
-
-  if (!ride || isLoading || isFetching) return;
 
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader>Usuwanie przejazdu</ModalHeader>
+            <ModalHeader>Usuwanie gracza z turnieju</ModalHeader>
             <ModalBody>
               <div className="flex flex-col gap-2">
-                <div>{ride.tournament.name}</div>
-                <div>{ride.player.name + " " + ride?.player.surname}</div>
-                <div>{ride.gokart.name}</div>
-                <div>{convertTimeToString(ride.time)}</div>
+                <div>{player.name + " " + player.surname}</div>
+                <div>{player.birthDate.toLocaleDateString()}</div>
+                <div>{player.school.acronym}</div>
               </div>
             </ModalBody>
             <ModalFooter>
@@ -58,7 +48,7 @@ export const RemoveRidesComponent: React.FC<RemoveRideProps> = ({
               <Button
                 color="primary"
                 onPress={async () => {
-                  await removeRide(Number(rideId));
+                  await removePlayerFromTournament({tournamentId: Number(tournamentId), playerId: Number(player.playerId)});
                   onClose();
                 }}
               >

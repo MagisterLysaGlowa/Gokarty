@@ -1,144 +1,54 @@
 import "./schoolManagement.css";
 import { useState } from "react";
 import { SchoolData } from "../../../types";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit } from "@fortawesome/free-regular-svg-icons/faEdit";
-import { faTrash } from "@fortawesome/free-solid-svg-icons/faTrash";
-import { schoolValidate } from "../../validations/SchoolValidation";
-import { addSchoolToList, resetSchoolValues } from "./SchoolManagementUtils";
 import { SchoolQueries } from "../../queries/schoolQuery";
+import { SchoolsTable } from "./SchoolManagementComponents/SchoolsTable";
+import { Input, useDisclosure } from "@heroui/react";
+import { Loading } from "../../components/Loading/Loading";
+import { useDebounce } from "../../Utils/debounce";
+import { FaMagnifyingGlass } from "react-icons/fa6";
+import { defaultVariant } from "../../Utils/gloablUtils";
+import { RemoveSchoolsModal } from "./SchoolManagementComponents/RemoveSchoolModal";
+import { EditSchoolModal } from "./SchoolManagementComponents/EditSchoolModal";
 
 export const SchoolManagement = () => {
-  const [formData, setFormData] = useState<SchoolData>(resetSchoolValues);
+  const [filter, setFilter] = useState<string>("");
+  const searchFilter = useDebounce(filter);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
+  const [selectedSchool, setSelectedSchool] = useState<SchoolData | undefined>(
+    undefined
+  );
 
-  const {
-    data: schools,
-    isLoading,
-    isFetching,
-  } = SchoolQueries.getAllSchools();
+  const editModal = useDisclosure();
+  const removeModal = useDisclosure();
 
-  const { mutateAsync: updateSchool } = SchoolQueries.updateSchool({
-    onSuccess: async () => setFormData(resetSchoolValues),
+  const { data, isLoading } = SchoolQueries.getAllSchools({
+    refetchInterval: 10_000,
   });
 
-  const { mutateAsync: createSchool } = SchoolQueries.createSchool({
-    onSuccess: async (school) => addSchoolToList(school),
-  });
-
-  const { mutateAsync: deleteSchool } = SchoolQueries.removeSchool();
-
-  async function formSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!(await schoolValidate(formData))) return;
-    if (formData.schoolId != -1) {
-      await updateSchool({ schoolId: formData.schoolId, data: formData });
-    } else {
-      await createSchool(formData);
-    }
-  }
-
-  if (isLoading || isFetching) return;
   return (
-    <div className="schoolManagement">
-      <form onSubmit={formSubmit}>
-        <h3>{formData.schoolId == -1 ? "Dodaj szkołę" : "Edytuj szkołę"}</h3>
-        <div>
-          <label htmlFor="name">Nazwa szkoły</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            className="form-control"
-            value={formData.name}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="city">Miasto</label>
-          <input
-            type="text"
-            id="city"
-            name="city"
-            className="form-control"
-            value={formData.city}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="acronym">Akronim</label>
-          <input
-            type="text"
-            id="acronym"
-            name="acronym"
-            className="form-control"
-            value={formData.acronym}
-            onChange={handleChange}
-          />
-        </div>
-        {formData.schoolId != -1 && (
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={() => {
-              setFormData(resetSchoolValues);
-            }}
-          >
-            Anuluj
-          </button>
-        )}
-        <button type="submit" className="btn btn-primary">
-          Zatwierdź
-        </button>
-      </form>
-      <div className="schoolsTable">
-        <table className="table table-striped">
-          <thead className="table-dark">
-            <tr>
-              <th>Lp</th>
-              <th>Nazwa</th>
-              <th>Miasto</th>
-              <th>Akronim</th>
-              <th>Edytuj</th>
-              <th>Usuń</th>
-            </tr>
-          </thead>
-          <tbody>
-            {schools?.map((school, i) => {
-              return (
-                <tr key={school.schoolId}>
-                  <td>{i + 1}</td>
-                  <td>{school.name}</td>
-                  <td>{school.city}</td>
-                  <td>{school.acronym}</td>
-                  <td>
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => {
-                        setFormData(school);
-                      }}
-                    >
-                      <FontAwesomeIcon icon={faEdit} />
-                    </button>
-                  </td>
-                  <td>
-                    <button className="btn btn-danger">
-                      <FontAwesomeIcon icon={faTrash} />
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+    <div className="flex flex-col h-full max-h-full overflow-hidden gap-3">
+      <div className="w-1/3">
+        <Input
+          placeholder="Wyszukiwarka"
+          startContent={<FaMagnifyingGlass />}
+          variant={defaultVariant}
+          onChange={(e) => setFilter(e.target.value)}
+          value={filter}
+        />
       </div>
+      <div>
+        {isLoading ? 
+          <Loading isLoading={isLoading}/> : 
+          <SchoolsTable editModal={editModal} removeModal={removeModal} data={data} setSelectedSchool={setSelectedSchool} searchFilter={searchFilter}/>
+        }
+      </div>
+      {selectedSchool && 
+        <>
+          <RemoveSchoolsModal school={selectedSchool} removeModal={removeModal}/>
+          <EditSchoolModal school={selectedSchool} editModal={editModal}/>
+        </>
+      }
     </div>
   );
 };

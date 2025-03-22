@@ -22,7 +22,7 @@ import {
   useGetMemorizedData,
 } from "./playersForTournamentUtils";
 import { usePlayerForTournamentCell } from "./playersForTournamentComponents/playersForTournamentCell";
-import { RemovePlayersComponent } from "./playersForTournamentComponents/RemovePlayersFromTournamentComponent";
+import { RemovePlayersFromTournamentModal } from "./playersForTournamentComponents/RemovePlayersFromTournamentModal";
 import { PlayerWithSchoolData } from "../../../../../types";
 
 export const PlayersForTournament = () => {
@@ -80,7 +80,7 @@ export const PlayersForTournament = () => {
         </Table>
       </div>
       {selectedPlayer &&
-        <RemovePlayersComponent removeModal={removeModal} player={selectedPlayer} />
+        <RemovePlayersFromTournamentModal removeModal={removeModal} player={selectedPlayer} />
       }
     </div>
   );
