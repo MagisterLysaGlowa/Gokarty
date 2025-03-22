@@ -17,6 +17,41 @@ import { PaginationButtons } from "./tournamentTableComponents/PaginationButtons
 import { PaginationProgressBar } from "./tournamentTableComponents/PaginationProgressBar";
 
 const TournamentTable = () => {
+  //swipe detector 
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
+  
+  const handleTouchStart = (e: TouchEvent) => {
+    touchStartX.current = e.changedTouches[0].screenX;
+  };
+  
+  const handleTouchEnd = (e: TouchEvent) => {
+    touchEndX.current = e.changedTouches[0].screenX;
+    if (touchStartX.current === null || touchEndX.current === null) return;
+  
+    const diff = touchStartX.current - touchEndX.current;
+  
+    if (Math.abs(diff) > 25) {
+      if (intervalRef.current) clearInterval(intervalRef.current); // zatrzymaj auto padding
+  
+      if (diff > 0) {
+        // Swipe w lewo
+        setPage((prev) =>
+          (prev + 1) % getPaginationLength(rides?.length || 0, pos)
+        );
+      } else {
+        // Swipe w prawo
+        setPage((prev) =>
+          (prev - 1 + getPaginationLength(rides?.length || 0, pos)) %
+          getPaginationLength(rides?.length || 0, pos)
+        );
+      }
+    }
+    touchStartX.current = null;
+    touchEndX.current = null;
+  };
+
+
   const { id } = useParams();
   const [page, setPage] = useState(0);
   const pos = 10;
@@ -44,7 +79,7 @@ const TournamentTable = () => {
     enabled: !!isAbleToRefetch(tournament?.tournamentStateId),
   });
 
-  const time = 5000;
+  const time = 10000;
 
   const { data: rides } = RideQueries.getTournamentBestFullRides(Number(id), {
     refetchInterval: tournament?.tournamentStateId === 2 ? time : false,
@@ -58,6 +93,23 @@ const TournamentTable = () => {
   }, [page, rides]);
 
   const intervalRef = useRef<number | null>(null);
+
+  //swipe detectour dla tabeli
+  useEffect(()=>{
+    const container = document.getElementById("tournament-table");
+    
+    if (container) {
+      container.addEventListener("touchstart", handleTouchStart);
+      container.addEventListener("touchend", handleTouchEnd);
+    }
+
+    return () => {
+      if (container) {
+        container.removeEventListener("touchstart", handleTouchStart);
+        container.removeEventListener("touchend", handleTouchEnd);
+      }
+    };
+  })
 
   useEffect(() => {
     if (intervalRef.current) {
@@ -73,25 +125,21 @@ const TournamentTable = () => {
         clearInterval(intervalRef.current);
       }
     };
+
   }, [rides?.length, page]);
 
   return (
     <div className="flex flex-col overflow-auto min-h-full w-full">
-      <div className="text-center text-5xl p-3 max-h-dvh font-jura flex gap-3 justify-center">
+      <div className="text-center text-3xl lg:text-5xl p-3 max-h-dvh font-jura flex gap-3 justify-center">
         <span>Tabela</span>
         <span className="text-main-default">Wyników</span>
       </div>
       <div className="py-4 bg-white w-full border-y-8 border-main-default" />
-      <div className="flex-1 flex p-3">
-        <div
-          className={`!overflow-hidden ${
-            tournament && tournament.tournamentStateId <= 2
-              ? "w-8/12"
-              : "w-full"
-          } flex flex-col`}
-        >
-          <RidesTable rows={rows} />
-          <div className="grid grid-cols-[25%_50%_25%] place-content-center justify-center items-center">
+      <div className="flex-1 flex lg:p-3 pb-3">
+        
+        <div id="tournament-table"  className={`!overflow-hidden w-full lg:w-8/12 flex flex-col`}>
+          <RidesTable  rows={rows} />
+          <div className="grid lg:grid-cols-[25%_50%_25%] gap-2 lg:gap-0 place-content-center justify-center items-center">
             <div />
             <div className="flex justify-center items-center gap-3">
               <PaginationButtons
@@ -107,7 +155,7 @@ const TournamentTable = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col flex-1 gap-3 w-4/12">
+        <div className="lg:flex flex-col flex-1 gap-3 w-4/12 hidden">
           {tournament && tournament.tournamentStateId == 2 && (
             <div className="h-full grid grid-rows-[40%_30%_30%] tableInfoBox border-2 border-main-default">
               <div className="tableInfoBoxRowBorder flex flex-col">
@@ -116,13 +164,13 @@ const TournamentTable = () => {
                 </span>
                 {lastRide && (
                   <div className="flex-1 flex-col flex justify-evenly">
-                    <div className="flex flex-col gap-3">
-                      <div className="headers grid grid-cols-3 text-center content-center text-gray-500">
+                    <div className="flex flex-col gap-1">
+                      <div className="headers grid grid-cols-3 text-sm text-center content-center text-gray-500">
                         <span>Osoba:</span>
                         <span>Gokart:</span>
                         <span>Punkty karne:</span>
                       </div>
-                      <div className="grid grid-cols-3 text-center items-center text-xl">
+                      <div className="grid grid-cols-3 text-center items-center xl:text-xl text-lg">
                         <React.Fragment key={lastRide.rideId}>
                           <div className="flex flex-col">
                             <span>

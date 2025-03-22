@@ -9,3 +9,21 @@
 .tableInfoBoxRowBorder {
   @apply border-b-3 border-gray-500 w-full;
 }
+
+
+@media (max-width: 768px) {
+  .table th:nth-child(5),
+  .table td:nth-child(5) {
+    display: none;
+  }
+}
+@media (max-width: 640px) {
+  .table th:nth-child(5),
+  .table td:nth-child(5) {
+    display: none;
+  }
+  .table th:nth-child(3),
+  .table td:nth-child(3) {
+    display: none;
+  }
+}
