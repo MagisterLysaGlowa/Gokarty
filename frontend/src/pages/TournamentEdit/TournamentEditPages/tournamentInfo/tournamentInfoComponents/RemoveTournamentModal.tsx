@@ -14,16 +14,15 @@ import { TournamentQueries } from "../../../../../queries/tournamentQuery";
 import { ModalProps, TournamentData } from "../../../../../../types";
 
 type RemoveTournamentProps = {
-  removeModalProps: ModalProps;
+  modal: ModalProps;
   tournament: TournamentData;
 };
 
 export const RemoveTournamentModal: FC<RemoveTournamentProps> = ({
-  removeModalProps,
+  modal,
   tournament,
 }) => {
   const navigate = useNavigate();
-  const { isOpen, onOpenChange } = removeModalProps;
   const { mutateAsync: removeTournamentAsync } =
     TournamentQueries.removeTournament({
       onSuccess: () => navigate(-1),
@@ -37,7 +36,7 @@ export const RemoveTournamentModal: FC<RemoveTournamentProps> = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+    <Modal {...modal}>
       <ModalContent>
         {(onClose) => (
           <>

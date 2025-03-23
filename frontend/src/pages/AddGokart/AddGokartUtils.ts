@@ -27,13 +27,13 @@ export const useGetGokartRows = (
   useMemo(
     () =>
       gokarts
-        ?.map((z, index) => ({
-          lp: index + 1,
-          key: z.gokartId,
-          name: z.name,
-        }))
-        .filter((z) =>
+        ?.filter((z) =>
           z.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())
-        ) || [],
+        )
+        .map((z, index) => ({
+          id: z.gokartId.toString(),
+          lp: (index + 1).toString(),
+          name: z.name,
+        })) || [],
     [gokarts, filter]
   );

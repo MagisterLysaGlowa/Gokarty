@@ -1,4 +1,7 @@
 import { SlotsToClasses } from "@heroui/react";
+import { TableActionButtonProps } from "../../types";
+import { FaEdit, FaTrash } from "react-icons/fa";
+import { CgAdd } from "react-icons/cg";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type DeepKeys<T, Prefix extends string = ""> = {
@@ -45,3 +48,27 @@ export const basicTableClasses:
 
 export const defaultVariant: "flat" | "bordered" | "underlined" | "faded" =
   "bordered";
+
+export const defaultEditButtonProps: TableActionButtonProps = {
+  size: "sm",
+  endContent: FaEdit({}),
+  variant: "shadow",
+  color: "primary",
+  isIconOnly: true,
+}
+
+export const defaultRemoveButtonProps: TableActionButtonProps = {
+  size: "sm",
+  endContent: FaTrash({}),
+  isIconOnly: true,
+  variant: "shadow",
+  className: "bg-red-600"
+}
+
+export const defaultAddButtonProps: TableActionButtonProps = {
+  size: "sm",
+  endContent: CgAdd({}),
+  isIconOnly: true,
+  variant: "shadow",
+  color: "primary",
+}

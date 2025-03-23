@@ -11,23 +11,21 @@ import { SchoolQueries } from "../../../queries/schoolQuery";
 import { queryClient } from "../../../Utils/ReactQueryConfig";
 
 type RemovePlayersProps = {
-  removeModal: ModalProps;
+  modal: ModalProps;
   school: SchoolData;
 };
 
 export const RemoveSchoolsModal: React.FC<RemovePlayersProps> = ({
-  removeModal,
+  modal,
   school,
 }) => {
-  const { isOpen, onOpenChange } = removeModal;
-
   const { mutateAsync: removeSchool } = SchoolQueries.removeSchool({
     onSuccess: async () =>
       await queryClient.invalidateQueries(["schools"]),
   });
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+    <Modal {...modal}>
       <ModalContent>
         {(onClose) => (
           <>

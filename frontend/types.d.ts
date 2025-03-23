@@ -191,3 +191,17 @@ export type ModalProps = {
   onOpenChange: () => void;
   onOpen: () => void;
 };
+
+export type TableActionButtonProps = {
+  size?: "sm" | "md" | "lg";
+  endContent?: React.ReactNode;
+  variant?: "flat" | "solid" | "bordered" | "light" | "faded" | "shadow" | "ghost";
+  color?: "default" | "primary" | "secondary" | "success" | "warning" | "danger";
+  className?: string;
+  isIconOnly?: boolean;
+}
+
+export type TableActionProps = {
+  modal: ModalProps;
+  buttonProps: TableActionButtonProps;
+}

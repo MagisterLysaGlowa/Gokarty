@@ -7,25 +7,22 @@ import {
   Button,
 } from "@heroui/react";
 import { FC } from "react";
-import { ModalProps } from "../../../../types";
-import { GokartRow } from "../AddGokart";
+import { GokartData, ModalProps } from "../../../../types";
 import { GokartQueries } from "../../../queries/gokartQuery";
 
 type RemoveGokartProps = {
-  modalProps: ModalProps;
-  gokart: GokartRow;
+  modal: ModalProps;
+  gokart: GokartData;
 };
 
 export const RemoveGokartModal: FC<RemoveGokartProps> = ({
-  modalProps,
+  modal,
   gokart,
 }) => {
-  const { isOpen, onOpenChange } = modalProps;
-
   const { mutateAsync: removeGokartAsync } = GokartQueries.removeGokart();
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+    <Modal {...modal}>
       <ModalContent>
         {(onClose) => (
           <>
@@ -40,7 +37,7 @@ export const RemoveGokartModal: FC<RemoveGokartProps> = ({
               <Button
                 color="primary"
                 onPress={async () => {
-                  await removeGokartAsync(gokart.key);
+                  await removeGokartAsync(gokart.gokartId);
                   onClose();
                 }}
               >

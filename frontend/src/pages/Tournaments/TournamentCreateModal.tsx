@@ -1,5 +1,4 @@
-import { MutateFunction } from "react-query";
-import { TournamentData, TournamentFormData } from "../../../types";
+import { ModalProps, TournamentFormData } from "../../../types";
 import {
   Modal,
   ModalContent,
@@ -11,46 +10,30 @@ import {
   Button,
 } from "@heroui/react";
 import { tournamentValidate } from "../../validations/TournamentValidation";
-import { defaultVariant } from "../../Utils/gloablUtils";
+import { defaultVariant } from "../../Utils/globalUtils";
+import { TournamentQueries } from "../../queries/tournamentQuery";
+import { useState } from "react";
+import { resetTournamentValues } from "./TournamentUtils";
 
 type TournamentCreateModalParams = {
-  tournament: TournamentFormData;
-  setTournament: React.Dispatch<React.SetStateAction<TournamentFormData>>;
-  isOpen: boolean;
-  onOpenChange: () => void;
-  createTournamentAsync: MutateFunction<
-    TournamentData,
-    Error,
-    TournamentFormData
-  >;
+  modal: ModalProps;
 };
 
 export const CreateTournamentModal: React.FC<TournamentCreateModalParams> = ({
-  isOpen,
-  onOpenChange,
-  setTournament,
-  tournament,
-  createTournamentAsync,
+  modal,
 }) => {
-  const handleSubmit = async (onClose: () => void) => {
-    if (await tournamentValidate(tournament)) {
-      await createTournamentAsync(tournament);
-      onClose();
-    }
-  };
+  const [tournament, setTournament] = useState<TournamentFormData>(
+    resetTournamentValues
+  );
 
-  const handleCancel = (onClose: () => void) => {
-    console.log("Cancel");
-    onClose();
-  };
+  const {mutateAsync: createTournament} = TournamentQueries.createTournament()
 
   return (
     <Modal
-      isOpen={isOpen}
+      {...modal}
       backdrop="blur"
       isDismissable={false}
       placement="top-center"
-      onOpenChange={onOpenChange}
     >
       <ModalContent>
         {(onClose) => (
@@ -84,13 +67,18 @@ export const CreateTournamentModal: React.FC<TournamentCreateModalParams> = ({
               <Button
                 color="danger"
                 variant="light"
-                onPress={() => handleCancel(onClose)}
+                onPress={onClose}
               >
                 Anuluj
               </Button>
               <Button
                 color="warning"
-                onPress={async () => await handleSubmit(onClose)}
+                onPress={async () => {
+                  if (await tournamentValidate(tournament)) {
+                    await createTournament(tournament);
+                    onClose();
+                  }
+                }}
               >
                 Dodaj
               </Button>

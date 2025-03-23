@@ -4,7 +4,7 @@ import { Input, useDisclosure } from "@heroui/react";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { useState } from "react";
 import { useDebounce } from "../../../../Utils/debounce";
-import { defaultVariant } from "../../../../Utils/gloablUtils";
+import { defaultVariant } from "../../../../Utils/globalUtils";
 import { RemoveRideModal } from "./tournamentRidesComponents/RemoveRideModal";
 import { EditRideModal } from "./tournamentRidesComponents/EditRideModal";
 import { TournamentRidesTable } from "./tournamentRidesComponents/TournamentRidesTable";
@@ -27,7 +27,7 @@ export const TournamentRides = () => {
   });
 
   return (
-    <div className="flex flex-col h-full max-h-full overflow-hidden gap-3">
+    <div className="flex flex-col flex-1 max-h-full overflow-hidden gap-3">
       <div className="w-1/3">
         <Input
           placeholder="Wyszukiwarka"

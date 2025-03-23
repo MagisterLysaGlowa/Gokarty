@@ -13,17 +13,17 @@ import {
 } from "@heroui/react";
 import {
   basicTableClasses,
+  defaultRemoveButtonProps,
   defaultVariant,
-} from "../../../../Utils/gloablUtils";
+} from "../../../../Utils/globalUtils";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { useDebounce } from "../../../../Utils/debounce";
 import {
   useGetColumns,
   useGetMemorizedData,
 } from "./playersForTournamentUtils";
-import { usePlayerForTournamentCell } from "./playersForTournamentComponents/playersForTournamentCell";
 import { RemovePlayersFromTournamentModal } from "./playersForTournamentComponents/RemovePlayersFromTournamentModal";
-import { PlayerWithSchoolData } from "../../../../../types";
+import { useCustomTableCells } from "../../../../components/CustomTableCells/CustomTableCells";
 
 export const PlayersForTournament = () => {
   const { id } = useParams();
@@ -36,11 +36,12 @@ export const PlayersForTournament = () => {
   const columns = useGetColumns();
   const removeModal = useDisclosure();
 
-  const [selectedPlayer, setSelectedPlayer] = useState<PlayerWithSchoolData | undefined>(
+  const [selectedPlayerId, setSelectedPlayerId] = useState<number | undefined>(
     undefined
   );
-  
-  const customCell = usePlayerForTournamentCell(setSelectedPlayer, removeModal);
+  const selectedPlayer = data?.find(player => player.playerId == selectedPlayerId);
+
+  const customCell = useCustomTableCells(setSelectedPlayerId, [{modal: removeModal, buttonProps: defaultRemoveButtonProps}]);
 
   return (
     <div className="flex flex-col h-full max-h-full overflow-hidden gap-3">
@@ -70,7 +71,7 @@ export const PlayersForTournament = () => {
           </TableHeader>
           <TableBody items={memoizedData}>
             {(item) => (
-              <TableRow key={item.playerId}>
+              <TableRow key={item.Lp}>
                 {(columnKey) => (
                   <TableCell>{customCell(item, columnKey)}</TableCell>
                 )}

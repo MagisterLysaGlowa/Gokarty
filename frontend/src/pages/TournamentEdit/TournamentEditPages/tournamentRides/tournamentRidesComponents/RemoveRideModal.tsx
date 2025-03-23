@@ -13,15 +13,14 @@ import { queryClient } from "../../../../../Utils/ReactQueryConfig";
 import { useParams } from "react-router-dom";
 
 type RemoveRideProps = {
-  removeModal: ModalProps;
+  modal: ModalProps;
   rideId: number | undefined;
 };
 
 export const RemoveRideModal: React.FC<RemoveRideProps> = ({
-  removeModal,
+  modal,
   rideId,
 }) => {
-  const { isOpen, onOpenChange } = removeModal;
   const { id: tournamentId } = useParams();
 
   const {
@@ -38,7 +37,7 @@ export const RemoveRideModal: React.FC<RemoveRideProps> = ({
   if (!ride || isLoading || isFetching) return;
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+    <Modal {...modal}>
       <ModalContent>
         {(onClose) => (
           <>

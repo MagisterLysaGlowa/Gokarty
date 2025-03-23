@@ -15,15 +15,14 @@ import { schoolValidate } from "../../../validations/SchoolValidation";
 
 type EditModalProps = {
 
-  editModal: ModalProps;
+  modal: ModalProps;
   school: SchoolData;
 };
 
 export const EditSchoolModal: React.FC<EditModalProps> = ({
-  editModal,
+  modal,
   school,
 }) => {
-  const { isOpen, onOpenChange } = editModal;
   const [schoolToEdit, setSchoolToEdit] = useState<SchoolFormData>(school);
 
   const { mutateAsync: updateSchool } = SchoolQueries.updateSchool({
@@ -33,7 +32,7 @@ export const EditSchoolModal: React.FC<EditModalProps> = ({
   });
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange} key={school.schoolId}>
+    <Modal {...modal} key={school.schoolId}>
       <ModalContent>
         {(onClose) => (
           <>

@@ -12,15 +12,14 @@ import { PlayerQueries } from "../../../../../queries/playerQuery";
 import { useParams } from "react-router-dom";
 
 type RemovePlayersProps = {
-  removeModal: ModalProps;
+  modal: ModalProps;
   player: PlayerWithSchoolData;
 };
 
 export const RemovePlayersFromTournamentModal: React.FC<RemovePlayersProps> = ({
-  removeModal,
+  modal,
   player,
 }) => {
-  const { isOpen, onOpenChange } = removeModal;
   const { id: tournamentId } = useParams();
 
   const { mutateAsync: removePlayerFromTournament } = PlayerQueries.removePlayerFromTournament({
@@ -29,7 +28,7 @@ export const RemovePlayersFromTournamentModal: React.FC<RemovePlayersProps> = ({
   });
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+    <Modal {...modal}>
       <ModalContent>
         {(onClose) => (
           <>

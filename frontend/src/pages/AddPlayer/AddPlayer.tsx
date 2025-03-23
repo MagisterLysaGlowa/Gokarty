@@ -13,7 +13,7 @@ import { validatePlayer } from "../../validations/PlayerValidation";
 import { resetPlayerValues } from "./AddPlayerUtils";
 import { PlayerQueries } from "../../queries/playerQuery";
 import { SchoolQueries } from "../../queries/schoolQuery";
-import { convertDateToInputValue } from "../../Utils/gloablUtils";
+import { convertDateToInputValue } from "../../Utils/globalUtils";
 
 export const AddPlayer = () => {
   const [player, SetPlayer] = useState<PlayerData>(resetPlayerValues);

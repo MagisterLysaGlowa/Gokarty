@@ -7,18 +7,18 @@ import {
   TableCell,
 } from "@heroui/react";
 
-import { useGokartCell } from "./GokartTableCell";
 import { useGetGokartColumns, useGetGokartRows } from "../AddGokartUtils";
 import { Dispatch, FC, SetStateAction } from "react";
-import { GokartQueries } from "../../../queries/gokartQuery";
-import { GokartRow } from "../AddGokart";
-import { ModalProps } from "../../../../types";
+import { GokartData, ModalProps } from "../../../../types";
+import { useCustomTableCells } from "../../../components/CustomTableCells/CustomTableCells";
+import { defaultEditButtonProps, defaultRemoveButtonProps } from "../../../Utils/globalUtils";
 
 type GokartTableProps = {
   removeGokartModal: ModalProps;
   editGokartModal: ModalProps;
-  setGokart: Dispatch<SetStateAction<GokartRow | undefined>>;
+  setGokart: Dispatch<SetStateAction<number | undefined>>;
   filter: string;
+  data: GokartData[] | undefined;
 };
 
 export const GokartTable: FC<GokartTableProps> = ({
@@ -26,28 +26,32 @@ export const GokartTable: FC<GokartTableProps> = ({
   setGokart,
   removeGokartModal,
   filter,
+  data,
 }) => {
-  const gokartCell = useGokartCell(
-    editGokartModal,
-    removeGokartModal,
-    setGokart
+  const gokartCell = useCustomTableCells(
+    setGokart,
+    [{
+      modal: editGokartModal, buttonProps: defaultEditButtonProps
+    }, {
+      modal: removeGokartModal, buttonProps: defaultRemoveButtonProps
+    }]
   );
   const columns = useGetGokartColumns();
-  const { data: gokarts } = GokartQueries.getAllGokarts();
-  const rows = useGetGokartRows(gokarts, filter);
+  const rows = useGetGokartRows(data, filter);
   return (
     <Table
       aria-label="Example table with dynamic content"
       removeWrapper
       classNames={{ td: "text-xl" }}
       isHeaderSticky
+      selectionMode="single"
     >
       <TableHeader columns={columns}>
         {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
       </TableHeader>
       <TableBody items={rows}>
         {(item) => (
-          <TableRow key={item.key}>
+          <TableRow key={item.lp}>
             {(columnKey) => (
               <TableCell>{gokartCell(item, columnKey)}</TableCell>
             )}

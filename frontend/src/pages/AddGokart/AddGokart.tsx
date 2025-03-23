@@ -6,15 +6,12 @@ import { GokartTable } from "./addGokartComponents/GokartTable";
 import { IoMdAdd } from "react-icons/io";
 import { AddGokartModal } from "./addGokartComponents/AddGokartModal";
 import { FaMagnifyingGlass } from "react-icons/fa6";
-
-export type GokartRow = {
-  lp: number;
-  key: number;
-  name: string;
-};
+import { GokartQueries } from "../../queries/gokartQuery";
 
 export const AddGokart = () => {
-  const [gokart, setGokart] = useState<GokartRow | undefined>(undefined);
+  const { data: data } = GokartQueries.getAllGokarts();
+  const [selectedGokartId, setSelectedGokartId] = useState<number | undefined>(undefined);
+  const selectedGokart = data?.find(gokart => gokart.gokartId == selectedGokartId);
   const [filter, setFilter] = useState("");
 
   const editGokartModal = useDisclosure();
@@ -34,22 +31,23 @@ export const AddGokart = () => {
         />
       </div>
       <GokartTable
+        data={data}
         editGokartModal={editGokartModal}
         removeGokartModal={removeGokartModal}
-        setGokart={setGokart}
+        setGokart={setSelectedGokartId}
         filter={filter}
       />
-      {gokart && (
+      {selectedGokart && (
         <>
           <EditGokartModal
             modalProps={editGokartModal}
-            gokart={gokart}
-            key={`edit-${gokart.key}`}
+            gokart={selectedGokart}
+            key={`edit-${selectedGokart.gokartId}`}
           />
           <RemoveGokartModal
             modalProps={removeGokartModal}
-            gokart={gokart}
-            key={`remove-${gokart.key}`}
+            gokart={selectedGokart}
+            key={`remove-${selectedGokart.gokartId}`}
           />
         </>
       )}

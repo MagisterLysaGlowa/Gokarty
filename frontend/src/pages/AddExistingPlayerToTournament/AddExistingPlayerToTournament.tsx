@@ -6,7 +6,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { PlayerQueries } from "../../queries/playerQuery";
 import { SchoolQueries } from "../../queries/schoolQuery";
-import { queryClient } from "../../Utils/ReactQueryConfig";
 
 export const AddExistingPlayerToTournament = () => {
   const { id } = useParams();
@@ -26,16 +25,8 @@ export const AddExistingPlayerToTournament = () => {
   const { data: players, refetch: filterRefetch } =
     PlayerQueries.filterPlayers(playerFilter);
 
-  const { mutateAsync: addPlayerToTournament } =
-    PlayerQueries.addPlayerToTournament({
-      onSuccess: () => {
-        queryClient.invalidateQueries(["playersfilter", playerFilter]);
-      },
-    });
-
   useEffect(() => {
     filterRefetch();
-    console.log(playerFilter);
   }, [playerFilter, filterRefetch]);
 
   return (

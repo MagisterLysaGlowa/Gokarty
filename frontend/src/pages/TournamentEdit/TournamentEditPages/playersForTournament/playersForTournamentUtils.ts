@@ -26,7 +26,7 @@ export const useGetMemorizedData = (
             .toLocaleLowerCase()
             .includes(filterSearch.toLocaleLowerCase())
         )
-        ?.map((z, index) => ({ ...z, Lp: index + 1 })) || [],
+        ?.map((z, index) => ({Lp: (index + 1).toString(), id: z.playerId.toString(), name: z.name, surname: z.surname, school: z.school.acronym, birthDate: z.birthDate.toLocaleDateString()})) || [],
     [data, filterSearch]
   );
 };

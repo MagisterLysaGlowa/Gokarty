@@ -16,17 +16,16 @@ import { tournamentValidate } from "../../../../../validations/TournamentValidat
 import { ModalProps, TournamentData } from "../../../../../../types";
 
 type EditModalProps = {
-  modalProps: ModalProps;
+  modal: ModalProps;
   tournament: TournamentData;
   setTournament: React.Dispatch<React.SetStateAction<TournamentData>>;
 };
 
 export const EditTournamentModal: React.FC<EditModalProps> = ({
-  modalProps,
+  modal,
   tournament,
   setTournament,
 }) => {
-  const { isOpen, onOpenChange } = modalProps;
   const { mutateAsync: updateTournamentAsync } =
     TournamentQueries.updateTournament();
 
@@ -40,7 +39,7 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
   const variant = "underlined";
 
   return (
-    <Modal isOpen={isOpen} placement="top-center" onOpenChange={onOpenChange}>
+    <Modal placement="top-center" {...modal}>
       <ModalContent>
         {(onClose) => (
           <>

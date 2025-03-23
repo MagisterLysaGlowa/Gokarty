@@ -24,7 +24,7 @@ export const useMemorizedSchoolsData = (
           z.name
           .toLocaleLowerCase()
           .includes(filter.toLocaleLowerCase())
-        ).map((z, index) => ({lp: index + 1, ...z})
+        ).map((z, index) => ({lp: (index + 1).toString(), id: z.schoolId.toString(), name: z.name, city: z.city, acronym: z.acronym})
       ) || []
     );
   }, [data, filter]);

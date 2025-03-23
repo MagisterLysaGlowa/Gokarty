@@ -10,10 +10,11 @@ import {
 import { useGetColumns, useMemorizedSchoolsData } from "../SchoolManagementUtils";
 import { Dispatch, SetStateAction } from "react";
 import { ModalProps, SchoolData } from "../../../../types";
-import { useCustomCell } from "./TableCustomCells";
+import { useCustomTableCells } from "../../../components/CustomTableCells/CustomTableCells";
+import { defaultEditButtonProps, defaultRemoveButtonProps } from "../../../Utils/globalUtils";
 
 type TournamentTableProps = {
-  setSelectedSchool: Dispatch<SetStateAction<SchoolData | undefined>>;
+  setSelectedSchool: Dispatch<SetStateAction<number | undefined>>;
   data: SchoolData[] | undefined;
   searchFilter: string;
   editModal: ModalProps;
@@ -27,32 +28,12 @@ export const SchoolsTable: React.FC<TournamentTableProps> = ({
   editModal,
   removeModal,
 }) => {
-  const {
-    isOpen: isEditOpen,
-    onOpen: onEditOpen,
-    onOpenChange: onEditChange,
-  } = editModal;
-
-  const {
-    isOpen: isRemoveOpen,
-    onOpen: onRemoveOpen,
-    onOpenChange: onRemoveChange,
-  } = removeModal;
-
   const columns = useGetColumns();
   const rows = useMemorizedSchoolsData(data, searchFilter);
-  const renderCell = useCustomCell(
-    setSelectedSchool,
-    {
-      isOpen: isRemoveOpen,
-      onOpen: onRemoveOpen,
-      onOpenChange: onRemoveChange,
-    },
-    {
-      isOpen: isEditOpen,
-      onOpen: onEditOpen,
-      onOpenChange: onEditChange,
-    }
+  const renderCell = useCustomTableCells(
+    setSelectedSchool, [
+    { modal: editModal, buttonProps: defaultEditButtonProps },
+    { modal: removeModal, buttonProps: defaultRemoveButtonProps }]
   );
   return (
     <Table

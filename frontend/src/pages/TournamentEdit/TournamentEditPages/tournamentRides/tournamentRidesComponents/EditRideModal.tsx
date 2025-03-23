@@ -22,16 +22,15 @@ import { useParams } from "react-router-dom";
 import { queryClient } from "../../../../../Utils/ReactQueryConfig";
 
 type EditModalProps = {
-  editModal: ModalProps;
+  modal: ModalProps;
   rideId: number;
 };
 
 export const EditRideModal: React.FC<EditModalProps> = ({
-  editModal,
+  modal,
   rideId,
 }) => {
   const { id } = useParams();
-  const { isOpen, onOpenChange } = editModal;
   const [rideToEdit, setRideToEdit] = useState<FullRideData>({
     gokartId: -1,
     isDisqualified: false,
@@ -60,7 +59,7 @@ export const EditRideModal: React.FC<EditModalProps> = ({
   const { data: gokarts } = GokartQueries.getAllGokarts();
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange} key={rideToEdit.rideId}>
+    <Modal {...modal} key={rideToEdit.rideId}>
       <ModalContent>
         {(onClose) => (
           <>

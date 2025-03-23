@@ -7,24 +7,22 @@ import {
   ModalHeader,
 } from "@heroui/react";
 import { PlayerQueries } from "../../../../queries/playerQuery";
-import { PlayerWithSchoolData } from "../../../../../types";
+import { ModalProps, PlayerWithSchoolData } from "../../../../../types";
 import { useParams } from "react-router-dom";
 
 type ModalTypeProps = {
-  isOpen: boolean;
-  onOpenChange: () => void;
+  modal: ModalProps;
   player: PlayerWithSchoolData;
 };
 
 export const AddPlayerToTournamentModal: React.FC<ModalTypeProps> = ({
-  isOpen,
-  onOpenChange,
+  modal,
   player,
 }) => {
   const { mutateAsync: addPlayer } = PlayerQueries.addPlayerToTournament();
   const { id } = useParams();
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+    <Modal {...modal}>
       <ModalContent>
         {(onClose) => (
           <>

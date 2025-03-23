@@ -8,26 +8,24 @@ import {
   Input,
 } from "@heroui/react";
 import { FC, useState } from "react";
-import { ModalProps } from "../../../../types";
-import { GokartRow } from "../AddGokart";
+import { GokartData, ModalProps } from "../../../../types";
 import { GokartQueries } from "../../../queries/gokartQuery";
 import { gokartValidate } from "../../../validations/GokartValidation";
 
 type EditGokartModalProps = {
-  modalProps: ModalProps;
-  gokart: GokartRow;
+  modal: ModalProps;
+  gokart: GokartData;
 };
 
 export const EditGokartModal: FC<EditGokartModalProps> = ({
-  modalProps: props,
+  modal,
   gokart,
 }) => {
-  const { isOpen, onOpenChange } = props;
-  const [gokartToEdit, setGokartToEdit] = useState<GokartRow>(gokart);
+  const [gokartToEdit, setGokartToEdit] = useState<GokartData>(gokart);
   const { mutateAsync: editGokartAsync } = GokartQueries.updateGokart();
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+    <Modal {...modal}>
       <ModalContent>
         {(onClose) => (
           <>
@@ -37,7 +35,7 @@ export const EditGokartModal: FC<EditGokartModalProps> = ({
             <ModalBody>
               <Input
                 label="Identyfikator"
-                value={`${gokartToEdit?.key}`}
+                value={`${gokartToEdit?.gokartId}`}
                 readOnly
               />
               <Input
@@ -61,7 +59,7 @@ export const EditGokartModal: FC<EditGokartModalProps> = ({
                     })
                   ) {
                     await editGokartAsync({
-                      gokartId: Number(gokartToEdit?.key),
+                      gokartId: Number(gokartToEdit?.gokartId),
                       name: String(gokartToEdit?.name),
                     });
                     onClose();

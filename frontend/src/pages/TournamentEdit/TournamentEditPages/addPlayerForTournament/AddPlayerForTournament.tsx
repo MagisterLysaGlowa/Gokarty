@@ -1,14 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { PlayerQueries } from "../../../../queries/playerQuery";
 import {
   PlayerFilterFormData,
-  PlayerWithSchoolData,
-  SchoolData,
 } from "../../../../../types";
 import { useParams } from "react-router-dom";
 import { SchoolQueries } from "../../../../queries/schoolQuery";
 import {
-  Button,
   Input,
   Select,
   SelectItem,
@@ -21,9 +18,12 @@ import {
   useDisclosure,
 } from "@heroui/react";
 
-import { CgAdd } from "react-icons/cg";
 import { AddPlayerToTournamentModal } from "./AddPlayerToTournamentModal";
-import { defaultVariant } from "../../../../Utils/gloablUtils";
+import { defaultAddButtonProps, defaultVariant } from "../../../../Utils/globalUtils";
+import { useColumns, useMemorizedPlayers } from "./AddPlayerForTournamentUtils";
+import { useCustomTableCells } from "../../../../components/CustomTableCells/CustomTableCells";
+import { useDebounce } from "../../../../Utils/debounce";
+import { Loading } from "../../../../components/Loading/Loading";
 
 export const AddPlayerForTournament = () => {
   const { id } = useParams();
@@ -33,77 +33,27 @@ export const AddPlayerForTournament = () => {
     surname: "",
     tournamentId: Number(id),
   });
+  const serverFilter = useDebounce(playerFilter);
 
   const { data: schools } = SchoolQueries.getAllSchools();
-  const { data: players, refetch } = PlayerQueries.filterPlayers(playerFilter, {
-    onSuccess: (z) => console.log(z),
-  });
-
-  const [selectedPlayer, setSelectedPlayer] = useState<PlayerWithSchoolData>(
-    {} as PlayerWithSchoolData
-  );
+  const { data: players, refetch, isFetching } = PlayerQueries.filterPlayers(serverFilter);
 
   useEffect(() => {
     refetch();
-  }, [playerFilter, refetch]);
+  }, [serverFilter, refetch]);
+  
+  const columns = useColumns();
+  const rows = useMemorizedPlayers(players);
+  
+  const [selectedPlayerId, setSelectedPlayerId] = useState<number | undefined>(undefined);
+  const selectedPlayer = players?.find(player => player.playerId == selectedPlayerId);
 
-  const columns = useMemo(
-    () => [
-      {
-        key: "name",
-        label: "Imie",
-      },
-      {
-        key: "surname",
-        label: "Nazwisko",
-      },
-      {
-        key: "birthDate",
-        label: "Data urodzenia",
-      },
-      {
-        key: "school",
-        label: "Szkoła",
-      },
-      {
-        key: "actions",
-        label: "Akcje",
-      },
-    ],
-    []
-  );
-
-  const rows = useMemo(() => players || [], [players]);
-
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
-
-  const customCell = useCallback(
-    (item: PlayerWithSchoolData, key: React.Key) => {
-      const cellValue = item[key as keyof PlayerWithSchoolData];
-      if (key === "school")
-        return (cellValue as SchoolData).name ?? "Brak danych";
-      if (key === "actions")
-        return (
-          <Button
-            isIconOnly
-            endContent={<CgAdd />}
-            variant="shadow"
-            color="primary"
-            onPress={() => {
-              setSelectedPlayer(item);
-              onOpen();
-            }}
-          />
-        );
-      if (key === "birthDate" && cellValue instanceof Date)
-        return cellValue.toLocaleDateString();
-
-      return typeof cellValue === "string" || typeof cellValue === "number"
-        ? cellValue
-        : "";
-    },
-    [onOpen]
-  );
+  const addModal = useDisclosure();
+  
+  const customCell = useCustomTableCells(
+    setSelectedPlayerId,
+    [{ modal: addModal, buttonProps: defaultAddButtonProps}]
+  )
 
   return (
     <div className="flex flex-col h-full max-h-full overflow-hidden gap-3">
@@ -139,7 +89,9 @@ export const AddPlayerForTournament = () => {
           {(s) => <SelectItem key={s.schoolId}>{s.acronym}</SelectItem>}
         </Select>
       </div>
-
+        
+      {isFetching ?
+      <Loading isLoading={isFetching}/> :
       <Table
         aria-label="Example table with dynamic content"
         isHeaderSticky
@@ -154,7 +106,7 @@ export const AddPlayerForTournament = () => {
         </TableHeader>
         <TableBody items={rows}>
           {(item) => (
-            <TableRow key={item.playerId}>
+            <TableRow key={item.lp}>
               {(columnKey) => (
                 <TableCell>{customCell(item, columnKey)}</TableCell>
               )}
@@ -162,11 +114,13 @@ export const AddPlayerForTournament = () => {
           )}
         </TableBody>
       </Table>
-      <AddPlayerToTournamentModal
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        player={selectedPlayer}
-      />
+      }
+      {selectedPlayer &&
+        <AddPlayerToTournamentModal
+          modal={addModal}
+          player={selectedPlayer}
+        />
+      }
     </div>
   );
 };

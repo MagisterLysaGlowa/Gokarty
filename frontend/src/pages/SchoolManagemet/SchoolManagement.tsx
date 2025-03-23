@@ -1,13 +1,12 @@
 import "./schoolManagement.css";
 import { useState } from "react";
-import { SchoolData } from "../../../types";
 import { SchoolQueries } from "../../queries/schoolQuery";
 import { SchoolsTable } from "./SchoolManagementComponents/SchoolsTable";
 import { Input, useDisclosure } from "@heroui/react";
 import { Loading } from "../../components/Loading/Loading";
 import { useDebounce } from "../../Utils/debounce";
 import { FaMagnifyingGlass } from "react-icons/fa6";
-import { defaultVariant } from "../../Utils/gloablUtils";
+import { defaultVariant } from "../../Utils/globalUtils";
 import { RemoveSchoolsModal } from "./SchoolManagementComponents/RemoveSchoolModal";
 import { EditSchoolModal } from "./SchoolManagementComponents/EditSchoolModal";
 
@@ -15,16 +14,17 @@ export const SchoolManagement = () => {
   const [filter, setFilter] = useState<string>("");
   const searchFilter = useDebounce(filter);
 
-  const [selectedSchool, setSelectedSchool] = useState<SchoolData | undefined>(
-    undefined
-  );
-
-  const editModal = useDisclosure();
-  const removeModal = useDisclosure();
-
   const { data, isLoading } = SchoolQueries.getAllSchools({
     refetchInterval: 10_000,
   });
+
+  const [selectedSchoolId, setSelectedSchoolId] = useState<number | undefined>(
+    undefined
+  );
+  const selectedSchool = data?.find(school => school.schoolId === selectedSchoolId);
+
+  const editModal = useDisclosure();
+  const removeModal = useDisclosure();
 
   return (
     <div className="flex flex-col h-full max-h-full overflow-hidden gap-3">
@@ -40,10 +40,10 @@ export const SchoolManagement = () => {
       <div>
         {isLoading ? 
           <Loading isLoading={isLoading}/> : 
-          <SchoolsTable editModal={editModal} removeModal={removeModal} data={data} setSelectedSchool={setSelectedSchool} searchFilter={searchFilter}/>
+          <SchoolsTable editModal={editModal} removeModal={removeModal} data={data} setSelectedSchool={setSelectedSchoolId} searchFilter={searchFilter}/>
         }
       </div>
-      {selectedSchool && 
+      {selectedSchool &&
         <>
           <RemoveSchoolsModal school={selectedSchool} removeModal={removeModal}/>
           <EditSchoolModal school={selectedSchool} editModal={editModal}/>
