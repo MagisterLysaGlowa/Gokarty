@@ -47,8 +47,8 @@ export const TournamentRides = () => {
           setSelectedRide={setSelectedRide}
         />
       }
-      <RemoveRideModal removeModal={removeModal} rideId={selectedRide} />
-      <EditRideModal editModal={editModal} rideId={Number(selectedRide)} />
+      <RemoveRideModal modal={removeModal} rideId={selectedRide} />
+      <EditRideModal modal={editModal} rideId={Number(selectedRide)} />
     </div>
   );
 };

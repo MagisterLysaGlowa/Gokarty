@@ -40,12 +40,12 @@ export const AddGokart = () => {
       {selectedGokart && (
         <>
           <EditGokartModal
-            modalProps={editGokartModal}
+            modal={editGokartModal}
             gokart={selectedGokart}
             key={`edit-${selectedGokart.gokartId}`}
           />
           <RemoveGokartModal
-            modalProps={removeGokartModal}
+            modal={removeGokartModal}
             gokart={selectedGokart}
             key={`remove-${selectedGokart.gokartId}`}
           />

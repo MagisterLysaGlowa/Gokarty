@@ -57,11 +57,11 @@ export const TournamentInfo = () => {
         />
       </div>
       <RemoveTournamentModal
-        removeModalProps={removeModal}
+        modal={removeModal}
         tournament={tournament}
       />
       <EditTournamentModal
-        modalProps={editModal}
+        modal={editModal}
         tournament={tournament}
         setTournament={SetTournament}
       />

@@ -45,8 +45,8 @@ export const SchoolManagement = () => {
       </div>
       {selectedSchool &&
         <>
-          <RemoveSchoolsModal school={selectedSchool} removeModal={removeModal}/>
-          <EditSchoolModal school={selectedSchool} editModal={editModal}/>
+          <RemoveSchoolsModal school={selectedSchool} modal={removeModal}/>
+          <EditSchoolModal school={selectedSchool} modal={editModal}/>
         </>
       }
     </div>

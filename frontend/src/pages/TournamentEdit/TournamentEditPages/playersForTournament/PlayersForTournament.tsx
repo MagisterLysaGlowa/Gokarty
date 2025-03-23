@@ -81,7 +81,7 @@ export const PlayersForTournament = () => {
         </Table>
       </div>
       {selectedPlayer &&
-        <RemovePlayersFromTournamentModal removeModal={removeModal} player={selectedPlayer} />
+        <RemovePlayersFromTournamentModal modal={removeModal} player={selectedPlayer} />
       }
     </div>
   );

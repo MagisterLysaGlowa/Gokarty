@@ -27,32 +27,12 @@ export const TournamentRidesTable: React.FC<TournamentTableProps> = ({
   editModal,
   removeModal,
 }) => {
-  const {
-    isOpen: isEditOpen,
-    onOpen: onEditOpen,
-    onOpenChange: onEditChange,
-  } = editModal;
-
-  const {
-    isOpen: isRemoveOpen,
-    onOpen: onRemoveOpen,
-    onOpenChange: onRemoveChange,
-  } = removeModal;
-
   const columns = useGetColumns();
   const rows = useMemorizedRidesData(data, searchFilter);
   const renderCell = useCustomCell(
     setSelectedRide,
-    {
-      isOpen: isRemoveOpen,
-      onOpen: onRemoveOpen,
-      onOpenChange: onRemoveChange,
-    },
-    {
-      isOpen: isEditOpen,
-      onOpen: onEditOpen,
-      onOpenChange: onEditChange,
-    }
+    removeModal,
+    editModal
   );
   return (
     <Table
