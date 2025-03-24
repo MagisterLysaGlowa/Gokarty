@@ -1,55 +1,62 @@
-import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-  useDisclosure,
-} from "@heroui/react";
-import {
-  columns,
-  getTableTextColor,
-  TableRowsType,
-  useCustomTableRows,
-} from "../tournamentTableUtils";
-import { useState } from "react";
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, useDisclosure } from "@heroui/react";
+import { columns, getTableTextColor, TableRowsType, useCustomTableRows } from "../tournamentTableUtils";
+import { useState, useEffect } from "react";
 import { RideInfoModal } from "./RideInfoModal";
+import { convertTimeToString } from "../../../Utils/TimeUtils";
 
 type RidesTableProps = {
   rows: TableRowsType[] | undefined;
 };
 
 export const RidesTable: React.FC<RidesTableProps> = ({ rows }) => {
-  const [selectedRide,setSelectedRide] = useState<TableRowsType | undefined>(undefined); 
+  const [selectedRide, setSelectedRide] = useState<TableRowsType | undefined>(undefined);
   const customCell = useCustomTableRows();
   const rideInfoModal = useDisclosure();
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 1024);
+
+  const handleResize = () => {
+    setIsSmallScreen(window.innerWidth < 1024);
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   return (
-    <><Table
-      aria-label=":c"
-      className="bg-transparent table flex-1 !p-0"
-      hideHeader
-      classNames={{
-        wrapper: ["bg-transparent", "shadow-none"],
-      }}
-    >
-      <TableHeader columns={columns}>
-        {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
-      </TableHeader>
-      <TableBody items={rows ?? []}>
-        {(item) => (
-          <TableRow onClick={()=>{setSelectedRide(item);rideInfoModal.onOpen()}} key={item.key}>
-            {(columnKey) => (
-              <TableCell className={`${getTableTextColor(item.key)} text-xl`}>
-                {customCell(item, columnKey)}
-              </TableCell>
-            )}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
-    {selectedRide && <RideInfoModal modalProps={rideInfoModal} ride={selectedRide}/>}
+    <>
+      <Table
+        aria-label=":c"
+        className="bg-transparent table flex-1 !p-0"
+        hideHeader
+        removeWrapper
+      >
+        <TableHeader columns={columns}>
+          {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
+        </TableHeader>
+        <TableBody items={rows ?? []}>
+          {(item) => (
+            <TableRow
+              onClick={() => {
+                if (isSmallScreen) {
+                  setSelectedRide(item);
+                  rideInfoModal.onOpen();
+                }
+              }}
+              key={item.key}
+            >
+              {(columnKey) => (
+                <TableCell className={`${getTableTextColor(item.key)} text-sm sm:text-lg lg:text-xl`}>
+                  {customCell(item, columnKey)}
+                </TableCell>
+              )}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+      {selectedRide && <RideInfoModal modalProps={rideInfoModal} ride={selectedRide} />}
     </>
   );
 };

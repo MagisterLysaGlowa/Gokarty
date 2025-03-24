@@ -52,7 +52,7 @@ const HomePage = () => {
           endContent={<FaArrowRight />}
           onPress={() => navigate("/zawody")}
         >
-          Przejdź do durniejów
+          Przejdź do zawodów
         </Button>
         <div className="navigation flex text-6xl gap-10 h-[100px] justify-center flex-wrap">
           {navigationElements.map((el) => (

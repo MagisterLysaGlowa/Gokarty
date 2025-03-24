@@ -10,6 +10,9 @@
   @apply border-b-3 border-gray-500 w-full;
 }
 
+.table td:nth-child(1) {
+  text-align:center;
+}
 
 @media (max-width: 768px) {
   .table th:nth-child(5),
@@ -22,6 +25,8 @@
   .table td:nth-child(5) {
     display: none;
   }
+}
+@media (max-width: 480px) {
   .table th:nth-child(3),
   .table td:nth-child(3) {
     display: none;

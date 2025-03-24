@@ -13,7 +13,7 @@ export const PaginationProgressBar: React.FC<PaginationProgressBar> = ({
   const widthRef = useRef<HTMLDivElement | null>(null);
   return (
     <div
-      className="w-[150px] h-[10px] rounded-lg bg-support overflow-hidden"
+      className="lg:w-[150px] w-[200px] h-[10px] rounded-lg bg-support overflow-hidden"
       ref={widthRef}
     >
       {widthRef.current && (
