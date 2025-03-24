@@ -16,6 +16,7 @@ import { TournamentRides } from "../pages/TournamentEdit/TournamentEditPages/tou
 import { TournamentInfo } from "../pages/TournamentEdit/TournamentEditPages/tournamentInfo/TournamentInfo";
 import { AddPlayerForTournament } from "../pages/TournamentEdit/TournamentEditPages/addPlayerForTournament/AddPlayerForTournament";
 import { PlayersForTournament } from "../pages/TournamentEdit/TournamentEditPages/playersForTournament/PlayersForTournament";
+import { InfoPage } from "../pages/InfoPage/InfoPage";
 
 export const router = createBrowserRouter([
   {
@@ -30,6 +31,7 @@ export const router = createBrowserRouter([
           { path: "login", element: <LoginPage /> },
           { path: "register", element: <RegisterPage /> },
           { path: "zawody/:id/wyniki", element: <TournamentTable /> },
+          { path: "/informacje", element: <InfoPage /> },
         ],
       },
       {

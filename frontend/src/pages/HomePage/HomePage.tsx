@@ -69,7 +69,7 @@ const HomePage = () => {
             </React.Fragment>
           ))}
           <Tooltip content={"Informacje"} showArrow>
-            <Link to={"/about"} className="homeNavigationElement">
+            <Link to={"/informacje"} className="homeNavigationElement">
               <FaInfoCircle />
             </Link>
           </Tooltip>
