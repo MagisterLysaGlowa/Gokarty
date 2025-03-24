@@ -7,9 +7,10 @@ import { IoMdAdd } from "react-icons/io";
 import { AddGokartModal } from "./addGokartComponents/AddGokartModal";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { GokartQueries } from "../../queries/gokartQuery";
+import { Loading } from "../../components/Loading/Loading";
 
 export const AddGokart = () => {
-  const { data: data } = GokartQueries.getAllGokarts();
+  const { data: data, isLoading } = GokartQueries.getAllGokarts();
   const [selectedGokartId, setSelectedGokartId] = useState<number | undefined>(undefined);
   const selectedGokart = data?.find(gokart => gokart.gokartId == selectedGokartId);
   const [filter, setFilter] = useState("");
@@ -30,6 +31,8 @@ export const AddGokart = () => {
           value={filter}
         />
       </div>
+      {isLoading ?
+      <Loading isLoading={isLoading}/> :
       <GokartTable
         data={data}
         editGokartModal={editGokartModal}
@@ -37,6 +40,7 @@ export const AddGokart = () => {
         setGokart={setSelectedGokartId}
         filter={filter}
       />
+      }
       {selectedGokart && (
         <>
           <EditGokartModal

@@ -10,56 +10,48 @@ import {
   SelectItem,
   Checkbox,
 } from "@heroui/react";
-import { FullRideData, ModalProps } from "../../../../../../types";
+import { GokartData, ModalProps, RideFormData } from "../../../../../../types";
 import { RideQueries } from "../../../../../queries/rideQuery";
 import { useState } from "react";
 import {
   calculateTimeFromStringToMs,
   convertTimeToString,
 } from "../../../../../Utils/TimeUtils";
-import { GokartQueries } from "../../../../../queries/gokartQuery";
 import { useParams } from "react-router-dom";
 import { queryClient } from "../../../../../Utils/ReactQueryConfig";
+import { RideModalData } from "../tournamentRidesUtils";
 
 type EditModalProps = {
   modal: ModalProps;
-  rideId: number;
+  ride: RideModalData;
+  gokarts?: GokartData[];
 };
 
 export const EditRideModal: React.FC<EditModalProps> = ({
   modal,
-  rideId,
+  ride,
+  gokarts,
 }) => {
-  const { id } = useParams();
-  const [rideToEdit, setRideToEdit] = useState<FullRideData>({
-    gokartId: -1,
-    isDisqualified: false,
-    playerId: -1,
-    rideId: Number(rideId),
-    rideNumber: -1,
-    time: -1,
-    tournamentId: Number(id),
-  });
-  const [time, setTime] = useState<string>("");
+  const { id: tournamentId } = useParams();
 
-  RideQueries.getFullRide(Number(rideId), {
-    onSuccess: (r) => {
-      setTime(convertTimeToString(r.time));
-      setRideToEdit(r);
-    },
+  const [rideToEdit, setRideToEdit] = useState<RideFormData>({
+    gokartId: Number(ride.timeData?.gokart.gokartId),
+    isDisqualified: Number(ride.timeData?.isDSQ),
+    playerId: ride.playerId,
+    time: Number(ride.timeData?.time),
+    tournamentId: Number(tournamentId),
   });
+
+  const [time, setTime] = useState<string>(convertTimeToString(Number(ride.timeData?.time)));
 
   const { mutateAsync: updateRide } = RideQueries.updateRide({
-    onSuccess: async () => {
-      await queryClient.invalidateQueries(["playersWithTimes", Number(id)]);
-      await queryClient.invalidateQueries(["ride", Number(rideId)]);
-    },
+    onSuccess: async () => await queryClient.invalidateQueries(["playersWithTimes", Number(tournamentId)])
   });
 
-  const { data: gokarts } = GokartQueries.getAllGokarts();
+  if(!gokarts) return;
 
   return (
-    <Modal {...modal} key={rideToEdit.rideId}>
+    <Modal {...modal} key={ride.timeData?.rideId}>
       <ModalContent>
         {(onClose) => (
           <>
@@ -68,25 +60,26 @@ export const EditRideModal: React.FC<EditModalProps> = ({
             </ModalHeader>
             <ModalBody>
               <Input
-                value={String(rideToEdit?.rideId)}
+                value={String(ride.timeData?.rideId)}
                 readOnly
                 label="Identyfikator przejazdu"
               />
               <Input
-                value={`${rideToEdit?.player?.name} ${rideToEdit?.player?.surname}`}
+                value={ride.player}
                 label="Osoba"
                 readOnly
               />
               <Input
+                placeholder="00:00:000"
                 value={time}
                 label="Czas"
                 maxLength={9}
                 onChange={(e) => setTime(e.target.value)}
               />
               <Checkbox
-                isSelected={rideToEdit.isDisqualified}
+                isSelected={Boolean(rideToEdit.isDisqualified)}
                 onValueChange={(e) =>
-                  setRideToEdit((p) => ({ ...p, isDisqualified: e }))
+                  setRideToEdit((p) => ({ ...p, isDisqualified: Number(e) }))
                 }
               >
                 Dyskwalifikacja
@@ -116,17 +109,12 @@ export const EditRideModal: React.FC<EditModalProps> = ({
                 color="primary"
                 onPress={async () => {
                   const timeRegex = /^\d{2}:\d{2}:\d{3}$/;
-
                   if (rideToEdit && timeRegex.test(time)) {
                     await updateRide({
-                      rideId: Number(rideId),
+                      rideId: Number(ride.timeData?.rideId),
                       data: {
-                        gokartId: rideToEdit.gokartId,
-                        isDisqualified:
-                          rideToEdit.isDisqualified == true ? 1 : 0,
-                        playerId: rideToEdit.playerId,
+                        ...rideToEdit,
                         time: calculateTimeFromStringToMs(time),
-                        tournamentId: Number(id),
                       },
                     });
                     onClose();

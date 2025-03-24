@@ -8,12 +8,12 @@ import {
 } from "@heroui/react";
 
 import { useCustomCell } from "../customCells";
-import { useGetColumns, useMemorizedRidesData } from "../tournamentRidesUtils";
+import { RideModalData, useGetColumns, useMemorizedRidesData } from "../tournamentRidesUtils";
 import { ModalProps, PlayersWithTimes } from "../../../../../../types";
 import { Dispatch, SetStateAction } from "react";
 
 type TournamentTableProps = {
-  setSelectedRide: Dispatch<SetStateAction<number | undefined>>;
+  setSelectedRide: Dispatch<SetStateAction<RideModalData | undefined>>;
   data: PlayersWithTimes[] | undefined;
   searchFilter: string;
   editModal: ModalProps;

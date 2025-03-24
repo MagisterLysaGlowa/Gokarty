@@ -1,12 +1,12 @@
 import React, { useCallback } from "react";
-import { RowType } from "./tournamentRidesUtils";
+import { RideModalData, RowType } from "./tournamentRidesUtils";
 import { convertTimeToString } from "../../../../Utils/TimeUtils";
 import { ModalProps, Times } from "../../../../../types";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { Button } from "@heroui/react";
 
 export const useCustomCell = (
-  setIds: React.Dispatch<React.SetStateAction<number | undefined>>,
+  setSelectedRide: React.Dispatch<React.SetStateAction<RideModalData | undefined>>,
   removeModalProps: ModalProps,
   editModalProps: ModalProps
 ) =>
@@ -50,11 +50,10 @@ export const useCustomCell = (
           );
         }
         case "gokart": {
-          const val = cellValue as string[];
           return (
-            <div className={`grid grid-rows-${val.length}`}>
-              {val.map((z, index) => (
-                <div key={`${z}-${index}`}>{z}</div>
+            <div className={`grid grid-rows-${row.times.length}`}>
+              {row.times.map((z, index) => (
+                <div key={`${z}-${index}`}>{z.gokart.name}</div>
               ))}
             </div>
           );
@@ -71,7 +70,12 @@ export const useCustomCell = (
                     variant="shadow"
                     color="primary"
                     onPress={() => {
-                      setIds(id);
+                      setSelectedRide({
+                        player: row.person.name,
+                        playerId: row.person.id,
+                        school: row.person.school,
+                        timeData: row.times.find(time => time.rideId == id),
+                      });
                       editModalProps.onOpen();
                     }}
                   />
@@ -81,7 +85,12 @@ export const useCustomCell = (
                     variant="shadow"
                     className="bg-red-600"
                     onPress={() => {
-                      setIds(id);
+                      setSelectedRide({
+                        player: row.person.name,
+                        playerId: row.person.id,
+                        school: row.person.school,
+                        timeData: row.times.find(time => time.rideId == id),
+                      });
                       removeModalProps.onOpen();
                     }}
                   />
@@ -95,5 +104,5 @@ export const useCustomCell = (
           return <>{cellValue}</>;
       }
     },
-    [removeModalProps, setIds, editModalProps]
+    [removeModalProps, setSelectedRide, editModalProps]
   );

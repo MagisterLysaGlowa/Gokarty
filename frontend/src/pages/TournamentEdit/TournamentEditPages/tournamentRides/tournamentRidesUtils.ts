@@ -16,16 +16,24 @@ export const useGetColumns = () =>
 export type RowType = {
   lp: number;
   person: {
+    id: number;
     name: string;
     school: string;
   };
   times: Times[];
-  gokart: string[];
 };
+
+
+export type RideModalData = {
+  player: string;
+  school: string;
+  playerId: number;
+  timeData?: Times;
+}
 
 export const useMemorizedRidesData = (
   data: PlayersWithTimes[] | undefined,
-  filter: string
+  filter: string,
 ) => {
   return useMemo(() => {
     return (
@@ -38,6 +46,7 @@ export const useMemorizedRidesData = (
         ?.map((z, index) => ({
           lp: index + 1,
           person: {
+            id: z.player.playerId,
             name: `${z.player.name} ${z.player.surname}`,
             school: z.player.school.acronym,
           },
@@ -48,7 +57,6 @@ export const useMemorizedRidesData = (
             rideId,
             isDSQ,
           })),
-          gokart: z.times.map(({ gokart }) => gokart.name),
         })) || []
     );
   }, [data, filter]);

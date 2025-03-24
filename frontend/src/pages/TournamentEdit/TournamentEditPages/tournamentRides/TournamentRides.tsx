@@ -9,13 +9,15 @@ import { RemoveRideModal } from "./tournamentRidesComponents/RemoveRideModal";
 import { EditRideModal } from "./tournamentRidesComponents/EditRideModal";
 import { TournamentRidesTable } from "./tournamentRidesComponents/TournamentRidesTable";
 import { Loading } from "../../../../components/Loading/Loading";
+import { GokartQueries } from "../../../../queries/gokartQuery";
+import { RideModalData } from "./tournamentRidesUtils";
 
 export const TournamentRides = () => {
   const { id } = useParams();
   const [filter, setFilter] = useState("");
   const search_filter = useDebounce(filter);
 
-  const [selectedRide, setSelectedRide] = useState<number | undefined>(
+  const [selectedRide, setSelectedRide] = useState<RideModalData | undefined>(
     undefined
   );
 
@@ -25,6 +27,7 @@ export const TournamentRides = () => {
   const { data, isLoading } = RideQueries.getAllPlayersWithTimes(Number(id), {
     refetchInterval: 10_000,
   });
+  const { data: gokarts } = GokartQueries.getAllGokarts();
 
   return (
     <div className="flex flex-col flex-1 max-h-full overflow-hidden gap-3">
@@ -47,8 +50,12 @@ export const TournamentRides = () => {
           setSelectedRide={setSelectedRide}
         />
       }
-      <RemoveRideModal modal={removeModal} rideId={selectedRide} />
-      <EditRideModal modal={editModal} rideId={Number(selectedRide)} />
+      {selectedRide &&
+        <>
+          <RemoveRideModal modal={removeModal} ride={selectedRide} />
+          <EditRideModal modal={editModal} ride={selectedRide} gokarts={gokarts}/>
+        </>
+      }
     </div>
   );
 };

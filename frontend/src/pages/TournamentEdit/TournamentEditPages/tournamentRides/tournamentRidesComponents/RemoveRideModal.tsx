@@ -11,30 +11,24 @@ import { RideQueries } from "../../../../../queries/rideQuery";
 import { convertTimeToString } from "../../../../../Utils/TimeUtils";
 import { queryClient } from "../../../../../Utils/ReactQueryConfig";
 import { useParams } from "react-router-dom";
+import { RideModalData } from "../tournamentRidesUtils";
 
 type RemoveRideProps = {
   modal: ModalProps;
-  rideId: number | undefined;
+  ride?: RideModalData;
 };
 
 export const RemoveRideModal: React.FC<RemoveRideProps> = ({
   modal,
-  rideId,
+  ride,
 }) => {
   const { id: tournamentId } = useParams();
-
-  const {
-    data: ride,
-    isLoading,
-    isFetching,
-  } = RideQueries.getFullRide(Number(rideId));
-
   const { mutateAsync: removeRide } = RideQueries.removeRide({
     onSuccess: async () =>
       await queryClient.invalidateQueries(["playersWithTimes", tournamentId]),
   });
 
-  if (!ride || isLoading || isFetching) return;
+  if (!ride) return;
 
   return (
     <Modal {...modal}>
@@ -44,10 +38,10 @@ export const RemoveRideModal: React.FC<RemoveRideProps> = ({
             <ModalHeader>Usuwanie przejazdu</ModalHeader>
             <ModalBody>
               <div className="flex flex-col gap-2">
-                <div>{ride.tournament?.name}</div>
-                <div>{ride.player?.name + " " + ride.player?.surname}</div>
-                <div>{ride.gokart?.name}</div>
-                <div>{convertTimeToString(ride.time)}</div>
+                <div>{"Identyfikator przejazdu: " + ride.timeData?.rideId}</div>
+                <div>{ride.player}</div>
+                <div>{ride.school}</div>
+                <div>{convertTimeToString(Number(ride.timeData?.time))}</div>
               </div>
             </ModalBody>
             <ModalFooter>
@@ -57,7 +51,7 @@ export const RemoveRideModal: React.FC<RemoveRideProps> = ({
               <Button
                 color="primary"
                 onPress={async () => {
-                  await removeRide(Number(rideId));
+                  await removeRide(Number(ride.timeData?.rideId));
                   onClose();
                 }}
               >
