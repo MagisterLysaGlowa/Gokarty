@@ -1,14 +1,16 @@
 import "./schoolManagement.css";
 import { useState } from "react";
 import { SchoolQueries } from "../../queries/schoolQuery";
-import { SchoolsTable } from "./SchoolManagementComponents/SchoolsTable";
 import { Input, useDisclosure } from "@heroui/react";
 import { Loading } from "../../components/Loading/Loading";
 import { useDebounce } from "../../Utils/debounce";
 import { FaMagnifyingGlass } from "react-icons/fa6";
-import { defaultVariant } from "../../Utils/globalUtils";
+import { defaultEditButtonProps, defaultRemoveButtonProps, defaultVariant } from "../../Utils/globalUtils";
 import { RemoveSchoolsModal } from "./SchoolManagementComponents/RemoveSchoolModal";
 import { EditSchoolModal } from "./SchoolManagementComponents/EditSchoolModal";
+import { useCustomTableCells } from "../../components/CustomTableCells/CustomTableCells";
+import { useGetColumns, useMemorizedSchoolsData } from "./SchoolManagementUtils";
+import { TableComponent } from "../../components/Table/TableComponent";
 
 export const SchoolManagement = () => {
   const [filter, setFilter] = useState<string>("");
@@ -26,6 +28,14 @@ export const SchoolManagement = () => {
   const editModal = useDisclosure();
   const removeModal = useDisclosure();
 
+  const columns = useGetColumns();
+  const rows = useMemorizedSchoolsData(data, searchFilter);
+  const renderCell = useCustomTableCells(
+    setSelectedSchoolId, [
+    { modal: editModal, buttonProps: defaultEditButtonProps },
+    { modal: removeModal, buttonProps: defaultRemoveButtonProps }]
+  );
+
   return (
     <div className="flex flex-col h-full max-h-full overflow-hidden gap-3">
       <div className="w-1/3">
@@ -39,8 +49,8 @@ export const SchoolManagement = () => {
       </div>
       <div>
         {isLoading ? 
-          <Loading isLoading={isLoading}/> : 
-          <SchoolsTable editModal={editModal} removeModal={removeModal} data={data} setSelectedSchool={setSelectedSchoolId} searchFilter={searchFilter}/>
+          <Loading isLoading={isLoading}/> :
+          <TableComponent columns={columns} rows={rows} tableCells={renderCell}/>
         }
       </div>
       {selectedSchool &&

@@ -20,7 +20,7 @@ export default {
       },
       colors: {
         'nav-selected': mainColor[500],
-        'nav-default': mainColor[950],
+        'nav-default': mainColor[800],
         'nav-separator': mainColor[900],
         'main-default': mainColor[500],
         'nav-bg': 'rgba(22, 22, 22, 1)',

@@ -2,17 +2,10 @@ import { useParams } from "react-router-dom";
 import { PlayerQueries } from "../../../../queries/playerQuery";
 import { useState } from "react";
 import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
   Input,
   useDisclosure,
 } from "@heroui/react";
 import {
-  basicTableClasses,
   defaultRemoveButtonProps,
   defaultVariant,
 } from "../../../../Utils/globalUtils";
@@ -24,10 +17,12 @@ import {
 } from "./playersForTournamentUtils";
 import { RemovePlayersFromTournamentModal } from "./playersForTournamentComponents/RemovePlayersFromTournamentModal";
 import { useCustomTableCells } from "../../../../components/CustomTableCells/CustomTableCells";
+import { TableComponent } from "../../../../components/Table/TableComponent";
+import { Loading } from "../../../../components/Loading/Loading";
 
 export const PlayersForTournament = () => {
   const { id } = useParams();
-  const { data } = PlayerQueries.getPlayersForTournamentWithSchool(Number(id), {
+  const { data, isLoading } = PlayerQueries.getPlayersForTournamentWithSchool(Number(id), {
     refetchInterval: 10_000,
   });
   const [filter, setFilter] = useState("");
@@ -55,30 +50,10 @@ export const PlayersForTournament = () => {
         />
       </div>
       <div className="flex-1 overflow-auto">
-        <Table
-          aria-label="Example table with custom cells"
-          isHeaderSticky
-          classNames={{
-            ...basicTableClasses,
-            td: "text-xl",
-            base: "max-h-full",
-          }}
-        >
-          <TableHeader columns={columns}>
-            {(column) => (
-              <TableColumn key={column.key}>{column.label}</TableColumn>
-            )}
-          </TableHeader>
-          <TableBody items={memoizedData}>
-            {(item) => (
-              <TableRow key={item.Lp}>
-                {(columnKey) => (
-                  <TableCell>{customCell(item, columnKey)}</TableCell>
-                )}
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+        {isLoading ? 
+          <Loading isLoading={isLoading}/> :
+          <TableComponent columns={columns} rows={memoizedData} tableCells={customCell}/>
+        }
       </div>
       {selectedPlayer &&
         <RemovePlayersFromTournamentModal modal={removeModal} player={selectedPlayer} />

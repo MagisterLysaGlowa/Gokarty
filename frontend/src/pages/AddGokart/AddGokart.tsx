@@ -2,12 +2,15 @@ import { Button, Input, useDisclosure } from "@heroui/react";
 import { useState } from "react";
 import { EditGokartModal } from "./addGokartComponents/EditGokartModal";
 import { RemoveGokartModal } from "./addGokartComponents/RemoveGokartModal";
-import { GokartTable } from "./addGokartComponents/GokartTable";
 import { IoMdAdd } from "react-icons/io";
 import { AddGokartModal } from "./addGokartComponents/AddGokartModal";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { GokartQueries } from "../../queries/gokartQuery";
 import { Loading } from "../../components/Loading/Loading";
+import { useCustomTableCells } from "../../components/CustomTableCells/CustomTableCells";
+import { useGetGokartColumns, useGetGokartRows } from "./AddGokartUtils";
+import { defaultEditButtonProps, defaultRemoveButtonProps } from "../../Utils/globalUtils";
+import { TableComponent } from "../../components/Table/TableComponent";
 
 export const AddGokart = () => {
   const { data: data, isLoading } = GokartQueries.getAllGokarts();
@@ -18,6 +21,17 @@ export const AddGokart = () => {
   const editGokartModal = useDisclosure();
   const removeGokartModal = useDisclosure();
   const addGokartModal = useDisclosure();
+
+  const gokartCell = useCustomTableCells(
+    setSelectedGokartId,
+    [{
+      modal: editGokartModal, buttonProps: defaultEditButtonProps
+    }, {
+      modal: removeGokartModal, buttonProps: defaultRemoveButtonProps
+    }]
+  );
+  const columns = useGetGokartColumns();
+  const rows = useGetGokartRows(data, filter);
 
   return (
     <div className="flex-1">
@@ -32,14 +46,8 @@ export const AddGokart = () => {
         />
       </div>
       {isLoading ?
-      <Loading isLoading={isLoading}/> :
-      <GokartTable
-        data={data}
-        editGokartModal={editGokartModal}
-        removeGokartModal={removeGokartModal}
-        setGokart={setSelectedGokartId}
-        filter={filter}
-      />
+        <Loading isLoading={isLoading}/> :
+        <TableComponent columns={columns} rows={rows} tableCells={gokartCell}/>
       }
       {selectedGokart && (
         <>

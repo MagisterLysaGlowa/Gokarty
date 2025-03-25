@@ -9,12 +9,6 @@ import {
   Input,
   Select,
   SelectItem,
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
   useDisclosure,
 } from "@heroui/react";
 
@@ -24,6 +18,7 @@ import { useColumns, useMemorizedPlayers } from "./AddPlayerForTournamentUtils";
 import { useCustomTableCells } from "../../../../components/CustomTableCells/CustomTableCells";
 import { useDebounce } from "../../../../Utils/debounce";
 import { Loading } from "../../../../components/Loading/Loading";
+import { TableComponent } from "../../../../components/Table/TableComponent";
 
 export const AddPlayerForTournament = () => {
   const { id } = useParams();
@@ -91,29 +86,8 @@ export const AddPlayerForTournament = () => {
       </div>
         
       {isFetching ?
-      <Loading isLoading={isFetching}/> :
-      <Table
-        aria-label="Example table with dynamic content"
-        isHeaderSticky
-        classNames={{
-          wrapper: "bg-transparent shadow-none p-0",
-        }}
-      >
-        <TableHeader columns={columns}>
-          {(column) => (
-            <TableColumn key={column.key}>{column.label}</TableColumn>
-          )}
-        </TableHeader>
-        <TableBody items={rows}>
-          {(item) => (
-            <TableRow key={item.lp}>
-              {(columnKey) => (
-                <TableCell>{customCell(item, columnKey)}</TableCell>
-              )}
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+        <Loading isLoading={isFetching}/> :
+        <TableComponent columns={columns} rows={rows} tableCells={customCell}/>
       }
       {selectedPlayer &&
         <AddPlayerToTournamentModal
