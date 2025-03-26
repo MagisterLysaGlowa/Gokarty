@@ -1,9 +1,12 @@
-import { Button, Divider, Image, Tooltip } from "@heroui/react";
+import { Button, Image, Tooltip } from "@heroui/react";
 import { FaArrowRight, FaInfoCircle } from "react-icons/fa";
 import { navElements } from "../../components/Navbar/navbarUtils";
 import { Link, useNavigate } from "react-router-dom";
 import "./HomePage.css";
-import React from "react";
+import { Footer } from "../../components/componentsExport";
+import { Separator } from "../../components/StaticPageComponents/Separator";
+import { Header } from "../../components/StaticPageComponents/Header";
+import { NavigationBox } from "./HomePageComponents/NavigationBox";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -14,7 +17,7 @@ const HomePage = () => {
 
   return (
     <div className="flex flex-col justify-between h-full">
-      <div className="w-full text-center flex justify-between items-center p-3">
+      <Header classNames="text-center flex justify-between items-center">
         <Image src="images/gokart.png" height={60} />
         <h1 className="text-[40px] flex items-center gap-2 font-medium">
           <span>Gokarty</span>
@@ -23,7 +26,7 @@ const HomePage = () => {
           </span>
         </h1>
         <span>Zapodaj logowanie</span>
-      </div>
+      </Header>
       <div className="grid grid-cols-3 bg-white py-3 border-y-8 border-main-default ">
         <Image src="images/mainPage.jpg" className="rounded-none" />
         <Image src="images/mainPage.jpg" className="rounded-none" />
@@ -56,17 +59,7 @@ const HomePage = () => {
         </Button>
         <div className="navigation flex text-6xl gap-10 h-[100px] justify-center flex-wrap">
           {navigationElements.map((el) => (
-            <React.Fragment key={el.id}>
-              <Tooltip content={el.name} showArrow>
-                <Link to={el.to} className="homeNavigationElement">
-                  <el.icon />
-                </Link>
-              </Tooltip>
-              <Divider
-                orientation="vertical"
-                className="w-[4px] h-[80%] my-auto rounded-3xl"
-              />
-            </React.Fragment>
+            <NavigationBox element={el} key={el.id} />
           ))}
           <Tooltip content={"Informacje"} showArrow>
             <Link to={"/informacje"} className="homeNavigationElement">
@@ -80,11 +73,8 @@ const HomePage = () => {
           niewłaściwie stosowany zagraża Twojemu życiu lub zdrowiu.
         </div>
       </div>
-      <div className="bg-white p-3 border-t-8 border-main-default w-full">
-        <p className="text-black font-bold text-center">
-          Mechanik OG full gangsta © {new Date().getFullYear()}
-        </p>
-      </div>
+      <Separator />
+      <Footer />
     </div>
   );
 };

@@ -30,7 +30,7 @@ export const navElements: NavbarListElementSchema[] = [
     id: 4,
     name: "Gokarty",
     icon: FaCar,
-    to: "/gokart",
+    to: "/gokarty",
   },
   {
     id: 5,

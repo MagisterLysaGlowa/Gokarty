@@ -17,6 +17,7 @@ import { TournamentInfo } from "../pages/TournamentEdit/TournamentEditPages/tour
 import { AddPlayerForTournament } from "../pages/TournamentEdit/TournamentEditPages/addPlayerForTournament/AddPlayerForTournament";
 import { PlayersForTournament } from "../pages/TournamentEdit/TournamentEditPages/playersForTournament/PlayersForTournament";
 import { InfoPage } from "../pages/InfoPage/InfoPage";
+import { GokartsPage } from "../pages/GokartsPage/GokartsPage";
 
 export const router = createBrowserRouter([
   {
@@ -31,7 +32,8 @@ export const router = createBrowserRouter([
           { path: "login", element: <LoginPage /> },
           { path: "register", element: <RegisterPage /> },
           { path: "zawody/:id/wyniki", element: <TournamentTable /> },
-          { path: "/informacje", element: <InfoPage /> },
+          { path: "informacje", element: <InfoPage /> },
+          { path: "gokarty", element: <GokartsPage /> },
         ],
       },
       {

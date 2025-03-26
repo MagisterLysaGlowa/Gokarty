@@ -1,4 +1,4 @@
-export const informations = [
+export const informations: PersonInformationSchema[] = [
   {
     name: "Kacper Piaskowy",
     description:
@@ -28,3 +28,10 @@ export const informations = [
     profile: "https://github.com/StalowyDestroyer",
   },
 ];
+
+export type PersonInformationSchema = {
+  name: string;
+  description: string;
+  avatar: string;
+  profile: string;
+};

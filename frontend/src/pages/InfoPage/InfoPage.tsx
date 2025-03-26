@@ -1,13 +1,16 @@
-import { Avatar, Link } from "@heroui/react";
 import { informations } from "./infoPageUtils";
+import { Footer } from "../../components/componentsExport";
+import { Separator } from "../../components/StaticPageComponents/Separator";
+import { Header } from "../../components/StaticPageComponents/Header";
+import { PersonInfo } from "./InfoPageComponent/PersonInfo";
 
 export const InfoPage = () => {
   return (
     <div className="h-full w-full flex flex-col overflow-auto">
-      <header className="p-3">
+      <Header>
         <p className="text-center text-main-default text-4xl">Informacje</p>
-      </header>
-      <div className="bg-white p-4 border-y-8 border-main-default w-full" />
+      </Header>
+      <Separator />
       <div className="flex-1 w-3/4 mx-auto my-7 flex flex-col gap-10">
         <section className="flex flex-col gap-5">
           <h3 className="text-2xl text-main-default text-center">
@@ -65,27 +68,13 @@ export const InfoPage = () => {
           </h3>
           <div className="grid grid-cols-2 grid-rows-2 gap-x-4 gap-y-5">
             {informations.map((person) => (
-              <div className="flex flex-col justify-center items-center gap-5">
-                <Avatar src={person.avatar} alt={person.name} size="lg" />
-                <Link
-                  className="text-main-default text-2xl"
-                  href={person.profile}
-                  target="_blank"
-                >
-                  {person.name}
-                </Link>
-                <p>{person.description}</p>
-              </div>
+              <PersonInfo person={person} />
             ))}
           </div>
         </section>
       </div>
-      <div className="bg-white p-4 border-y-8 border-main-default w-full" />
-      <div>
-        <p className="text-white font-bold text-center p-3">
-          Mechanik OG full gangsta © {new Date().getFullYear()}
-        </p>
-      </div>
+      <Separator />
+      <Footer />
     </div>
   );
 };
