@@ -13,44 +13,72 @@ namespace api.Repositories {
             _context = context;
             _playerRepository = playerRepository;
         }
-        //ToDo: To jest straszny potwór 💀💀💀
-        // wymaga poprawy
-        public async Task<bool> CreateQueuesAsync(int tournamentId, List<int> gokartIds, int numberOfRidesInOneGokart) {
+
+        public async Task<bool> CreateQueuesAsync(int tournamentId, List<int> gokartIds, int numberOfRidesInOneGokart)
+        {
             if (gokartIds.Count == 0)
                 return false;
             if (numberOfRidesInOneGokart == 0)
                 return false;
-            if (_context.Rides.Where(r => r.TournamentId == tournamentId).ToList().Count != 0 && _context.Rides.Where(r => r.TournamentId == tournamentId).Max(r => r.RideNumber) >= gokartIds.Count)
+            IEnumerable<Ride> tournamentRides = _context.Rides.Where(r => r.TournamentId == tournamentId);
+            if (tournamentRides.ToList().Count != 0 && tournamentRides.Max(r => r.RideNumber) >= gokartIds.Count)
                 return false;
-            int? lastUsedGokartId = _context.Rides.Where(r => r.TournamentId == tournamentId).OrderByDescending(r => r.RideId).FirstOrDefault()?.GokartId;
-            List<Player> players = await _playerRepository.GetAllForTournamentAsync(tournamentId);
-            List<Player> selectedPlayers = new List<Player>();
-            Random rnd = new Random();
+            List<Player> playersInTournament = await _playerRepository.GetAllForTournamentAsync(tournamentId);
+            int? lastUsedGokartId = tournamentRides.OrderByDescending(r => r.RideId).FirstOrDefault()?.GokartId;//gokart który był ostatnio użyty lub null jeżeli to pierwsze losowanie
+            int gokartNowIndex = lastUsedGokartId is null ? 0 : (gokartIds.IndexOf((int)lastUsedGokartId) + 1) % gokartIds.Count;//index gokatraw liście gokartIds dla którego losujemy ludzi
+            List<Player> playersNotQueued = new(playersInTournament);//wszyscy uczestnicy których nie wybraliśmy do kolejki, czyli na początku wszyscy
+            List<Queue> queuesToAdd = new();
+            Random rnd = new();
 
-            int gokart = gokartIds[0];
-            for (int i = 0; i < players.Count; i++) {
-                if (i % numberOfRidesInOneGokart == 0) {
-                    selectedPlayers.AddRange(players.GetRange(i, players.Count - (i % numberOfRidesInOneGokart) * numberOfRidesInOneGokart >= numberOfRidesInOneGokart ? numberOfRidesInOneGokart : players.Count - (i % numberOfRidesInOneGokart) * numberOfRidesInOneGokart));
-                    if (lastUsedGokartId != null) {
-                        List<int> usedGokarts = _context.Rides.Where(r => r.TournamentId == tournamentId && r.PlayerId == players[i].PlayerId).Select(r => r.GokartId).ToList();
-                        List<int> filteredGokarts = gokartIds.Where(id => !usedGokarts.Contains(id)).ToList();
-                        gokart = filteredGokarts[(filteredGokarts.FindIndex(id => id == lastUsedGokartId) + 1) % filteredGokarts.Count];
+            for (int i = 0; i < playersInTournament.Count / numberOfRidesInOneGokart; i++)
+            {
+                //osoby które nie jechały gokartem dla którego losujemy i mogą zostać wybrane
+                List<Player> canBeQueued = playersNotQueued.Where(p => !tournamentRides.Where(r => r.GokartId == gokartIds[gokartNowIndex]).Select(r => r.PlayerId).Contains(p.PlayerId)).ToList();
+                for (int j = 0; j < numberOfRidesInOneGokart; j++)
+                {
+                    if (canBeQueued.Count > 0)
+                    {
+                        var player = canBeQueued[rnd.Next(0, canBeQueued.Count)];
+                        queuesToAdd.Add(new Queue()
+                        {
+                            TournamentId = tournamentId,
+                            PlayerId = player.PlayerId,
+                            QueuePosition = (i * numberOfRidesInOneGokart) + j,
+                            RideStatusId = 1,
+                            GokartId = gokartIds[gokartNowIndex],
+                        });
+                        canBeQueued.Remove(player);
+                        playersNotQueued.Remove(player);
                     }
-                    lastUsedGokartId = gokart;
+                    else
+                    {
+                        for (int k = 0; k < numberOfRidesInOneGokart - j; k++)
+                        {
+                            List<Player> playersWhoCanSwap = playersInTournament.Where(p => !tournamentRides.Where(r => r.GokartId == gokartIds[gokartNowIndex]).Select(r => r.PlayerId).Contains(p.PlayerId)).ToList();
+                            List<Queue> queuesWherePlayerCanSwap = queuesToAdd.Where(q => q.TournamentId == tournamentId && playersWhoCanSwap.Select(p => p.PlayerId).Contains(q.PlayerId) && gokartIds.Where(g => !tournamentRides.Where(r => r.PlayerId == playersNotQueued[k].PlayerId).Select(r => r.GokartId).Contains(g)).Contains(q.GokartId)).ToList();
+                            var queueToSwap = queuesWherePlayerCanSwap[rnd.Next(0, queuesWherePlayerCanSwap.Count)];
+                            queuesToAdd.RemoveAt(queuesToAdd.IndexOf(queueToSwap));
+                            queuesToAdd.Add(new Queue()
+                            {
+                                TournamentId = tournamentId,
+                                PlayerId = queueToSwap.PlayerId,
+                                QueuePosition = (i * numberOfRidesInOneGokart) + j + k,
+                                RideStatusId = 1,
+                                GokartId = gokartIds[gokartNowIndex],
+                            });
+                            queueToSwap.PlayerId = playersNotQueued[k].PlayerId;
+                            queuesToAdd.Add(queueToSwap);
+                        }
+                        break;
+                    }
                 }
-
-                var player = selectedPlayers[rnd.Next(0, selectedPlayers.Count)];
-                _context.Queues.Add(new Queue() {
-                    TournamentId = tournamentId,
-                    PlayerId = player.PlayerId,
-                    QueuePosition = i,
-                    RideStatusId = 1,
-                    GokartId = gokart,
-                });
-                selectedPlayers.Remove(player);
+                gokartNowIndex = (gokartNowIndex + 1) % gokartIds.Count;
             }
 
-            _context.SaveChanges();
+            foreach (Queue queue in queuesToAdd)
+                await _context.Queues.AddAsync(queue);
+
+            await _context.SaveChangesAsync();
             return true;
         }
 
