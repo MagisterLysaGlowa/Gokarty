@@ -181,10 +181,10 @@ const useRemovePlayerFromTournament = (
         removePlayerTexts
       );
     },
-    onSuccess: handleSuccessWithRefreshOnSuccess(
-      [["players" + "tournament" + "withSchool"]],
+    onSuccess: (r, v, c) => handleSuccessWithRefreshOnSuccess(
+      [["players" + "tournament" + "withSchool"], ["playerstournamentwithSchool", v.tournamentId]],
       options?.onSuccess
-    ),
+    )(r, v, c),
   });
 };
 

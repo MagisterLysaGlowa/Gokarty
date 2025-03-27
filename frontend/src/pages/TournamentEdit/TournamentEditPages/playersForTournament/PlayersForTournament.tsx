@@ -15,14 +15,14 @@ import {
   useGetColumns,
   useGetMemorizedData,
 } from "./playersForTournamentUtils";
-import { RemovePlayersFromTournamentModal } from "./playersForTournamentComponents/RemovePlayersFromTournamentModal";
 import { useCustomTableCells } from "../../../../components/CustomTableCells/CustomTableCells";
 import { TableComponent } from "../../../../components/Table/TableComponent";
 import { Loading } from "../../../../components/Loading/Loading";
+import { YesNoModal } from "../../../../components/YesNoModal/YesNoModal";
 
 export const PlayersForTournament = () => {
-  const { id } = useParams();
-  const { data, isLoading } = PlayerQueries.getPlayersForTournamentWithSchool(Number(id), {
+  const { id: tournamentId } = useParams();
+  const { data, isLoading } = PlayerQueries.getPlayersForTournamentWithSchool(Number(tournamentId), {
     refetchInterval: 10_000,
   });
   const [filter, setFilter] = useState("");
@@ -37,6 +37,8 @@ export const PlayersForTournament = () => {
   const selectedPlayer = data?.find(player => player.playerId == selectedPlayerId);
 
   const customCell = useCustomTableCells(setSelectedPlayerId, [{modal: removeModal, buttonProps: defaultRemoveButtonProps}]);
+
+  const { mutateAsync: removePlayerFromTournament } = PlayerQueries.removePlayerFromTournament();
 
   return (
     <div className="flex flex-col h-full max-h-full overflow-hidden gap-3">
@@ -56,7 +58,13 @@ export const PlayersForTournament = () => {
         }
       </div>
       {selectedPlayer &&
-        <RemovePlayersFromTournamentModal modal={removeModal} player={selectedPlayer} />
+        <YesNoModal header="Usuwanie gracza z turnieju" modal={removeModal} onYes={async () => removePlayerFromTournament({tournamentId: tournamentId, playerId: Number(selectedPlayerId)})}>
+          <div className="flex flex-col gap-2">
+            <div>{selectedPlayer.name + " " + selectedPlayer.surname}</div>
+            <div>{selectedPlayer.birthDate.toLocaleDateString()}</div>
+            <div>{selectedPlayer.school.acronym}</div>
+          </div>
+        </YesNoModal>
       }
     </div>
   );

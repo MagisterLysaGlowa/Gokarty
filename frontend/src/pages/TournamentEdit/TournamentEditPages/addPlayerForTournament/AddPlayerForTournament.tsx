@@ -12,21 +12,21 @@ import {
   useDisclosure,
 } from "@heroui/react";
 
-import { AddPlayerToTournamentModal } from "./AddPlayerToTournamentModal";
 import { defaultAddButtonProps, defaultVariant } from "../../../../Utils/globalUtils";
 import { useColumns, useMemorizedPlayers } from "./AddPlayerForTournamentUtils";
 import { useCustomTableCells } from "../../../../components/CustomTableCells/CustomTableCells";
 import { useDebounce } from "../../../../Utils/debounce";
 import { Loading } from "../../../../components/Loading/Loading";
 import { TableComponent } from "../../../../components/Table/TableComponent";
+import { YesNoModal } from "../../../../components/YesNoModal/YesNoModal";
 
 export const AddPlayerForTournament = () => {
-  const { id } = useParams();
+  const { id: tournamentId } = useParams();
   const [playerFilter, setPlayerFilter] = useState<PlayerFilterFormData>({
     name: "",
     schoolId: -1,
     surname: "",
-    tournamentId: Number(id),
+    tournamentId: Number(tournamentId),
   });
   const serverFilter = useDebounce(playerFilter);
 
@@ -49,6 +49,8 @@ export const AddPlayerForTournament = () => {
     setSelectedPlayerId,
     [{ modal: addModal, buttonProps: defaultAddButtonProps}]
   )
+
+  const { mutateAsync: addPlayer } = PlayerQueries.addPlayerToTournament();
 
   return (
     <div className="flex flex-col h-full max-h-full overflow-hidden gap-3">
@@ -90,10 +92,12 @@ export const AddPlayerForTournament = () => {
         <TableComponent columns={columns} rows={rows} tableCells={customCell}/>
       }
       {selectedPlayer &&
-        <AddPlayerToTournamentModal
-          modal={addModal}
-          player={selectedPlayer}
-        />
+        <YesNoModal buttonText="Dodaj" header="Dodaj zawodnika" onYes={async () => addPlayer({tournamentId: tournamentId, playerId: Number(selectedPlayerId)})} modal={addModal}>
+          <h2>Czy napewno chcesz dodać zawodnika</h2>
+          <span>
+            {selectedPlayer.name} {selectedPlayer.surname}
+          </span>
+        </YesNoModal>
       }
     </div>
   );

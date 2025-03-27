@@ -8,7 +8,6 @@ import TournamentTable from "../pages/tournamentTable/TournamentTable";
 import { SchoolManagement } from "../pages/SchoolManagemet/SchoolManagement";
 import { AddGokart } from "../pages/AddGokart/AddGokart";
 import { TournamentManegement } from "../pages/TournamenManagement/TournamentManegement";
-import { QueueEdit } from "../pages/QueueEdit/QueueEdit";
 import { EmptyLayout } from "../layouts/EmptyLayout";
 import { MainNavigationLayout } from "../layouts/MainNavigationLayout";
 import { DualNavigationManagment } from "../layouts/DualNavigationManagment";
@@ -69,11 +68,6 @@ export const router = createBrowserRouter([
       { path: "zawody/:id/zarzadzanie", element: <TournamentManegement /> },
       // { path: "zawody/:id/edycja/zawodnik", element: <AddPlayer /> },
       // { path: "zawody/:id/edycja/zawodnik/:playerId", element: <AddPlayer /> },
-
-      {
-        path: "zawody/:id/kolejka",
-        element: <QueueEdit />,
-      },
     ],
   },
 ]);

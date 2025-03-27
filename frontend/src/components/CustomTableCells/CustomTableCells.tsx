@@ -12,9 +12,10 @@ export const useCustomTableCells = (
         return (
             <div className="flex gap-3">
             {
-                actions.map((action) => {
+                actions.map((action, i) => {
                     return (
                         <Button
+                        key={i}
                         {...action.buttonProps}
                         onPress={() => {
                             setItem(Number(row["id"]));

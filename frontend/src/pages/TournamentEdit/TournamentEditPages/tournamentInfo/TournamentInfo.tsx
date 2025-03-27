@@ -1,19 +1,19 @@
 import { Button, useDisclosure } from "@heroui/react";
 import { FaDice, FaEdit, FaPlay, FaStop, FaTrash } from "react-icons/fa";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
 import { TournamentData, TournamentType } from "../../../../../types";
 import { TournamentQueries } from "../../../../queries/tournamentQuery";
-import { RemoveTournamentModal } from "./tournamentInfoComponents/RemoveTournamentModal";
 import { EditTournamentModal } from "./tournamentInfoComponents/EditTournamentModal";
 import "../../tournamentEdit.css";
 import { TournamentInfoComponent } from "./tournamentInfoComponents/TournamentInfoComponent";
 import { Loading } from "../../../../components/Loading/Loading";
 import { CreateQueueModal } from "./tournamentInfoComponents/CreateQueueModal";
-import { StartEndTournamentModal } from "./tournamentInfoComponents/StartEndTournamentModal";
+import { YesNoModal } from "../../../../components/YesNoModal/YesNoModal";
 
 export const TournamentInfo = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const editModal = useDisclosure();
   const removeModal = useDisclosure();
@@ -33,6 +33,13 @@ export const TournamentInfo = () => {
   const { isLoading } = TournamentQueries.getTournament(Number(id), {
     onSuccess: (res) => SetTournament(res),
   });
+
+  const { mutateAsync: removeTournamentAsync } =
+    TournamentQueries.removeTournament({
+      onSuccess: () => navigate(-1),
+    });
+
+  const { mutateAsync: updateTournament} = TournamentQueries.updateTournament();
 
   return (
     <div className="grid place-items-center h-full">
@@ -72,10 +79,9 @@ export const TournamentInfo = () => {
             onPress={() => queueModal.onOpen()}
           />}
         </div>
-        <RemoveTournamentModal
-          modal={removeModal}
-          tournament={tournament}
-        />
+        <YesNoModal header={tournament.name} modal={removeModal} onYes={async () => removeTournamentAsync(Number(tournament.tournamentId))}>
+          {"Czy napewno chcesz usunąć te zawody?"}
+        </YesNoModal>
         <EditTournamentModal
           modal={editModal}
           tournament={tournament}
@@ -85,10 +91,9 @@ export const TournamentInfo = () => {
           tournament={tournament}
           modal={queueModal}
         />
-        <StartEndTournamentModal
-          modal={startEndModal}
-          tournament={tournament}
-        />
+        <YesNoModal header={(tournament.tournamentStateId == 1 ? "Rozpoczęcie" : "Zakończnie") + " zawodów"} modal={startEndModal} buttonText="Tak" onYes={async () => updateTournament({...tournament, tournamentStateId: tournament.tournamentStateId + 1})}>
+          Czy napewno chcesz {tournament.tournamentStateId == 1 ? "rozpocząć" : "zakończyć"} te zawody?
+        </YesNoModal>
       </>
       }
     </div>

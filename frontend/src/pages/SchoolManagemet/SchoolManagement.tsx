@@ -6,11 +6,12 @@ import { Loading } from "../../components/Loading/Loading";
 import { useDebounce } from "../../Utils/debounce";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { defaultEditButtonProps, defaultRemoveButtonProps, defaultVariant } from "../../Utils/globalUtils";
-import { RemoveSchoolsModal } from "./SchoolManagementComponents/RemoveSchoolModal";
 import { EditSchoolModal } from "./SchoolManagementComponents/EditSchoolModal";
 import { useCustomTableCells } from "../../components/CustomTableCells/CustomTableCells";
 import { useGetColumns, useMemorizedSchoolsData } from "./SchoolManagementUtils";
 import { TableComponent } from "../../components/Table/TableComponent";
+import { YesNoModal } from "../../components/YesNoModal/YesNoModal";
+import { queryClient } from "../../Utils/ReactQueryConfig";
 
 export const SchoolManagement = () => {
   const [filter, setFilter] = useState<string>("");
@@ -36,6 +37,11 @@ export const SchoolManagement = () => {
     { modal: removeModal, buttonProps: defaultRemoveButtonProps }]
   );
 
+  const { mutateAsync: removeSchool } = SchoolQueries.removeSchool({
+    onSuccess: async () =>
+      await queryClient.invalidateQueries(["schools"]),
+  });
+
   return (
     <div className="flex flex-col h-full max-h-full overflow-hidden gap-3">
       <div className="w-1/3">
@@ -55,7 +61,12 @@ export const SchoolManagement = () => {
       </div>
       {selectedSchool &&
         <>
-          <RemoveSchoolsModal school={selectedSchool} modal={removeModal}/>
+          <YesNoModal header="Usuwanie szkoły" modal={removeModal} onYes={async () => removeSchool(Number(selectedSchoolId))}>
+            <div className="flex flex-col gap-2">
+              <div>{selectedSchool.name + " (" + selectedSchool.acronym + ")"}</div>
+              <div>{selectedSchool.city}</div>
+            </div>
+          </YesNoModal>
           <EditSchoolModal school={selectedSchool} modal={editModal}/>
         </>
       }

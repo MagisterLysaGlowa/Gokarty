@@ -1,7 +1,6 @@
 import { Button, Input, useDisclosure } from "@heroui/react";
 import { useState } from "react";
 import { EditGokartModal } from "./addGokartComponents/EditGokartModal";
-import { RemoveGokartModal } from "./addGokartComponents/RemoveGokartModal";
 import { IoMdAdd } from "react-icons/io";
 import { AddGokartModal } from "./addGokartComponents/AddGokartModal";
 import { FaMagnifyingGlass } from "react-icons/fa6";
@@ -11,6 +10,7 @@ import { useCustomTableCells } from "../../components/CustomTableCells/CustomTab
 import { useGetGokartColumns, useGetGokartRows } from "./AddGokartUtils";
 import { defaultEditButtonProps, defaultRemoveButtonProps } from "../../Utils/globalUtils";
 import { TableComponent } from "../../components/Table/TableComponent";
+import { YesNoModal } from "../../components/YesNoModal/YesNoModal";
 
 export const AddGokart = () => {
   const { data: data, isLoading } = GokartQueries.getAllGokarts();
@@ -32,6 +32,8 @@ export const AddGokart = () => {
   );
   const columns = useGetGokartColumns();
   const rows = useGetGokartRows(data, filter);
+
+  const { mutateAsync: removeGokartAsync } = GokartQueries.removeGokart();
 
   return (
     <div className="flex-1">
@@ -56,11 +58,9 @@ export const AddGokart = () => {
             gokart={selectedGokart}
             key={`edit-${selectedGokart.gokartId}`}
           />
-          <RemoveGokartModal
-            modal={removeGokartModal}
-            gokart={selectedGokart}
-            key={`remove-${selectedGokart.gokartId}`}
-          />
+          <YesNoModal header="Usuń gokart" modal={removeGokartModal} onYes={async () => removeGokartAsync(Number(selectedGokartId))}>
+            {selectedGokart.name}
+          </YesNoModal>
         </>
       )}
       <AddGokartModal modalProps={addGokartModal} />
