@@ -16,7 +16,7 @@ export const InfoPage = () => {
           <h3 className="text-2xl text-main-default text-center">
             O aplikacji:
           </h3>
-          <div>
+          <div className="text-xs sm:text-sm md:text-lg">
             Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ea, in
             ipsam minima velit modi quis expedita dolor ullam aperiam eum quasi.
             Aspernatur ex neque quod, cumque magnam autem quae. Ducimus. Ipsam,
@@ -41,7 +41,7 @@ export const InfoPage = () => {
           <h3 className="text-2xl text-main-default text-center">
             Sposób użycia:
           </h3>
-          <div>
+          <div className="text-xs sm:text-sm md:text-lg">
             Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ea, in
             ipsam minima velit modi quis expedita dolor ullam aperiam eum quasi.
             Aspernatur ex neque quod, cumque magnam autem quae. Ducimus. Ipsam,
@@ -66,7 +66,7 @@ export const InfoPage = () => {
           <h3 className="text-2xl text-main-default text-center">
             Przymusowo zaangażowani:
           </h3>
-          <div className="grid grid-cols-2 grid-rows-2 gap-x-4 gap-y-5">
+          <div className="grid sm:grid-cols-2 grid-rows-4 sm:grid-rows-2 gap-x-4 gap-y-5 text-xs sm:text-sm md:text-lg">
             {informations.map((person) => (
               <PersonInfo person={person} />
             ))}

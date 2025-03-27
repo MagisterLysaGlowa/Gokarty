@@ -8,7 +8,7 @@ type PersonInfoProps = {
 
 export const PersonInfo: FC<PersonInfoProps> = ({ person }) => {
   return (
-    <div className="flex flex-col justify-center items-center gap-5">
+    <div className="flex flex-col justify-center items-center gap-2 lg:gap-5">
       <Avatar src={person.avatar} alt={person.name} size="lg" />
       <Link
         className="text-main-default text-2xl"
