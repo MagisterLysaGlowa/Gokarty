@@ -1,7 +1,7 @@
 import "./schoolManagement.css";
 import { useState } from "react";
 import { SchoolQueries } from "../../queries/schoolQuery";
-import { Input, useDisclosure } from "@heroui/react";
+import { Button, Input, useDisclosure } from "@heroui/react";
 import { Loading } from "../../components/Loading/Loading";
 import { useDebounce } from "../../Utils/debounce";
 import { FaMagnifyingGlass } from "react-icons/fa6";
@@ -12,6 +12,8 @@ import { useGetColumns, useMemorizedSchoolsData } from "./SchoolManagementUtils"
 import { TableComponent } from "../../components/Table/TableComponent";
 import { YesNoModal } from "../../components/YesNoModal/YesNoModal";
 import { queryClient } from "../../Utils/ReactQueryConfig";
+import { IoMdAdd } from "react-icons/io";
+import { AddSchoolModal } from "./SchoolManagementComponents/AddSchoolModal";
 
 export const SchoolManagement = () => {
   const [filter, setFilter] = useState<string>("");
@@ -28,6 +30,7 @@ export const SchoolManagement = () => {
 
   const editModal = useDisclosure();
   const removeModal = useDisclosure();
+  const addModal = useDisclosure();
 
   const columns = useGetColumns();
   const rows = useMemorizedSchoolsData(data, searchFilter);
@@ -70,6 +73,15 @@ export const SchoolManagement = () => {
           <EditSchoolModal school={selectedSchool} modal={editModal}/>
         </>
       }
+      <AddSchoolModal modal={addModal}/>
+      <div className="fixed right-10 bottom-10">
+        <Button
+          isIconOnly
+          endContent={<IoMdAdd />}
+          onPress={addModal.onOpen}
+          className="rounded-[50%] bg-main-default w-[100px] h-[100px] text-[60px] fixed right-5 bottom-5"
+        />
+      </div>
     </div>
   );
 };

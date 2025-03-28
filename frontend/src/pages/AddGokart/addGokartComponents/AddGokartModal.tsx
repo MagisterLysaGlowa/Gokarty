@@ -8,7 +8,7 @@ import {
   Input,
 } from "@heroui/react";
 import { ModalProps } from "../../../../types";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { GokartQueries } from "../../../queries/gokartQuery";
 import { gokartValidate } from "../../../validations/GokartValidation";
 
@@ -17,14 +17,14 @@ type AddGokartModalProps = {
 };
 
 export const AddGokartModal: FC<AddGokartModalProps> = ({ modalProps }) => {
-  const { isOpen, onOpenChange } = modalProps;
   const [gokart, setGokart] = useState<string>("");
-  const { mutateAsync: createGokart } = GokartQueries.createGokart({
-    onSuccess: () => setGokart(""),
-  });
+  const { mutateAsync: createGokart } = GokartQueries.createGokart();
+  useEffect(() => {
+    setGokart("");
+  }, [modalProps.isOpen]);
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+    <Modal {...modalProps} key={modalProps.isOpen ? "add-open" : "add-close"}>
       <ModalContent>
         {(onClose) => (
           <>

@@ -12,7 +12,7 @@ import {
 import { tournamentValidate } from "../../validations/TournamentValidation";
 import { defaultVariant } from "../../Utils/globalUtils";
 import { TournamentQueries } from "../../queries/tournamentQuery";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { resetTournamentValues } from "./TournamentUtils";
 
 type TournamentCreateModalParams = {
@@ -27,6 +27,9 @@ export const CreateTournamentModal: React.FC<TournamentCreateModalParams> = ({
   );
 
   const {mutateAsync: createTournament} = TournamentQueries.createTournament()
+  useEffect(() => {
+    setTournament(resetTournamentValues);
+  }, [modal.isOpen])
 
   return (
     <Modal

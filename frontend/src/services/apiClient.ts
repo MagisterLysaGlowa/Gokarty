@@ -20,7 +20,7 @@ const parseDates = (obj: any): any => {
 
 // Tworzenie instancji Axios
 const apiClient = axios.create({
-  baseURL: "http://192.168.136.112:5173/api",
+  baseURL: "http://localhost:5079/api",
   headers: {
     "Content-Type": "application/json",
   },
