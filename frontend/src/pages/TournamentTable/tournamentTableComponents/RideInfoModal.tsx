@@ -26,11 +26,11 @@ export const RideInfoModal: FC<RideInfoModalProps> = ({ modalProps, ride }) => {
   }
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-      <ModalContent className={`border-2 ${setBorderForPosition(Number(ride.pozycja.substring(1)))}`}>
+      <ModalContent className={`border-2 ${setBorderForPosition(Number(ride.position?.substring(1)))}`}>
         {(onClose) => (
           <>
-            <ModalHeader className={`flex flex-col gap-1 text-lg text-center ${setColorForPosition(Number(ride.pozycja.substring(1)))}`}>
-              {ride.osoba}
+            <ModalHeader className={`flex flex-col gap-1 text-lg text-center ${setColorForPosition(Number(ride.position?.substring(1)))}`}>
+              {ride.person}
             </ModalHeader>
             <ModalBody>
               <div className="grid grid-cols-2">
@@ -40,15 +40,15 @@ export const RideInfoModal: FC<RideInfoModalProps> = ({ modalProps, ride }) => {
                   <p>Gokart:</p>
                   <p>Czas:</p>
                   <p>Pkt karne:</p>
-                  {ride.roznica !== "" && <p>Różnica:</p>}
+                  {ride.difference !== "" && <p>Różnica:</p>}
                 </div>
                 <div>
-                  <p>{ride.szkola}</p>
-                  <p>{ride.czas}</p>
+                  <p>{ride.school}</p>
+                  <p>{ride.time}</p>
                   <p>{ride.gokart}</p>
-                  <p>{ride.czas}</p>
+                  <p>{ride.time}</p>
                   <p className="text-red-700">2</p>
-                  <p className="text-red-700">{ride.roznica}</p>
+                  <p className="text-red-700">{ride.difference}</p>
                 </div>
               </div>
             </ModalBody>

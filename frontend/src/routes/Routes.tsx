@@ -4,7 +4,7 @@ import HomePage from "../pages/HomePage/HomePage";
 import LoginPage from "../pages/LoginPage/LoginPage";
 import RegisterPage from "../pages/RegisterPage/RegisterPage";
 import Tournaments from "../pages/Tournaments/Tournaments";
-import TournamentTable from "../pages/tournamentTable/TournamentTable";
+import TournamentTable from "../pages/TournamentTable/TournamentTable";
 import { SchoolManagement } from "../pages/SchoolManagemet/SchoolManagement";
 import { AddGokart } from "../pages/AddGokart/AddGokart";
 import { TournamentManegement } from "../pages/TournamenManagement/TournamentManegement";

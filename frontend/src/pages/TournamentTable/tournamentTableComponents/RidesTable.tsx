@@ -1,6 +1,6 @@
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, useDisclosure } from "@heroui/react";
-import { columns, getTableTextColor, TableRowsType, useCustomTableRows } from "../tournamentTableUtils";
 import { useState, useEffect } from "react";
+import { TableRowsType, useCustomTableRows, columns, getTableTextColor } from "../tournamentTableUtils";
 import { RideInfoModal } from "./RideInfoModal";
 
 type RidesTableProps = {

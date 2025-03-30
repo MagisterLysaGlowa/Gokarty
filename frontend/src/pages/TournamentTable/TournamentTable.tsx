@@ -3,17 +3,13 @@ import { useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { RideQueries } from "../../queries/rideQuery";
 import { QueueQueries } from "../../queries/queueQuery";
-import {
-  getPaginationLength,
-  getRows,
-  useTableUpdate,
-} from "./tournamentTableUtils";
+import { FullQueueData, FullRideData } from "../../../types";
 import { TournamentQueries } from "../../queries/tournamentQuery";
-import { RidesTable } from "./tournamentTableComponents/RidesTable";
 import { PaginationButtons } from "./tournamentTableComponents/PaginationButtons";
 import { PaginationProgressBar } from "./tournamentTableComponents/PaginationProgressBar";
+import { RidesTable } from "./tournamentTableComponents/RidesTable";
 import { TournamentRightPanel } from "./tournamentTableComponents/TournamentRightPanel";
-import { FullQueueData, FullRideData } from "../../../types";
+import { getPaginationLength, useTableUpdate, getRows } from "./tournamentTableUtils";
 
 const TournamentTable = () => {
   //swipe detector

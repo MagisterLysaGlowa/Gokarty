@@ -80,19 +80,19 @@ export const getRows = (
 ): TableRowsType[] | undefined => {
   return data
     ?.map((z, index, array) => ({
-      roznica:
+      difference:
         index === 0
           ? ""
           : "+" +
             convertTimeToString(
               index == 0 ? 0 : array[index].time - array[0].time
             ),
-      pozycja: index < 9 ? `#0${index + 1}` : `#${index + 1}`,
+      position: index < 9 ? `#0${index + 1}` : `#${index + 1}`,
       key: index,
-      osoba: `${z.player.name} ${z.player.surname}`,
-      gokart: z.gokart.name,
-      czas: convertTimeToString(z.time),
-      szkola: z.player.school.acronym,
+      person: `${z.player?.name} ${z.player?.surname}`,
+      gokart: z.gokart?.name,
+      time: convertTimeToString(z.time),
+      school: z.player?.school.acronym,
     }))
     .slice(page * quantity, (page + 1) * quantity);
 };
@@ -111,13 +111,13 @@ export const getPaginationLength = (
 ) => Math.ceil((ridesLength ? ridesLength : 0) / quantity);
 
 export type TableRowsType = {
-  roznica: string;
-  pozycja: string;
+  difference?: string;
+  position?: string;
   key: number;
-  osoba: string;
-  gokart: string;
-  czas: string;
-  szkola: string;
+  person?: string;
+  gokart?: string;
+  time?: string;
+  school?: string;
 };
 
 export const useCustomTableRows = () => {
@@ -129,7 +129,7 @@ export const useCustomTableRows = () => {
         return (
           <div className="flex flex-col">
             <span>{cellValue}</span>
-            <span className="text-sm">{row.szkola}</span>
+            <span className="text-sm">{row.school}</span>
           </div>
         );
       default:
