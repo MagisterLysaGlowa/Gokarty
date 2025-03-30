@@ -3,6 +3,7 @@ using api.Data;
 using api.Helpers;
 using api.Interfaces;
 using api.Repositories;
+using api.SignalRHubs;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
@@ -15,6 +16,7 @@ namespace api
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddSignalR();
             builder.Services.AddControllers();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<ITournamentRepository, TournamentRepository>();
@@ -24,14 +26,17 @@ namespace api
             builder.Services.AddScoped<IRideRepository, RideRepository>();
             builder.Services.AddScoped<IQueueRepository, QueueRepository>();
             builder.Services.AddScoped<IJwtService, JwtService>();
+            builder.Services.AddScoped<ITournamentTableHubSender, TournamentTableHubSender>();
 
             builder.Services.AddDbContext<AppDbContext>(options =>
             {
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection") ??
                     throw new InvalidOperationException("Connection string 'DefaultConnection' not found"));
             });
+
             builder.Services.AddControllers().AddJsonOptions(x =>
-                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles
+            );
 
             builder.Services.AddCors(options =>
             {
@@ -43,10 +48,11 @@ namespace api
                         .AllowCredentials());
             });
 
-
             var app = builder.Build();
 
             app.UseCors("AllowReactApp");
+
+            app.MapHub<TournamentTableHub>("/hubs/tournamentTable");
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

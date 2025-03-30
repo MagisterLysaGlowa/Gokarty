@@ -6,13 +6,14 @@ import { QueueQueries } from "../../queries/queueQuery";
 import {
   getPaginationLength,
   getRows,
-  isAbleToRefetch,
+  useTableUpdate,
 } from "./tournamentTableUtils";
 import { TournamentQueries } from "../../queries/tournamentQuery";
 import { RidesTable } from "./tournamentTableComponents/RidesTable";
 import { PaginationButtons } from "./tournamentTableComponents/PaginationButtons";
 import { PaginationProgressBar } from "./tournamentTableComponents/PaginationProgressBar";
 import { TournamentRightPanel } from "./tournamentTableComponents/TournamentRightPanel";
+import { FullQueueData, FullRideData } from "../../../types";
 
 const TournamentTable = () => {
   //swipe detector
@@ -54,36 +55,38 @@ const TournamentTable = () => {
   const [page, setPage] = useState(0);
   const pos = 10;
 
+  const [currentRide, setCurrentRide] = useState<FullQueueData | null | undefined>(null);
+  const [queue, setQueue] = useState<FullQueueData[] | null | undefined>([]);
+  const [lastRide, setLastRide] = useState<FullRideData | null | undefined>(null);
+  const [rides, setRides] = useState<FullRideData[] | null | undefined>([]);
+
   const { data: tournament } = TournamentQueries.getTournament(Number(id));
+  const { data: currentRideData } = QueueQueries.getFullActiveQueueForTournament(Number(id));
+  const { data: queueData } = QueueQueries.getAllFullQueuesForTournament(Number(id));
+  const { data: lastRideData } = RideQueries.getTournamentLastFullRide(Number(id));
+  const { data: ridesData } = RideQueries.getTournamentBestFullRides(Number(id));
 
-  const { data: currentRide } = QueueQueries.getFullActiveQueueForTournament(
-    Number(id),
-    {
-      refetchInterval: 3000,
-      enabled: !!isAbleToRefetch(tournament?.tournamentStateId),
-    }
-  );
+  useEffect(() => {
+    setCurrentRide(currentRideData)
+  }, [currentRideData]);
+  useEffect(() => {
+    setQueue(queueData)
+  }, [queueData]);
+  useEffect(() => {
+    setLastRide(lastRideData)
+  }, [lastRideData]);
+  useEffect(() => {
+    setRides(ridesData)
+  }, [ridesData]);
 
-  const { data: queue } = QueueQueries.getAllFullQueuesForTournament(
-    Number(id),
-    {
-      refetchInterval: 3000,
-      enabled: !!isAbleToRefetch(tournament?.tournamentStateId),
-    }
-  );
-
-  const { data: lastRide } = RideQueries.getTournamentLastFullRide(Number(id), {
-    refetchInterval: 3000,
-    enabled: !!isAbleToRefetch(tournament?.tournamentStateId),
+  useTableUpdate((newData) => {
+    setCurrentRide(newData.currentRide);
+    setQueue(newData.queue);
+    setLastRide(newData.lastRide);
+    setRides(newData.rides);
   });
 
   const time = 10000;
-
-  const { data: rides } = RideQueries.getTournamentBestFullRides(Number(id), {
-    refetchInterval: tournament?.tournamentStateId === 2 ? time : false,
-    enabled: tournament?.tournamentStateId !== 1,
-  });
-
   const [rows, setRows] = useState(getRows(rides, page, pos));
 
   useEffect(() => {

@@ -1,24 +1,31 @@
 ﻿using api.Dtos;
 using api.Interfaces;
 using api.Models;
+using api.SignalRHubs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace api.Controllers {
     [Route("api/[controller]")]
     [ApiController]
     public class QueueController : ControllerBase {
         private readonly IQueueRepository queueRepository;
+        private readonly ITournamentTableHubSender hubSender;
 
-        public QueueController(IQueueRepository queueRepository) {
+        public QueueController(IQueueRepository queueRepository, ITournamentTableHubSender hubSender) {
             this.queueRepository = queueRepository;
+            this.hubSender = hubSender;
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateQueues(QueueDto dto) {
             try {
                 if (await queueRepository.CreateQueuesAsync(dto.TournamentId, dto.GokartIds, dto.NumberOfRidesInOneGokart))
+                {
+                    await hubSender.SendUpdate(dto.TournamentId);
                     return Created("",true);
+                }
                 return BadRequest("Bad request");
             } catch (Exception) {
                 return BadRequest();
@@ -48,7 +55,12 @@ namespace api.Controllers {
         [HttpPut("{queueId}")]
         public async Task<IActionResult> UpdateRideState(int queueId) {
             try {
-                return Ok(await queueRepository.ChangeQueueStateAsync(queueId));
+                if (await queueRepository.GetAsync(queueId) is Queue queue)
+                {
+                    await hubSender.SendUpdate(queue.TournamentId);
+                    return Ok(await queueRepository.ChangeQueueStateAsync(queueId));
+                }
+                return NotFound();
             } catch (Exception) {
                 return BadRequest();
             }

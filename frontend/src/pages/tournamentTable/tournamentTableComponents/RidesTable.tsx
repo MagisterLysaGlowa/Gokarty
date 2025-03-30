@@ -2,7 +2,6 @@ import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, useDis
 import { columns, getTableTextColor, TableRowsType, useCustomTableRows } from "../tournamentTableUtils";
 import { useState, useEffect } from "react";
 import { RideInfoModal } from "./RideInfoModal";
-import { convertTimeToString } from "../../../Utils/TimeUtils";
 
 type RidesTableProps = {
   rows: TableRowsType[] | undefined;

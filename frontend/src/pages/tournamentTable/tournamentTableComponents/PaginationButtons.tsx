@@ -2,7 +2,7 @@ import { RideData } from "../../../../types";
 import { getPaginationLength } from "../tournamentTableUtils";
 
 type PaginationButtonsProps = {
-  rides: RideData[] | undefined;
+  rides: RideData[] | undefined | null;
   pageState: [number, React.Dispatch<React.SetStateAction<number>>];
   intervalRef: React.MutableRefObject<number | null>;
   time: number;

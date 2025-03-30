@@ -1,6 +1,41 @@
-import { useCallback } from "react";
-import { FullRideData } from "../../../types";
+import { useCallback, useEffect } from "react";
+import { FullQueueData, FullRideData } from "../../../types";
 import { convertTimeToString } from "../../Utils/TimeUtils";
+import * as signalR from "@microsoft/signalr";
+
+export type TournamentTableUpdateData = {
+  currentRide: FullQueueData;
+  queue: FullQueueData[];
+  lastRide: FullRideData;
+  rides: FullRideData[];
+}
+
+export const useTableUpdate = (onUpdate: (data: TournamentTableUpdateData) => void) => {
+  useEffect(() => {
+    const connection = new signalR.HubConnectionBuilder()
+      .withUrl("http://localhost:5079/hubs/tournamentTable")
+      .withAutomaticReconnect()
+      .build();
+
+    let isMounted = true;
+
+    connection.start().then(() => {
+        if (!isMounted) {
+          connection.stop();
+          return;
+        }
+        connection.on("tournamentTableUpdate", (data) => {
+          onUpdate(data);
+        });
+      })
+
+    return () => {
+      isMounted = false;
+      connection.stop();
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+};
 
 export const getTableTextColor = (number: number) => {
   switch (number) {
@@ -39,7 +74,7 @@ export const columns = [
 ];
 
 export const getRows = (
-  data: FullRideData[] | undefined,
+  data: FullRideData[] | undefined | null,
   page: number,
   quantity: number
 ): TableRowsType[] | undefined => {

@@ -6,12 +6,12 @@ import {
   ModalFooter,
   Button,
 } from "@heroui/react";
-import React, { FC } from "react";
-import { FullRideData, ModalProps } from "../../../../types";
+import { FC } from "react";
+import { ModalProps } from "../../../../types";
 import { TableRowsType } from "../tournamentTableUtils";
 type RideInfoModalProps = { modalProps: ModalProps; ride: TableRowsType };
 export const RideInfoModal: FC<RideInfoModalProps> = ({ modalProps, ride }) => {
-  const { isOpen, onOpen, onOpenChange } = modalProps;
+  const { isOpen, onOpenChange } = modalProps;
   const setColorForPosition = (position: number) => {
     if (position === 1) return "text-yellow-500";
     if (position === 2) return "text-gray-500";

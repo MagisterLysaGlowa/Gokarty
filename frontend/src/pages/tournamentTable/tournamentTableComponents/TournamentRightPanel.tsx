@@ -6,10 +6,10 @@ import { FaGripLinesVertical } from "react-icons/fa";
 
 type TournamentRightPanelProps = {
   tournament: TournamentData | undefined;
-  lastRide: FullRideData | undefined;
-  rides: FullRideData[] | undefined;
+  lastRide: FullRideData | null | undefined;
+  rides: FullRideData[] | undefined | null;
   currentRide: FullQueueData | undefined | null;
-  queue: FullQueueData[] | undefined;
+  queue: FullQueueData[] | undefined | null;
   isVisible: boolean;
   setIsRightPanelVisible: Dispatch<SetStateAction<boolean>>;
 };
@@ -135,8 +135,8 @@ export const TournamentRightPanel: FC<TournamentRightPanelProps> = ({
                   Nastepni:
                 </span>
                 <ol className="text-xl flex-1">
-                  {queue?.slice(0, 3).map(({ player }) => (
-                    <li>{`${player.name} ${player.surname}`}</li>
+                  {queue?.slice(0, 3).map(({ player }, i) => (
+                    <li key={i}>{`${player.name} ${player.surname}`}</li>
                   ))}
                 </ol>
               </div>
