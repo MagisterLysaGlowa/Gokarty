@@ -18,7 +18,7 @@
 }
 
 .navbarListElement {
-  @apply flex h-[50px] items-center w-max gap-5;
+  @apply flex h-[50px] items-center w-max gap-5 hover:text-yellow-300 duration-300; 
 }
 
 .navbarListElementIcon {

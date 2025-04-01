@@ -10,3 +10,17 @@
 .page {
   @apply h-full p-3 max-h-[calc(100dvh-12px)];
 }
+/* width */
+::-webkit-scrollbar {
+  @apply w-2;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    @apply  bg-support rounded-xl;
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+  @apply w-full bg-main-default rounded-xl p-5;
+  }

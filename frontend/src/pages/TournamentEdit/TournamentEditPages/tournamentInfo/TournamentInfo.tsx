@@ -10,7 +10,7 @@ import { TournamentInfoComponent } from "./tournamentInfoComponents/TournamentIn
 import { Loading } from "../../../../components/Loading/Loading";
 import { CreateQueueModal } from "./tournamentInfoComponents/CreateQueueModal";
 import { YesNoModal } from "../../../../components/YesNoModal/YesNoModal";
-
+import {Tooltip} from "@heroui/tooltip";
 export const TournamentInfo = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -52,32 +52,40 @@ export const TournamentInfo = () => {
           key={id}
         />
         <div className="adminActions">
-          <Button
-            className="tournamentButton bg-main-default"
-            onPress={() => editModal.onOpen()}
-            endContent={<FaEdit />}
-            isIconOnly
-          />
-          <Button
-            isIconOnly
-            endContent={<FaTrash />}
-            className="tournamentButton bg-red-600"
-            onPress={() => removeModal.onOpen()}
-          />
+          <Tooltip content="Edytuj zawody" showArrow>
+            <Button
+              className="tournamentButton bg-main-default"
+              onPress={() => editModal.onOpen()}
+              endContent={<FaEdit />}
+              isIconOnly
+            />
+          </Tooltip>
+          <Tooltip content="Usuń zawody" showArrow>
+            <Button
+              isIconOnly
+              endContent={<FaTrash />}
+              className="tournamentButton bg-red-600"
+              onPress={() => removeModal.onOpen()}
+            />
+          </Tooltip>
           {tournament.tournamentStateId != 3 &&
-          <Button
-            isIconOnly
-            endContent={tournament.tournamentStateId == 1 ? <FaPlay /> : <FaStop />}
-            className="tournamentButton bg-blue-600"
-            onPress={() => startEndModal.onOpen()}
-          />}
+          <Tooltip content="Zakończ zawody" showArrow>
+            <Button
+              isIconOnly
+              endContent={tournament.tournamentStateId == 1 ? <FaPlay /> : <FaStop />}
+              className="tournamentButton bg-blue-600"
+              onPress={() => startEndModal.onOpen()}
+            />
+          </Tooltip>}
           {tournament.tournamentStateId == 2 &&
-          <Button
-            isIconOnly
-            endContent={<FaDice />}
-            className="tournamentButton bg-orange-600"
-            onPress={() => queueModal.onOpen()}
-          />}
+          <Tooltip content="Wylosuj kolejke" showArrow>
+            <Button
+              isIconOnly
+              endContent={<FaDice />}
+              className="tournamentButton bg-orange-600"
+              onPress={() => queueModal.onOpen()}
+            />
+          </Tooltip>}
         </div>
         <YesNoModal header={tournament.name} modal={removeModal} onYes={async () => removeTournamentAsync(Number(tournament.tournamentId))}>
           {"Czy napewno chcesz usunąć te zawody?"}

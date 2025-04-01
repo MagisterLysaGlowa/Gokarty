@@ -20,7 +20,7 @@ export const NavbarListElement: React.FC<NavbarListElementProps> = ({
           selected == element.id ? "text-nav-selected" : "text-nav-default"
         }`}
       >
-        <div className="navbarListElementIcon">{<element.icon />}</div>
+        <div className="navbarListElementIcon ">{<element.icon />}</div>
         <span className="navbarListElementText">{element.name}</span>
       </div>
     </Link>
