@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace api.Models {
     public class Tournament {
@@ -14,7 +13,7 @@ namespace api.Models {
         [JsonIgnore]
         public List<PlayerTournament> PlayerTournaments { get; set; } = new();
         [JsonIgnore]
-        public ICollection<Ride> Rides { get; } = default!;
+        public ICollection<RideGroup> RideGroups { get; } = default!;
         [JsonIgnore]
         public ICollection<Queue> Queues { get; } = default!;
     }

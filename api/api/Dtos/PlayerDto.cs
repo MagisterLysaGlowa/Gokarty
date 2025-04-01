@@ -8,5 +8,6 @@ namespace api.Dtos
         public string? Surname { get; set; }
         public DateTime BirthDate { get; set; }
         public int SchoolId { get; set; }
+        public int ClassId { get; set; }
     }
 }

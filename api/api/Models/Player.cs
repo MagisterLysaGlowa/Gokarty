@@ -10,11 +10,12 @@ namespace api.Models
         public DateTime BirthDate { get; set; }
         public int SchoolId { get; set; }
         public School School { get; set; } = default!;
+        public int? ClassId { get; set; }
+        public Class Class { get; set; } = default!;
         [JsonIgnore]
-        public List<PlayerTournament> PlayerTournaments { get; set; }
-            = new();
+        public List<PlayerTournament> PlayerTournaments { get; set; } = new();
         [JsonIgnore]
-        public ICollection<Ride> Rides { get; } = default!;
+        public ICollection<RideGroup> RideGroups { get; } = default!;
         [JsonIgnore]
         public ICollection<Queue> Queues { get; } = default!;
     }

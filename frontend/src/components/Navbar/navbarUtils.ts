@@ -30,7 +30,7 @@ export const navElements: NavbarListElementSchema[] = [
     id: 4,
     name: "Gokarty",
     icon: FaCar,
-    to: "/gokarty",
+    to: "/gokart",
   },
   {
     id: 5,
@@ -39,3 +39,10 @@ export const navElements: NavbarListElementSchema[] = [
     to: "/gokart",
   },
 ];
+
+
+export const staticPagesNav=[
+  navElements[0],
+  navElements[3],
+  {...navElements[4],to:"/gokarty"}
+]

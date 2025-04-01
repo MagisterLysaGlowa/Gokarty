@@ -1,6 +1,6 @@
 import { Button, Image, Tooltip } from "@heroui/react";
 import { FaArrowRight, FaInfoCircle } from "react-icons/fa";
-import { navElements } from "../../components/Navbar/navbarUtils";
+import { staticPagesNav } from "../../components/Navbar/navbarUtils";
 import { Link, useNavigate } from "react-router-dom";
 import "./HomePage.css";
 import { Footer } from "../../components/componentsExport";
@@ -10,10 +10,6 @@ import { NavigationBox } from "./HomePageComponents/NavigationBox";
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const useLess = ["Strona główna", "Zawody"];
-  const navigationElements = navElements.filter(
-    (z) => !useLess.includes(z.name)
-  );
 
   return (
     <div className="flex flex-col justify-between h-full">
@@ -58,7 +54,7 @@ const HomePage = () => {
           Przejdź do zawodów
         </Button>
         <div className="navigation flex text-6xl gap-10 h-[100px] justify-center flex-wrap">
-          {navigationElements.map((el) => (
+          {staticPagesNav.map((el) => (
             <NavigationBox element={el} key={el.id} />
           ))}
           <Tooltip content={"Informacje"} showArrow>

@@ -20,7 +20,7 @@ namespace api.Repositories {
                 return false;
             if (numberOfRidesInOneGokart == 0)
                 return false;
-            IEnumerable<Ride> tournamentRides = _context.Rides.Where(r => r.TournamentId == tournamentId);
+            IEnumerable<Ride> tournamentRides = _context.Rides.Where(r => r.RideGroup.TournamentId == tournamentId);
             if (tournamentRides.ToList().Count != 0 && tournamentRides.Max(r => r.RideNumber) >= gokartIds.Count)
                 return false;
             List<Player> playersInTournament = await _playerRepository.GetAllForTournamentAsync(tournamentId);
@@ -33,7 +33,7 @@ namespace api.Repositories {
             for (int i = 0; i < playersInTournament.Count / numberOfRidesInOneGokart; i++)
             {
                 //osoby które nie jechały gokartem dla którego losujemy i mogą zostać wybrane
-                List<Player> canBeQueued = playersNotQueued.Where(p => !tournamentRides.Where(r => r.GokartId == gokartIds[gokartNowIndex]).Select(r => r.PlayerId).Contains(p.PlayerId)).ToList();
+                List<Player> canBeQueued = playersNotQueued.Where(p => !tournamentRides.Where(r => r.GokartId == gokartIds[gokartNowIndex]).Select(r => r.RideGroup.PlayerId).Contains(p.PlayerId)).ToList();
                 for (int j = 0; j < numberOfRidesInOneGokart; j++)
                 {
                     if (canBeQueued.Count > 0)
@@ -54,8 +54,8 @@ namespace api.Repositories {
                     {
                         for (int k = 0; k < numberOfRidesInOneGokart - j; k++)
                         {
-                            List<Player> playersWhoCanSwap = playersInTournament.Where(p => !tournamentRides.Where(r => r.GokartId == gokartIds[gokartNowIndex]).Select(r => r.PlayerId).Contains(p.PlayerId)).ToList();
-                            List<Queue> queuesWherePlayerCanSwap = queuesToAdd.Where(q => q.TournamentId == tournamentId && playersWhoCanSwap.Select(p => p.PlayerId).Contains(q.PlayerId) && gokartIds.Where(g => !tournamentRides.Where(r => r.PlayerId == playersNotQueued[k].PlayerId).Select(r => r.GokartId).Contains(g)).Contains(q.GokartId)).ToList();
+                            List<Player> playersWhoCanSwap = playersInTournament.Where(p => !tournamentRides.Where(r => r.GokartId == gokartIds[gokartNowIndex]).Select(r => r.RideGroup.PlayerId).Contains(p.PlayerId)).ToList();
+                            List<Queue> queuesWherePlayerCanSwap = queuesToAdd.Where(q => q.TournamentId == tournamentId && playersWhoCanSwap.Select(p => p.PlayerId).Contains(q.PlayerId) && gokartIds.Where(g => !tournamentRides.Where(r => r.RideGroup.PlayerId == playersNotQueued[k].PlayerId).Select(r => r.GokartId).Contains(g)).Contains(q.GokartId)).ToList();
                             var queueToSwap = queuesWherePlayerCanSwap[rnd.Next(0, queuesWherePlayerCanSwap.Count)];
                             queuesToAdd.RemoveAt(queuesToAdd.IndexOf(queueToSwap));
                             queuesToAdd.Add(new Queue()

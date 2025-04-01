@@ -52,11 +52,11 @@ export const getTableTextColor = (number: number) => {
 
 export const columns = [
   {
-    key: "pozycja",
+    key: "position",
     label: "POZYCJA",
   },
   {
-    key: "osoba",
+    key: "person",
     label: "OSOBA",
   },
   {
@@ -64,11 +64,11 @@ export const columns = [
     label: "Gokart",
   },
   {
-    key: "czas",
+    key: "time",
     label: "CZAS",
   },
   {
-    key: "roznica",
+    key: "difference",
     label: "ROZNICA",
   },
 ];

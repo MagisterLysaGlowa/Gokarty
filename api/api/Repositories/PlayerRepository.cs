@@ -38,11 +38,11 @@ namespace api.Repositories {
         public async Task<List<Player>> FilterPlayersAsync(PlayerFilterDto dto) {
             var players = await _context.Players.Include(z => z.School).ToListAsync();
 
-            if (dto.Name != "" && dto.Name != null) {
+            if (!string.IsNullOrEmpty(dto.Name)) {
                 players = players.Where(p => p.Name!.ToLower().Contains(dto.Name.ToLower())).ToList();
             }
 
-            if (dto.Surname != "" && dto.Surname != null) {
+            if (!string.IsNullOrEmpty(dto.Surname)) {
                 players = players.Where(p => p.Surname!.ToLower().Contains(dto.Surname.ToLower())).ToList();
             }
 
@@ -54,7 +54,6 @@ namespace api.Repositories {
                 .Where(t => t.TournamentsId == dto.TournamentId)
                 .Select(t => t.PlayersId)
                 .ToListAsync();
-            //ToDo: napraw async
             players = players.Where(p => !playersInThisTournament.Contains(p.PlayerId)).ToList();
 
             return players;
@@ -114,6 +113,7 @@ namespace api.Repositories {
                 playerDb.Surname = player.Surname;
                 playerDb.BirthDate = player.BirthDate;
                 playerDb.SchoolId = player.SchoolId;
+                playerDb.ClassId = player.ClassId;
                 _context.Players.Update(playerDb);
                 await _context.SaveChangesAsync();
                 return playerDb;

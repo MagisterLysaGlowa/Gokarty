@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using api.Data;
@@ -11,9 +12,11 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250401090143_AddClassForPlayer")]
+    partial class AddClassForPlayer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -194,7 +197,7 @@ namespace api.Migrations
                     b.Property<bool>("IsDisqualified")
                         .HasColumnType("boolean");
 
-                    b.Property<int?>("RideGroupId")
+                    b.Property<int>("PlayerId")
                         .HasColumnType("integer");
 
                     b.Property<int>("RideNumber")
@@ -203,41 +206,18 @@ namespace api.Migrations
                     b.Property<int>("Time")
                         .HasColumnType("integer");
 
-                    b.HasKey("RideId");
-
-                    b.HasIndex("GokartId");
-
-                    b.HasIndex("RideGroupId");
-
-                    b.ToTable("Rides");
-                });
-
-            modelBuilder.Entity("api.Models.RideGroup", b =>
-                {
-                    b.Property<int>("RideGroupId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("RideGroupId"));
-
-                    b.Property<int>("ClassId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("PlayerId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("TournamentId")
                         .HasColumnType("integer");
 
-                    b.HasKey("RideGroupId");
+                    b.HasKey("RideId");
 
-                    b.HasIndex("ClassId");
+                    b.HasIndex("GokartId");
 
                     b.HasIndex("PlayerId");
 
                     b.HasIndex("TournamentId");
 
-                    b.ToTable("RideGroups");
+                    b.ToTable("Rides");
                 });
 
             modelBuilder.Entity("api.Models.RideStatus", b =>
@@ -508,36 +488,19 @@ namespace api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("api.Models.RideGroup", "RideGroup")
-                        .WithMany("Rides")
-                        .HasForeignKey("RideGroupId");
-
-                    b.Navigation("Gokart");
-
-                    b.Navigation("RideGroup");
-                });
-
-            modelBuilder.Entity("api.Models.RideGroup", b =>
-                {
-                    b.HasOne("api.Models.Class", "Class")
-                        .WithMany("RideGroups")
-                        .HasForeignKey("ClassId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("api.Models.Player", "Player")
-                        .WithMany("RideGroups")
+                        .WithMany("Rides")
                         .HasForeignKey("PlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("api.Models.Tournament", "Tournament")
-                        .WithMany("RideGroups")
+                        .WithMany("Rides")
                         .HasForeignKey("TournamentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Class");
+                    b.Navigation("Gokart");
 
                     b.Navigation("Player");
 
@@ -564,8 +527,6 @@ namespace api.Migrations
             modelBuilder.Entity("api.Models.Class", b =>
                 {
                     b.Navigation("Players");
-
-                    b.Navigation("RideGroups");
                 });
 
             modelBuilder.Entity("api.Models.Gokart", b =>
@@ -581,11 +542,6 @@ namespace api.Migrations
 
                     b.Navigation("Queues");
 
-                    b.Navigation("RideGroups");
-                });
-
-            modelBuilder.Entity("api.Models.RideGroup", b =>
-                {
                     b.Navigation("Rides");
                 });
 
@@ -605,7 +561,7 @@ namespace api.Migrations
 
                     b.Navigation("Queues");
 
-                    b.Navigation("RideGroups");
+                    b.Navigation("Rides");
                 });
 
             modelBuilder.Entity("api.Models.TournamentState", b =>

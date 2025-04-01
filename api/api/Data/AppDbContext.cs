@@ -18,6 +18,9 @@ namespace api.Data {
         public DbSet<TournamentState> TournamentStates { get; set; } = default!;
         public DbSet<User> Users { get; set; } = default!;
         public DbSet<TournamentType> TournamentTypes { get; set; } = default!;
+        public DbSet<Class> Classes { get; set; } = default!;
+        public DbSet<RideGroup> RideGroups { get; set; } = default!;
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             /*PLAYER TO TOURNAMENT (MANY TO MANY)*/
@@ -42,6 +45,12 @@ namespace api.Data {
                         .WithMany(p => p.Players)
                         .HasForeignKey(s => s.SchoolId);
 
+            //PLAYER TO CLASS (ONE TO MANY)
+            modelBuilder.Entity<Player>()
+                .HasOne(c => c.Class)
+                .WithMany(p => p.Players)
+                .HasForeignKey(p => p.ClassId);
+
             //TOURNAMENT TO TOURNAMENT STATE (ONE TO MANY)
 
             modelBuilder.Entity<Tournament>()
@@ -56,18 +65,25 @@ namespace api.Data {
                         .WithMany(tt=>tt.Tournaments)
                         .HasForeignKey(t=>t.TournamentTypeId);
 
-            //RIDE TO TOURNAMENT (ONE TO MANY)
+            //RIDEGROUP TO CLASS (ONE TO MANY)
 
-            modelBuilder.Entity<Ride>()
+            modelBuilder.Entity<RideGroup>()
+                        .HasOne(r => r.Class)
+                        .WithMany(c => c.RideGroups)
+                        .HasForeignKey(r => r.ClassId);
+
+            //RIDEGROUP TO TOURNAMENT (ONE TO MANY)
+
+            modelBuilder.Entity<RideGroup>()
                         .HasOne(r => r.Tournament)
-                        .WithMany(t => t.Rides)
+                        .WithMany(t => t.RideGroups)
                         .HasForeignKey(r => r.TournamentId);
 
-            //RIDE TO PLAYER (ONE TO MANY)
+            //RIDEGROUP TO PLAYER (ONE TO MANY)
 
-            modelBuilder.Entity<Ride>()
+            modelBuilder.Entity<RideGroup>()
                         .HasOne(r => r.Player)
-                        .WithMany(p => p.Rides)
+                        .WithMany(p => p.RideGroups)
                         .HasForeignKey(r => r.PlayerId);
 
             //RIDE TO GOKARTS (ONE TO MANY)
@@ -76,6 +92,11 @@ namespace api.Data {
                         .HasOne(r => r.Gokart)
                         .WithMany(g => g.Rides)
                         .HasForeignKey(r => r.GokartId);
+
+            modelBuilder.Entity<Ride>()
+                        .HasOne(r => r.RideGroup)
+                        .WithMany(rg => rg.Rides)
+                        .HasForeignKey(r => r.RideGroupId);
 
             //QUEUE TO TOURNAMENT (ONE TO MANY)
 
