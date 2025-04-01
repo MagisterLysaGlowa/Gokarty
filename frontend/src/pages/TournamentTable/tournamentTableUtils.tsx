@@ -8,9 +8,11 @@ export type TournamentTableUpdateData = {
   queue: FullQueueData[];
   lastRide: FullRideData;
   rides: FullRideData[];
-}
+};
 
-export const useTableUpdate = (onUpdate: (data: TournamentTableUpdateData) => void) => {
+export const useTableUpdate = (
+  onUpdate: (data: TournamentTableUpdateData) => void
+) => {
   useEffect(() => {
     const connection = new signalR.HubConnectionBuilder()
       .withUrl("http://localhost:5079/hubs/tournamentTable")
@@ -20,20 +22,20 @@ export const useTableUpdate = (onUpdate: (data: TournamentTableUpdateData) => vo
     let isMounted = true;
 
     connection.start().then(() => {
-        if (!isMounted) {
-          connection.stop();
-          return;
-        }
-        connection.on("tournamentTableUpdate", (data) => {
-          onUpdate(data);
-        });
-      })
+      if (!isMounted) {
+        connection.stop();
+        return;
+      }
+      connection.on("tournamentTableUpdate", (data) => {
+        onUpdate(data);
+      });
+    });
 
     return () => {
       isMounted = false;
       connection.stop();
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 };
 
@@ -52,11 +54,11 @@ export const getTableTextColor = (number: number) => {
 
 export const columns = [
   {
-    key: "pozycja",
+    key: "position",
     label: "POZYCJA",
   },
   {
-    key: "osoba",
+    key: "person",
     label: "OSOBA",
   },
   {
@@ -64,11 +66,11 @@ export const columns = [
     label: "Gokart",
   },
   {
-    key: "czas",
+    key: "time",
     label: "CZAS",
   },
   {
-    key: "roznica",
+    key: "diference",
     label: "ROZNICA",
   },
 ];

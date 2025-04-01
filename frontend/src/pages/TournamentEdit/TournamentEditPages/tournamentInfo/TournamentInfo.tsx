@@ -11,6 +11,9 @@ import { Loading } from "../../../../components/Loading/Loading";
 import { CreateQueueModal } from "./tournamentInfoComponents/CreateQueueModal";
 import { YesNoModal } from "../../../../components/YesNoModal/YesNoModal";
 import {Tooltip} from "@heroui/tooltip";
+import { QueueQueries } from "../../../../queries/queueQuery";
+import { FcDataBackup } from "react-icons/fc";
+
 export const TournamentInfo = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -39,7 +42,16 @@ export const TournamentInfo = () => {
       onSuccess: () => navigate(-1),
     });
 
-  const { mutateAsync: updateTournament} = TournamentQueries.updateTournament();
+  const { mutateAsync: updateTournament } =
+    TournamentQueries.updateTournament();
+
+  const { data: queue } = QueueQueries.getAllFullQueuesForTournament(
+    Number(id),
+    {
+      enabled: tournament.tournamentStateId == 2,
+      onSuccess: (r) => console.log(r),
+    }
+  );
 
   return (
     <div className="grid place-items-center h-full">
@@ -80,11 +92,18 @@ export const TournamentInfo = () => {
           {tournament.tournamentStateId == 2 &&
           <Tooltip content="Wylosuj kolejke" showArrow>
             <Button
-              isIconOnly
-              endContent={<FaDice />}
-              className="tournamentButton bg-orange-600"
-              onPress={() => queueModal.onOpen()}
-            />
+                isIconOnly
+                endContent={
+                  !queue || queue.length == 0 ? <FaDice /> : <FcDataBackup />
+                }
+                className={`tournamentButton ${
+                  !queue || queue.length == 0 ? "bg-orange-600" : "bg-green-700"
+                }`}
+                onPress={() => {
+                  if (!queue || queue.length == 0) queueModal.onOpen();
+                  else navigate(`/zawody/${Number(id)}/kolejka`);
+                }}
+              />
           </Tooltip>}
         </div>
         <YesNoModal header={tournament.name} modal={removeModal} onYes={async () => removeTournamentAsync(Number(tournament.tournamentId))}>
