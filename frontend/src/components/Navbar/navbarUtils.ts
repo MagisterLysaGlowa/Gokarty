@@ -1,4 +1,5 @@
 import { IconType } from "react-icons";
+import { BsInfoCircle } from "react-icons/bs";
 import { FaArchive, FaCar, FaHome, FaTrophy } from "react-icons/fa";
 import { IoSchool } from "react-icons/io5";
 export type NavbarListElementSchema = {
@@ -40,9 +41,9 @@ export const navElements: NavbarListElementSchema[] = [
   },
 ];
 
-
-export const staticPagesNav=[
+export const staticPageNav: NavbarListElementSchema[] = [
   navElements[0],
-  navElements[3],
-  {...navElements[4],to:"/gokarty"}
-]
+  navElements[4],
+  { ...navElements[3], to: "/gokarty" },
+  { icon: BsInfoCircle, id: 20, name: "Informacje", to: "/informacje" },
+];

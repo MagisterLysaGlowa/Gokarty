@@ -15,6 +15,8 @@ namespace api
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.WebHost.UseUrls(new[] { "http://0.0.0.0:5079","http://localhost:5079" });
+
             // Add services to the container.
             builder.Services.AddSignalR();
             builder.Services.AddControllers();

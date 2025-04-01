@@ -1,7 +1,7 @@
-import { Button, Image, Tooltip } from "@heroui/react";
-import { FaArrowRight, FaInfoCircle } from "react-icons/fa";
-import { staticPagesNav } from "../../components/Navbar/navbarUtils";
-import { Link, useNavigate } from "react-router-dom";
+import { Button, Image } from "@heroui/react";
+import { FaArrowRight } from "react-icons/fa";
+import { staticPageNav } from "../../components/Navbar/navbarUtils";
+import { useNavigate } from "react-router-dom";
 import "./HomePage.css";
 import { Footer } from "../../components/componentsExport";
 import { Separator } from "../../components/StaticPageComponents/Separator";
@@ -12,7 +12,7 @@ const HomePage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col justify-between h-full">
+    <div className="h-full w-full flex flex-col overflow-auto">
       <Header classNames="text-center flex justify-between items-center">
         <Image src="images/gokart.png" height={60} />
         <h1 className="text-[40px] flex items-center gap-2 font-medium">
@@ -54,14 +54,13 @@ const HomePage = () => {
           Przejdź do zawodów
         </Button>
         <div className="navigation flex text-6xl gap-10 h-[100px] justify-center flex-wrap">
-          {staticPagesNav.map((el) => (
-            <NavigationBox element={el} key={el.id} />
+          {staticPageNav.map((el, index, list) => (
+            <NavigationBox
+              element={el}
+              key={el.id}
+              showDivider={index !== list.length - 1}
+            />
           ))}
-          <Tooltip content={"Informacje"} showArrow>
-            <Link to={"/informacje"} className="homeNavigationElement">
-              <FaInfoCircle />
-            </Link>
-          </Tooltip>
         </div>
         <div className="w-2/3 text-center mb-5">
           Przed użyciem zapoznaj się z treścią ulotki dołączonej do opakowania

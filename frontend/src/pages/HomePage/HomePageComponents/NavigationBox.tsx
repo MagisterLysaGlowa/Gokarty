@@ -6,8 +6,12 @@ import { NavbarListElementSchema } from "../../../components/Navbar/navbarUtils"
 
 type NavigationBoxProps = {
   element: NavbarListElementSchema;
+  showDivider: boolean;
 };
-export const NavigationBox: FC<NavigationBoxProps> = ({ element }) => {
+export const NavigationBox: FC<NavigationBoxProps> = ({
+  element,
+  showDivider = true,
+}) => {
   return (
     <React.Fragment key={element.id}>
       <Tooltip content={element.name} showArrow>
@@ -15,10 +19,12 @@ export const NavigationBox: FC<NavigationBoxProps> = ({ element }) => {
           <element.icon />
         </Link>
       </Tooltip>
-      <Divider
-        orientation="vertical"
-        className="w-[4px] h-[80%] my-auto rounded-3xl"
-      />
+      {showDivider && (
+        <Divider
+          orientation="vertical"
+          className="w-[4px] h-[80%] my-auto rounded-3xl"
+        />
+      )}
     </React.Fragment>
   );
 };

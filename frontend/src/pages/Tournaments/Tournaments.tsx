@@ -9,7 +9,7 @@ const Tournaments = () => {
 
   return (
     <div className="flex gap-2 flex-col overflow-hidden">
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto px-3">
         <TournamentsListContainer />
       </div>
       <CreateTournamentModal
@@ -17,7 +17,7 @@ const Tournaments = () => {
       />
       <Button
         isIconOnly
-        className="rounded-[50%] bg-main-default w-[100px] h-[100px] text-[60px] fixed right-5 bottom-5"
+        className="rounded-[50%] bg-main-default w-[100px] h-[100px] text-[60px] fixed right-10 bottom-5 z-10"
         size="lg"
         endContent={<IoMdAdd />}
         onPress={addModal.onOpen}
