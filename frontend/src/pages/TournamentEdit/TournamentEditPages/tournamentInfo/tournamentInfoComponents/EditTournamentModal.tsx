@@ -36,6 +36,7 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
     }
   };
 
+  console.log(tournament)
   const variant = "underlined";
 
   return (

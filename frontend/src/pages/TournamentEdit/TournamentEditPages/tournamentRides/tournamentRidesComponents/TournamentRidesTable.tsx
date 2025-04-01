@@ -29,6 +29,7 @@ export const TournamentRidesTable: React.FC<TournamentTableProps> = ({
 }) => {
   const columns = useGetColumns();
   const rows = useMemorizedRidesData(data, searchFilter);
+  
   const renderCell = useCustomCell(
     setSelectedRide,
     removeModal,
@@ -36,7 +37,6 @@ export const TournamentRidesTable: React.FC<TournamentTableProps> = ({
   );
   return (
     <Table
-      aria-label="Example"
       className="overflow-y-auto"
       isHeaderSticky
       removeWrapper

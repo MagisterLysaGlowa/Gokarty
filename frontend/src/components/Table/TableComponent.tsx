@@ -15,9 +15,10 @@ export const TableComponent: FC<TableProps> = ({
     return (
         <Table
             aria-label="Example table with dynamic content"
+            className="overflow-y-auto"
+            isHeaderSticky
             removeWrapper
             classNames={{ td: "text-xl" }}
-            isHeaderSticky
             selectionMode="single"
         >
             <TableHeader columns={columns}>

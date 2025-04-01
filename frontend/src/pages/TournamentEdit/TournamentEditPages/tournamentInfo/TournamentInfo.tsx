@@ -48,8 +48,7 @@ export const TournamentInfo = () => {
   const { data: queue } = QueueQueries.getAllFullQueuesForTournament(
     Number(id),
     {
-      enabled: tournament.tournamentStateId == 2,
-      onSuccess: (r) => console.log(r),
+      enabled: tournament.tournamentStateId == 2
     }
   );
 
