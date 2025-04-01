@@ -9,7 +9,12 @@ import { PaginationButtons } from "./tournamentTableComponents/PaginationButtons
 import { PaginationProgressBar } from "./tournamentTableComponents/PaginationProgressBar";
 import { RidesTable } from "./tournamentTableComponents/RidesTable";
 import { TournamentRightPanel } from "./tournamentTableComponents/TournamentRightPanel";
-import { getPaginationLength, useTableUpdate, getRows } from "./tournamentTableUtils";
+import {
+  getPaginationLength,
+  useTableUpdate,
+  getRows,
+} from "./tournamentTableUtils";
+import { Footer } from "../../components/componentsExport";
 
 const TournamentTable = () => {
   //swipe detector
@@ -51,28 +56,39 @@ const TournamentTable = () => {
   const [page, setPage] = useState(0);
   const pos = 10;
 
-  const [currentRide, setCurrentRide] = useState<FullQueueData | null | undefined>(null);
+  const [currentRide, setCurrentRide] = useState<
+    FullQueueData | null | undefined
+  >(null);
   const [queue, setQueue] = useState<FullQueueData[] | null | undefined>([]);
-  const [lastRide, setLastRide] = useState<FullRideData | null | undefined>(null);
+  const [lastRide, setLastRide] = useState<FullRideData | null | undefined>(
+    null
+  );
   const [rides, setRides] = useState<FullRideData[] | null | undefined>([]);
 
   const { data: tournament } = TournamentQueries.getTournament(Number(id));
-  const { data: currentRideData } = QueueQueries.getFullActiveQueueForTournament(Number(id));
-  const { data: queueData } = QueueQueries.getAllFullQueuesForTournament(Number(id));
-  const { data: lastRideData } = RideQueries.getTournamentLastFullRide(Number(id));
-  const { data: ridesData } = RideQueries.getTournamentBestFullRides(Number(id));
+  const { data: currentRideData } =
+    QueueQueries.getFullActiveQueueForTournament(Number(id));
+  const { data: queueData } = QueueQueries.getAllFullQueuesForTournament(
+    Number(id)
+  );
+  const { data: lastRideData } = RideQueries.getTournamentLastFullRide(
+    Number(id)
+  );
+  const { data: ridesData } = RideQueries.getTournamentBestFullRides(
+    Number(id)
+  );
 
   useEffect(() => {
-    setCurrentRide(currentRideData)
+    setCurrentRide(currentRideData);
   }, [currentRideData]);
   useEffect(() => {
-    setQueue(queueData)
+    setQueue(queueData);
   }, [queueData]);
   useEffect(() => {
-    setLastRide(lastRideData)
+    setLastRide(lastRideData);
   }, [lastRideData]);
   useEffect(() => {
-    setRides(ridesData)
+    setRides(ridesData);
   }, [ridesData]);
 
   useTableUpdate((newData) => {
@@ -169,11 +185,7 @@ const TournamentTable = () => {
         />
       </div>
       <div className="py-4 bg-white w-full border-y-8 border-main-default" />
-      <div className="p-3 w-full">
-        <p className="text-white font-bold text-center">
-          Mechanik OG full gangsta © {new Date().getFullYear()}
-        </p>
-      </div>
+      <Footer />
     </div>
   );
 };
