@@ -85,7 +85,7 @@ export const TournamentInfo = () => {
             />
           </Tooltip>}
           {tournament.tournamentStateId == 2 &&
-          <Tooltip content="Wylosuj kolejke" showArrow>
+          <Tooltip content={!queue || queue.length == 0 ? "Wylosuj kolejke" : "Zarządzaj kolejką"} showArrow>
             <Button
                 isIconOnly
                 endContent={
