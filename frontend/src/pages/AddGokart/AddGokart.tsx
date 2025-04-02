@@ -56,14 +56,14 @@ export const AddGokart = () => {
           <EditGokartModal
             modal={editGokartModal}
             gokart={selectedGokart}
-            key={`edit-${selectedGokart.gokartId}`}
+            key={`edit-${selectedGokartId}`}
           />
-          <YesNoModal header="Usuń gokart" modal={removeGokartModal} onYes={async () => removeGokartAsync(Number(selectedGokartId))}>
+          <YesNoModal header="Usuń gokart" modal={removeGokartModal} onYes={async () => removeGokartAsync(Number(selectedGokartId))} key={`remove-${selectedGokartId}`}>
             {selectedGokart.name}
           </YesNoModal>
         </>
       )}
-      <AddGokartModal modalProps={addGokartModal} />
+      <AddGokartModal modal={addGokartModal} key={`add`}/>
       <div className="fixed right-10 bottom-10">
         <Button
           isIconOnly

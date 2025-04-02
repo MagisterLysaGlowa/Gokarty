@@ -27,7 +27,6 @@ export const RidesTable: React.FC<RidesTableProps> = ({ rows }) => {
   return (
     <>
       <Table
-        aria-label=":c"
         className="bg-transparent table flex-1 !p-0"
         hideHeader
         removeWrapper
@@ -55,7 +54,7 @@ export const RidesTable: React.FC<RidesTableProps> = ({ rows }) => {
           )}
         </TableBody>
       </Table>
-      {selectedRide && <RideInfoModal modalProps={rideInfoModal} ride={selectedRide} />}
+      {selectedRide && <RideInfoModal modal={rideInfoModal} ride={selectedRide} key={`info-${selectedRide.key}`}/>}
     </>
   );
 };

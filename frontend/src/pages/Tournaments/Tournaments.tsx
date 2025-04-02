@@ -13,6 +13,7 @@ const Tournaments = () => {
         <TournamentsListContainer />
       </div>
       <CreateTournamentModal
+        key={`add`}
         modal={addModal}
       />
       <Button

@@ -23,7 +23,6 @@ export type RowType = {
   times: Times[];
 };
 
-
 export type RideModalData = {
   player: string;
   school: string;

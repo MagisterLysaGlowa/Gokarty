@@ -23,7 +23,7 @@ export const QueueManagement = () => {
     Number(tournamentId)
   );
 
-  const cosik = useCustomTableCells();
+  const tableCells = useCustomTableCells();
   const rows = useGetRows(players);
   const cols = useGetCols();
 
@@ -35,7 +35,7 @@ export const QueueManagement = () => {
       <Separator />
       <div className="grid grid-cols-[70%_30%] flex-1 h-full">
         <div className="p-3">
-          <TableComponent rows={rows} columns={cols} tableCells={cosik} />
+          <TableComponent rows={rows} columns={cols} tableCells={tableCells} />
         </div>
         <div className="w-full h-full flex items-center justify-center">
           <div className="w-[90%] h-[90%] border-2 border-main-default grid grid-rows-[30%_5%_35%_5%_25%] rounded-xl p-3">

@@ -64,16 +64,16 @@ export const SchoolManagement = () => {
       </div>
       {selectedSchool &&
         <>
-          <YesNoModal header="Usuwanie szkoły" modal={removeModal} onYes={async () => removeSchool(Number(selectedSchoolId))}>
+          <YesNoModal header="Usuwanie szkoły" modal={removeModal} onYes={async () => removeSchool(Number(selectedSchoolId))} key={`remove-${selectedSchoolId}`}>
             <div className="flex flex-col gap-2">
               <div>{selectedSchool.name + " (" + selectedSchool.acronym + ")"}</div>
               <div>{selectedSchool.city}</div>
             </div>
           </YesNoModal>
-          <EditSchoolModal school={selectedSchool} modal={editModal}/>
+          <EditSchoolModal school={selectedSchool} modal={editModal} key={`edit-${selectedSchoolId}`}/>
         </>
       }
-      <AddSchoolModal modal={addModal}/>
+      <AddSchoolModal modal={addModal} key={`add`}/>
       <div className="fixed right-10 bottom-10">
         <Button
           isIconOnly

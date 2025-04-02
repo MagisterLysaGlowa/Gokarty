@@ -26,8 +26,7 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
   tournament,
   setTournament,
 }) => {
-  const { mutateAsync: updateTournamentAsync } =
-    TournamentQueries.updateTournament();
+  const { mutateAsync: updateTournamentAsync } = TournamentQueries.updateTournament();
 
   const handleEdit = async (onClose: () => void) => {
     if (await tournamentValidate(tournament)) {
@@ -36,11 +35,10 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
     }
   };
 
-  console.log(tournament)
   const variant = "underlined";
 
   return (
-    <Modal placement="top-center" {...modal}>
+    <Modal placement="top-center" isOpen={modal.isOpen} onOpenChange={modal.onOpenChange}>
       <ModalContent>
         {(onClose) => (
           <>

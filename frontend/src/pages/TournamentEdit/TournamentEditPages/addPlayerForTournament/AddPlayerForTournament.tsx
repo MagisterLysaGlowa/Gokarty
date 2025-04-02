@@ -92,7 +92,7 @@ export const AddPlayerForTournament = () => {
         <TableComponent columns={columns} rows={rows} tableCells={customCell}/>
       }
       {selectedPlayer &&
-        <YesNoModal buttonText="Dodaj" header="Dodaj zawodnika" onYes={async () => addPlayer({tournamentId: tournamentId, playerId: Number(selectedPlayerId)})} modal={addModal}>
+        <YesNoModal buttonText="Dodaj" header="Dodaj zawodnika" onYes={async () => addPlayer({tournamentId: Number(tournamentId), playerId: Number(selectedPlayerId)})} modal={addModal} key={`add-${selectedPlayerId}`}>
           <h2>Czy napewno chcesz dodać zawodnika</h2>
           <span>
             {selectedPlayer.name} {selectedPlayer.surname}

@@ -145,7 +145,6 @@ const useAddPlayerToQueue = (
     mutationFn: ({ tournamentId, playerId }) =>
       QueueService.addPlayerToQueue(tournamentId, playerId),
     onSuccess: (r, v, c) => {
-      console.log(r);
       handleSuccessWithRefreshOnSuccess(
         [["playersForQueue", r]],
         options?.onSuccess

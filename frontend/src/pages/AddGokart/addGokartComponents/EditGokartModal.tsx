@@ -25,7 +25,7 @@ export const EditGokartModal: FC<EditGokartModalProps> = ({
   const { mutateAsync: editGokartAsync } = GokartQueries.updateGokart();
 
   return (
-    <Modal {...modal}>
+    <Modal isOpen={modal.isOpen} onOpenChange={modal.onOpenChange}>
       <ModalContent>
         {(onClose) => (
           <>

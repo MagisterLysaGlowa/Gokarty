@@ -32,7 +32,7 @@ export const EditSchoolModal: React.FC<EditModalProps> = ({
   });
 
   return (
-    <Modal {...modal} key={school.schoolId}>
+    <Modal isOpen={modal.isOpen} onOpenChange={modal.onOpenChange}>
       <ModalContent>
         {(onClose) => (
           <>

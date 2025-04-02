@@ -35,7 +35,7 @@ export const CreateQueueModal: React.FC<CreateQueueProps> = ({
   if(!gokarts) return;
 
   return (
-    <Modal placement="top-center" {...modal} key={tournament.tournamentId}>
+    <Modal placement="top-center" isOpen={modal.isOpen} onOpenChange={modal.onOpenChange}>
       <ModalContent>
         {(onClose) => (
           <>

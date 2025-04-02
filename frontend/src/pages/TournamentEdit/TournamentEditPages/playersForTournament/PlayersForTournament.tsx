@@ -58,7 +58,7 @@ export const PlayersForTournament = () => {
         }
       </div>
       {selectedPlayer &&
-        <YesNoModal header="Usuwanie gracza z turnieju" modal={removeModal} onYes={async () => removePlayerFromTournament({tournamentId: tournamentId, playerId: Number(selectedPlayerId)})}>
+        <YesNoModal header="Usuwanie gracza z turnieju" modal={removeModal} onYes={async () => removePlayerFromTournament({tournamentId: Number(tournamentId), playerId: Number(selectedPlayerId)})} key={`remove-${selectedPlayerId}`}>
           <div className="flex flex-col gap-2">
             <div>{selectedPlayer.name + " " + selectedPlayer.surname}</div>
             <div>{selectedPlayer.birthDate.toLocaleDateString()}</div>

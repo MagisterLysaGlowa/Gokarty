@@ -59,7 +59,7 @@ export const TournamentRides = () => {
       }
       {selectedRide &&
         <>
-          <YesNoModal header="Usuwanie przejazdu" modal={removeModal} onYes={async () => removeRide(Number(selectedRide.timeData?.rideId))}>
+          <YesNoModal header="Usuwanie przejazdu" modal={removeModal} onYes={async () => removeRide(Number(selectedRide.timeData?.rideId))} key={`remove-${selectedRide.timeData?.rideId}`}>
             <div className="flex flex-col gap-2">
               <div>{"Identyfikator przejazdu: " + selectedRide.timeData?.rideId}</div>
               <div>{selectedRide.player}</div>
@@ -67,7 +67,7 @@ export const TournamentRides = () => {
               <div>{convertTimeToString(Number(selectedRide.timeData?.time))}</div>
             </div>
           </YesNoModal>
-          <EditRideModal modal={editModal} ride={selectedRide} gokarts={gokarts}/>
+          <EditRideModal modal={editModal} ride={selectedRide} gokarts={gokarts} key={`edit-${selectedRide.timeData?.rideId}`}/>
         </>
       }
     </div>

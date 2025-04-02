@@ -15,8 +15,6 @@ class TournamentService {
     tournamentId: number,
     data: TournamentFormData
   ): Promise<TournamentData> {
-    console.log(data);
-    
     const response = await apiClient.put<TournamentData>(
       `/tournament/${tournamentId}`,
       data

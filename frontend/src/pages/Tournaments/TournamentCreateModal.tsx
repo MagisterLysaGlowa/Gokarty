@@ -22,18 +22,18 @@ type TournamentCreateModalParams = {
 export const CreateTournamentModal: React.FC<TournamentCreateModalParams> = ({
   modal,
 }) => {
-  const [tournament, setTournament] = useState<TournamentFormData>(
-    resetTournamentValues
-  );
+  const [tournament, setTournament] = useState<TournamentFormData>(resetTournamentValues);
 
   const {mutateAsync: createTournament} = TournamentQueries.createTournament()
+
   useEffect(() => {
     setTournament(resetTournamentValues);
   }, [modal.isOpen])
 
   return (
     <Modal
-      {...modal}
+      isOpen={modal.isOpen}
+      onOpenChange={modal.onOpenChange}
       backdrop="blur"
       isDismissable={false}
       placement="top-center"

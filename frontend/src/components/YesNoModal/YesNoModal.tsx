@@ -25,7 +25,7 @@ import { ReactNode } from "react";
     buttonText = "Usuń",
   }) => {
     return (
-      <Modal {...modal}>
+      <Modal isOpen={modal.isOpen} onOpenChange={modal.onOpenChange}>
         <ModalContent>
           {(onClose) => (
             <>

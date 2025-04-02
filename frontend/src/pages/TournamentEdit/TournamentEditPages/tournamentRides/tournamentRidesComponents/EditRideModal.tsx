@@ -12,7 +12,7 @@ import {
 } from "@heroui/react";
 import { GokartData, ModalProps, RideFormData } from "../../../../../../types";
 import { RideQueries } from "../../../../../queries/rideQuery";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   calculateTimeFromStringToMs,
   convertTimeToString,
@@ -42,9 +42,6 @@ export const EditRideModal: React.FC<EditModalProps> = ({
   });
 
   const [time, setTime] = useState<string>(convertTimeToString(Number(ride.timeData?.time)));
-  useEffect(() => {
-    setTime(convertTimeToString(Number(ride.timeData?.time)));
-  })
 
   const { mutateAsync: updateRide } = RideQueries.updateRide({
     onSuccess: async () => await queryClient.invalidateQueries(["playersWithTimes", Number(tournamentId)])
@@ -53,7 +50,7 @@ export const EditRideModal: React.FC<EditModalProps> = ({
   if(!gokarts) return;
 
   return (
-    <Modal {...modal} key={ride.timeData?.rideId}>
+    <Modal isOpen={modal.isOpen} onOpenChange={modal.onOpenChange}>
       <ModalContent>
         {(onClose) => (
           <>

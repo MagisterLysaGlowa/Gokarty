@@ -16,17 +16,15 @@ type AddSchoolModalProps = {
   modal: ModalProps;
 };
 
-export const AddSchoolModal: React.FC<AddSchoolModalProps> = ({
-  modal,
-}) => {
+export const AddSchoolModal: React.FC<AddSchoolModalProps> = ({ modal }) => {
   const [school, setSchool] = useState<SchoolFormData>({
     name: "",
     acronym: "",
     city: ""
   });
-
+  
   const { mutateAsync: createSchool } = SchoolQueries.createSchool();
-
+  
   useEffect(() => {
     setSchool({
       name: "",
@@ -36,7 +34,7 @@ export const AddSchoolModal: React.FC<AddSchoolModalProps> = ({
   }, [modal.isOpen]);
 
   return (
-    <Modal {...modal} key={modal.isOpen ? "add-open" : "add-close"}>
+    <Modal isOpen={modal.isOpen} onOpenChange={modal.onOpenChange}>
       <ModalContent>
         {(onClose) => (
           <>

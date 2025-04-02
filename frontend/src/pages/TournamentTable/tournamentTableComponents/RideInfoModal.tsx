@@ -9,23 +9,32 @@ import {
 import { FC } from "react";
 import { ModalProps } from "../../../../types";
 import { TableRowsType } from "../tournamentTableUtils";
-type RideInfoModalProps = { modalProps: ModalProps; ride: TableRowsType };
-export const RideInfoModal: FC<RideInfoModalProps> = ({ modalProps, ride }) => {
-  const { isOpen, onOpenChange } = modalProps;
+
+type RideInfoModalProps = {
+  modal: ModalProps;
+  ride: TableRowsType
+};
+
+export const RideInfoModal: FC<RideInfoModalProps> = ({
+  modal,
+  ride
+}) => {
   const setColorForPosition = (position: number) => {
     if (position === 1) return "text-yellow-500";
     if (position === 2) return "text-gray-500";
     if (position === 3) return "text-amber-900";
     return "text-white";
   }
+
   const setBorderForPosition = (position: number) => {
     if (position === 1) return "border-yellow-500";
     if (position === 2) return "border-gray-500";
     if (position === 3) return "border-amber-900";
     return "border-none";
   }
+
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+    <Modal isOpen={modal.isOpen} onOpenChange={modal.onOpenChange}>
       <ModalContent className={`border-2 ${setBorderForPosition(Number(ride.position?.substring(1)))}`}>
         {(onClose) => (
           <>

@@ -13,18 +13,18 @@ import { GokartQueries } from "../../../queries/gokartQuery";
 import { gokartValidate } from "../../../validations/GokartValidation";
 
 type AddGokartModalProps = {
-  modalProps: ModalProps;
+  modal: ModalProps;
 };
 
-export const AddGokartModal: FC<AddGokartModalProps> = ({ modalProps }) => {
+export const AddGokartModal: FC<AddGokartModalProps> = ({ modal }) => {
   const [gokart, setGokart] = useState<string>("");
   const { mutateAsync: createGokart } = GokartQueries.createGokart();
   useEffect(() => {
     setGokart("");
-  }, [modalProps.isOpen]);
+  }, [modal.isOpen]);
 
   return (
-    <Modal {...modalProps} key={modalProps.isOpen ? "add-open" : "add-close"}>
+    <Modal isOpen={modal.isOpen} onOpenChange={modal.onOpenChange}>
       <ModalContent>
         {(onClose) => (
           <>
