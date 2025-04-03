@@ -1,15 +1,13 @@
 import { informations } from "./infoPageUtils";
 import { Footer } from "../../components/componentsExport";
 import { Separator } from "../../components/StaticPageComponents/Separator";
-import { Header } from "../../components/StaticPageComponents/Header";
 import { PersonInfo } from "./InfoPageComponent/PersonInfo";
+import { PageHeaderWithNavbar } from "../../components/StaticPageComponents/PageHeaderWithNavbar";
 
 export const InfoPage = () => {
   return (
     <div className="h-full w-full flex flex-col overflow-auto">
-      <Header>
-        <p className="text-center text-main-default text-4xl">Informacje</p>
-      </Header>
+      <PageHeaderWithNavbar title="Informacje" />
       <Separator />
       <div className="flex-1 w-3/4 mx-auto my-7 flex flex-col gap-10">
         <section className="flex flex-col gap-5">
