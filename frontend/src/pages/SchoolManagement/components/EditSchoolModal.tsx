@@ -12,9 +12,9 @@ import { ModalProps, SchoolData, SchoolFormData } from "../../../../types";
 import { SchoolQueries } from "../../../queries/schoolQuery";
 import { queryClient } from "../../../Utils/ReactQueryConfig";
 import { schoolValidate } from "../../../validations/SchoolValidation";
+import { modalConfig } from "../../../configs/modalConfig";
 
 type EditModalProps = {
-
   modal: ModalProps;
   school: SchoolData;
 };
@@ -32,7 +32,11 @@ export const EditSchoolModal: React.FC<EditModalProps> = ({
   });
 
   return (
-    <Modal isOpen={modal.isOpen} onOpenChange={modal.onOpenChange}>
+    <Modal
+      isOpen={modal.isOpen}
+      onOpenChange={modal.onOpenChange}
+      {...modalConfig}
+    >
       <ModalContent>
         {(onClose) => (
           <>
@@ -49,17 +53,23 @@ export const EditSchoolModal: React.FC<EditModalProps> = ({
               <Input
                 value={schoolToEdit.name}
                 label="Nazwa"
-                onValueChange={(e) => setSchoolToEdit((prev) => ({...prev, name: e}))}
+                onValueChange={(e) =>
+                  setSchoolToEdit((prev) => ({ ...prev, name: e }))
+                }
               />
               <Input
                 value={schoolToEdit.city}
                 label="Miasto"
-                onValueChange={(e) => setSchoolToEdit((prev) => ({...prev, city: e}))}
+                onValueChange={(e) =>
+                  setSchoolToEdit((prev) => ({ ...prev, city: e }))
+                }
               />
               <Input
                 value={schoolToEdit.acronym}
                 label="Skrót"
-                onValueChange={(e) => setSchoolToEdit((prev) => ({...prev, acronym: e}))}
+                onValueChange={(e) =>
+                  setSchoolToEdit((prev) => ({ ...prev, acronym: e }))
+                }
               />
             </ModalBody>
             <ModalFooter>
@@ -69,10 +79,13 @@ export const EditSchoolModal: React.FC<EditModalProps> = ({
               <Button
                 color="primary"
                 onPress={async () => {
-                    if(await schoolValidate(schoolToEdit)) {
-                        await updateSchool({schoolId: Number(school.schoolId), data: schoolToEdit});
-                        onClose();
-                    }
+                  if (await schoolValidate(schoolToEdit)) {
+                    await updateSchool({
+                      schoolId: Number(school.schoolId),
+                      data: schoolToEdit,
+                    });
+                    onClose();
+                  }
                 }}
               >
                 Edytuj

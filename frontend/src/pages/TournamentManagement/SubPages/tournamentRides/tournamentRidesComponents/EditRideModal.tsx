@@ -20,6 +20,7 @@ import {
 import { useParams } from "react-router-dom";
 import { queryClient } from "../../../../../Utils/ReactQueryConfig";
 import { RideModalData } from "../tournamentRidesUtils";
+import { modalConfig } from "../../../../../configs/modalConfig";
 
 type EditModalProps = {
   modal: ModalProps;
@@ -39,18 +40,29 @@ export const EditRideModal: React.FC<EditModalProps> = ({
     playerId: ride.playerId,
     time: Number(ride.timeData?.time),
     tournamentId: Number(tournamentId),
+    penaltyPoints: Number(ride.penaltyPoints),
   });
 
-  const [time, setTime] = useState<string>(convertTimeToString(Number(ride.timeData?.time)));
+  const [time, setTime] = useState<string>(
+    convertTimeToString(Number(ride.timeData?.time))
+  );
 
   const { mutateAsync: updateRide } = RideQueries.updateRide({
-    onSuccess: async () => await queryClient.invalidateQueries(["playersWithTimes", Number(tournamentId)])
+    onSuccess: async () =>
+      await queryClient.invalidateQueries([
+        "playersWithTimes",
+        Number(tournamentId),
+      ]),
   });
 
-  if(!gokarts) return;
+  if (!gokarts) return;
 
   return (
-    <Modal isOpen={modal.isOpen} onOpenChange={modal.onOpenChange}>
+    <Modal
+      isOpen={modal.isOpen}
+      onOpenChange={modal.onOpenChange}
+      {...modalConfig}
+    >
       <ModalContent>
         {(onClose) => (
           <>
@@ -63,11 +75,7 @@ export const EditRideModal: React.FC<EditModalProps> = ({
                 readOnly
                 label="Identyfikator przejazdu"
               />
-              <Input
-                value={ride.player}
-                label="Osoba"
-                readOnly
-              />
+              <Input value={ride.player} label="Osoba" readOnly />
               <Input
                 placeholder="00:00:000"
                 value={time}

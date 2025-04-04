@@ -11,6 +11,7 @@ import { ModalProps } from "../../../../types";
 import { FC, useEffect, useState } from "react";
 import { GokartQueries } from "../../../queries/gokartQuery";
 import { gokartValidate } from "../../../validations/GokartValidation";
+import { modalConfig } from "../../../configs/modalConfig";
 
 type AddGokartModalProps = {
   modal: ModalProps;
@@ -24,7 +25,11 @@ export const AddGokartModal: FC<AddGokartModalProps> = ({ modal }) => {
   }, [modal.isOpen]);
 
   return (
-    <Modal isOpen={modal.isOpen} onOpenChange={modal.onOpenChange}>
+    <Modal
+      isOpen={modal.isOpen}
+      onOpenChange={modal.onOpenChange}
+      {...modalConfig}
+    >
       <ModalContent>
         {(onClose) => (
           <>

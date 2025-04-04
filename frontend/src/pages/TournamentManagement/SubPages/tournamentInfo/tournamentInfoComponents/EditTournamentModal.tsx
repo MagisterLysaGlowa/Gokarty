@@ -14,6 +14,7 @@ import { parseDate } from "@internationalized/date";
 import { TournamentQueries } from "../../../../../queries/tournamentQuery";
 import { tournamentValidate } from "../../../../../validations/TournamentValidation";
 import { ModalProps, TournamentData } from "../../../../../../types";
+import { modalConfig } from "../../../../../configs/modalConfig";
 
 type EditModalProps = {
   modal: ModalProps;
@@ -26,7 +27,8 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
   tournament,
   setTournament,
 }) => {
-  const { mutateAsync: updateTournamentAsync } = TournamentQueries.updateTournament();
+  const { mutateAsync: updateTournamentAsync } =
+    TournamentQueries.updateTournament();
 
   const handleEdit = async (onClose: () => void) => {
     if (await tournamentValidate(tournament)) {
@@ -38,7 +40,12 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
   const variant = "underlined";
 
   return (
-    <Modal placement="top-center" isOpen={modal.isOpen} onOpenChange={modal.onOpenChange}>
+    <Modal
+      placement="top-center"
+      isOpen={modal.isOpen}
+      onOpenChange={modal.onOpenChange}
+      {...modalConfig}
+    >
       <ModalContent>
         {(onClose) => (
           <>

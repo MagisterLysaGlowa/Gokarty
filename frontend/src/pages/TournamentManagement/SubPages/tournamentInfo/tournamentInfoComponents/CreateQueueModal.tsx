@@ -14,6 +14,7 @@ import { useState } from "react";
 import { GokartQueries } from "../../../../../queries/gokartQuery";
 import { QueueQueries } from "../../../../../queries/queueQuery";
 import { queueValidation } from "../../../../../validations/QueueRandomizationValidation";
+import { modalConfig } from "../../../../../configs/modalConfig";
 
 type CreateQueueProps = {
   modal: ModalProps;
@@ -44,6 +45,7 @@ export const CreateQueueModal: React.FC<CreateQueueProps> = ({
       placement="top-center"
       isOpen={modal.isOpen}
       onOpenChange={modal.onOpenChange}
+      {...modalConfig}
     >
       <ModalContent>
         {(onClose) => (

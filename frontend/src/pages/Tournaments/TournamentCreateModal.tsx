@@ -14,6 +14,7 @@ import { defaultVariant } from "../../Utils/globalUtils";
 import { TournamentQueries } from "../../queries/tournamentQuery";
 import { useEffect, useState } from "react";
 import { resetTournamentValues } from "./TournamentUtils";
+import { modalConfig } from "../../configs/modalConfig";
 
 type TournamentCreateModalParams = {
   modal: ModalProps;
@@ -22,21 +23,23 @@ type TournamentCreateModalParams = {
 export const CreateTournamentModal: React.FC<TournamentCreateModalParams> = ({
   modal,
 }) => {
-  const [tournament, setTournament] = useState<TournamentFormData>(resetTournamentValues);
+  const [tournament, setTournament] = useState<TournamentFormData>(
+    resetTournamentValues
+  );
 
-  const {mutateAsync: createTournament} = TournamentQueries.createTournament()
+  const { mutateAsync: createTournament } =
+    TournamentQueries.createTournament();
 
   useEffect(() => {
     setTournament(resetTournamentValues);
-  }, [modal.isOpen])
+  }, [modal.isOpen]);
 
   return (
     <Modal
       isOpen={modal.isOpen}
       onOpenChange={modal.onOpenChange}
-      backdrop="blur"
       isDismissable={false}
-      placement="top-center"
+      {...modalConfig}
     >
       <ModalContent>
         {(onClose) => (
@@ -67,11 +70,7 @@ export const CreateTournamentModal: React.FC<TournamentCreateModalParams> = ({
               />
             </ModalBody>
             <ModalFooter>
-              <Button
-                color="danger"
-                variant="light"
-                onPress={onClose}
-              >
+              <Button color="danger" variant="light" onPress={onClose}>
                 Anuluj
               </Button>
               <Button

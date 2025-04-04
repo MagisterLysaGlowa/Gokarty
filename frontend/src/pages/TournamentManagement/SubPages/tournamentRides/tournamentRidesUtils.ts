@@ -28,11 +28,12 @@ export type RideModalData = {
   school: string;
   playerId: number;
   timeData?: Times;
-}
+  penaltyPoints?: number;
+};
 
 export const useMemorizedRidesData = (
   data: PlayersWithTimes[] | undefined,
-  filter: string,
+  filter: string
 ) => {
   return useMemo(() => {
     return (

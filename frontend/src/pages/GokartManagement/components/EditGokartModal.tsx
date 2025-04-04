@@ -11,6 +11,7 @@ import { FC, useState } from "react";
 import { GokartData, ModalProps } from "../../../../types";
 import { GokartQueries } from "../../../queries/gokartQuery";
 import { gokartValidate } from "../../../validations/GokartValidation";
+import { modalConfig } from "../../../configs/modalConfig";
 
 type EditGokartModalProps = {
   modal: ModalProps;
@@ -25,7 +26,11 @@ export const EditGokartModal: FC<EditGokartModalProps> = ({
   const { mutateAsync: editGokartAsync } = GokartQueries.updateGokart();
 
   return (
-    <Modal isOpen={modal.isOpen} onOpenChange={modal.onOpenChange}>
+    <Modal
+      isOpen={modal.isOpen}
+      onOpenChange={modal.onOpenChange}
+      {...modalConfig}
+    >
       <ModalContent>
         {(onClose) => (
           <>
