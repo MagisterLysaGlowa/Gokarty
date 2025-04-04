@@ -18,24 +18,33 @@ import { queueValidation } from "../../../../../validations/QueueRandomizationVa
 type CreateQueueProps = {
   modal: ModalProps;
   tournament: TournamentData;
+  refetchQueue: () => void;
 };
 
 export const CreateQueueModal: React.FC<CreateQueueProps> = ({
   modal,
-  tournament
+  tournament,
+  refetchQueue,
 }) => {
-  const [numberOfRidesInOneGokart, setNumberOfRidesInOneGokart] = useState<number>(1);
+  const [numberOfRidesInOneGokart, setNumberOfRidesInOneGokart] =
+    useState<number>(1);
   const [gokartIds, setGokartIds] = useState<number[]>([]);
 
   const { data: gokarts } = GokartQueries.getAllGokarts();
-  const { mutateAsync: createQueuesAsync } = QueueQueries.createQueue();
+  const { mutateAsync: createQueuesAsync } = QueueQueries.createQueue({
+    onSuccess: () => refetchQueue(),
+  });
 
   const variant = "underlined";
 
-  if(!gokarts) return;
+  if (!gokarts) return;
 
   return (
-    <Modal placement="top-center" isOpen={modal.isOpen} onOpenChange={modal.onOpenChange}>
+    <Modal
+      placement="top-center"
+      isOpen={modal.isOpen}
+      onOpenChange={modal.onOpenChange}
+    >
       <ModalContent>
         {(onClose) => (
           <>
@@ -56,11 +65,13 @@ export const CreateQueueModal: React.FC<CreateQueueProps> = ({
                 selectedKeys={gokartIds}
                 selectionMode="multiple"
                 variant={variant}
-                onSelectionChange={(e) => setGokartIds(Array.from(e as Set<number>))}
+                onSelectionChange={(e) =>
+                  setGokartIds(Array.from(e as Set<number>))
+                }
               >
-                {gokarts.map(g => 
-                    <SelectItem key={g.gokartId}>{g.name}</SelectItem>
-                )}
+                {gokarts.map((g) => (
+                  <SelectItem key={g.gokartId}>{g.name}</SelectItem>
+                ))}
               </Select>
             </ModalBody>
             <ModalFooter>
@@ -70,15 +81,17 @@ export const CreateQueueModal: React.FC<CreateQueueProps> = ({
               <Button
                 className="bg-main-default"
                 onPress={async () => {
-                  if(await queueValidation({
-                    gokartIds: gokartIds,
-                    numberOfRidesInOneGokart: numberOfRidesInOneGokart,
-                    tournamentId: tournament.tournamentId
-                  })) {
+                  if (
+                    await queueValidation({
+                      gokartIds: gokartIds,
+                      numberOfRidesInOneGokart: numberOfRidesInOneGokart,
+                      tournamentId: tournament.tournamentId,
+                    })
+                  ) {
                     await createQueuesAsync({
                       gokartIds: gokartIds,
                       numberOfRidesInOneGokart: numberOfRidesInOneGokart,
-                      tournamentId: tournament.tournamentId
+                      tournamentId: tournament.tournamentId,
                     });
                   }
                   onClose();

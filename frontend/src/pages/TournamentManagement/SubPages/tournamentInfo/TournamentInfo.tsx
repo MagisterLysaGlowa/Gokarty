@@ -1,5 +1,12 @@
 import { Button, useDisclosure } from "@heroui/react";
-import { FaDice, FaEdit, FaList, FaPlay, FaStop, FaTrash } from "react-icons/fa";
+import {
+  FaDice,
+  FaEdit,
+  FaList,
+  FaPlay,
+  FaStop,
+  FaTrash,
+} from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
 import { TournamentData, TournamentType } from "../../../../../types";
@@ -44,93 +51,124 @@ export const TournamentInfo = () => {
   const { mutateAsync: updateTournament } =
     TournamentQueries.updateTournament();
 
-  const { data: queue } = QueueQueries.getAllFullQueuesForTournament(
-    Number(id), { enabled: tournament.tournamentStateId == 2 }
-  );
+  const { data: queue, refetch: refetchQueue } =
+    QueueQueries.getAllFullQueuesForTournament(Number(id), {
+      enabled: tournament.tournamentStateId == 2,
+    });
 
   return (
     <div className="grid place-items-center h-full">
-      {isLoading ? 
-      <Loading isLoading={isLoading}/> : 
-      <>
-        <TournamentInfoComponent
-          tournament={tournament}
-          isLoading={isLoading}
-          key={id}
-        />
-        <div className="adminActions">
-          <Tooltip content="Edytuj zawody" showArrow>
-            <Button
-              className="tournamentButton bg-main-default"
-              onPress={() => editModal.onOpen()}
-              endContent={<FaEdit />}
-              isIconOnly
-            />
-          </Tooltip>
-          <Tooltip content="Usuń zawody" showArrow>
-            <Button
-              isIconOnly
-              endContent={<FaTrash />}
-              className="tournamentButton bg-red-600"
-              onPress={() => removeModal.onOpen()}
-            />
-          </Tooltip>
-          {tournament.tournamentStateId != 3 &&
-          <Tooltip content={tournament.tournamentStateId == 1 ? "Rozpocznij zawody" : "Zakończ zawody"} showArrow>
-            <Button
-              isIconOnly
-              endContent={tournament.tournamentStateId == 1 ? <FaPlay /> : <FaStop />}
-              className="tournamentButton bg-blue-600"
-              onPress={() => startEndModal.onOpen()}
-            />
-          </Tooltip>}
-          {tournament.tournamentStateId == 2 &&
-          <Tooltip content={!queue || queue.length == 0 ? "Wylosuj kolejke" : "Zarządzaj kolejką"} showArrow>
-            <Button
+      {isLoading ? (
+        <Loading isLoading={isLoading} />
+      ) : (
+        <>
+          <TournamentInfoComponent
+            tournament={tournament}
+            isLoading={isLoading}
+            key={id}
+          />
+          <div className="adminActions">
+            <Tooltip content="Edytuj zawody" showArrow>
+              <Button
+                className="tournamentButton bg-main-default"
+                onPress={() => editModal.onOpen()}
+                endContent={<FaEdit />}
                 isIconOnly
-                endContent={
-                  !queue || queue.length == 0 ? <FaDice /> : <FaList />
-                }
-                className={`tournamentButton ${
-                  !queue || queue.length == 0 ? "bg-orange-600" : "bg-green-700"
-                }`}
-                onPress={() => {
-                  if (!queue || queue.length == 0) queueModal.onOpen();
-                  else navigate(`/zawody/${Number(id)}/kolejka`);
-                }}
               />
-          </Tooltip>}
-        </div>
-        <YesNoModal
-          header={tournament.name}
-          modal={removeModal}
-          onYes={async () => removeTournamentAsync(Number(tournament.tournamentId))}
-          key={`remove-${tournament.tournamentId}`}
-        >
-          {"Czy napewno chcesz usunąć te zawody?"}
-        </YesNoModal>
-        <EditTournamentModal
-          modal={editModal}
-          tournament={tournament}
-          setTournament={SetTournament}
-          key={`edit-${tournament.tournamentId}`}
-        />
-        <CreateQueueModal
-          tournament={tournament}
-          modal={queueModal}
-          key={`queue-${tournament.tournamentId}`}
-        />
-        <YesNoModal
-          header={(tournament.tournamentStateId == 1 ? "Rozpoczęcie" : "Zakończnie") + " zawodów"}
-          modal={startEndModal}
-          buttonText="Tak"
-          onYes={async () => updateTournament({...tournament, tournamentStateId: tournament.tournamentStateId + 1})}
-          key={`state-${tournament.tournamentId}`}
-        >
-          Czy napewno chcesz {tournament.tournamentStateId == 1 ? "rozpocząć" : "zakończyć"} te zawody?
-        </YesNoModal>
-      </>
-      }
+            </Tooltip>
+            <Tooltip content="Usuń zawody" showArrow>
+              <Button
+                isIconOnly
+                endContent={<FaTrash />}
+                className="tournamentButton bg-red-600"
+                onPress={() => removeModal.onOpen()}
+              />
+            </Tooltip>
+            {tournament.tournamentStateId != 3 && (
+              <Tooltip
+                content={
+                  tournament.tournamentStateId == 1
+                    ? "Rozpocznij zawody"
+                    : "Zakończ zawody"
+                }
+                showArrow
+              >
+                <Button
+                  isIconOnly
+                  endContent={
+                    tournament.tournamentStateId == 1 ? <FaPlay /> : <FaStop />
+                  }
+                  className="tournamentButton bg-blue-600"
+                  onPress={() => startEndModal.onOpen()}
+                />
+              </Tooltip>
+            )}
+            {tournament.tournamentStateId == 2 && (
+              <Tooltip
+                content={`${
+                  !queue?.length ? "Wylosuj kolejke" : "Zarządzaj kolejką"
+                }`}
+                showArrow
+              >
+                <Button
+                  isIconOnly
+                  endContent={!queue?.length ? <FaDice /> : <FaList />}
+                  className={`tournamentButton ${
+                    !queue?.length ? "bg-orange-600" : "bg-green-700"
+                  }`}
+                  onPress={() =>
+                    !queue?.length
+                      ? queueModal.onOpen()
+                      : navigate(`/zawody/${id}/kolejka`)
+                  }
+                />
+              </Tooltip>
+            )}
+          </div>
+          <YesNoModal
+            header={tournament.name}
+            modal={removeModal}
+            onYes={async () =>
+              removeTournamentAsync(Number(tournament.tournamentId))
+            }
+            key={`remove-${tournament.tournamentId}`}
+          >
+            {"Czy napewno chcesz usunąć te zawody?"}
+          </YesNoModal>
+          <EditTournamentModal
+            modal={editModal}
+            tournament={tournament}
+            setTournament={SetTournament}
+            key={`edit-${tournament.tournamentId}`}
+          />
+          <CreateQueueModal
+            refetchQueue={refetchQueue}
+            tournament={tournament}
+            modal={queueModal}
+            key={`queue-${tournament.tournamentId}`}
+          />
+          <YesNoModal
+            header={
+              (tournament.tournamentStateId == 1
+                ? "Rozpoczęcie"
+                : "Zakończnie") + " zawodów"
+            }
+            modal={startEndModal}
+            buttonText="Tak"
+            onYes={async () =>
+              updateTournament({
+                ...tournament,
+                tournamentStateId: tournament.tournamentStateId + 1,
+              })
+            }
+            key={`state-${tournament.tournamentId}`}
+          >
+            Czy napewno chcesz{" "}
+            {tournament.tournamentStateId == 1 ? "rozpocząć" : "zakończyć"} te
+            zawody?
+          </YesNoModal>
+        </>
+      )}
     </div>
   );
 };

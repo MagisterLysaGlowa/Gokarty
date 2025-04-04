@@ -6,7 +6,7 @@ import { Image, Divider } from "@heroui/react";
 export const GokartSliderContainer = () => {
   return (
     <Swiper
-      className="px-3"
+      className="px-3 w-full flex-1"
       modules={[Autoplay, Navigation]}
       slidesPerView={4} // Widoczne 3 slajdy na raz
       slidesPerGroup={1} // Przesuwa się tylko o 1 slajd na raz
@@ -18,7 +18,10 @@ export const GokartSliderContainer = () => {
       navigation={true}
     >
       {gokartsArray.map((element, index) => (
-        <SwiperSlide key={index} className="flex flex-col gap-10 xl:px-5 lg:px-4 md:px-3 sm:px-2 px-1">
+        <SwiperSlide
+          key={index}
+          className="flex flex-col gap-10 xl:px-5 lg:px-4 md:px-3 sm:px-2 px-1"
+        >
           <Image
             src={element.src}
             alt={`Slide ${index + 1}`}
