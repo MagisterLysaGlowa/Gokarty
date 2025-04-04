@@ -67,40 +67,16 @@ namespace api.Controllers {
             }
         }
 
-        [HttpGet("{rideId}")]
-        public async Task<IActionResult> Get(int rideId) {
+        [HttpDelete("{rideId}")]
+        public async Task<IActionResult> Remove(int rideId)
+        {
             try {
-                if (await rideRepository.GetAsync(rideId) is Ride ride)
-                    return Ok(ride);
+                if (await rideRepository.RemoveAsync(rideId) is int id)
+                    return Ok(id);
                 return NotFound();
-            } catch (Exception) {
-                return BadRequest();
             }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetAllAsync() {
-            try {
-                return Ok(await rideRepository.GetAllAsync());
-            } catch (Exception) {
-                return BadRequest();
-            }
-        }
-
-        [HttpGet("full")]
-        public async Task<IActionResult> FullGetAll() {
-            try {
-                return Ok(await rideRepository.FullGetAllAsync());
-            } catch (Exception) {
-                return BadRequest();
-            }
-        }
-
-        [HttpGet("full/{rideId}")]
-        public async Task<IActionResult> FullGetAll(int rideId) {
-            try {
-                return Ok(await rideRepository.FullGetAsync(rideId));
-            } catch (Exception) {
+            catch (Exception)
+            {
                 return BadRequest();
             }
         }
@@ -119,17 +95,6 @@ namespace api.Controllers {
             try {
                 if (await rideRepository.FullGetLastAddedForTournamentAsync(tournamentId) is FullRideDto ride)
                     return Ok(ride);
-                return NotFound();
-            } catch (Exception) {
-                return BadRequest();
-            }
-        }
-
-        [HttpDelete("{rideId}")]
-        public async Task<IActionResult> Remove(int rideId) {
-            try {
-                if (await rideRepository.RemoveAsync(rideId) is int id)
-                    return Ok(id);
                 return NotFound();
             } catch (Exception) {
                 return BadRequest();

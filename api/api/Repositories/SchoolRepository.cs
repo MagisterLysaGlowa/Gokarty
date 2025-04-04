@@ -15,7 +15,7 @@ namespace api.Repositories {
             return school;
         }
 
-        public async Task<School?> GetOneAsync(int schoolId) {
+        public async Task<School?> GetAsync(int schoolId) {
             return await _context.Schools.FindAsync(schoolId);
         }
 

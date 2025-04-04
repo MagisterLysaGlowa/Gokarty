@@ -27,11 +27,6 @@ class GokartService {
     const response = await apiClient.get<GokartData[]>("/gokart");
     return response.data;
   }
-
-  static async getGokart(gokartId: number): Promise<GokartData> {
-    const response = await apiClient.get<GokartData>(`/gokart/${gokartId}`);
-    return response.data;
-  }
 }
 
 export default GokartService;

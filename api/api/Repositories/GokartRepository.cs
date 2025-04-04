@@ -15,10 +15,6 @@ namespace api.Repositories {
             return gokart;
         }
 
-        public async Task<Gokart?> GetAsync(int gokartId) {
-            return await _context.Gokarts.FindAsync(gokartId);
-        }
-
         public async Task<List<Gokart>> GetAllAsync() {
             return await _context.Gokarts.ToListAsync();
         }

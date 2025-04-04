@@ -32,48 +32,10 @@ namespace api.Controllers {
             }
         }
 
-        [HttpGet("{queueId}")]
-        public async Task<IActionResult> Get(int queueId) {
-            try {
-                if (await queueRepository.GetAsync(queueId) is Queue queue)
-                    return Ok(queue);
-                return NotFound();
-            } catch (Exception) {
-                return BadRequest();
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetAll() {
-            try {
-                return Ok(await queueRepository.GetAllAsync());
-            } catch (Exception) {
-                return NotFound();
-            }
-        }
-
-        [HttpGet("full")]
-        public async Task<IActionResult> FullGetAll() {
-            try {
-                return Ok(await queueRepository.FullGetAllAsync());
-            } catch (Exception) {
-                return BadRequest();
-            }
-        }
-
         [HttpGet("full/tournament/{tournamentId}")]
         public async Task<IActionResult> FullGetAllQuueuesForTournament(int tournamentId) {
             try {
                 return Ok(await queueRepository.FullGetAllQueuesForTournamentAsync(tournamentId));
-            } catch (Exception) {
-                return BadRequest();
-            }
-        }
-
-        [HttpGet("full/{queueId}")]
-        public async Task<IActionResult> FullGetAll(int queueId) {
-            try {
-                return Ok(await queueRepository.FullGetAsync(queueId));
             } catch (Exception) {
                 return BadRequest();
             }

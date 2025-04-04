@@ -48,17 +48,6 @@ namespace api.Controllers {
             }
         }
 
-        [HttpGet("{gokartId}")]
-        public async Task<IActionResult> Get(int gokartId) {
-            try {
-                if (await gokartRepository.GetAsync(gokartId) is Gokart gokart)
-                    return Ok(gokart);
-                return NotFound();
-            } catch (Exception) {
-                return BadRequest();
-            }
-        }
-
         [HttpGet]
         public async Task<IActionResult> GetAll() {
             try {

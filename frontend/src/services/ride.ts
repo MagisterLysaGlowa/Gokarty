@@ -20,21 +20,6 @@ class RideService {
     return response.data;
   }
 
-  static async getAllRides(): Promise<RideData[]> {
-    const response = await apiClient.get<RideData[]>("/ride");
-    return response.data;
-  }
-
-  static async getRide(rideId: number): Promise<RideData> {
-    const response = await apiClient.get<RideData>(`/ride/${rideId}`);
-    return response.data;
-  }
-
-  static async getAllFullRides(): Promise<FullRideData[]> {
-    const response = await apiClient.get<FullRideData[]>("/ride/full");
-    return response.data;
-  }
-
   static async getTournamentBestFullRides(
     tournamentId: number
   ): Promise<FullRideData[]> {
@@ -52,11 +37,7 @@ class RideService {
     );
     return response.data;
   }
-
-  static async getFullRide(rideId: number): Promise<FullRideData> {
-    const response = await apiClient.get<FullRideData>(`/ride/full/${rideId}`);
-    return response.data;
-  }
+  
   static async getAllFullRidesForTournament(tournamentId: number) {
     const response = await apiClient.get(
       `/ride/full/tournament/${tournamentId}/all`

@@ -21,18 +21,6 @@ const useGetAllGokarts = (options?: UseQueryOptions<GokartData[], Error>) => {
   });
 };
 
-const useGetGokartByID = (
-  id: number,
-  options?: UseQueryOptions<GokartData, Error>
-) => {
-  return useQuery({
-    queryKey: ["gokart", id],
-    queryFn: async () => await GokartService.getGokart(id),
-    enabled: !!id,
-    ...options,
-  });
-};
-
 const useCreateGokart = (
   options?: UseMutationOptions<GokartData, Error, GokartFormData>
 ) => {
@@ -91,7 +79,6 @@ const useRemoveGokart = (
 
 export const GokartQueries = {
   getAllGokarts: useGetAllGokarts,
-  getGokart: useGetGokartByID,
   createGokart: useCreateGokart,
   updateGokart: useUpdateGokart,
   removeGokart: useRemoveGokart,

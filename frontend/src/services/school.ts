@@ -20,10 +20,6 @@ class SchoolService {
   static async getAllSchools(): Promise<SchoolData[]> {
     return (await apiClient.get<SchoolData[]>("/school")).data;
   }
-
-  static async getSchool(schoolId: number): Promise<SchoolData> {
-    return (await apiClient.get<SchoolData>(`/school/${schoolId}`)).data;
-  }
 }
 
 export default SchoolService;

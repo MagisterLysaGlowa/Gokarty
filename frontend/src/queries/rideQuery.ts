@@ -20,48 +20,6 @@ import {
 } from "../Utils/ToastNotifications";
 import { handleSuccessWithRefreshWithOnSuccess as handleSuccessWithRefreshOnSuccess } from "./queryUtils";
 
-const useGetAllRides = (options?: UseQueryOptions<RideData[], Error>) => {
-  return useQuery({
-    queryKey: ["rides"],
-    queryFn: RideService.getAllRides,
-    ...options,
-  });
-};
-
-const useGetRideByID = (
-  id: number,
-  options?: UseQueryOptions<RideData, Error>
-) => {
-  return useQuery({
-    queryKey: ["ride", id],
-    queryFn: async () => await RideService.getRide(id),
-    enabled: !!id,
-    ...options,
-  });
-};
-
-const useGetAllFullRides = (
-  options?: UseQueryOptions<FullRideData[], Error>
-) => {
-  return useQuery({
-    queryKey: ["fullRides"],
-    queryFn: RideService.getAllFullRides,
-    ...options,
-  });
-};
-
-const useGetFullRideByID = (
-  id: number,
-  options?: UseQueryOptions<FullRideData, Error>
-) => {
-  return useQuery({
-    queryKey: ["fullRide", id],
-    queryFn: async () => await RideService.getFullRide(id),
-    enabled: !!id,
-    ...options,
-  });
-};
-
 const useGetTournamentBestFullRides = (
   tournamentId: number,
   options?: UseQueryOptions<FullRideData[], Error>
@@ -151,14 +109,10 @@ const useGetPlayersWithTimes = (
 };
 
 export const RideQueries = {
-  getAllPlayersWithTimes: useGetPlayersWithTimes,
-  getAllRides: useGetAllRides,
-  getRide: useGetRideByID,
-  getAllFullRides: useGetAllFullRides,
-  getFullRide: useGetFullRideByID,
-  getTournamentBestFullRides: useGetTournamentBestFullRides,
-  getTournamentLastFullRide: useGetTournamentLastFullRide,
   createRide: useCreateRide,
   updateRide: useUpdateRide,
   removeRide: useRemoveRide,
+  getTournamentBestFullRides: useGetTournamentBestFullRides,
+  getTournamentLastFullRide: useGetTournamentLastFullRide,
+  getAllPlayersWithTimes: useGetPlayersWithTimes,
 };

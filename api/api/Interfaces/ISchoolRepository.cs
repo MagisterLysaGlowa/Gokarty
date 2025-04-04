@@ -8,7 +8,7 @@ namespace api.Interfaces
         Task<School?> UpdateAsync(int schoolId,School school);
         Task<int?> RemoveAsync(int schoolId); 
         Task<List<School>> GetAllAsync();
-        Task<School?> GetOneAsync(int schoolId);
+        Task<School?> GetAsync(int schoolId);
 
     }
 }

@@ -22,18 +22,6 @@ const useGetAllSchools = (options?: UseQueryOptions<SchoolData[], Error>) => {
   });
 };
 
-const useGetSchoolByID = (
-  id: number,
-  options?: UseQueryOptions<SchoolData, Error>
-) => {
-  return useQuery({
-    queryKey: ["school", id],
-    queryFn: async () => await SchoolService.getSchool(id),
-    enabled: !!id,
-    ...options,
-  });
-};
-
 const useCreateSchool = (
   options?: UseMutationOptions<SchoolData, Error, SchoolFormData>
 ) => {
@@ -95,7 +83,6 @@ const useRemoveSchool = (
 
 export const SchoolQueries = {
   getAllSchools: useGetAllSchools,
-  getSchool: useGetSchoolByID,
   createSchool: useCreateSchool,
   updateSchool: useUpdateSchool,
   removeSchool: useRemoveSchool,

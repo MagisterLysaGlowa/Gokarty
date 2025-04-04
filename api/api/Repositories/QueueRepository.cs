@@ -95,37 +95,6 @@ namespace api.Repositories {
                 .ToListAsync();
         }
 
-        public async Task<Queue?> FullGetAsync(int queueId) {
-            return await _context.Queues
-                .Where(q => q.QueueId == queueId)
-                .Include(q => q.Tournament)
-                .Include(q => q.Player)
-                    .ThenInclude(p => p.School)
-                .Include(q => q.Player)
-                    .ThenInclude(p => p.Class)
-                .Include(q => q.Gokart)
-                .FirstOrDefaultAsync();
-        }
-
-        public async Task<List<Queue>> FullGetAllAsync() {
-            return await _context.Queues
-                .Include(q => q.Tournament)
-                .Include(q => q.Player)
-                    .ThenInclude(p => p.School)
-                .Include(q => q.Player)
-                    .ThenInclude(p => p.Class)
-                .Include(q => q.Gokart)
-                .ToListAsync();
-        }
-
-        public async Task<Queue?> GetAsync(int queueId) {
-            return await _context.Queues.FindAsync(queueId);
-        }
-
-        public async Task<List<Queue>> GetAllAsync() {
-            return await _context.Queues.ToListAsync();
-        }
-
         public async Task<int?> RemoveAsync(int queueId) {
             if (await _context.Queues.Where(q => q.QueueId == queueId).FirstOrDefaultAsync() is Queue queue)
             {

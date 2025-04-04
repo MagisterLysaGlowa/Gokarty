@@ -12,7 +12,7 @@ namespace api.Controllers
     {
         private readonly ISchoolRepository schoolRepository;
 
-        public SchoolController(ISchoolRepository schoolRepository)=>this.schoolRepository = schoolRepository;
+        public SchoolController(ISchoolRepository schoolRepository) => this.schoolRepository = schoolRepository;
         
         [HttpPost]
         public async Task<IActionResult> Create(SchoolDto dto)
@@ -52,18 +52,6 @@ namespace api.Controllers
             try {
                 if(await schoolRepository.RemoveAsync(schoolId) is int sId)
                     return Ok(sId);
-                return NotFound();
-            } catch (Exception) {
-                return BadRequest();
-            }
-        }
-
-        [HttpGet("{schoolId}")]
-        public async Task<IActionResult> Get(int schoolId)
-        {
-            try {
-                if(await schoolRepository.GetOneAsync(schoolId) is School _school)
-                    return Ok(_school);
                 return NotFound();
             } catch (Exception) {
                 return BadRequest();

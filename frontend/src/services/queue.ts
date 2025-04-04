@@ -1,6 +1,5 @@
 import {
   FullQueueData,
-  QueueData,
   QueueFormData,
 } from "../../types";
 import apiClient from "./apiClient";
@@ -27,18 +26,6 @@ class QueueService {
     return response.data;
   }
 
-  static async getAllQueues(): Promise<QueueData[]> {
-    return (await apiClient.get<QueueData[]>("/queue")).data;
-  }
-
-  static async getQueue(queueId: number): Promise<QueueData> {
-    return (await apiClient.get<QueueData>(`/queue/${queueId}`)).data;
-  }
-
-  static async getAllFullQueues(): Promise<FullQueueData[]> {
-    return (await apiClient.get<FullQueueData[]>("/queue/full")).data;
-  }
-
   static async getAllFullQueuesForTournament(
     tournamentId: number
   ): Promise<FullQueueData[]> {
@@ -47,10 +34,6 @@ class QueueService {
         `/queue/full/tournament/${tournamentId}`
       )
     ).data;
-  }
-
-  static async getFullQueue(queueId: number): Promise<FullQueueData> {
-    return (await apiClient.get<FullQueueData>(`/queue/full/${queueId}`)).data;
   }
 }
 

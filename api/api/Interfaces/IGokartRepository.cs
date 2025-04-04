@@ -8,7 +8,6 @@ namespace api.Interfaces
         Task<Gokart?> UpdateAsync(int gokartId, Gokart gokart);
         Task<int?> RemoveAsync(int gokartId);
         Task<List<Gokart>> GetAllAsync();
-        Task<Gokart?> GetAsync(int gokartId);
 
     }
 }
