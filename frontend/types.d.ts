@@ -46,6 +46,7 @@ export interface RideFormData {
   gokartId: number;
   time: number;
   isDisqualified: number;
+  penaltyPoints: number;
 }
 
 export interface QueueFormData {
@@ -93,12 +94,18 @@ export interface SchoolData {
   acronym: string;
 }
 
+export interface Class {
+  classId: number;
+  name: string;
+}
+
 export interface PlayerWithSchoolData {
   playerId: number;
   name: string;
   surname: string;
   birthDate: Date;
   school: SchoolData;
+  class: Class;
 }
 
 export interface GokartData {
@@ -129,17 +136,11 @@ export interface FullRideData {
   isDisqualified: boolean;
 }
 
-export interface RideStatusData {
-  rideStatusId: number;
-  state: string;
-}
-
 export interface QueueData {
   queueId: number;
   tournamentId: number;
   playerId: number;
   queuePosition: number;
-  rideStatusId: number;
   gokartId: number;
 }
 
@@ -148,10 +149,8 @@ export interface FullQueueData {
   tournamentId: number;
   playerId: number;
   queuePosition: number;
-  rideStatusId: number;
   tournament: TournamentData;
   player: PlayerWithSchoolData;
-  rideStatus: RideStatusData;
   gokartId: number;
   gokart: GokartData;
 }

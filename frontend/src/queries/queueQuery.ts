@@ -7,7 +7,6 @@ import {
 import QueueService from "../services/queue";
 import {
   FullQueueData,
-  PlayerData,
   QueueData,
   QueueFormData,
 } from "../../types";
@@ -58,25 +57,12 @@ const useCreateQueue = (
   });
 };
 
-const useRemoveQueuesForTournament = (
+const useRemoveQueue = (
   options?: UseMutationOptions<number, Error, number>
 ) => {
   return useMutation({
-    mutationFn: (tournamentId) =>
-      QueueService.removeQueuesForTournament(tournamentId),
-    onSuccess: handleSuccessWithRefreshOnSuccess(
-      [["queues"]],
-      options?.onSuccess
-    ),
-    ...options,
-  });
-};
-
-const useUpdateQueueRideStatus = (
-  options?: UseMutationOptions<string, Error, number>
-) => {
-  return useMutation({
-    mutationFn: (queueId) => QueueService.updateQueueRideStatus(queueId),
+    mutationFn: (queueId) =>
+      QueueService.removeQueue(queueId),
     onSuccess: handleSuccessWithRefreshOnSuccess(
       [["queues"]],
       options?.onSuccess
@@ -109,61 +95,12 @@ const useGetFullQueue = (
   });
 };
 
-const useGetFullActiveQueueForTournament = (
-  tournamentId: number,
-  options?: UseQueryOptions<FullQueueData | null, Error>
-) => {
-  return useQuery({
-    queryKey: ["fullActiveQueue", tournamentId],
-    queryFn: () => QueueService.getFullActiveQueueForTournament(tournamentId),
-    enabled: !!tournamentId,
-    ...options,
-  });
-};
-
-const useGetPlayersForQueue = (
-  tournamentId: number,
-  options?: UseQueryOptions<PlayerData[], Error>
-) => {
-  return useQuery({
-    queryKey: ["playersForQueue", tournamentId],
-    queryFn: () => QueueService.playersForQueue(tournamentId),
-    enabled: !!tournamentId,
-    ...options,
-  });
-};
-
-//ToDo: popraw
-const useAddPlayerToQueue = (
-  options?: UseMutationOptions<
-    boolean,
-    Error,
-    { tournamentId: number; playerId: number }
-  >
-) => {
-  return useMutation({
-    mutationFn: ({ tournamentId, playerId }) =>
-      QueueService.addPlayerToQueue(tournamentId, playerId),
-    onSuccess: (r, v, c) => {
-      handleSuccessWithRefreshOnSuccess(
-        [["playersForQueue", r]],
-        options?.onSuccess
-      )(r, v, c);
-    },
-    ...options,
-  });
-};
-
 export const QueueQueries = {
   getAllQueues: useGetAllQueues,
   getQueue: useGetQueue,
   getAllFullQueues: useGetAllFullQueues,
   getAllFullQueuesForTournament: useGetAllFullQueuesForTournament,
   getFullQueue: useGetFullQueue,
-  getFullActiveQueueForTournament: useGetFullActiveQueueForTournament,
-  getPlayersForQueue: useGetPlayersForQueue,
   createQueue: useCreateQueue,
-  removeQueuesForTournament: useRemoveQueuesForTournament,
-  updateQueueRideStatus: useUpdateQueueRideStatus,
-  addPlayerToQueue: useAddPlayerToQueue,
+  removeQueue: useRemoveQueue,
 };

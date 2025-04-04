@@ -32,7 +32,6 @@ namespace api.SignalRHubs
         {
             await hubContext.Clients.Groups("tournamentTable").SendAsync("tournamentTableUpdate", new TournemntTableUpdateDto()
             {
-                CurrentRide = await queueRepository.FullGetActiveQueueForTournamentAsync(tournamentId),
                 Queue = await queueRepository.FullGetAllQueuesForTournamentAsync(tournamentId),
                 LastRide = await rideRepository.FullGetLastAddedForTournamentAsync(tournamentId),
                 Rides = await rideRepository.FullGetBestForTournamentAsync(tournamentId),

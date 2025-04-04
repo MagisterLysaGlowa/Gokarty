@@ -12,5 +12,6 @@ namespace api.Models
         public int Time { get; set; }
         public int RideNumber { get; set; }
         public bool IsDisqualified { get; set; }
+        public int PenaltyPoints { get; set; }
     }
 }

@@ -6,14 +6,14 @@ import { Loading } from "../../components/Loading/Loading";
 import { useDebounce } from "../../Utils/debounce";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { defaultEditButtonProps, defaultRemoveButtonProps, defaultVariant } from "../../Utils/globalUtils";
-import { EditSchoolModal } from "./SchoolManagementComponents/EditSchoolModal";
+import { EditSchoolModal } from "./components/EditSchoolModal";
 import { useCustomTableCells } from "../../components/CustomTableCells/CustomTableCells";
 import { useGetColumns, useMemorizedSchoolsData } from "./SchoolManagementUtils";
 import { TableComponent } from "../../components/Table/TableComponent";
 import { YesNoModal } from "../../components/YesNoModal/YesNoModal";
 import { queryClient } from "../../Utils/ReactQueryConfig";
 import { IoMdAdd } from "react-icons/io";
-import { AddSchoolModal } from "./SchoolManagementComponents/AddSchoolModal";
+import { AddSchoolModal } from "./components/AddSchoolModal";
 
 export const SchoolManagement = () => {
   const [filter, setFilter] = useState<string>("");

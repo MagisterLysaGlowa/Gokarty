@@ -23,7 +23,8 @@ namespace api.Controllers {
                             GokartId = dto.GokartId,
                             Time = dto.Time,
                             IsDisqualified = dto.IsDisqualified == 1,
-                            RideNumber = last
+                            RideNumber = last,
+                            PenaltyPoints = dto.PenaltyPoints,
                         };
                         return Created("", await rideRepository.CreateAsync(ride));
                     } else {
@@ -33,11 +34,15 @@ namespace api.Controllers {
                             GokartId = dto.GokartId,
                             Time = dto.Time,
                             IsDisqualified = dto.IsDisqualified == 1,
-                            RideNumber = last
+                            RideNumber = last,
+                            PenaltyPoints = dto.PenaltyPoints,
                         };
+                        return Created("", await rideRepository.CreateAsync(ride));
                     }
                 }
-                return NotFound();
+                else {
+                    return BadRequest();
+                }
             } catch (Exception) {
                 return BadRequest();
             }

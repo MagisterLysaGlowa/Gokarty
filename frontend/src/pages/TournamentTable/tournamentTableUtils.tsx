@@ -4,7 +4,6 @@ import { convertTimeToString } from "../../Utils/TimeUtils";
 import * as signalR from "@microsoft/signalr";
 
 export type TournamentTableUpdateData = {
-  currentRide: FullQueueData;
   queue: FullQueueData[];
   lastRide: FullRideData;
   rides: FullRideData[];

@@ -20,12 +20,14 @@ namespace api.Repositories {
                 return false;
             if (numberOfRidesInOneGokart == 0)
                 return false;
-            IEnumerable<Ride> tournamentRides = _context.Rides.Where(r => r.RideGroup.TournamentId == tournamentId);
+            IEnumerable<Ride> tournamentRides = _context.Rides.Where(r => r.RideGroup.TournamentId == tournamentId).Include(r => r.RideGroup);
             if (tournamentRides.ToList().Count != 0 && tournamentRides.Max(r => r.RideNumber) >= gokartIds.Count)
                 return false;
             List<Player> playersInTournament = await _playerRepository.GetAllForTournamentAsync(tournamentId);
+            if (playersInTournament.Count % numberOfRidesInOneGokart != 0)
+                return false;
             int? lastUsedGokartId = tournamentRides.OrderByDescending(r => r.RideId).FirstOrDefault()?.GokartId;//gokart który był ostatnio użyty lub null jeżeli to pierwsze losowanie
-            int gokartNowIndex = lastUsedGokartId is null ? 0 : (gokartIds.IndexOf((int)lastUsedGokartId) + 1) % gokartIds.Count;//index gokatraw liście gokartIds dla którego losujemy ludzi
+            int gokartNowIndex = lastUsedGokartId is null ? 0 : (gokartIds.IndexOf((int)lastUsedGokartId) + 1) % gokartIds.Count;//index gokatra w liście gokartIds dla którego losujemy ludzi
             List<Player> playersNotQueued = new(playersInTournament);//wszyscy uczestnicy których nie wybraliśmy do kolejki, czyli na początku wszyscy
             List<Queue> queuesToAdd = new();
             Random rnd = new();
@@ -44,7 +46,6 @@ namespace api.Repositories {
                             TournamentId = tournamentId,
                             PlayerId = player.PlayerId,
                             QueuePosition = (i * numberOfRidesInOneGokart) + j,
-                            RideStatusId = 1,
                             GokartId = gokartIds[gokartNowIndex],
                         });
                         canBeQueued.Remove(player);
@@ -63,7 +64,6 @@ namespace api.Repositories {
                                 TournamentId = tournamentId,
                                 PlayerId = queueToSwap.PlayerId,
                                 QueuePosition = (i * numberOfRidesInOneGokart) + j + k,
-                                RideStatusId = 1,
                                 GokartId = gokartIds[gokartNowIndex],
                             });
                             queueToSwap.PlayerId = playersNotQueued[k].PlayerId;
@@ -84,24 +84,26 @@ namespace api.Repositories {
 
         public async Task<List<Queue>> FullGetAllQueuesForTournamentAsync(int tournamentId) {
             return await _context.Queues
+                .Where(q => q.TournamentId == tournamentId)
                 .Include(q => q.Tournament)
                 .Include(q => q.Player)
                     .ThenInclude(p => p.School)
-                .Include(q => q.RideStatus)
+                .Include(q => q.Player)
+                    .ThenInclude(p => p.Class)
                 .Include(q => q.Gokart)
-                .Where(q => q.TournamentId == tournamentId && q.RideStatusId == 1)
                 .OrderBy(q => q.QueuePosition)
                 .ToListAsync();
         }
 
         public async Task<Queue?> FullGetAsync(int queueId) {
             return await _context.Queues
+                .Where(q => q.QueueId == queueId)
                 .Include(q => q.Tournament)
                 .Include(q => q.Player)
                     .ThenInclude(p => p.School)
-                .Include(q => q.RideStatus)
+                .Include(q => q.Player)
+                    .ThenInclude(p => p.Class)
                 .Include(q => q.Gokart)
-                .Where(q => q.QueueId == queueId)
                 .FirstOrDefaultAsync();
         }
 
@@ -110,7 +112,8 @@ namespace api.Repositories {
                 .Include(q => q.Tournament)
                 .Include(q => q.Player)
                     .ThenInclude(p => p.School)
-                .Include(q => q.RideStatus)
+                .Include(q => q.Player)
+                    .ThenInclude(p => p.Class)
                 .Include(q => q.Gokart)
                 .ToListAsync();
         }
@@ -123,63 +126,14 @@ namespace api.Repositories {
             return await _context.Queues.ToListAsync();
         }
 
-        public async Task<bool> ChangeQueueStateAsync(int queueId) {
-            if (await _context.Queues.FirstAsync(q => q.QueueId == queueId) is Queue queue) {
-                queue.RideStatusId++;
-                if (queue.RideStatusId > 3)
-                    queue.RideStatusId = 3;
-                _context.Queues.Update(queue);
-                _context.SaveChanges();
-                return true;
-            }
-            return false;
-        }
-
-        public async Task<bool> RemoveQueuesForTournamentAsync(int tournamentId) {
-            if (await _context.Tournaments.FirstAsync(t => t.TournamentId == tournamentId) is null)
-                return false;
-            List<Queue> queues = await _context.Queues.Where(q => q.TournamentId == tournamentId).ToListAsync();
-            if (queues.Count == 0)
-                return false;
-            foreach (var queue in queues) {
+        public async Task<int?> RemoveAsync(int queueId) {
+            if (await _context.Queues.Where(q => q.QueueId == queueId).FirstOrDefaultAsync() is Queue queue)
+            {
                 _context.Queues.Remove(queue);
-            }
-            await _context.SaveChangesAsync();
-            return true;
-        }
-
-        public async Task<Queue?> FullGetActiveQueueForTournamentAsync(int tournamentId) {
-            return await _context.Queues
-                .Include(q => q.Tournament)
-                .Include(q => q.Player).
-                    ThenInclude(p => p.School)
-                .Include(q => q.RideStatus)
-                .Include(q => q.Gokart)
-                .FirstOrDefaultAsync(q => q.TournamentId == tournamentId && q.RideStatusId == 2);
-        }
-
-        public async Task<List<Player>> GetPlayersForQueueAsync(int tournamentId) {
-            var players = await _playerRepository.GetAllForTournamentAsync(tournamentId);
-            var queues = await _context.Queues.Include(y => y.Player).Where(z => z.RideStatusId < 3).Select(j => j.Player).ToListAsync();
-
-            return players.Where(z => !queues.Contains(z)).ToList();
-        }
-
-        public async Task<bool> AddPlayerToQueueAsync(int tournamentId, int playerId) {
-            if (await _context.Queues.Where(z => z.TournamentId == tournamentId).OrderByDescending(z => z.QueuePosition).FirstOrDefaultAsync() is Queue q) {
-
-                _context.Queues.Add(new Queue {
-                    TournamentId = tournamentId,
-                    PlayerId = playerId,
-                    QueuePosition = q.QueuePosition + 1,
-                    GokartId = 1,
-                    RideStatusId = 1,
-                });
-
                 await _context.SaveChangesAsync();
-                return true;
+                return queue.TournamentId;
             }
-            return false;
+            return null;
         }
     }
 }

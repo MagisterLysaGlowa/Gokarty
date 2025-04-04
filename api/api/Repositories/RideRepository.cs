@@ -138,7 +138,7 @@ namespace api.Repositories {
             {
                 TournamentId = tournamentId,
                 PlayerId = playerId,
-                ClassId = (int)_context.Players.Where(p => p.PlayerId == playerId).FirstAsync().Result.ClassId!
+                ClassId = (int)(await _context.Players.Where(p => p.PlayerId == playerId).FirstAsync()).ClassId!
             });
             await _context.SaveChangesAsync();
             return rg.Entity.RideGroupId;

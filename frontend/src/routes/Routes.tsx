@@ -5,16 +5,15 @@ import LoginPage from "../pages/LoginPage/LoginPage";
 import RegisterPage from "../pages/RegisterPage/RegisterPage";
 import Tournaments from "../pages/Tournaments/Tournaments";
 import TournamentTable from "../pages/TournamentTable/TournamentTable";
-import { SchoolManagement } from "../pages/SchoolManagemet/SchoolManagement";
-import { AddGokart } from "../pages/AddGokart/AddGokart";
-import { TournamentManegement } from "../pages/TournamenManagement/TournamentManegement";
+import { SchoolManagement } from "../pages/SchoolManagement/SchoolManagement";
+import { AddGokart } from "../pages/GokartManagement/AddGokart";
 import { EmptyLayout } from "../layouts/EmptyLayout";
 import { MainNavigationLayout } from "../layouts/MainNavigationLayout";
 import { DualNavigationManagment } from "../layouts/DualNavigationManagment";
-import { TournamentRides } from "../pages/TournamentEdit/TournamentEditPages/tournamentRides/TournamentRides";
-import { TournamentInfo } from "../pages/TournamentEdit/TournamentEditPages/tournamentInfo/TournamentInfo";
-import { AddPlayerForTournament } from "../pages/TournamentEdit/TournamentEditPages/addPlayerForTournament/AddPlayerForTournament";
-import { PlayersForTournament } from "../pages/TournamentEdit/TournamentEditPages/playersForTournament/PlayersForTournament";
+import { TournamentRides } from "../pages/TournamentManagement/SubPages/tournamentRides/TournamentRides";
+import { TournamentInfo } from "../pages/TournamentManagement/SubPages/tournamentInfo/TournamentInfo";
+import { AddPlayerForTournament } from "../pages/TournamentManagement/SubPages/addPlayerForTournament/AddPlayerForTournament";
+import { PlayersForTournament } from "../pages/TournamentManagement/SubPages/playersForTournament/PlayersForTournament";
 import { InfoPage } from "../pages/InfoPage/InfoPage";
 import { GokartsPage } from "../pages/GokartsPage/GokartsPage";
 import { QueueManagement } from "../pages/QueueManagement/QueueManagement";
@@ -50,7 +49,7 @@ export const router = createBrowserRouter([
         path: "zawody",
         element: <DualNavigationManagment />,
         children: [
-          { path: ":id/:tournamentName/", element: <TournamentInfo /> },
+          { path: ":id/:tournamentName", element: <TournamentInfo /> },
           {
             path: ":id/:tournamentName/przejazdy",
             element: <TournamentRides />,
@@ -65,11 +64,6 @@ export const router = createBrowserRouter([
           },
         ],
       },
-
-      // { path: "przejazd/:id/edytuj", element: <RideEdit /> },
-      { path: "zawody/:id/zarzadzanie", element: <TournamentManegement /> },
-      // { path: "zawody/:id/edycja/zawodnik", element: <AddPlayer /> },
-      // { path: "zawody/:id/edycja/zawodnik/:playerId", element: <AddPlayer /> },
     ],
   },
 ]);

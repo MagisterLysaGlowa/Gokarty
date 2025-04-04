@@ -1,8 +1,8 @@
 import { Button, Input, useDisclosure } from "@heroui/react";
 import { useState } from "react";
-import { EditGokartModal } from "./addGokartComponents/EditGokartModal";
+import { EditGokartModal } from "./components/EditGokartModal";
 import { IoMdAdd } from "react-icons/io";
-import { AddGokartModal } from "./addGokartComponents/AddGokartModal";
+import { AddGokartModal } from "./components/AddGokartModal";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { GokartQueries } from "../../queries/gokartQuery";
 import { Loading } from "../../components/Loading/Loading";

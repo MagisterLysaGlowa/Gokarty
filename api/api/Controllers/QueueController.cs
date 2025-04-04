@@ -52,36 +52,10 @@ namespace api.Controllers {
             }
         }
 
-        [HttpPut("{queueId}")]
-        public async Task<IActionResult> UpdateRideState(int queueId) {
-            try {
-                if (await queueRepository.GetAsync(queueId) is Queue queue)
-                {
-                    await hubSender.SendUpdate(queue.TournamentId);
-                    return Ok(await queueRepository.ChangeQueueStateAsync(queueId));
-                }
-                return NotFound();
-            } catch (Exception) {
-                return BadRequest();
-            }
-        }
-
         [HttpGet("full")]
         public async Task<IActionResult> FullGetAll() {
             try {
                 return Ok(await queueRepository.FullGetAllAsync());
-            } catch (Exception) {
-                return BadRequest();
-            }
-        }
-
-        [HttpGet("full/tournament/{tournamentId}/active")]
-        public async Task<IActionResult> FullGetActiveQueueForTournament(int tournamentId) {
-            try {
-                //ToDo do sprawdzenia
-                if(await queueRepository.FullGetActiveQueueForTournamentAsync(tournamentId) is Queue q)
-                    return Ok(q);
-                return NotFound();
             } catch (Exception) {
                 return BadRequest();
             }
@@ -105,26 +79,15 @@ namespace api.Controllers {
             }
         }
 
-        [HttpDelete("{tournamentId}")]
-        public async Task<IActionResult> Remove(int tournamentId) {
+        [HttpDelete("{queueId}")]
+        public async Task<IActionResult> Remove(int queueId) {
             try {
-                return Ok(await queueRepository.RemoveQueuesForTournamentAsync(tournamentId));
-            } catch (Exception) {
+                if(await queueRepository.RemoveAsync(queueId) is int tournamentId)
+                {
+                    await hubSender.SendUpdate(tournamentId);
+                    return Ok();
+                }
                 return BadRequest();
-            }
-        }
-        [HttpGet("tournament/{tournamentID}/players")]
-        public async Task<IActionResult> GetPlayers(int tournamentID) {
-            try {
-                return Ok(await queueRepository.GetPlayersForQueueAsync(tournamentID));
-            } catch (Exception) {
-                return BadRequest();
-            }
-        }
-        [HttpPost("tournament/{tournamentID}/player/{playerID}")]
-        public async Task<IActionResult> AddPlayerToQueue(int tournamentID, int playerID) {
-            try {
-                return Created("",await queueRepository.AddPlayerToQueueAsync(tournamentID, playerID));
             } catch (Exception) {
                 return BadRequest();
             }

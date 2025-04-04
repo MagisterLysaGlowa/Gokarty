@@ -1,6 +1,5 @@
 import {
   FullQueueData,
-  PlayerData,
   QueueData,
   QueueFormData,
 } from "../../types";
@@ -21,10 +20,10 @@ class QueueService {
     return (await apiClient.post<string>("/queue", formData)).data;
   }
 
-  static async removeQueuesForTournament(
-    tournamentId: number
+  static async removeQueue(
+    queueId: number
   ): Promise<number> {
-    const response = await apiClient.delete<number>(`/queue/${tournamentId}`);
+    const response = await apiClient.delete<number>(`/queue/${queueId}`);
     return response.data;
   }
 
@@ -52,39 +51,6 @@ class QueueService {
 
   static async getFullQueue(queueId: number): Promise<FullQueueData> {
     return (await apiClient.get<FullQueueData>(`/queue/full/${queueId}`)).data;
-  }
-
-  static async getFullActiveQueueForTournament(
-    tournamentId: number
-  ): Promise<FullQueueData | null> {
-    const response = await apiClient.get(
-      `/queue/full/tournament/${tournamentId}/active`
-    );
-    return response.data;
-  }
-
-  static async updateQueueRideStatus(queueId: number): Promise<string> {
-    return (await apiClient.put<string>(`/queue/${queueId}`, new FormData()))
-      .data;
-  }
-
-  static async playersForQueue(tournamentId: number): Promise<PlayerData[]> {
-    return (
-      await apiClient.get<PlayerData[]>(
-        `/queue/tournament/${tournamentId}/players`
-      )
-    ).data;
-  }
-
-  static async addPlayerToQueue(
-    tournamentId: number,
-    playerId: number
-  ): Promise<boolean> {
-    return (
-      await apiClient.post<boolean>(
-        `/queue/tournament/${tournamentId}/player/${playerId}`
-      )
-    ).data;
   }
 }
 

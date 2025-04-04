@@ -66,8 +66,6 @@ const TournamentTable = () => {
   const [rides, setRides] = useState<FullRideData[] | null | undefined>([]);
 
   const { data: tournament } = TournamentQueries.getTournament(Number(id));
-  const { data: currentRideData } =
-    QueueQueries.getFullActiveQueueForTournament(Number(id));
   const { data: queueData } = QueueQueries.getAllFullQueuesForTournament(
     Number(id)
   );
@@ -79,10 +77,8 @@ const TournamentTable = () => {
   );
 
   useEffect(() => {
-    setCurrentRide(currentRideData);
-  }, [currentRideData]);
-  useEffect(() => {
-    setQueue(queueData);
+    setQueue(queueData ? queueData.splice(1, queueData.length - 1) : []);
+    setCurrentRide(queueData ? queueData[0] : null)
   }, [queueData]);
   useEffect(() => {
     setLastRide(lastRideData);
@@ -92,7 +88,7 @@ const TournamentTable = () => {
   }, [ridesData]);
 
   useTableUpdate((newData) => {
-    setCurrentRide(newData.currentRide);
+    setCurrentRide(newData.queue ? newData.queue[0] : null);
     setQueue(newData.queue);
     setLastRide(newData.lastRide);
     setRides(newData.rides);

@@ -13,7 +13,6 @@ namespace api.Data {
         public DbSet<School> Schools { get; set; } = default!;
         public DbSet<Tournament> Tournaments { get; set; } = default!;
         public DbSet<Ride> Rides { get; set; } = default!;
-        public DbSet<RideStatus> RideStatuses { get; set; } = default!;
         public DbSet<Queue> Queues { get; set; } = default!;
         public DbSet<TournamentState> TournamentStates { get; set; } = default!;
         public DbSet<User> Users { get; set; } = default!;
@@ -112,13 +111,6 @@ namespace api.Data {
                         .WithMany(P => P.Queues)
                         .HasForeignKey(q => q.PlayerId);
 
-            //QUEUE TO RIDE STATUS (ONE TO MANY)
-
-            modelBuilder.Entity<Queue>()
-                        .HasOne(q => q.RideStatus)
-                        .WithMany(rs => rs.Queues)
-                        .HasForeignKey(q => q.RideStatusId);
-
             //QUEUE TO GOKART (ONE TO MANY)
 
             modelBuilder.Entity<Queue>()
@@ -130,12 +122,6 @@ namespace api.Data {
                 new TournamentState() { TournamentStateId = 1, State = "Zaplanowane" },
                 new TournamentState() { TournamentStateId = 2, State = "W trakcie" },
                 new TournamentState() { TournamentStateId = 3, State = "Zakończone" }
-            );
-
-            modelBuilder.Entity<RideStatus>().HasData(
-                new RideStatus() { RideStatusId = 1, State = "Oczekuje" },
-                new RideStatus() { RideStatusId = 2, State = "W trakcie" },
-                new RideStatus() { RideStatusId = 3, State = "Zakończył" }
             );
 
             modelBuilder.Entity<Gokart>().HasData(

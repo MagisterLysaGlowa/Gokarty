@@ -10,5 +10,6 @@ namespace api.Dtos
         public int GokartId { get; set; }
         public int Time { get; set; }
         public int IsDisqualified { get; set; }
+        public int PenaltyPoints { get; set; }
     }
 }
