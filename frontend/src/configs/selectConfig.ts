@@ -1,6 +1,6 @@
-import { BasicStyles } from "./configTypes";
+import { BasicProps } from "./configTypes";
 
-export const selectConfig: BasicStyles = {
+export const selectConfig: BasicProps = {
   size: "md",
   variant: "flat",
   color: "default",

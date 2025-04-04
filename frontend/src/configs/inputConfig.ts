@@ -1,6 +1,6 @@
-import { BasicStyles } from "./configTypes";
+import { BasicProps } from "./configTypes";
 
-export const inputConfig: BasicStyles = {
+export const inputConfig: BasicProps = {
   variant: "flat",
   color: "default",
   size: "md",

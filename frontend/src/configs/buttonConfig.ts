@@ -1,9 +1,10 @@
-import { BasicStyles } from "./configTypes";
+import { ButtonVariant, BasicStyles } from "./configTypes";
 
 type ButtonSpinnerPlacement = "start" | "end";
 
 export type ButtonProps = BasicStyles & {
   spinnerPlacement?: ButtonSpinnerPlacement;
+  variant?: ButtonVariant;
 };
 
 export const confirmButtonConfig: ButtonProps = {

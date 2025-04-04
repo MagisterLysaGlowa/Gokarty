@@ -63,7 +63,6 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
               <Input
                 label="Nazwa"
                 value={tournament.name}
-                variant={variant}
                 onChange={(e) =>
                   setTournament((p) => ({ ...p, name: e.target.value }))
                 }

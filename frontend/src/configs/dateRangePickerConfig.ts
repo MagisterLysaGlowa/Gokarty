@@ -1,6 +1,6 @@
-import { BasicStyles } from "./configTypes";
+import { BasicProps } from "./configTypes";
 
-export const dateRangePickerConfig: BasicStyles = {
+export const dateRangePickerConfig: BasicProps = {
   size: "md",
   variant: "flat",
   color: "default",
