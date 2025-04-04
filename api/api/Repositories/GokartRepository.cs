@@ -15,8 +15,11 @@ namespace api.Repositories {
             return gokart;
         }
 
-        public async Task<List<Gokart>> GetAllAsync() {
-            return await _context.Gokarts.ToListAsync();
+        public async Task<Gokart> UpdateAsync(Gokart gokart)
+        {
+            _context.Gokarts.Update(gokart);
+            await _context.SaveChangesAsync();
+            return gokart;
         }
 
         public async Task<int?> RemoveAsync(int gokartId) {
@@ -28,13 +31,13 @@ namespace api.Repositories {
             return null;
         }
 
-        public async Task<Gokart?> UpdateAsync(int gokartId, Gokart gokart) {
-            if (await _context.Gokarts.FindAsync(gokartId) is Gokart gokartDb) {
-                gokartDb.Name = gokart.Name;
-                await _context.SaveChangesAsync();
-                return gokartDb;
-            }
-            return null;
+        public async Task<Gokart?> GetAsync(int gokartId)
+        {
+            return await _context.Gokarts.FindAsync(gokartId);
+        }
+
+        public async Task<List<Gokart>> GetAllAsync() {
+            return await _context.Gokarts.ToListAsync();
         }
     }
 }

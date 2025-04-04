@@ -6,10 +6,10 @@ import {
 } from "react-query";
 import PlayerService from "../services/player";
 import {
-  PlayerData,
+  PlayerDataDeleted,
   PlayerFilterFormData,
   PlayerFormData,
-  PlayerWithSchoolData,
+  PlayerData,
 } from "../../types";
 import {
   addPlayerToTournament,
@@ -20,17 +20,9 @@ import {
 } from "../Utils/ToastNotifications";
 import { handleSuccessWithRefreshWithOnSuccess as handleSuccessWithRefreshOnSuccess } from "./queryUtils";
 
-const useGetAllPlayers = (options?: UseQueryOptions<PlayerData[], Error>) => {
-  return useQuery({
-    queryKey: ["players"],
-    queryFn: PlayerService.getAllPlayers,
-    ...options,
-  });
-};
-
 const useGetPlayerByID = (
   id: number,
-  options?: UseQueryOptions<PlayerData, Error>
+  options?: UseQueryOptions<PlayerDataDeleted, Error>
 ) => {
   return useQuery({
     queryKey: ["player", id],
@@ -42,16 +34,16 @@ const useGetPlayerByID = (
 
 const useCreatePlayer = (
   options?: UseMutationOptions<
-    PlayerData,
+    PlayerFormData,
     Error,
     { tournamentId: number; data: PlayerFormData }
   >
 ) => {
   return useMutation({
     ...options,
-    mutationFn: async ({ tournamentId, data }) => {
+    mutationFn: async ({ data }) => {
       return await promiseToast(
-        PlayerService.createPlayer(tournamentId, data),
+        PlayerService.createPlayer(data),
         createPlayerTexts
       );
     },
@@ -64,7 +56,7 @@ const useCreatePlayer = (
 
 const useUpdatePlayer = (
   options?: UseMutationOptions<
-    PlayerData,
+    PlayerDataDeleted,
     Error,
     { playerId: number; data: PlayerFormData }
   >
@@ -105,7 +97,7 @@ const useRemovePlayer = (
 
 const useGetPlayersForTournament = (
   tournamentId: number,
-  options?: UseQueryOptions<PlayerData[], Error>
+  options?: UseQueryOptions<PlayerDataDeleted[], Error>
 ) => {
   return useQuery({
     queryKey: ["players" + "tournament", tournamentId],
@@ -118,7 +110,7 @@ const useGetPlayersForTournament = (
 
 const useGetPlayersForTournamentWithSchool = (
   tournamentId: number,
-  options?: UseQueryOptions<PlayerWithSchoolData[], Error>
+  options?: UseQueryOptions<PlayerData[], Error>
 ) => {
   return useQuery({
     queryKey: ["players" + "tournament" + "withSchool", tournamentId],
@@ -131,7 +123,7 @@ const useGetPlayersForTournamentWithSchool = (
 
 const useFilterPlayers = (
   data: PlayerFilterFormData,
-  options?: UseQueryOptions<PlayerWithSchoolData[], Error>
+  options?: UseQueryOptions<PlayerData[], Error>
 ) => {
   return useQuery({
     queryKey: ["players" + "filter"],
@@ -193,7 +185,6 @@ const useRemovePlayerFromTournament = (
 };
 
 export const PlayerQueries = {
-  getAllPlayers: useGetAllPlayers,
   getPlayer: useGetPlayerByID,
   createPlayer: useCreatePlayer,
   updatePlayer: useUpdatePlayer,

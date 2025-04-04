@@ -6,12 +6,12 @@ namespace api.Models
     {
         public int RideGroupId { get; set; }
         public int PlayerId { get; set; }
-        public Player Player { get; set; } = default!;
+        public Player Player { get; set; } = new();
         public int TournamentId { get; set; }
-        public Tournament Tournament { get; set; } = default!;
+        public Tournament Tournament { get; set; } = new();
         public int ClassId { get; set; }
-        public Class Class { get; set; } = default!;
+        public Class Class { get; set; } = new();
         [JsonIgnore]
-        public ICollection<Ride> Rides { get; } = default!;
+        public ICollection<Ride> Rides { get; } = [];
     }
 }

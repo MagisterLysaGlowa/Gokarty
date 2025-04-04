@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { FullQueueData } from "../../../types";
+import { QueueData } from "../../../types";
 
 export const useGetCols = () =>
   useMemo(
@@ -24,7 +24,7 @@ export const useGetCols = () =>
     []
   );
 
-export const useGetRows = (players: FullQueueData[] | undefined) =>
+export const useGetRows = (players: QueueData[] | undefined) =>
   useMemo(
     () =>
       players?.map((z, index) => ({

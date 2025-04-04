@@ -9,14 +9,14 @@ namespace api.Models
         public string? Surname { get; set; }
         public DateTime BirthDate { get; set; }
         public int SchoolId { get; set; }
-        public School School { get; set; } = default!;
+        public School School { get; set; } = new();
         public int? ClassId { get; set; }
-        public Class Class { get; set; } = default!;
+        public Class Class { get; set; } = new();
         [JsonIgnore]
-        public List<PlayerTournament> PlayerTournaments { get; set; } = new();
+        public ICollection<PlayerTournament> PlayerTournaments { get; set; } = [];
         [JsonIgnore]
-        public ICollection<RideGroup> RideGroups { get; } = default!;
+        public ICollection<RideGroup> RideGroups { get; } = [];
         [JsonIgnore]
-        public ICollection<Queue> Queues { get; } = default!;
+        public ICollection<Queue> Queues { get; } = [];
     }
 }

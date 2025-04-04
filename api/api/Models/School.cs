@@ -9,7 +9,7 @@ namespace api.Models
         public string? City { get; set; }
         public string? Acronym { get; set; }
         [JsonIgnore]
-        public ICollection<Player> Players { get; } = default!;
+        public ICollection<Player> Players { get; } = [];
 
     }
 }

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { PlayerWithSchoolData } from "../../../../../types";
+import { PlayerData } from "../../../../../types";
 
 export const useGetColumns = () =>
   useMemo(
@@ -15,7 +15,7 @@ export const useGetColumns = () =>
   );
 
 export const useGetMemorizedData = (
-  data: PlayerWithSchoolData[] | undefined,
+  data: PlayerData[] | undefined,
   filterSearch: string
 ) => {
   return useMemo(

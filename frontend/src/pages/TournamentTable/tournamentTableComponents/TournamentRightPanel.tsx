@@ -1,15 +1,15 @@
 import { Dispatch, FC, SetStateAction } from "react";
-import { FullQueueData, FullRideData, TournamentData } from "../../../../types";
+import { QueueData, RideData, TournamentData } from "../../../../types";
 import { FaArrowRightLong, FaArrowLeftLong } from "react-icons/fa6";
 import { convertTimeToString } from "../../../Utils/TimeUtils";
 import { FaGripLinesVertical } from "react-icons/fa";
 
 type TournamentRightPanelProps = {
   tournament: TournamentData | undefined;
-  lastRide: FullRideData | null | undefined;
-  rides: FullRideData[] | undefined | null;
-  currentRide: FullQueueData | undefined | null;
-  queue: FullQueueData[] | undefined | null;
+  lastRide: RideData | null | undefined;
+  rides: RideData[] | undefined | null;
+  currentRide: QueueData | undefined | null;
+  queue: QueueData[] | undefined | null;
   isVisible: boolean;
   setIsRightPanelVisible: Dispatch<SetStateAction<boolean>>;
 };

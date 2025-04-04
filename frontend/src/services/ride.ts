@@ -1,16 +1,16 @@
-import { FullRideData, GokartData, RideData, RideFormData } from "../../types";
+import { RideData, RideFormData } from "../../types";
 import apiClient from "./apiClient";
 
 class RideService {
-  static async createRide(data: RideFormData): Promise<RideData> {
-    const response = await apiClient.post<RideData>("/ride", data);
+  static async createRide(data: RideFormData): Promise<RideFormData> {
+    const response = await apiClient.post<RideFormData>("/ride", data);
     return response.data;
   }
 
   static async updateRide(
     rideId: number,
     data: RideFormData
-  ): Promise<GokartData> {
+  ): Promise<RideData> {
     const response = await apiClient.put(`/ride/${rideId}`, data);
     return response.data;
   }
@@ -22,8 +22,8 @@ class RideService {
 
   static async getTournamentBestFullRides(
     tournamentId: number
-  ): Promise<FullRideData[]> {
-    const response = await apiClient.get<FullRideData[]>(
+  ): Promise<RideData[]> {
+    const response = await apiClient.get<RideData[]>(
       `/ride/full/tournament/${tournamentId}`
     );
     return response.data;
@@ -31,8 +31,8 @@ class RideService {
 
   static async getTournamentLastFullRide(
     tournamentId: number
-  ): Promise<FullRideData> {
-    const response = await apiClient.get<FullRideData>(
+  ): Promise<RideData> {
+    const response = await apiClient.get<RideData>(
       `/ride/full/tournament/${tournamentId}/last`
     );
     return response.data;

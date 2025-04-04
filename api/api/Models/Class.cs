@@ -7,8 +7,8 @@ namespace api.Models
         public int ClassId { get; set; }
         public string Name { get; set; } = "";
         [JsonIgnore]
-        public ICollection<Player> Players { get; } = default!;
+        public ICollection<Player> Players { get; } = [];
         [JsonIgnore]
-        public ICollection<RideGroup> RideGroups { get; } = default!;
+        public ICollection<RideGroup> RideGroups { get; } = [];
     }
 }

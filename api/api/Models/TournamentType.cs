@@ -5,6 +5,6 @@ namespace api.Models {
         public int TournamentTypeId { get; set; }
         public string? Name { get; set; }
         [JsonIgnore]
-        public ICollection<Tournament> Tournaments;
+        public ICollection<Tournament> Tournaments { get; } = [];
     }
 }

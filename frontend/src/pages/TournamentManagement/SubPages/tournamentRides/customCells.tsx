@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { RideModalData, RowType } from "./tournamentRidesUtils";
 import { convertTimeToString } from "../../../../Utils/TimeUtils";
-import { ModalProps, Times } from "../../../../../types";
+import { ModalProps, RideData } from "../../../../../types";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { Button } from "@heroui/react";
 
@@ -28,7 +28,7 @@ export const useCustomCell = (
           );
         }
         case "times": {
-          const val = cellValue as Times[];
+          const val = cellValue as RideData[];
           return (
             <div className="flex flex-col">
               {val.map((z, index) => (

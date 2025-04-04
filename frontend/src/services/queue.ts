@@ -1,5 +1,5 @@
 import {
-  FullQueueData,
+  QueueData,
   QueueFormData,
 } from "../../types";
 import apiClient from "./apiClient";
@@ -28,9 +28,9 @@ class QueueService {
 
   static async getAllFullQueuesForTournament(
     tournamentId: number
-  ): Promise<FullQueueData[]> {
+  ): Promise<QueueData[]> {
     return (
-      await apiClient.get<FullQueueData[]>(
+      await apiClient.get<QueueData[]>(
         `/queue/full/tournament/${tournamentId}`
       )
     ).data;

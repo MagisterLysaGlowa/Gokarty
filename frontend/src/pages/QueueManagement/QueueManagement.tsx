@@ -16,7 +16,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useCustomTableCells } from "../../components/CustomTableCells/CustomTableCells";
 import { useGetCols, useGetRows } from "./queueManagementUtils";
 import { useState } from "react";
-import { FullQueueData } from "../../../types";
+import { QueueData } from "../../../types";
 import { RideQueries } from "../../queries/rideQuery";
 import { calculateTimeFromStringToMs } from "../../Utils/TimeUtils";
 
@@ -24,8 +24,8 @@ export const QueueManagement = () => {
   const { id: tournamentId } = useParams();
   const navigate = useNavigate();
   const { data: gokarts } = GokartQueries.getAllGokarts();
-  const [drivingNow, setDrivingNow] = useState<FullQueueData | undefined>(undefined);
-  const [queues, setQueues] = useState<FullQueueData[]>([]);
+  const [drivingNow, setDrivingNow] = useState<QueueData | undefined>(undefined);
+  const [queues, setQueues] = useState<QueueData[]>([]);
   QueueQueries.getAllFullQueuesForTournament(Number(tournamentId), {
     onSuccess: (res) => {
       if(localStorage.getItem("isAnyoneDrivingNow" + tournamentId)) {

@@ -7,14 +7,14 @@ namespace api.Models {
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public int TournamentStateId { get; set; }
-        public TournamentState TournamentState { get; set; } = default!;
+        public TournamentState TournamentState { get; set; } = new();
         public int? TournamentTypeId { get; set; }
-        public TournamentType TournamentType { get; set; } = default!;
+        public TournamentType TournamentType { get; set; } = new();
         [JsonIgnore]
-        public List<PlayerTournament> PlayerTournaments { get; set; } = new();
+        public ICollection<PlayerTournament> PlayerTournaments { get; set; } = [];
         [JsonIgnore]
-        public ICollection<RideGroup> RideGroups { get; } = default!;
+        public ICollection<RideGroup> RideGroups { get; } = [];
         [JsonIgnore]
-        public ICollection<Queue> Queues { get; } = default!;
+        public ICollection<Queue> Queues { get; } = [];
     }
 }

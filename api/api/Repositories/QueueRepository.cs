@@ -2,7 +2,6 @@
 using api.Interfaces;
 using api.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Numerics;
 
 namespace api.Repositories {
     public class QueueRepository : IQueueRepository {
@@ -14,7 +13,7 @@ namespace api.Repositories {
             _playerRepository = playerRepository;
         }
 
-        public async Task<bool> CreateQueuesAsync(int tournamentId, List<int> gokartIds, int numberOfRidesInOneGokart)
+        public async Task<bool> CreateAsync(int tournamentId, List<int> gokartIds, int numberOfRidesInOneGokart)
         {
             if (gokartIds.Count == 0)
                 return false;
@@ -82,7 +81,7 @@ namespace api.Repositories {
             return true;
         }
 
-        public async Task<List<Queue>> FullGetAllQueuesForTournamentAsync(int tournamentId) {
+        public async Task<List<Queue>> GetAllForTournamentAsync(int tournamentId) {
             return await _context.Queues
                 .Where(q => q.TournamentId == tournamentId)
                 .Include(q => q.Tournament)

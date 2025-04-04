@@ -3,27 +3,33 @@ using api.Interfaces;
 using api.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace api.Repositories {
-    public class SchoolRepository : ISchoolRepository {
+namespace api.Repositories
+{
+    public class SchoolRepository : ISchoolRepository
+    {
         private readonly AppDbContext _context;
 
         public SchoolRepository(AppDbContext context) => _context = context;
 
-        public async Task<School> CreateAsync(School school) {
+        public async Task<School> CreateAsync(School school)
+        {
             await _context.Schools.AddAsync(school);
             await _context.SaveChangesAsync();
             return school;
         }
 
-        public async Task<School?> GetAsync(int schoolId) {
+        public async Task<School?> GetAsync(int schoolId)
+        {
             return await _context.Schools.FindAsync(schoolId);
         }
 
-        public async Task<List<School>> GetAllAsync() {
+        public async Task<List<School>> GetAllAsync()
+        {
             return await _context.Schools.ToListAsync();
         }
 
-        public async Task<int?> RemoveAsync(int schoolId) {
+        public async Task<int?> RemoveAsync(int schoolId)
+        {
             if (await _context.Schools.FindAsync(schoolId) is School school) {
                 _context.Schools.Remove(school);
                 await _context.SaveChangesAsync();
@@ -32,18 +38,14 @@ namespace api.Repositories {
             return null;
         }
 
-        public async Task<School?> UpdateAsync(int schoolId, School school) {
-            if (await _context.Schools.FindAsync(schoolId) is School school_db) {
-                school_db.Name = school.Name;
-                school_db.City = school.City;
-                school_db.Acronym = school.Acronym;
-
-                _context.Update(school_db);
-                await _context.SaveChangesAsync();
-                return school_db;
-            }
-            return null;
+        public async Task<School> UpdateAsync(School data)
+        {
+            _context.Update(data);
+            await _context.SaveChangesAsync();
+            return data;
         }
+
+
 
     }
 }

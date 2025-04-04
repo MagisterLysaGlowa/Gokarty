@@ -6,7 +6,7 @@ import {
 } from "react-query";
 import QueueService from "../services/queue";
 import {
-  FullQueueData,
+  QueueData,
   QueueFormData,
 } from "../../types";
 import { createQueueTexts, promiseToast } from "../Utils/ToastNotifications";
@@ -42,7 +42,7 @@ const useRemoveQueue = (
 
 const useGetAllFullQueuesForTournament = (
   tournamentId: number,
-  options?: UseQueryOptions<FullQueueData[], Error>
+  options?: UseQueryOptions<QueueData[], Error>
 ) => {
   return useQuery({
     queryKey: ["fullQueues", tournamentId],

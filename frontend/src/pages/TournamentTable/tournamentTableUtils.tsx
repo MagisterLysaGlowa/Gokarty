@@ -1,12 +1,12 @@
 import { useCallback, useEffect } from "react";
-import { FullQueueData, FullRideData } from "../../../types";
+import { QueueData, RideData } from "../../../types";
 import { convertTimeToString } from "../../Utils/TimeUtils";
 import * as signalR from "@microsoft/signalr";
 
 export type TournamentTableUpdateData = {
-  queue: FullQueueData[];
-  lastRide: FullRideData;
-  rides: FullRideData[];
+  queue: QueueData[];
+  lastRide: RideData;
+  rides: RideData[];
 };
 
 export const useTableUpdate = (
@@ -75,7 +75,7 @@ export const columns = [
 ];
 
 export const getRows = (
-  data: FullRideData[] | undefined | null,
+  data: RideData[] | undefined | null,
   page: number,
   quantity: number
 ): TableRowsType[] | undefined => {

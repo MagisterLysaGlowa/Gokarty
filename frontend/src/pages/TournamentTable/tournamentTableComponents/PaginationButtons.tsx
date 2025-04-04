@@ -1,8 +1,7 @@
-import { RideData } from "../../../../types";
 import { getPaginationLength } from "../tournamentTableUtils";
 
 type PaginationButtonsProps = {
-  rides: RideData[] | undefined | null;
+  itemCount: number;
   pageState: [number, React.Dispatch<React.SetStateAction<number>>];
   intervalRef: React.MutableRefObject<number | null>;
   time: number;
@@ -10,7 +9,7 @@ type PaginationButtonsProps = {
 };
 export const PaginationButtons: React.FC<PaginationButtonsProps> = ({
   pageState,
-  rides,
+  itemCount,
   intervalRef,
   time,
   quantity,
@@ -23,7 +22,7 @@ export const PaginationButtons: React.FC<PaginationButtonsProps> = ({
     } h-[10px] rounded-lg`;
 
   return Array.from({
-    length: getPaginationLength(rides?.length, quantity),
+    length: getPaginationLength(itemCount, quantity),
   }).map((_, index) => (
     <button
       className={buttonClass(index)}
@@ -35,7 +34,7 @@ export const PaginationButtons: React.FC<PaginationButtonsProps> = ({
         }
         intervalRef.current = setInterval(() => {
           setPage(
-            (p) => (p + 1) % getPaginationLength(rides?.length, quantity)
+            (p) => (p + 1) % getPaginationLength(itemCount, quantity)
           );
         }, time);
       }}

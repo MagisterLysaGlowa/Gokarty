@@ -1,10 +1,7 @@
 ﻿using api.Dtos;
+using api.Helpers;
 using api.Interfaces;
-using api.Models;
-using api.SignalRHubs;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 
 namespace api.Controllers {
     [Route("api/[controller]")]
@@ -19,25 +16,26 @@ namespace api.Controllers {
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateQueues(QueueDto dto) {
+        public async Task<IActionResult> Create(QueueDto dto) {
             try {
-                if (await queueRepository.CreateQueuesAsync(dto.TournamentId, dto.GokartIds, dto.NumberOfRidesInOneGokart))
-                {
-                    await hubSender.SendUpdate(dto.TournamentId);
-                    return Created("",true);
-                }
-                return BadRequest("Bad request");
+                await queueRepository.CreateAsync(dto.TournamentId, dto.GokartIds, dto.NumberOfRidesInOneGokart);
+                await hubSender.SendUpdate(dto.TournamentId);
+                return StatusCode(201, new ResponseHelper(201, "Created", "Pomyślnie utworzono kolejkę"));
+            } catch (TimeoutException) {
+                return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
             } catch (Exception) {
-                return BadRequest();
+                return StatusCode(500, new ResponseHelper(500, "ServerError", "Wystąpił nieoczekiwany błąd"));
             }
         }
 
-        [HttpGet("full/tournament/{tournamentId}")]
-        public async Task<IActionResult> FullGetAllQuueuesForTournament(int tournamentId) {
+        [HttpGet("tournament/{tournamentId}")]
+        public async Task<IActionResult> GetAllForTournament(int tournamentId) {
             try {
-                return Ok(await queueRepository.FullGetAllQueuesForTournamentAsync(tournamentId));
+                return Ok(await queueRepository.GetAllForTournamentAsync(tournamentId));
+            } catch (TimeoutException) {
+                return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
             } catch (Exception) {
-                return BadRequest();
+                return StatusCode(500, new ResponseHelper(500, "ServerError", "Wystąpił nieoczekiwany błąd"));
             }
         }
 
@@ -47,11 +45,13 @@ namespace api.Controllers {
                 if(await queueRepository.RemoveAsync(queueId) is int tournamentId)
                 {
                     await hubSender.SendUpdate(tournamentId);
-                    return Ok();
+                    return StatusCode(200, new ResponseHelper(201, "Ok", "Pomyślnie usunięto kolejkę"));
                 }
-                return BadRequest();
+                return StatusCode(404, new ResponseHelper(404, "NotFound", "Nie znaleziono kolejki"));
+            } catch (TimeoutException) {
+                return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
             } catch (Exception) {
-                return BadRequest();
+                return StatusCode(500, new ResponseHelper(500, "ServerError", "Wystąpił nieoczekiwany błąd"));
             }
         }
 

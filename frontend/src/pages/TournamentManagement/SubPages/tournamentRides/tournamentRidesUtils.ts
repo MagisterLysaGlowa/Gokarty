@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { PlayersWithTimes, Times } from "../../../../../types";
+import { PlayerWithRides, RideData } from "../../../../../types";
 
 export const useGetColumns = () =>
   useMemo(
@@ -20,19 +20,19 @@ export type RowType = {
     name: string;
     school: string;
   };
-  times: Times[];
+  times: RideData[];
 };
 
 export type RideModalData = {
   player: string;
   school: string;
   playerId: number;
-  timeData?: Times;
+  timeData?: RideData;
   penaltyPoints?: number;
 };
 
 export const useMemorizedRidesData = (
-  data: PlayersWithTimes[] | undefined,
+  data: PlayerWithRides[] | undefined,
   filter: string
 ) => {
   return useMemo(() => {
@@ -50,7 +50,7 @@ export const useMemorizedRidesData = (
             name: `${z.player.name} ${z.player.surname}`,
             school: z.player.school.acronym,
           },
-          times: z.times.map(({ time, rideNumber, gokart, rideId, isDSQ }) => ({
+          times: z.rides.map(({ time, rideNumber, gokart, rideId, isDSQ }) => ({
             time,
             rideNumber,
             gokart,

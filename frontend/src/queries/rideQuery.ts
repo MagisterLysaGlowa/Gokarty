@@ -6,9 +6,9 @@ import {
 } from "react-query";
 import RideService from "../services/ride";
 import {
-  FullRideData,
+  RideData,
   GokartData,
-  PlayersWithTimes,
+  PlayerWithRides,
   RideData,
   RideFormData,
 } from "../../types";
@@ -22,7 +22,7 @@ import { handleSuccessWithRefreshWithOnSuccess as handleSuccessWithRefreshOnSucc
 
 const useGetTournamentBestFullRides = (
   tournamentId: number,
-  options?: UseQueryOptions<FullRideData[], Error>
+  options?: UseQueryOptions<RideData[], Error>
 ) => {
   return useQuery({
     queryKey: ["tournamentBestFullRides", tournamentId],
@@ -35,7 +35,7 @@ const useGetTournamentBestFullRides = (
 
 const useGetTournamentLastFullRide = (
   tournamentId: number,
-  options?: UseQueryOptions<FullRideData, Error>
+  options?: UseQueryOptions<RideData, Error>
 ) => {
   return useQuery({
     queryKey: ["tournamentLastFullRide", tournamentId],
@@ -98,7 +98,7 @@ const useRemoveRide = (options?: UseMutationOptions<number, Error, number>) => {
 
 const useGetPlayersWithTimes = (
   tournamentId: number,
-  options?: UseQueryOptions<PlayersWithTimes[], Error>
+  options?: UseQueryOptions<PlayerWithRides[], Error>
 ) => {
   return useQuery({
     queryKey: ["playersWithTimes", tournamentId],

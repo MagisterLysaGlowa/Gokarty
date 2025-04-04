@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { PlayerWithSchoolData } from "../../../../../types";
+import { PlayerData } from "../../../../../types";
 
 export const useColumns = () => useMemo(
     () => [
@@ -27,7 +27,7 @@ export const useColumns = () => useMemo(
     []
   );
 
-export const useMemorizedPlayers = (players: PlayerWithSchoolData[] | undefined) => 
+export const useMemorizedPlayers = (players: PlayerData[] | undefined) => 
   useMemo(() => players?.map((player, i) => ({
     lp: (i + 1).toString(),
     id: player.playerId.toString(),

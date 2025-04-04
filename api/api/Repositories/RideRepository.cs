@@ -4,38 +4,33 @@ using api.Interfaces;
 using api.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace api.Repositories {
-    public class RideRepository : IRideRepository {
+namespace api.Repositories
+{
+    public class RideRepository : IRideRepository
+    {
         private readonly AppDbContext _context;
 
-        public RideRepository(AppDbContext context) {
+        public RideRepository(AppDbContext context)
+        {
             _context = context;
         }
-        public async Task<Ride> CreateAsync(Ride ride) {
+        public async Task<Ride> CreateAsync(Ride ride)
+        {
             await _context.Rides.AddAsync(ride);
             await _context.SaveChangesAsync();
             return ride;
         }
 
-        public async Task<Ride?> UpdateAsync(int rideId, Ride ride)
+        public async Task<Ride?> UpdateAsync(Ride data)
         {
-            if (await _context.Rides.FindAsync(rideId) is Ride rideDb)
-            {
-                rideDb.GokartId = ride.GokartId;
-                rideDb.Time = ride.Time;
-                rideDb.RideNumber = ride.RideNumber;
-                rideDb.IsDisqualified = ride.IsDisqualified;
-                _context.Rides.Update(rideDb);
-                await _context.SaveChangesAsync();
-                return rideDb;
-            }
-            return null;
+            _context.Rides.Update(data);
+            await _context.SaveChangesAsync();
+            return data;
         }
 
         public async Task<int?> RemoveAsync(int rideId)
         {
-            if (await _context.Rides.FindAsync(rideId) is Ride ride)
-            {
+            if (await _context.Rides.FindAsync(rideId) is Ride ride) {
                 _context.Rides.Remove(ride);
                 await _context.SaveChangesAsync();
                 return rideId;
@@ -43,7 +38,8 @@ namespace api.Repositories {
             return null;
         }
 
-        public async Task<List<FullRideDto>> FullGetBestForTournamentAsync(int tournamentId) {
+        public async Task<List<FullRideDto>> FullGetBestForTournamentAsync(int tournamentId)
+        {
             var rides = await _context.Rides
                 .Where(r => r.RideGroup.TournamentId == tournamentId && !r.IsDisqualified)
                 .Select(r => new FullRideDto()
@@ -115,7 +111,8 @@ namespace api.Repositories {
             return await _context.Rides.FindAsync(rideId)!;
         }
 
-        public async Task<int?> FindRideNumberAsync(int tournamentId, int playerId) {
+        public async Task<int?> FindRideNumberAsync(int tournamentId, int playerId)
+        {
             return await _context.Rides
                 .Where(r => r.RideGroup.TournamentId == tournamentId)
                 .Where(r => r.RideGroup.Player.PlayerId == playerId)

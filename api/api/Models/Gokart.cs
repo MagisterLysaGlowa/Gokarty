@@ -7,9 +7,9 @@ namespace api.Models
         public int GokartId { get; set; }
         public string? Name { get; set; }
         [JsonIgnore]
-        public ICollection<Ride> Rides { get; } = default!;
+        public ICollection<Ride> Rides { get; } = [];
         [JsonIgnore]
-        public ICollection<Queue> Queues { get; } = default!;
+        public ICollection<Queue> Queues { get; } = [];
 
     }
 }

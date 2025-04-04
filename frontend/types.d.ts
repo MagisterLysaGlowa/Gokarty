@@ -1,6 +1,41 @@
-export interface LoginFormData {
-  login: string;
-  password: string;
+export interface GokartData {
+  gokartId: number;
+  name: string;
+}
+
+export interface GokartFormData {
+  name: string;
+}
+
+export interface QueueData {
+  queueId: number;
+  tournamentId: number;
+  playerId: number;
+  queuePosition: number;
+  tournament: TournamentData;
+  player: PlayerData;
+  gokartId: number;
+  gokart: GokartData;
+}
+
+export interface QueueFormData {
+  tournamentId: number;
+  gokartIds: number[];
+  numberOfRidesInOneGokart: number;
+}
+
+export interface TournamentData {
+  tournamentId: number;
+  name: string;
+  startDate: Date;
+  endDate: Date;
+  tournamentStateId: number;
+  tournamentType: TournamentType;
+}
+
+export interface TournamentType {
+  tournamentTypeId: number;
+  name: string;
 }
 
 export interface TournamentFormData {
@@ -11,33 +46,51 @@ export interface TournamentFormData {
   tournamentTypeId: number;
 }
 
-export interface TournamentType {
-  tournamentTypeId: number;
-  name: string;
-}
-
 export interface PlayerFormData {
   name: string;
   surname: string;
   birthDate: Date;
-  schoolId: number;
+  school: SchoolData;
+  class: Class;
 }
 
-export interface PlayerFilterFormData {
+export interface PlayerData {
+  playerId: number;
+  name: string;
+  surname: string;
+  birthDate: Date;
+  school: SchoolData;
+  class: Class;
+}
+
+export interface PlayerWithRides {
+  player: PlayerData;
+  rides: RideData[];
+}
+
+interface PlayerFilterFormData {
   name: string;
   surname: string;
   schoolId: number;
   tournamentId: number;
 }
 
-export interface SchoolFormData {
+export interface Class {
+  classId: number;
+  name: string;
+}
+
+export interface SchoolData {
+  schoolId: number;
   name: string;
   city: string;
   acronym: string;
 }
 
-export interface GokartFormData {
+export interface SchoolFormData {
   name: string;
+  city: string;
+  acronym: string;
 }
 
 export interface RideFormData {
@@ -49,141 +102,21 @@ export interface RideFormData {
   penaltyPoints: number;
 }
 
-export interface QueueFormData {
-  tournamentId: number;
-  gokartIds: Array<number>;
-  numberOfRidesInOneGokart: number;
-}
-
-export interface UserData {
-  userId: number;
-  login: string;
-  access: string;
-}
-
-export interface TournamentData {
-  tournamentId: number;
-  name: string;
-  startDate: Date;
-  endDate: Date;
-  tournamentStateId: number;
-  tournamentTypeId: number;
-  tournamentType: TournamentType;
-}
-
-export interface TournamentFullData {
-  tournamentId: number;
-  name: string;
-  startDate: Date;
-  endDate: Date;
-  tournamentStateId: number;
-}
-
-export interface PlayerData {
-  playerId: number;
-  name: string;
-  surname: string;
-  birthDate: Date;
-  schoolId: number;
-}
-
-export interface SchoolData {
-  schoolId: number;
-  name: string;
-  city: string;
-  acronym: string;
-}
-
-export interface Class {
-  classId: number;
-  name: string;
-}
-
-export interface PlayerWithSchoolData {
-  playerId: number;
-  name: string;
-  surname: string;
-  birthDate: Date;
-  school: SchoolData;
-  class: Class;
-}
-
-export interface GokartData {
-  gokartId: number;
-  name: string;
+export interface RideAndPersonData {
+  rideGroupId: number;
+  rideData: RideData;
+  player: PlayerData;
 }
 
 export interface RideData {
-  rideId: number;
-  tournamentId: number;
-  playerId: number;
-  gokartId: number;
-  time: number;
-  rideNumber: number;
-  isDisqualified: boolean;
-}
-
-export interface FullRideData {
-  rideId: number;
-  tournamentId: number;
-  playerId: number;
-  gokartId: number;
-  time: number;
-  rideNumber: number;
-  tournament?: TournamentData;
-  player?: PlayerWithSchoolData;
-  gokart?: GokartData;
-  isDisqualified: boolean;
-}
-
-export interface QueueData {
-  queueId: number;
-  tournamentId: number;
-  playerId: number;
-  queuePosition: number;
-  gokartId: number;
-}
-
-export interface FullQueueData {
-  queueId: number;
-  tournamentId: number;
-  playerId: number;
-  queuePosition: number;
-  tournament: TournamentData;
-  player: PlayerWithSchoolData;
-  gokartId: number;
-  gokart: GokartData;
-}
-
-export interface Time {
-  ms: number;
-  s: number;
-  m: number;
-  h: number;
-}
-
-export interface PhotoCellData {
-  lapCount: number;
-  lapsLeft: number;
-  time: Time;
-  startPermission: boolean;
-  photocell1Activ: boolean;
-  photocell2Activ: boolean;
-  photocell3Activ: boolean;
-}
-
-export interface Times {
   gokart: GokartData;
   rideNumber: number;
   time: number;
   rideId: number;
-  isDSQ: boolean;
+  isDisqualified: boolean;
+  penaltyPoints: number;
 }
 
-export interface PlayersWithTimes {
-  player: PlayerWithSchoolData;
-  times: Times[];
-}
 
 export type ModalProps = {
   isOpen: boolean;

@@ -1,29 +1,26 @@
 import {
-  PlayerData,
   PlayerFilterFormData,
   PlayerFormData,
-  PlayerWithSchoolData,
+  PlayerData,
 } from "../../types";
 import apiClient from "./apiClient";
 
 class PlayerService {
   static async createPlayer(
-    tournamentId: number,
     data: PlayerFormData
-  ): Promise<PlayerData> {
+  ): Promise<PlayerFormData> {
     const response = await apiClient.post<PlayerData>(
-      `/player/${tournamentId}`,
+      `/player`,
       data
     );
     return response.data;
   }
 
   static async updatePlayer(
-    playerId: number,
-    data: PlayerFormData
-  ): Promise<PlayerData> {
+    data: PlayerData
+  ): Promise<PlayerFormData> {
     const response = await apiClient.put<PlayerData>(
-      `/player/${playerId}`,
+      `/player`,
       data
     );
     return response.data;
@@ -34,22 +31,8 @@ class PlayerService {
     return Number(response.data);
   }
 
-  static async getAllPlayers(): Promise<PlayerData[]> {
-    const response = await apiClient.get<PlayerData[]>(`/player`);
-    return response.data;
-  }
-
   static async getPlayer(playerId: number): Promise<PlayerData> {
     const response = await apiClient.get<PlayerData>(`/player/${playerId}`);
-    return response.data;
-  }
-
-  static async getPlayerWithSchool(
-    playerId: number
-  ): Promise<PlayerWithSchoolData> {
-    const response = await apiClient.get<PlayerWithSchoolData>(
-      `/player/playerWithSchool/${playerId}`
-    );
     return response.data;
   }
 
@@ -57,24 +40,15 @@ class PlayerService {
     tournamentId: number
   ): Promise<PlayerData[]> {
     const response = await apiClient.get<PlayerData[]>(
-      `/player/forTournament/${tournamentId}`
-    );
-    return response.data;
-  }
-
-  static async getPlayersForTournamentWithSchool(
-    tournamentId: number
-  ): Promise<PlayerWithSchoolData[]> {
-    const response = await apiClient.get<PlayerWithSchoolData[]>(
-      `/player/forTournament/withSchool/${tournamentId}`
+      `/player/tournament/${tournamentId}`
     );
     return response.data;
   }
 
   static async filterPlayers(
     data: PlayerFilterFormData
-  ): Promise<PlayerWithSchoolData[]> {
-    const response = await apiClient.get<PlayerWithSchoolData[]>(
+  ): Promise<PlayerData[]> {
+    const response = await apiClient.get<PlayerData[]>(
       `/player/filter?name=${data.name}&surname=${data.surname}&schoolId=${data.schoolId}&tournamentId=${data.tournamentId}`
     );
     return response.data;
@@ -85,7 +59,7 @@ class PlayerService {
     playerId: number
   ): Promise<number> {
     const response = await apiClient.post(
-      `/player/addplayertotournament/${tournamentId}`,
+      `/player/addToTournament/${tournamentId}`,
       playerId
     );
     return Number(response.data);
@@ -96,7 +70,7 @@ class PlayerService {
     playerId: number
   ): Promise<number> {
     const response = await apiClient.post(
-      `/player/removeplayerfromtournament/${tournamentId}`,
+      `/player/removeFromTournament/${tournamentId}`,
       playerId
     );
     return Number(response.data);
