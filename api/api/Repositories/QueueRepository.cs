@@ -85,9 +85,8 @@ namespace api.Repositories {
                 .Where(q => q.TournamentId == tournamentId)
                 .Include(q => q.Tournament)
                 .Include(q => q.Player)
-                    .ThenInclude(p => p.School)
-                .Include(q => q.Player)
                     .ThenInclude(p => p.Class)
+                        .ThenInclude(c => c.School)
                 .Include(q => q.Gokart)
                 .OrderBy(q => q.QueuePosition)
                 .ToListAsync();

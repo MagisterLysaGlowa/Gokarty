@@ -3,13 +3,13 @@
 namespace api.Models {
     public class Tournament {
         public int TournamentId { get; set; }
-        public string? Name { get; set; }
+        public string Name { get; set; } = String.Empty;
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public int TournamentStateId { get; set; }
-        public TournamentState TournamentState { get; set; } = new();
+        public TournamentState TournamentState { get; set; } = default!;
         public int? TournamentTypeId { get; set; }
-        public TournamentType TournamentType { get; set; } = new();
+        public TournamentType TournamentType { get; set; } = default!;
         [JsonIgnore]
         public ICollection<PlayerTournament> PlayerTournaments { get; set; } = [];
         [JsonIgnore]

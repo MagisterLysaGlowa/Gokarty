@@ -85,7 +85,7 @@ namespace api.Controllers {
         [HttpPost("addToTournament/{tournamentId}")]
         public async Task<IActionResult> AddToTournament(int tournamentId, [FromBody] int playerId) {
             try {
-                if (await playerRepository.AddPlayerToTournamentAsync(tournamentId, playerId) is int)
+                if (await playerRepository.AddToTournamentAsync(tournamentId, playerId) is int)
                     return StatusCode(200, new ResponseHelper(200, "Ok", "Pomyślnie dodano gracza do zawodów"));
                 return StatusCode(409, new ResponseHelper(200, "Ok", "Gracz jest już dodany do zawodów"));
             } catch (TimeoutException) {
@@ -97,7 +97,7 @@ namespace api.Controllers {
         [HttpPost("removeFromTournament/{tournamentId}")]
         public async Task<IActionResult> RemoveFromTournament(int tournamentId, [FromBody] int playerId) {
             try {
-                if (await playerRepository.RemovePlayerFromTournamentAsync(tournamentId, playerId) is int)
+                if (await playerRepository.RemoveFromTournamentAsync(tournamentId, playerId) is int)
                     return StatusCode(200, new ResponseHelper(200, "Ok", "Pomyślnie usunięto gracza z zawodów"));
                 return StatusCode(404, new ResponseHelper(404, "Ok", "Gracz nie jest w zawodach"));
             } catch (TimeoutException) {

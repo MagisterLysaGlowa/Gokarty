@@ -5,13 +5,11 @@ namespace api.Models
     public class Player
     {
         public int PlayerId { get; set; }
-        public string? Name { get; set; }
-        public string? Surname { get; set; }
+        public string Name { get; set; } = String.Empty;
+        public string Surname { get; set; } = String.Empty;
         public DateTime BirthDate { get; set; }
-        public int SchoolId { get; set; }
-        public School School { get; set; } = new();
         public int? ClassId { get; set; }
-        public Class Class { get; set; } = new();
+        public Class Class { get; set; } = default!;
         [JsonIgnore]
         public ICollection<PlayerTournament> PlayerTournaments { get; set; } = [];
         [JsonIgnore]

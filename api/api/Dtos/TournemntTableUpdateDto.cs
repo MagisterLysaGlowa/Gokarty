@@ -6,7 +6,7 @@ namespace api.Dtos
     {
         public Queue? CurrentRide { get; set; }
         public List<Queue> Queue { get; set; } = default!;
-        public FullRideDto? LastRide { get; set; }
-        public List<FullRideDto> Rides { get; set; } = default!;
+        public RideWithGroupDto? LastRide { get; set; }
+        public List<RideWithGroupDto> Rides { get; set; } = default!;
     }
 }

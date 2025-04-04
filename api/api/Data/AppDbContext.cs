@@ -37,18 +37,20 @@ namespace api.Data {
                         .WithMany(t => t.PlayerTournaments)
                         .HasForeignKey(pt => pt.TournamentsId);
 
-            //PLAYER TO SCHOOL (ONE TO MANY)
-
-            modelBuilder.Entity<Player>()
-                        .HasOne(s => s.School)
-                        .WithMany(p => p.Players)
-                        .HasForeignKey(s => s.SchoolId);
 
             //PLAYER TO CLASS (ONE TO MANY)
+
             modelBuilder.Entity<Player>()
                 .HasOne(c => c.Class)
                 .WithMany(p => p.Players)
                 .HasForeignKey(p => p.ClassId);
+
+            //CLASS TO SCHOOL (ONE TO MANY)
+
+            modelBuilder.Entity<Class>()
+                .HasOne(c => c.School)
+                .WithMany(s => s.Classes)
+                .HasForeignKey(c => c.SchoolId);
 
             //TOURNAMENT TO TOURNAMENT STATE (ONE TO MANY)
 
@@ -133,9 +135,14 @@ namespace api.Data {
                 new School() { SchoolId = 1, Name = "ZSTIO", Acronym = "ZSTIO", City = "Limanowa" }
             );
 
+            modelBuilder.Entity<Class>().HasData(
+                new Class() { ClassId = 1, Name = "5TP", SchoolId = 1 },
+                new Class() { ClassId = 2, Name = "5TI", SchoolId = 1 }
+            );
+
             modelBuilder.Entity<Player>().HasData(
-                new Player() { PlayerId = 1, Name = "Maciej", Surname = "Traktor", BirthDate = new DateTime(2024, 10, 5, 12, 0, 0, DateTimeKind.Utc), SchoolId = 1 },
-                new Player() { PlayerId = 2, Name = "Michalina", Surname = "Ciągnik", BirthDate = new DateTime(2024, 10, 5, 12, 0, 0, DateTimeKind.Utc), SchoolId = 1 }
+                new Player() { PlayerId = 1, Name = "Maciej", Surname = "Traktor", BirthDate = new DateTime(2024, 10, 5, 12, 0, 0, DateTimeKind.Utc), ClassId = 1 },
+                new Player() { PlayerId = 2, Name = "Michalina", Surname = "Ciągnik", BirthDate = new DateTime(2024, 10, 5, 12, 0, 0, DateTimeKind.Utc), ClassId = 1 }
             );
             modelBuilder.Entity<PlayerTournament>().HasData(
                 new PlayerTournament() { PlayersId = 1, TournamentsId = 1 },

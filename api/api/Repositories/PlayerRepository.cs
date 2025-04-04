@@ -38,22 +38,22 @@ namespace api.Repositories {
         public async Task<Player?> GetAsync(int playerId)
         {
             return await _context.Players
-                .Include(p => p.School)
                 .Include(p => p.Class)
+                .ThenInclude(c => c.School)
                 .FirstAsync(p => p.PlayerId == playerId);
         }
 
         public async Task<List<Player>> FilterPlayersAsync(PlayerFilterDto dto) {
-            var players = await _context.Players.Include(z => z.School).ToListAsync();
+            var players = await _context.Players.Include(z => z.Class.SchoolId).ToListAsync();
 
             if (!string.IsNullOrEmpty(dto.Name)) {
-                players = players.Where(p => p.Name!.ToLower().Contains(dto.Name.ToLower())).ToList();
+                players = players.Where(p => p.Name.ToLower().Contains(dto.Name.ToLower())).ToList();
             }
             if (!string.IsNullOrEmpty(dto.Surname)) {
-                players = players.Where(p => p.Surname!.ToLower().Contains(dto.Surname.ToLower())).ToList();
+                players = players.Where(p => p.Surname.ToLower().Contains(dto.Surname.ToLower())).ToList();
             }
             if (dto.SchoolId != 0) {
-                players = players.Where(p => p.SchoolId == dto.SchoolId).ToList();
+                players = players.Where(p => p.Class.SchoolId == dto.SchoolId).ToList();
             }
 
             var playersInThisTournament = await _context.PlayerTournaments
@@ -69,20 +69,18 @@ namespace api.Repositories {
            return await _context.PlayerTournaments
                 .Where(pt => pt.TournamentsId == tournamentId)
                 .Select(pt => pt.Player)
-                .Include(p=>p.Class)
-                .Include(p=>p.School)
+                .Include(p => p.Class)
+                .ThenInclude(c => c.School)
                 .ToListAsync();
         }
 
-        public async Task<int?> AddPlayerToTournamentAsync(int tournamentId, int playerId)
+        public async Task<int?> AddToTournamentAsync(int tournamentId, int playerId)
         {
-            var playerTournament = new PlayerTournament()
-            {
-                PlayersId = playerId,
-                TournamentsId = tournamentId
-            };
-            if (!_context.PlayerTournaments.Any(e => e.TournamentsId == tournamentId && e.PlayersId == playerId))
-            {
+            if (!_context.PlayerTournaments.Any(e => e.TournamentsId == tournamentId && e.PlayersId == playerId)) {
+                var playerTournament = new PlayerTournament() {
+                    PlayersId = playerId,
+                    TournamentsId = tournamentId
+                };
                 await _context.PlayerTournaments.AddAsync(playerTournament);
                 await _context.SaveChangesAsync();
                 return playerId;
@@ -90,7 +88,7 @@ namespace api.Repositories {
             return null;
         }
 
-        public async Task<int?> RemovePlayerFromTournamentAsync(int tournamentId, int playerId) {
+        public async Task<int?> RemoveFromTournamentAsync(int tournamentId, int playerId) {
             var playerTournament = await _context.PlayerTournaments.FirstOrDefaultAsync(pt => pt.PlayersId == playerId && pt.TournamentsId == tournamentId);
             if (playerTournament is PlayerTournament pt) {
                 _context.PlayerTournaments.Remove(playerTournament);

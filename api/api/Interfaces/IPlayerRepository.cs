@@ -11,7 +11,7 @@ namespace api.Interfaces
         Task<Player?> GetAsync(int playerId);
         Task<List<Player>> FilterPlayersAsync(PlayerFilterDto dto);
         Task<List<Player>> GetAllForTournamentAsync(int tournamentId);
-        Task<int?> AddPlayerToTournamentAsync(int tournamentId, int playerId);
-        Task<int?> RemovePlayerFromTournamentAsync(int tournamentId,int playerId);
+        Task<int?> AddToTournamentAsync(int tournamentId, int playerId);
+        Task<int?> RemoveFromTournamentAsync(int tournamentId,int playerId);
     }
 }
