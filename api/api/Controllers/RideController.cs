@@ -51,7 +51,7 @@ namespace api.Controllers
             }
         }
 
-        [HttpPut("{rideId}")]
+        [HttpPut]
         public async Task<IActionResult> Update(Ride data)
         {
             try {

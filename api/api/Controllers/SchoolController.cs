@@ -28,7 +28,7 @@ namespace api.Controllers {
             }
         }
 
-        [HttpPut("{schoolId}")]
+        [HttpPut]
         public async Task<IActionResult> Update(School data)
         {
             try {

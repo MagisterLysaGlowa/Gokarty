@@ -58,7 +58,7 @@ namespace api.Controllers
             }
         }
 
-        [HttpPut("{tournamentId}")]
+        [HttpPut]
         public async Task<IActionResult> Update(Tournament data)
         {
             try {
