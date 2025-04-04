@@ -21,6 +21,12 @@ import { useParams } from "react-router-dom";
 import { queryClient } from "../../../../../Utils/ReactQueryConfig";
 import { RideModalData } from "../tournamentRidesUtils";
 import { modalConfig } from "../../../../../configs/modalConfig";
+import { inputConfig } from "../../../../../configs/inputConfig";
+import {
+  cancelButtonConfig,
+  confirmButtonConfig,
+} from "../../../../../configs/buttonConfig";
+import { selectConfig } from "../../../../../configs/selectConfig";
 
 type EditModalProps = {
   modal: ModalProps;
@@ -74,14 +80,21 @@ export const EditRideModal: React.FC<EditModalProps> = ({
                 value={String(ride.timeData?.rideId)}
                 readOnly
                 label="Identyfikator przejazdu"
+                {...inputConfig}
               />
-              <Input value={ride.player} label="Osoba" readOnly />
+              <Input
+                value={ride.player}
+                label="Osoba"
+                readOnly
+                {...inputConfig}
+              />
               <Input
                 placeholder="00:00:000"
                 value={time}
                 label="Czas"
                 maxLength={9}
                 onChange={(e) => setTime(e.target.value)}
+                {...inputConfig}
               />
               <Checkbox
                 isSelected={Boolean(rideToEdit.isDisqualified)}
@@ -92,6 +105,7 @@ export const EditRideModal: React.FC<EditModalProps> = ({
                 Dyskwalifikacja
               </Checkbox>
               <Select
+                {...selectConfig}
                 items={gokarts}
                 label="Gokart"
                 selectedKeys={String(rideToEdit?.gokartId)}
@@ -109,11 +123,11 @@ export const EditRideModal: React.FC<EditModalProps> = ({
               </Select>
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
+              <Button {...cancelButtonConfig} onPress={onClose}>
                 Anuluj
               </Button>
               <Button
-                color="primary"
+                {...confirmButtonConfig}
                 onPress={async () => {
                   const timeRegex = /^\d{2}:\d{2}:\d{3}$/;
                   if (rideToEdit && timeRegex.test(time)) {

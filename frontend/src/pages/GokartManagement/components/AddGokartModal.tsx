@@ -12,6 +12,11 @@ import { FC, useEffect, useState } from "react";
 import { GokartQueries } from "../../../queries/gokartQuery";
 import { gokartValidate } from "../../../validations/GokartValidation";
 import { modalConfig } from "../../../configs/modalConfig";
+import { inputConfig } from "../../../configs/inputConfig";
+import {
+  cancelButtonConfig,
+  confirmButtonConfig,
+} from "../../../configs/buttonConfig";
 
 type AddGokartModalProps = {
   modal: ModalProps;
@@ -41,14 +46,15 @@ export const AddGokartModal: FC<AddGokartModalProps> = ({ modal }) => {
                 label="Nazwa"
                 value={gokart}
                 onValueChange={(e) => setGokart(e)}
+                {...inputConfig}
               />
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
+              <Button {...cancelButtonConfig} onPress={onClose}>
                 Anuluj
               </Button>
               <Button
-                color="primary"
+                {...confirmButtonConfig}
                 onPress={async () => {
                   if (await gokartValidate({ name: gokart })) {
                     await createGokart({ name: gokart });

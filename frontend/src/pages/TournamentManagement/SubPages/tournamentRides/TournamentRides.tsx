@@ -13,6 +13,7 @@ import { RideModalData } from "./tournamentRidesUtils";
 import { queryClient } from "../../../../Utils/ReactQueryConfig";
 import { YesNoModal } from "../../../../components/YesNoModal/YesNoModal";
 import { convertTimeToString } from "../../../../Utils/TimeUtils";
+import { inputConfig } from "../../../../configs/inputConfig";
 
 export const TournamentRides = () => {
   const { id: tournamentId } = useParams();
@@ -26,14 +27,20 @@ export const TournamentRides = () => {
   const removeModal = useDisclosure();
   const editModal = useDisclosure();
 
-  const { data, isLoading } = RideQueries.getAllPlayersWithTimes(Number(tournamentId), {
-    refetchInterval: 10_000,
-  });
+  const { data, isLoading } = RideQueries.getAllPlayersWithTimes(
+    Number(tournamentId),
+    {
+      refetchInterval: 10_000,
+    }
+  );
   const { data: gokarts } = GokartQueries.getAllGokarts();
 
   const { mutateAsync: removeRide } = RideQueries.removeRide({
     onSuccess: async () =>
-      await queryClient.invalidateQueries(["playersWithTimes", Number(tournamentId)]),
+      await queryClient.invalidateQueries([
+        "playersWithTimes",
+        Number(tournamentId),
+      ]),
   });
 
   return (
@@ -45,10 +52,12 @@ export const TournamentRides = () => {
           variant={defaultVariant}
           onChange={(e) => setFilter(e.target.value)}
           value={filter}
+          {...inputConfig}
         />
       </div>
-      {isLoading ? 
-        <Loading isLoading={isLoading}/> : 
+      {isLoading ? (
+        <Loading isLoading={isLoading} />
+      ) : (
         <TournamentRidesTable
           data={data}
           editModal={editModal}
@@ -56,20 +65,36 @@ export const TournamentRides = () => {
           searchFilter={search_filter}
           setSelectedRide={setSelectedRide}
         />
-      }
-      {selectedRide &&
+      )}
+      {selectedRide && (
         <>
-          <YesNoModal header="Usuwanie przejazdu" modal={removeModal} onYes={async () => removeRide(Number(selectedRide.timeData?.rideId))} key={`remove-${selectedRide.timeData?.rideId}`}>
+          <YesNoModal
+            header="Usuwanie przejazdu"
+            modal={removeModal}
+            onYes={async () =>
+              removeRide(Number(selectedRide.timeData?.rideId))
+            }
+            key={`remove-${selectedRide.timeData?.rideId}`}
+          >
             <div className="flex flex-col gap-2">
-              <div>{"Identyfikator przejazdu: " + selectedRide.timeData?.rideId}</div>
+              <div>
+                {"Identyfikator przejazdu: " + selectedRide.timeData?.rideId}
+              </div>
               <div>{selectedRide.player}</div>
               <div>{selectedRide.school}</div>
-              <div>{convertTimeToString(Number(selectedRide.timeData?.time))}</div>
+              <div>
+                {convertTimeToString(Number(selectedRide.timeData?.time))}
+              </div>
             </div>
           </YesNoModal>
-          <EditRideModal modal={editModal} ride={selectedRide} gokarts={gokarts} key={`edit-${selectedRide.timeData?.rideId}`}/>
+          <EditRideModal
+            modal={editModal}
+            ride={selectedRide}
+            gokarts={gokarts}
+            key={`edit-${selectedRide.timeData?.rideId}`}
+          />
         </>
-      }
+      )}
     </div>
   );
 };

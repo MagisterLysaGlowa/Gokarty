@@ -16,19 +16,10 @@ namespace api.Repositories {
             return tournament;
         }
 
-        public async Task<Tournament?> UpdateAsync(int tournamentId, Tournament tournament) {
-            if (await _context.Tournaments.FindAsync(tournamentId) is Tournament _tournament) {
-                _tournament.Name = tournament.Name;
-                _tournament.StartDate = tournament.StartDate;
-                _tournament.EndDate = tournament.EndDate;
-                _tournament.TournamentStateId = tournament.TournamentStateId;
-                _tournament.TournamentTypeId = tournament.TournamentTypeId;
-
-                _context.Tournaments.Update(_tournament);
-                await _context.SaveChangesAsync();
-                return _tournament;
-            }
-            return null;
+        public async Task<Tournament?> UpdateAsync(Tournament data) {
+            _context.Tournaments.Update(data);
+            await _context.SaveChangesAsync();
+            return data;
         }
 
         public async Task<int?> RemoveAsync(int tournamentId) {

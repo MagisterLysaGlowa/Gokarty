@@ -32,18 +32,13 @@ namespace api.Repositories {
             return null;
         }
 
-        public async Task<School?> UpdateAsync(int schoolId, School school) {
-            if (await _context.Schools.FindAsync(schoolId) is School school_db) {
-                school_db.Name = school.Name;
-                school_db.City = school.City;
-                school_db.Acronym = school.Acronym;
-
-                _context.Update(school_db);
-                await _context.SaveChangesAsync();
-                return school_db;
-            }
-            return null;
+        public async Task<School> UpdateAsync(School data) {
+            _context.Update(data);
+            await _context.SaveChangesAsync();
+            return data;
         }
+
+
 
     }
 }

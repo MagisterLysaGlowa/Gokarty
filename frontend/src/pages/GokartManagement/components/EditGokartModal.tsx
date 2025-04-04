@@ -12,6 +12,11 @@ import { GokartData, ModalProps } from "../../../../types";
 import { GokartQueries } from "../../../queries/gokartQuery";
 import { gokartValidate } from "../../../validations/GokartValidation";
 import { modalConfig } from "../../../configs/modalConfig";
+import { inputConfig } from "../../../configs/inputConfig";
+import {
+  cancelButtonConfig,
+  confirmButtonConfig,
+} from "../../../configs/buttonConfig";
 
 type EditGokartModalProps = {
   modal: ModalProps;
@@ -42,6 +47,7 @@ export const EditGokartModal: FC<EditGokartModalProps> = ({
                 label="Identyfikator"
                 value={`${gokartToEdit?.gokartId}`}
                 readOnly
+                {...inputConfig}
               />
               <Input
                 label="Nazwa"
@@ -49,14 +55,15 @@ export const EditGokartModal: FC<EditGokartModalProps> = ({
                 onValueChange={(e) =>
                   setGokartToEdit((p) => ({ ...p, name: e }))
                 }
+                {...inputConfig}
               />
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
+              <Button {...cancelButtonConfig} onPress={onClose}>
                 Anuluj
               </Button>
               <Button
-                color="primary"
+                {...confirmButtonConfig}
                 onPress={async () => {
                   if (
                     await gokartValidate({

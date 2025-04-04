@@ -6,7 +6,7 @@ namespace api.Interfaces
     public interface IRideRepository
     {
         Task<Ride> CreateAsync(Ride ride);
-        Task<Ride?> UpdateAsync(int rideId,Ride ride);
+        Task<Ride?> UpdateAsync(Ride ride);
         Task<int?> RemoveAsync(int rideId);
         Task<List<FullRideDto>> FullGetBestForTournamentAsync(int tournamentId);
         Task<FullRideDto?> FullGetLastAddedForTournamentAsync(int tournamentId);

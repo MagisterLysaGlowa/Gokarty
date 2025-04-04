@@ -15,6 +15,13 @@ import { TournamentQueries } from "../../../../../queries/tournamentQuery";
 import { tournamentValidate } from "../../../../../validations/TournamentValidation";
 import { ModalProps, TournamentData } from "../../../../../../types";
 import { modalConfig } from "../../../../../configs/modalConfig";
+import { inputConfig } from "../../../../../configs/inputConfig";
+import {
+  cancelButtonConfig,
+  confirmButtonConfig,
+} from "../../../../../configs/buttonConfig";
+import { selectConfig } from "../../../../../configs/selectConfig";
+import { dateRangePickerConfig } from "../../../../../configs/dateRangePickerConfig";
 
 type EditModalProps = {
   modal: ModalProps;
@@ -60,8 +67,10 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
                 onChange={(e) =>
                   setTournament((p) => ({ ...p, name: e.target.value }))
                 }
+                {...inputConfig}
               />
               <DateRangePicker
+                {...dateRangePickerConfig}
                 defaultValue={{
                   start: parseDate(
                     tournament.startDate.toISOString().split("T")[0]
@@ -74,10 +83,10 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
                 label="Czas trwania"
               />
               <Select
+                {...selectConfig}
                 label="Rodzaj kolejki"
                 selectedKeys={tournament.tournamentTypeId.toString()}
                 selectionMode="single"
-                variant={variant}
                 onChange={(e) =>
                   setTournament((p) => ({
                     ...p,
@@ -89,7 +98,7 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
                 <SelectItem key={"2"}>Nieskończona</SelectItem>
               </Select>
               <Select
-                variant={variant}
+                {...selectConfig}
                 label="Etap turnieju"
                 selectionMode="single"
                 selectedKeys={[tournament.tournamentStateId.toString()]}
@@ -106,11 +115,11 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
               </Select>
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="flat" onPress={onClose}>
+              <Button {...cancelButtonConfig} onPress={onClose}>
                 Anuluj
               </Button>
               <Button
-                className="bg-main-default"
+                {...confirmButtonConfig}
                 onPress={() => handleEdit(onClose)}
               >
                 Zatwierdź

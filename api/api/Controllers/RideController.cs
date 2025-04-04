@@ -1,4 +1,5 @@
 ﻿using api.Dtos;
+using api.Helpers;
 using api.Interfaces;
 using api.Models;
 using Microsoft.AspNetCore.Http;
@@ -28,8 +29,7 @@ namespace api.Controllers {
                         };
                         return Created("", await rideRepository.CreateAsync(ride));
                     } else {
-                        var ride = new Ride
-                        {
+                        var ride = new Ride {
                             RideGroupId = await rideRepository.CreateRideGroupAsync(dto.TournamentId, dto.PlayerId),
                             GokartId = dto.GokartId,
                             Time = dto.Time,
@@ -39,8 +39,7 @@ namespace api.Controllers {
                         };
                         return Created("", await rideRepository.CreateAsync(ride));
                     }
-                }
-                else {
+                } else {
                     return BadRequest();
                 }
             } catch (Exception) {
@@ -49,35 +48,31 @@ namespace api.Controllers {
         }
 
         [HttpPut("{rideId}")]
-        public async Task<IActionResult> Update(int rideId, RideDto dto) {
+        public async Task<IActionResult> Update(Ride data) {
             try {
-                if (await rideRepository.GetAsync(rideId) is Ride _ride) {
-                    var ride = new Ride {
-                        GokartId = dto.GokartId,
-                        Time = dto.Time,
-                        IsDisqualified = dto.IsDisqualified == 1,
-                        RideNumber = _ride.RideNumber
-                    };
-                    return Ok(await rideRepository.UpdateAsync(rideId, ride));
-                }
-                return NotFound();
-            } catch (Exception e) {
-                Console.WriteLine(e.Message);
-                return BadRequest();
+                if (!ModelState.IsValid)
+                    return StatusCode(400, new ResponseHelper(400, "BadRequest", "Nie poprawne dane dla przejazdu"));
+                if (await rideRepository.GetAsync(data.RideId) is null)
+                    return StatusCode(404, new ResponseHelper(404, "NotFound", "Nie znaleziono przejazdu"));
+                await rideRepository.UpdateAsync(data);
+                return StatusCode(200, new ResponseHelper(200, "Ok", "Pomyślnie uaktualniono przejazd"));
+            } catch (TimeoutException) {
+                return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
+            } catch (Exception) {
+                return StatusCode(500, new ResponseHelper(500, "ServerError", "Wystąpił nieoczekiwany błąd"));
             }
         }
 
         [HttpDelete("{rideId}")]
-        public async Task<IActionResult> Remove(int rideId)
-        {
+        public async Task<IActionResult> Remove(int rideId) {
             try {
                 if (await rideRepository.RemoveAsync(rideId) is int id)
-                    return Ok(id);
-                return NotFound();
-            }
-            catch (Exception)
-            {
-                return BadRequest();
+                    return StatusCode(200,new ResponseHelper(200,"Ok","Pomyślnie usunięto przejazd"));
+                return StatusCode(404, new ResponseHelper(404, "NotFound", "Nie znaleziono przejazdu"));
+            } catch (TimeoutException) {
+                return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
+            } catch (Exception) {
+                return StatusCode(500, new ResponseHelper(500, "ServerError", "Wystąpił nieoczekiwany błąd"));
             }
         }
 
@@ -85,8 +80,10 @@ namespace api.Controllers {
         public async Task<IActionResult> FullGetBestForTournament(int tournamentId) {
             try {
                 return Ok(await rideRepository.FullGetBestForTournamentAsync(tournamentId));
+            } catch (TimeoutException) {
+                return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
             } catch (Exception) {
-                return BadRequest();
+                return StatusCode(500, new ResponseHelper(500, "ServerError", "Wystąpił nieoczekiwany błąd"));
             }
         }
 
@@ -96,8 +93,10 @@ namespace api.Controllers {
                 if (await rideRepository.FullGetLastAddedForTournamentAsync(tournamentId) is FullRideDto ride)
                     return Ok(ride);
                 return NotFound();
+            } catch (TimeoutException) {
+                return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
             } catch (Exception) {
-                return BadRequest();
+                return StatusCode(500, new ResponseHelper(500, "ServerError", "Wystąpił nieoczekiwany błąd"));
             }
         }
 
@@ -105,10 +104,12 @@ namespace api.Controllers {
         public async Task<IActionResult> GetFullAllForTournament(int tournamentId) {
             try {
                 return Ok(await rideRepository.GetGroupedRidesForTournament(tournamentId));
+            } catch (TimeoutException) {
+                return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
             } catch (Exception) {
-                return BadRequest();
+                return StatusCode(500, new ResponseHelper(500, "ServerError", "Wystąpił nieoczekiwany błąd"));
             }
         }
     }
-    
+
 }
