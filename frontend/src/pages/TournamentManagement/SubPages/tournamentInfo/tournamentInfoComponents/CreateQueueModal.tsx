@@ -15,6 +15,11 @@ import { GokartQueries } from "../../../../../queries/gokartQuery";
 import { QueueQueries } from "../../../../../queries/queueQuery";
 import { queueValidation } from "../../../../../validations/QueueRandomizationValidation";
 import { modalConfig } from "../../../../../configs/modalConfig";
+import {
+  cancelButtonConfig,
+  confirmButtonConfig,
+} from "../../../../../configs/buttonConfig";
+import { selectConfig } from "../../../../../configs/selectConfig";
 
 type CreateQueueProps = {
   modal: ModalProps;
@@ -63,10 +68,10 @@ export const CreateQueueModal: React.FC<CreateQueueProps> = ({
                 onValueChange={setNumberOfRidesInOneGokart}
               />
               <Select
+                {...selectConfig}
                 label="Wybierz gokarty"
                 selectedKeys={gokartIds}
                 selectionMode="multiple"
-                variant={variant}
                 onSelectionChange={(e) =>
                   setGokartIds(Array.from(e as Set<number>))
                 }
@@ -77,11 +82,11 @@ export const CreateQueueModal: React.FC<CreateQueueProps> = ({
               </Select>
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="flat" onPress={onClose}>
+              <Button {...cancelButtonConfig} onPress={onClose}>
                 Anuluj
               </Button>
               <Button
-                className="bg-main-default"
+                {...confirmButtonConfig}
                 onPress={async () => {
                   if (
                     await queueValidation({

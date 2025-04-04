@@ -1,10 +1,7 @@
 import { useParams } from "react-router-dom";
 import { PlayerQueries } from "../../../../queries/playerQuery";
 import { useState } from "react";
-import {
-  Input,
-  useDisclosure,
-} from "@heroui/react";
+import { Input, useDisclosure } from "@heroui/react";
 import {
   defaultRemoveButtonProps,
   defaultVariant,
@@ -19,12 +16,16 @@ import { useCustomTableCells } from "../../../../components/CustomTableCells/Cus
 import { TableComponent } from "../../../../components/Table/TableComponent";
 import { Loading } from "../../../../components/Loading/Loading";
 import { YesNoModal } from "../../../../components/YesNoModal/YesNoModal";
+import { inputConfig } from "../../../../configs/inputConfig";
 
 export const PlayersForTournament = () => {
   const { id: tournamentId } = useParams();
-  const { data, isLoading } = PlayerQueries.getPlayersForTournamentWithSchool(Number(tournamentId), {
-    refetchInterval: 10_000,
-  });
+  const { data, isLoading } = PlayerQueries.getPlayersForTournamentWithSchool(
+    Number(tournamentId),
+    {
+      refetchInterval: 10_000,
+    }
+  );
   const [filter, setFilter] = useState("");
   const filterSearch = useDebounce(filter);
   const memoizedData = useGetMemorizedData(data, filterSearch);
@@ -34,11 +35,16 @@ export const PlayersForTournament = () => {
   const [selectedPlayerId, setSelectedPlayerId] = useState<number | undefined>(
     undefined
   );
-  const selectedPlayer = data?.find(player => player.playerId == selectedPlayerId);
+  const selectedPlayer = data?.find(
+    (player) => player.playerId == selectedPlayerId
+  );
 
-  const customCell = useCustomTableCells(setSelectedPlayerId, [{modal: removeModal, buttonProps: defaultRemoveButtonProps}]);
+  const customCell = useCustomTableCells(setSelectedPlayerId, [
+    { modal: removeModal, buttonProps: defaultRemoveButtonProps },
+  ]);
 
-  const { mutateAsync: removePlayerFromTournament } = PlayerQueries.removePlayerFromTournament();
+  const { mutateAsync: removePlayerFromTournament } =
+    PlayerQueries.removePlayerFromTournament();
 
   return (
     <div className="flex flex-col h-full max-h-full overflow-hidden gap-3">
@@ -49,23 +55,39 @@ export const PlayersForTournament = () => {
           variant={defaultVariant}
           onChange={(e) => setFilter(e.target.value)}
           value={filter}
+          {...inputConfig}
         />
       </div>
       <div className="flex-1 overflow-auto">
-        {isLoading ? 
-          <Loading isLoading={isLoading}/> :
-          <TableComponent columns={columns} rows={memoizedData} tableCells={customCell}/>
-        }
+        {isLoading ? (
+          <Loading isLoading={isLoading} />
+        ) : (
+          <TableComponent
+            columns={columns}
+            rows={memoizedData}
+            tableCells={customCell}
+          />
+        )}
       </div>
-      {selectedPlayer &&
-        <YesNoModal header="Usuwanie gracza z turnieju" modal={removeModal} onYes={async () => removePlayerFromTournament({tournamentId: Number(tournamentId), playerId: Number(selectedPlayerId)})} key={`remove-${selectedPlayerId}`}>
+      {selectedPlayer && (
+        <YesNoModal
+          header="Usuwanie gracza z turnieju"
+          modal={removeModal}
+          onYes={async () =>
+            removePlayerFromTournament({
+              tournamentId: Number(tournamentId),
+              playerId: Number(selectedPlayerId),
+            })
+          }
+          key={`remove-${selectedPlayerId}`}
+        >
           <div className="flex flex-col gap-2">
             <div>{selectedPlayer.name + " " + selectedPlayer.surname}</div>
             <div>{selectedPlayer.birthDate.toLocaleDateString()}</div>
             <div>{selectedPlayer.school.acronym}</div>
           </div>
         </YesNoModal>
-      }
+      )}
     </div>
   );
 };

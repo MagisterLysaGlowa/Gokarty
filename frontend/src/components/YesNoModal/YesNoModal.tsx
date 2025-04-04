@@ -9,6 +9,10 @@ import {
 import { ModalProps } from "../../../types";
 import { ReactNode } from "react";
 import { modalConfig } from "../../configs/modalConfig";
+import {
+  cancelButtonConfig,
+  confirmButtonConfig,
+} from "../../configs/buttonConfig";
 
 type YesNoModalProps = {
   modal: ModalProps;
@@ -37,11 +41,11 @@ export const YesNoModal: React.FC<YesNoModalProps> = ({
             <ModalHeader>{header}</ModalHeader>
             <ModalBody>{children}</ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
+              <Button {...cancelButtonConfig} onPress={onClose}>
                 Anuluj
               </Button>
               <Button
-                color="primary"
+                {...confirmButtonConfig}
                 onPress={() => {
                   onYes();
                   onClose();

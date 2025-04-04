@@ -15,6 +15,12 @@ import { TournamentQueries } from "../../queries/tournamentQuery";
 import { useEffect, useState } from "react";
 import { resetTournamentValues } from "./TournamentUtils";
 import { modalConfig } from "../../configs/modalConfig";
+import { inputConfig } from "../../configs/inputConfig";
+import {
+  cancelButtonConfig,
+  confirmButtonConfig,
+} from "../../configs/buttonConfig";
+import { dateRangePickerConfig } from "../../configs/dateRangePickerConfig";
 
 type TournamentCreateModalParams = {
   modal: ModalProps;
@@ -56,8 +62,10 @@ export const CreateTournamentModal: React.FC<TournamentCreateModalParams> = ({
                 onChange={(e) =>
                   setTournament((prev) => ({ ...prev, name: e.target.value }))
                 }
+                {...inputConfig}
               />
               <DateRangePicker
+                {...dateRangePickerConfig}
                 label="Czas trwania turnieju"
                 onChange={(e) => {
                   if (e?.start && e.end)
@@ -70,11 +78,11 @@ export const CreateTournamentModal: React.FC<TournamentCreateModalParams> = ({
               />
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
+              <Button {...cancelButtonConfig} onPress={onClose}>
                 Anuluj
               </Button>
               <Button
-                color="warning"
+                {...confirmButtonConfig}
                 onPress={async () => {
                   if (await tournamentValidate(tournament)) {
                     await createTournament(tournament);

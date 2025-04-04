@@ -1,24 +1,22 @@
 import { useEffect, useState } from "react";
 import { PlayerQueries } from "../../../../queries/playerQuery";
-import {
-  PlayerFilterFormData,
-} from "../../../../../types";
+import { PlayerFilterFormData } from "../../../../../types";
 import { useParams } from "react-router-dom";
 import { SchoolQueries } from "../../../../queries/schoolQuery";
-import {
-  Input,
-  Select,
-  SelectItem,
-  useDisclosure,
-} from "@heroui/react";
+import { Input, Select, SelectItem, useDisclosure } from "@heroui/react";
 
-import { defaultAddButtonProps, defaultVariant } from "../../../../Utils/globalUtils";
+import {
+  defaultAddButtonProps,
+  defaultVariant,
+} from "../../../../Utils/globalUtils";
 import { useColumns, useMemorizedPlayers } from "./AddPlayerForTournamentUtils";
 import { useCustomTableCells } from "../../../../components/CustomTableCells/CustomTableCells";
 import { useDebounce } from "../../../../Utils/debounce";
 import { Loading } from "../../../../components/Loading/Loading";
 import { TableComponent } from "../../../../components/Table/TableComponent";
 import { YesNoModal } from "../../../../components/YesNoModal/YesNoModal";
+import { inputConfig } from "../../../../configs/inputConfig";
+import { selectConfig } from "../../../../configs/selectConfig";
 
 export const AddPlayerForTournament = () => {
   const { id: tournamentId } = useParams();
@@ -31,24 +29,31 @@ export const AddPlayerForTournament = () => {
   const serverFilter = useDebounce(playerFilter);
 
   const { data: schools } = SchoolQueries.getAllSchools();
-  const { data: players, refetch, isFetching } = PlayerQueries.filterPlayers(serverFilter);
+  const {
+    data: players,
+    refetch,
+    isFetching,
+  } = PlayerQueries.filterPlayers(serverFilter);
 
   useEffect(() => {
     refetch();
   }, [serverFilter, refetch]);
-  
+
   const columns = useColumns();
   const rows = useMemorizedPlayers(players);
-  
-  const [selectedPlayerId, setSelectedPlayerId] = useState<number | undefined>(undefined);
-  const selectedPlayer = players?.find(player => player.playerId == selectedPlayerId);
+
+  const [selectedPlayerId, setSelectedPlayerId] = useState<number | undefined>(
+    undefined
+  );
+  const selectedPlayer = players?.find(
+    (player) => player.playerId == selectedPlayerId
+  );
 
   const addModal = useDisclosure();
-  
-  const customCell = useCustomTableCells(
-    setSelectedPlayerId,
-    [{ modal: addModal, buttonProps: defaultAddButtonProps}]
-  )
+
+  const customCell = useCustomTableCells(setSelectedPlayerId, [
+    { modal: addModal, buttonProps: defaultAddButtonProps },
+  ]);
 
   const { mutateAsync: addPlayer } = PlayerQueries.addPlayerToTournament();
 
@@ -63,6 +68,7 @@ export const AddPlayerForTournament = () => {
           onChange={(e) =>
             setPlayerFilter((p) => ({ ...p, name: e.target.value }))
           }
+          {...inputConfig}
         />
         <Input
           placeholder="Nazwisko"
@@ -72,12 +78,13 @@ export const AddPlayerForTournament = () => {
           onChange={(e) =>
             setPlayerFilter((p) => ({ ...p, surname: e.target.value }))
           }
+          {...inputConfig}
         />
         <Select
+          {...selectConfig}
           items={schools || []}
           aria-label="Wybierz szkołę"
           value={playerFilter.schoolId}
-          variant={defaultVariant}
           onChange={(e) =>
             setPlayerFilter((p) => ({ ...p, schoolId: Number(e.target.value) }))
           }
@@ -86,19 +93,31 @@ export const AddPlayerForTournament = () => {
           {(s) => <SelectItem key={s.schoolId}>{s.acronym}</SelectItem>}
         </Select>
       </div>
-        
-      {isFetching ?
-        <Loading isLoading={isFetching}/> :
-        <TableComponent columns={columns} rows={rows} tableCells={customCell}/>
-      }
-      {selectedPlayer &&
-        <YesNoModal buttonText="Dodaj" header="Dodaj zawodnika" onYes={async () => addPlayer({tournamentId: Number(tournamentId), playerId: Number(selectedPlayerId)})} modal={addModal} key={`add-${selectedPlayerId}`}>
+
+      {isFetching ? (
+        <Loading isLoading={isFetching} />
+      ) : (
+        <TableComponent columns={columns} rows={rows} tableCells={customCell} />
+      )}
+      {selectedPlayer && (
+        <YesNoModal
+          buttonText="Dodaj"
+          header="Dodaj zawodnika"
+          onYes={async () =>
+            addPlayer({
+              tournamentId: Number(tournamentId),
+              playerId: Number(selectedPlayerId),
+            })
+          }
+          modal={addModal}
+          key={`add-${selectedPlayerId}`}
+        >
           <h2>Czy napewno chcesz dodać zawodnika</h2>
           <span>
             {selectedPlayer.name} {selectedPlayer.surname}
           </span>
         </YesNoModal>
-      }
+      )}
     </div>
   );
 };

@@ -13,6 +13,11 @@ import { SchoolQueries } from "../../../queries/schoolQuery";
 import { queryClient } from "../../../Utils/ReactQueryConfig";
 import { schoolValidate } from "../../../validations/SchoolValidation";
 import { modalConfig } from "../../../configs/modalConfig";
+import { inputConfig } from "../../../configs/inputConfig";
+import {
+  cancelButtonConfig,
+  confirmButtonConfig,
+} from "../../../configs/buttonConfig";
 
 type EditModalProps = {
   modal: ModalProps;
@@ -49,6 +54,7 @@ export const EditSchoolModal: React.FC<EditModalProps> = ({
                 value={String(school.schoolId)}
                 readOnly
                 label="Identyfikator przejazdu"
+                {...inputConfig}
               />
               <Input
                 value={schoolToEdit.name}
@@ -56,6 +62,7 @@ export const EditSchoolModal: React.FC<EditModalProps> = ({
                 onValueChange={(e) =>
                   setSchoolToEdit((prev) => ({ ...prev, name: e }))
                 }
+                {...inputConfig}
               />
               <Input
                 value={schoolToEdit.city}
@@ -63,6 +70,7 @@ export const EditSchoolModal: React.FC<EditModalProps> = ({
                 onValueChange={(e) =>
                   setSchoolToEdit((prev) => ({ ...prev, city: e }))
                 }
+                {...inputConfig}
               />
               <Input
                 value={schoolToEdit.acronym}
@@ -70,14 +78,15 @@ export const EditSchoolModal: React.FC<EditModalProps> = ({
                 onValueChange={(e) =>
                   setSchoolToEdit((prev) => ({ ...prev, acronym: e }))
                 }
+                {...inputConfig}
               />
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
+              <Button {...cancelButtonConfig} onPress={onClose}>
                 Anuluj
               </Button>
               <Button
-                color="primary"
+                {...confirmButtonConfig}
                 onPress={async () => {
                   if (await schoolValidate(schoolToEdit)) {
                     await updateSchool({

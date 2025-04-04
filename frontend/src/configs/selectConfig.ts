@@ -1,8 +1,8 @@
 import { BasicStyles } from "./configTypes";
 
-export const inputConfig: BasicStyles = {
+export const selectConfig: BasicStyles = {
+  size: "md",
   variant: "flat",
   color: "default",
-  size: "md",
   radius: "md",
 };

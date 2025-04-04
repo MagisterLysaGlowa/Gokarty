@@ -66,9 +66,7 @@ namespace api.Controllers
         public async Task<IActionResult> GetAll()
         {
             try {
-                if (await gokartRepository.GetAllAsync() is List<Gokart> gokarts && gokarts.Count > 0)
-                    return Ok(gokarts);
-                return NotFound();
+                return Ok(await gokartRepository.GetAllAsync());
             } catch (TimeoutException) {
                 return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
             } catch (Exception) {

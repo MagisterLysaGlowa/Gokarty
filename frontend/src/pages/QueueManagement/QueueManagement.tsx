@@ -19,6 +19,8 @@ import { useState } from "react";
 import { QueueData } from "../../../types";
 import { RideQueries } from "../../queries/rideQuery";
 import { calculateTimeFromStringToMs } from "../../Utils/TimeUtils";
+import { inputConfig } from "../../configs/inputConfig";
+import { selectConfig } from "../../configs/selectConfig";
 
 export const QueueManagement = () => {
   const { id: tournamentId } = useParams();
@@ -28,13 +30,13 @@ export const QueueManagement = () => {
   const [queues, setQueues] = useState<QueueData[]>([]);
   QueueQueries.getAllFullQueuesForTournament(Number(tournamentId), {
     onSuccess: (res) => {
-      if(localStorage.getItem("isAnyoneDrivingNow" + tournamentId)) {
+      if (localStorage.getItem("isAnyoneDrivingNow" + tournamentId)) {
         setDrivingNow(res[0]);
         setQueues(res.splice(1, res.length - 1));
       } else {
         setQueues(res);
       }
-    }
+    },
   });
   const [time, setTime] = useState<string>("00:00:000");
   const [penaltyPoints, setPenaltyPoints] = useState<number>(0);
@@ -58,7 +60,7 @@ export const QueueManagement = () => {
   }
 
   async function SubmitRide(isDisqualified: number) {
-    if(drivingNow) {
+    if (drivingNow) {
       await createRideAsync({
         gokartId: drivingNow.gokart.gokartId,
         isDisqualified: isDisqualified,
@@ -90,17 +92,31 @@ export const QueueManagement = () => {
               </p>
               <span className="flex flex-col text-center">
                 <span className="text-gray-400">Osoba</span>
-                {drivingNow && <span>{drivingNow.player.name} {drivingNow.player.surname} {drivingNow.player.class?.name}</span>}
+                {drivingNow && (
+                  <span>
+                    {drivingNow.player.name} {drivingNow.player.surname}{" "}
+                    {drivingNow.player.class?.name}
+                  </span>
+                )}
               </span>
               <div className="flex flex-col items-center justify-center w-[90%] mx-auto gap-2">
                 <p>Gokart:</p>
                 <Select
                   items={gokarts || []}
-                  selectedKeys={drivingNow ? [String(drivingNow?.gokart.gokartId)] : []}
+                  selectedKeys={
+                    drivingNow ? [String(drivingNow?.gokart.gokartId)] : []
+                  }
+                  {...selectConfig}
                   aria-label="Gokart"
-                  onChange={(e) => { 
-                    if(drivingNow)
-                      setDrivingNow({...drivingNow, gokart: {...drivingNow.gokart, gokartId: Number(e.target.value)}})
+                  onChange={(e) => {
+                    if (drivingNow)
+                      setDrivingNow({
+                        ...drivingNow,
+                        gokart: {
+                          ...drivingNow.gokart,
+                          gokartId: Number(e.target.value),
+                        },
+                      });
                   }}
                 >
                   {(item) => (
@@ -119,6 +135,7 @@ export const QueueManagement = () => {
                 value={time}
                 onValueChange={setTime}
                 className="w-[90%] mx-auto text-center"
+                {...inputConfig}
               />
               <div className="flex flex-col gap-2 justify-center items-center">
                 <span>Punkty karne:</span>
@@ -136,27 +153,52 @@ export const QueueManagement = () => {
               <Divider className="h-[5px] rounded-lg" />
             </div>
             <div className="flex flex-col gap-2 justify-center px-5 w-[90%] mx-auto">
-              <Button onPress={async () => await SubmitRide(0)}  className="bg-green-800">Zatwierdź</Button>
+              <Button
+                onPress={async () => await SubmitRide(0)}
+                className="bg-green-800"
+              >
+                Zatwierdź
+              </Button>
               <Button onPress={RestartRide}>Rozpocznij ponownie</Button>
-              <Button onPress={async () => await SubmitRide(1)} className="bg-red-800">Dyskwalifikuj przejazd</Button>
+              <Button
+                onPress={async () => await SubmitRide(1)}
+                className="bg-red-800"
+              >
+                Dyskwalifikuj przejazd
+              </Button>
             </div>
           </div>
-          {!drivingNow &&
-          <div className="absolute w-full h-full inset-0 bg-gradient-to-l from-white/5 to-[#141414] backdrop-blur-sm shadow-xl flex items-center justify-center">
-            <div className="w-[80%] mx-auto my-auto border-2 border-main-default bg-[#141414] rounded-xl p-3 flex items-center flex-col gap-3">
-              {queues.length > 0 ?
-              <>
-                <p className="text-3xl">Następny:</p>
-                <span className="text-xl">{queues[0].player.name} {queues[0].player.surname} {queues[0].player.class?.name}</span>
-                <Button onPress={StartRide}  className="bg-green-500 text-xl p-6">Rozpocznij przejazd</Button>
-              </> :
-              <>
-                <p className="text-3xl">Kolejka zakończona</p>
-                <Button onPress={() => navigate(-1)} className="bg-green-500 text-xl p-6">Wróć do losowania kolejki</Button>
-              </>
-              }
+          {!drivingNow && (
+            <div className="absolute w-full h-full inset-0 bg-gradient-to-l from-white/5 to-[#141414] backdrop-blur-sm shadow-xl flex items-center justify-center">
+              <div className="w-[80%] mx-auto my-auto border-2 border-main-default bg-[#141414] rounded-xl p-3 flex items-center flex-col gap-3">
+                {queues.length > 0 ? (
+                  <>
+                    <p className="text-3xl">Następny:</p>
+                    <span className="text-xl">
+                      {queues[0].player.name} {queues[0].player.surname}{" "}
+                      {queues[0].player.class?.name}
+                    </span>
+                    <Button
+                      onPress={StartRide}
+                      className="bg-green-500 text-xl p-6"
+                    >
+                      Rozpocznij przejazd
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-3xl">Kolejka zakończona</p>
+                    <Button
+                      onPress={() => navigate(-1)}
+                      className="bg-green-500 text-xl p-6"
+                    >
+                      Wróć do losowania kolejki
+                    </Button>
+                  </>
+                )}
+              </div>
             </div>
-          </div>}
+          )}
         </div>
       </div>
       <Separator />

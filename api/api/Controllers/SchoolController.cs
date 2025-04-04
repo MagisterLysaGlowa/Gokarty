@@ -5,12 +5,10 @@ using api.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace api.Controllers
-{
+namespace api.Controllers {
     [Route("api/[controller]")]
     [ApiController]
-    public class SchoolController : ControllerBase
-    {
+    public class SchoolController : ControllerBase {
         private readonly ISchoolRepository schoolRepository;
 
         public SchoolController(ISchoolRepository schoolRepository) => this.schoolRepository = schoolRepository;
@@ -48,8 +46,7 @@ namespace api.Controllers
         }
 
         [HttpDelete("{schoolId}")]
-        public async Task<IActionResult> Remove(int schoolId)
-        {
+        public async Task<IActionResult> Remove(int schoolId) {
             try {
                 if (await schoolRepository.RemoveAsync(schoolId) is int sId)
                     return StatusCode(200, new ResponseHelper(200, "Ok", "Pomyślnie usunięto szkołe"));
@@ -62,8 +59,7 @@ namespace api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
+        public async Task<IActionResult> GetAll() {
             try {
                 return Ok(await schoolRepository.GetAllAsync());
             } catch (TimeoutException) {

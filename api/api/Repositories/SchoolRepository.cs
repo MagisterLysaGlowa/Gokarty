@@ -44,8 +44,5 @@ namespace api.Repositories
             await _context.SaveChangesAsync();
             return data;
         }
-
-
-
     }
 }

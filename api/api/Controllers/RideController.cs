@@ -33,8 +33,7 @@ namespace api.Controllers
                         };
                         return Created("", await rideRepository.CreateAsync(ride));
                     } else {
-                        var ride = new Ride
-                        {
+                        var ride = new Ride {
                             RideGroupId = await rideRepository.CreateRideGroupAsync(dto.TournamentId, dto.PlayerId),
                             GokartId = dto.GokartId,
                             Time = dto.Time,
@@ -70,8 +69,7 @@ namespace api.Controllers
         }
 
         [HttpDelete("{rideId}")]
-        public async Task<IActionResult> Remove(int rideId)
-        {
+        public async Task<IActionResult> Remove(int rideId) {
             try {
                 if (await rideRepository.RemoveAsync(rideId) is int id)
                     return StatusCode(200, new ResponseHelper(200, "Ok", "Pomyślnie usunięto przejazd"));
@@ -121,5 +119,4 @@ namespace api.Controllers
             }
         }
     }
-
 }

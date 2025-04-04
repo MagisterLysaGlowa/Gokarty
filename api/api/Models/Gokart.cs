@@ -1,9 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace api.Models
-{
-    public class Gokart
-    {
+namespace api.Models {
+    public class Gokart {
         public int GokartId { get; set; }
         public string? Name { get; set; }
         [JsonIgnore]

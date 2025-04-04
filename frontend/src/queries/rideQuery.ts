@@ -6,7 +6,6 @@ import {
 } from "react-query";
 import RideService from "../services/ride";
 import {
-  RideData,
   GokartData,
   PlayerWithRides,
   RideData,
