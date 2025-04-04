@@ -1,4 +1,5 @@
 ﻿using api.Dtos;
+using api.Exceptions;
 using api.Helpers;
 using api.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +22,10 @@ namespace api.Controllers {
                 await queueRepository.CreateAsync(dto.TournamentId, dto.GokartIds, dto.NumberOfRidesInOneGokart);
                 await hubSender.SendUpdate(dto.TournamentId);
                 return StatusCode(201, new ResponseHelper(201, "Created", "Pomyślnie utworzono kolejkę"));
+            } catch (MoreRidesThanGokartsException) {
+                return StatusCode(400, new ResponseHelper(400, "BadRequest", "Nie można przeprowadzić więcej przejazdów niż jest wybranch gokartów do losowania"));
+            } catch (NumberOfRidesNotMultipleOfPlayersException) {
+                return StatusCode(408, new ResponseHelper(408, "Timeout", "Ilość graczy nie jest wielokrotnością ilości przejazdów na gokart"));
             } catch (TimeoutException) {
                 return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
             } catch (Exception) {

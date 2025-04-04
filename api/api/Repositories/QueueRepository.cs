@@ -1,4 +1,5 @@
 ﻿using api.Data;
+using api.Exceptions;
 using api.Interfaces;
 using api.Models;
 using Microsoft.EntityFrameworkCore;
@@ -13,18 +14,18 @@ namespace api.Repositories {
             _playerRepository = playerRepository;
         }
 
-        public async Task<bool> CreateAsync(int tournamentId, List<int> gokartIds, int numberOfRidesInOneGokart)
+        public async Task CreateAsync(int tournamentId, List<int> gokartIds, int numberOfRidesInOneGokart)
         {
             if (gokartIds.Count == 0)
-                return false;
+                throw new ArgumentException();
             if (numberOfRidesInOneGokart == 0)
-                return false;
+                throw new ArgumentException();
             IEnumerable<Ride> tournamentRides = _context.Rides.Where(r => r.RideGroup.TournamentId == tournamentId).Include(r => r.RideGroup);
             if (tournamentRides.ToList().Count != 0 && tournamentRides.Max(r => r.RideNumber) >= gokartIds.Count)
-                return false;
+                throw new MoreRidesThanGokartsException();
             List<Player> playersInTournament = await _playerRepository.GetAllForTournamentAsync(tournamentId);
             if (playersInTournament.Count % numberOfRidesInOneGokart != 0)
-                return false;
+                throw new NumberOfRidesNotMultipleOfPlayersException();
             int? lastUsedGokartId = tournamentRides.OrderByDescending(r => r.RideId).FirstOrDefault()?.GokartId;//gokart który był ostatnio użyty lub null jeżeli to pierwsze losowanie
             int gokartNowIndex = lastUsedGokartId is null ? 0 : (gokartIds.IndexOf((int)lastUsedGokartId) + 1) % gokartIds.Count;//index gokatra w liście gokartIds dla którego losujemy ludzi
             List<Player> playersNotQueued = new(playersInTournament);//wszyscy uczestnicy których nie wybraliśmy do kolejki, czyli na początku wszyscy
@@ -76,9 +77,7 @@ namespace api.Repositories {
 
             foreach (Queue queue in queuesToAdd)
                 await _context.Queues.AddAsync(queue);
-
             await _context.SaveChangesAsync();
-            return true;
         }
 
         public async Task<List<Queue>> GetAllForTournamentAsync(int tournamentId) {
