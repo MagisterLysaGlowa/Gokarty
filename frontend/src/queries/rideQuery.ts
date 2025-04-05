@@ -1,27 +1,16 @@
-import {
-  useMutation,
-  UseMutationOptions,
-  useQuery,
-  UseQueryOptions,
-} from "react-query";
+import { useMutation, useQuery, UseQueryOptions } from "react-query";
 import RideService from "../services/ride";
+import { RideAndPersonData, RideData, RideFormData } from "../../types";
+import { successToast } from "../Utils/ToastNotifications";
 import {
-  GokartData,
-  PlayerWithRides,
-  RideData,
-  RideFormData,
-} from "../../types";
-import {
-  createRideTexts,
-  promiseToast,
-  removeRideTexts,
-  updateRideTexts,
-} from "../Utils/ToastNotifications";
-import { handleSuccessWithRefreshWithOnSuccess as handleSuccessWithRefreshOnSuccess } from "./queryUtils";
+  handleError,
+  handleSuccessWithRefreshWithOnSuccess as handleSuccessWithRefreshOnSuccess,
+  MutationType,
+} from "./queryUtils";
 
 const useGetTournamentBestFullRides = (
   tournamentId: number,
-  options?: UseQueryOptions<RideData[], Error>
+  options?: UseQueryOptions<RideAndPersonData[], Error>
 ) => {
   return useQuery({
     queryKey: ["tournamentBestFullRides", tournamentId],
@@ -33,7 +22,7 @@ const useGetTournamentBestFullRides = (
 
 const useGetTournamentLastFullRide = (
   tournamentId: number,
-  options?: UseQueryOptions<RideData, Error>
+  options?: UseQueryOptions<RideAndPersonData, Error>
 ) => {
   return useQuery({
     queryKey: ["tournamentLastFullRide", tournamentId],
@@ -43,59 +32,62 @@ const useGetTournamentLastFullRide = (
   });
 };
 
-const useCreateRide = (
-  options?: UseMutationOptions<RideData, Error, RideFormData>
-) => {
+const useCreateRide = (options?: MutationType<RideFormData>) => {
   return useMutation({
     ...options,
     mutationFn: async (data: RideFormData) => {
-      return await promiseToast(RideService.createRide(data), createRideTexts);
+      return await RideService.create(data, "/ride");
     },
-    onSuccess: handleSuccessWithRefreshOnSuccess(
-      [["rides"]],
-      options?.onSuccess
-    ),
-  });
-};
-
-const useUpdateRide = (
-  options?: UseMutationOptions<
-    GokartData,
-    Error,
-    { rideId: number; data: RideFormData }
-  >
-) => {
-  return useMutation({
-    ...options,
-    mutationFn: async ({ rideId, data }) => {
-      return await promiseToast(
-        RideService.updateRide(rideId, data),
-        updateRideTexts
+    onError: handleError,
+    onSuccess: (res, vars, _) => {
+      successToast(res.message);
+      handleSuccessWithRefreshOnSuccess([["rides"]], options?.onSuccess)(
+        res,
+        vars,
+        _
       );
     },
-    onSuccess: handleSuccessWithRefreshOnSuccess(
-      [["ride"]],
-      options?.onSuccess
-    ),
   });
 };
 
-const useRemoveRide = (options?: UseMutationOptions<number, Error, number>) => {
+const useUpdateRide = (options?: MutationType<RideData>) => {
+  return useMutation({
+    ...options,
+    mutationFn: async (data) => {
+      return await RideService.update(data, "/ride");
+    },
+    onSuccess: (res, vars, _) => {
+      successToast(res.message);
+      handleSuccessWithRefreshOnSuccess([["ride"]], options?.onSuccess)(
+        res,
+        vars,
+        _
+      );
+    },
+  });
+};
+
+const useRemoveRide = (options?: MutationType<number>) => {
   return useMutation({
     ...options,
     mutationFn: async (id: number) => {
-      return await promiseToast(RideService.removeRide(id), removeRideTexts);
+      return await RideService.remove(id, "/ride");
     },
-    onSuccess: handleSuccessWithRefreshOnSuccess(
-      [["rides"]],
-      options?.onSuccess
-    ),
+    onError: handleError,
+    onSuccess: (res, vars, _) => {
+      successToast(res.message);
+      handleSuccessWithRefreshOnSuccess([["rides"]], options?.onSuccess)(
+        res,
+        vars,
+        _
+      );
+    },
   });
 };
 
 const useGetPlayersWithTimes = (
   tournamentId: number,
-  options?: UseQueryOptions<PlayerWithRides[], Error>
+  options?: UseQueryOptions<RideAndPersonData[], Error>
 ) => {
   return useQuery({
     queryKey: ["playersWithTimes", tournamentId],

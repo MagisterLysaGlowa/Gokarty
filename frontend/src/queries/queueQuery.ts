@@ -1,41 +1,43 @@
-import {
-  useMutation,
-  useQuery,
-  UseMutationOptions,
-  UseQueryOptions,
-} from "react-query";
+import { useMutation, useQuery, UseQueryOptions } from "react-query";
 import QueueService from "../services/queue";
+import { QueueData, QueueFormData } from "../../types";
 import {
-  QueueData,
-  QueueFormData,
-} from "../../types";
-import { createQueueTexts, promiseToast } from "../Utils/ToastNotifications";
-import { handleSuccessWithRefreshWithOnSuccess as handleSuccessWithRefreshOnSuccess } from "./queryUtils";
+  handleError,
+  handleSuccessWithRefreshWithOnSuccess as handleSuccessWithRefreshOnSuccess,
+  MutationType,
+} from "./queryUtils";
+import { successToast } from "../Utils/ToastNotifications";
 
-const useCreateQueue = (
-  options?: UseMutationOptions<string, Error, QueueFormData>
-) => {
+const useCreateQueue = (options?: MutationType<QueueFormData>) => {
   return useMutation({
-    mutationFn: (data) =>
-      promiseToast(QueueService.createQueue(data), createQueueTexts),
-    onSuccess: handleSuccessWithRefreshOnSuccess(
-      [["queues"]],
-      options?.onSuccess
-    ),
+    mutationFn: async (data) => {
+      return await QueueService.create(data, "/queue");
+    },
+    onError: handleError,
+    onSuccess: (res, vars, _) => {
+      successToast(res.message);
+      handleSuccessWithRefreshOnSuccess([["queues"]], options?.onSuccess)(
+        res,
+        vars,
+        _
+      );
+    },
     ...options,
   });
 };
 
-const useRemoveQueue = (
-  options?: UseMutationOptions<number, Error, number>
-) => {
+const useRemoveQueue = (options?: MutationType<number>) => {
   return useMutation({
-    mutationFn: (queueId) =>
-      QueueService.removeQueue(queueId),
-    onSuccess: handleSuccessWithRefreshOnSuccess(
-      [["queues"]],
-      options?.onSuccess
-    ),
+    mutationFn: async (queueId) => await QueueService.remove(queueId, "/queue"),
+    onError: handleError,
+    onSuccess: (res, vars, _) => {
+      successToast(res.message);
+      handleSuccessWithRefreshOnSuccess([["queues"]], options?.onSuccess)(
+        res,
+        vars,
+        _
+      );
+    },
     ...options,
   });
 };

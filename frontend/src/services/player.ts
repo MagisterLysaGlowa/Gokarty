@@ -1,6 +1,6 @@
 import { PlayerFilterFormData, PlayerData } from "../../types";
 import apiClient from "./apiClient";
-import { BaseService } from "./baseService";
+import { BaseService, QueryResponse } from "./baseService";
 
 class PlayerService extends BaseService {
   static async getPlayersForTournament(
@@ -24,23 +24,23 @@ class PlayerService extends BaseService {
   static async addPlayerToTournament(
     tournamentId: number,
     playerId: number
-  ): Promise<number> {
+  ): Promise<QueryResponse> {
     const response = await apiClient.post(
       `/player/addToTournament/${tournamentId}`,
       playerId
     );
-    return Number(response.data);
+    return response.data;
   }
 
   static async removePlayerFromTournament(
     tournamentId: number,
     playerId: number
-  ): Promise<number> {
+  ): Promise<QueryResponse> {
     const response = await apiClient.post(
       `/player/removeFromTournament/${tournamentId}`,
       playerId
     );
-    return Number(response.data);
+    return response.data;
   }
 }
 
