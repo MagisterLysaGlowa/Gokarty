@@ -1,38 +1,13 @@
-import {
-  QueueData,
-  QueueFormData,
-} from "../../types";
+import { QueueData } from "../../types";
 import apiClient from "./apiClient";
+import { BaseService } from "./baseService";
 
-class QueueService {
-  static async createQueue(data: QueueFormData): Promise<string> {
-    const formData = new FormData();
-    formData.append("tournamentId", data.tournamentId.toString());
-    data.gokartIds.forEach((id, index) => {
-      formData.append(`gokartIds[${index}]`, id.toString());
-    });
-    formData.append(
-      "numberOfRidesInOneGokart",
-      data.numberOfRidesInOneGokart.toString()
-    );
-
-    return (await apiClient.post<string>("/queue", formData)).data;
-  }
-
-  static async removeQueue(
-    queueId: number
-  ): Promise<number> {
-    const response = await apiClient.delete<number>(`/queue/${queueId}`);
-    return response.data;
-  }
-
+class QueueService extends BaseService {
   static async getAllFullQueuesForTournament(
     tournamentId: number
   ): Promise<QueueData[]> {
     return (
-      await apiClient.get<QueueData[]>(
-        `/queue/full/tournament/${tournamentId}`
-      )
+      await apiClient.get<QueueData[]>(`/queue/tournament/${tournamentId}`)
     ).data;
   }
 }

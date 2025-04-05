@@ -1,5 +1,7 @@
 import { MutationOptions, QueryClient, QueryKey } from "react-query";
 import { queryClient } from "../Utils/ReactQueryConfig";
+import { QueryResponse } from "../services/baseService";
+import { errorToast } from "../Utils/ToastNotifications";
 
 /**
  *
@@ -38,4 +40,8 @@ export const handleSuccessWithRefreshWithOnSuccess = <
     refreshQueries(queryClient, queryKeys);
     userOnSuccess?.(data, variables, context);
   };
+};
+
+export const handleError = (err: QueryResponse) => {
+  errorToast(err.message);
 };

@@ -1,41 +1,8 @@
-import {
-  PlayerFilterFormData,
-  PlayerFormData,
-  PlayerData,
-} from "../../types";
+import { PlayerFilterFormData, PlayerData } from "../../types";
 import apiClient from "./apiClient";
+import { BaseService } from "./baseService";
 
-class PlayerService {
-  static async createPlayer(
-    data: PlayerFormData
-  ): Promise<PlayerFormData> {
-    const response = await apiClient.post<PlayerData>(
-      `/player`,
-      data
-    );
-    return response.data;
-  }
-
-  static async updatePlayer(
-    data: PlayerData
-  ): Promise<PlayerFormData> {
-    const response = await apiClient.put<PlayerData>(
-      `/player`,
-      data
-    );
-    return response.data;
-  }
-
-  static async removePlayer(playerId: number): Promise<number> {
-    const response = await apiClient.delete<string>(`/player/${playerId}`);
-    return Number(response.data);
-  }
-
-  static async getPlayer(playerId: number): Promise<PlayerData> {
-    const response = await apiClient.get<PlayerData>(`/player/${playerId}`);
-    return response.data;
-  }
-
+class PlayerService extends BaseService {
   static async getPlayersForTournament(
     tournamentId: number
   ): Promise<PlayerData[]> {

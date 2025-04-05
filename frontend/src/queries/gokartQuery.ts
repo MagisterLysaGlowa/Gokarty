@@ -5,70 +5,64 @@ import {
   UseQueryOptions,
 } from "react-query";
 import GokartService from "../services/gokart";
-import { GokartData, GokartFormData } from "../../types";
+import { GokartData } from "../../types";
 import {
-  createGokartTexts,
-  promiseToast,
-  updateGokartTexts,
-} from "../Utils/ToastNotifications";
-import { handleSuccessWithRefreshWithOnSuccess as handleSuccessWithRefreshOnSuccess } from "./queryUtils";
+  handleError,
+  handleSuccessWithRefreshWithOnSuccess as handleSuccessWithRefreshOnSuccess,
+} from "./queryUtils";
+import { QueryResponse } from "../services/baseService";
+import { successToast } from "../Utils/ToastNotifications";
+
+type MutationType<T> = UseMutationOptions<QueryResponse, QueryResponse, T>;
 
 const useGetAllGokarts = (options?: UseQueryOptions<GokartData[], Error>) => {
   return useQuery({
     queryKey: ["gokarts"],
-    queryFn: GokartService.getAllGokarts,
+    queryFn: () => GokartService.getAll<GokartData>("/gokart"),
     ...options,
   });
 };
 
-const useCreateGokart = (
-  options?: UseMutationOptions<GokartData, Error, GokartFormData>
-) => {
-  return useMutation({
-    ...options,
-    mutationFn: async (data: GokartFormData) => {
-      return await promiseToast(
-        GokartService.createGokart(data),
-        createGokartTexts
-      );
-    },
-    onSuccess: handleSuccessWithRefreshOnSuccess(
-      [["gokarts"]],
-      options?.onSuccess
-    ),
-  });
-};
-
-const useUpdateGokart = (
-  options?: UseMutationOptions<GokartData, Error, GokartData>
-) => {
+const useCreateGokart = (options?: MutationType<GokartData>) => {
   return useMutation({
     ...options,
     mutationFn: async (data: GokartData) => {
-      return await promiseToast(
-        GokartService.updateGokart(data.gokartId, data),
-        updateGokartTexts
-      );
+      return GokartService.create<GokartData>(data, "/gokart");
     },
-    onSuccess: (r, v, c) => {
-      handleSuccessWithRefreshOnSuccess(
-        [["gokart", r.gokartId], ["gokarts"]],
-        options?.onSuccess
-      )(r, v, c);
+    onError: handleError,
+    onSuccess: (res, vars, _) => {
+      successToast(res.message);
+      handleSuccessWithRefreshOnSuccess([["gokarts"]], options?.onSuccess)(
+        res,
+        vars,
+        _
+      );
     },
   });
 };
 
-const useRemoveGokart = (
-  options?: UseMutationOptions<number, Error, number>
-) => {
+const useUpdateGokart = (options?: MutationType<GokartData>) => {
+  return useMutation({
+    ...options,
+    mutationFn: async (data: GokartData) => {
+      return GokartService.update<GokartData>(data, "/gokart");
+    },
+    onError: handleError,
+    onSuccess: (res, vars, _) => {
+      successToast(res.message);
+      handleSuccessWithRefreshOnSuccess(
+        [["gokart", vars.gokartId], ["gokarts"]],
+        options?.onSuccess
+      )(res, vars, _);
+    },
+  });
+};
+
+const useRemoveGokart = (options?: MutationType<number>) => {
   return useMutation({
     ...options,
     mutationFn: async (id: number) => {
-      return await promiseToast(
-        GokartService.removeGokart(id),
-        updateGokartTexts
-      );
+      return GokartService.remove(id, "/gokart");
     },
     onSuccess: handleSuccessWithRefreshOnSuccess(
       [["gokarts"]],

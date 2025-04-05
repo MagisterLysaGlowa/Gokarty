@@ -103,10 +103,18 @@ export interface RideFormData {
 }
 
 export interface RideAndPersonData {
-  rideGroupId: number;
-  rideData: RideData;
+  ride: RideData;
   player: PlayerData;
+  class: Class;
+  tournament: TournamentData;
 }
+
+export type RideGroup = {
+  ride: RideData;
+  player: PlayerData;
+  class: Class;
+  tournament: TournamentData;
+};
 
 export interface RideData {
   gokart: GokartData;
@@ -117,7 +125,6 @@ export interface RideData {
   penaltyPoints: number;
 }
 
-
 export type ModalProps = {
   isOpen: boolean;
   onOpenChange: () => void;
@@ -127,13 +134,26 @@ export type ModalProps = {
 export type TableActionButtonProps = {
   size?: "sm" | "md" | "lg";
   endContent?: React.ReactNode;
-  variant?: "flat" | "solid" | "bordered" | "light" | "faded" | "shadow" | "ghost";
-  color?: "default" | "primary" | "secondary" | "success" | "warning" | "danger";
+  variant?:
+    | "flat"
+    | "solid"
+    | "bordered"
+    | "light"
+    | "faded"
+    | "shadow"
+    | "ghost";
+  color?:
+    | "default"
+    | "primary"
+    | "secondary"
+    | "success"
+    | "warning"
+    | "danger";
   className?: string;
   isIconOnly?: boolean;
-}
+};
 
 export type TableActionProps = {
   modal: ModalProps;
   buttonProps: TableActionButtonProps;
-}
+};

@@ -1,46 +1,31 @@
-import { RideData, RideFormData } from "../../types";
+import { RideAndPersonData } from "../../types";
 import apiClient from "./apiClient";
+import { BaseService } from "./baseService";
 
-class RideService {
-  static async createRide(data: RideFormData): Promise<RideFormData> {
-    const response = await apiClient.post<RideFormData>("/ride", data);
-    return response.data;
-  }
-
-  static async updateRide(
-    rideId: number,
-    data: RideFormData
-  ): Promise<RideData> {
-    const response = await apiClient.put(`/ride/${rideId}`, data);
-    return response.data;
-  }
-
-  static async removeRide(rideId: number): Promise<number> {
-    const response = await apiClient.delete<number>(`/ride/${rideId}`);
-    return response.data;
-  }
-
-  static async getTournamentBestFullRides(
+class RideService extends BaseService {
+  static async getTournamentBestRides(
     tournamentId: number
-  ): Promise<RideData[]> {
-    const response = await apiClient.get<RideData[]>(
-      `/ride/full/tournament/${tournamentId}`
+  ): Promise<RideAndPersonData[]> {
+    const response = await apiClient.get<RideAndPersonData[]>(
+      `/ride/tournament/${tournamentId}/best`
     );
     return response.data;
   }
 
-  static async getTournamentLastFullRide(
+  static async getTournamentLastRide(
     tournamentId: number
-  ): Promise<RideData> {
-    const response = await apiClient.get<RideData>(
-      `/ride/full/tournament/${tournamentId}/last`
+  ): Promise<RideAndPersonData> {
+    const response = await apiClient.get<RideAndPersonData>(
+      `/ride/tournament/${tournamentId}/last`
     );
     return response.data;
   }
-  
-  static async getAllFullRidesForTournament(tournamentId: number) {
-    const response = await apiClient.get(
-      `/ride/full/tournament/${tournamentId}/all`
+
+  static async getAllRidesForTournament(
+    tournamentId: number
+  ): Promise<RideAndPersonData[]> {
+    const response = await apiClient.get<RideAndPersonData[]>(
+      `/ride/tournament/${tournamentId}`
     );
     return response.data;
   }

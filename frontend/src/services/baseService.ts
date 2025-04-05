@@ -1,0 +1,33 @@
+import apiClient from "./apiClient";
+
+export class BaseService {
+  static async create<T>(data: T, endpoint: string): Promise<QueryResponse> {
+    const response = await apiClient.post<QueryResponse>(endpoint, data);
+    return response.data;
+  }
+
+  static async update<T>(data: T, endpoint: string): Promise<QueryResponse> {
+    const response = await apiClient.put<QueryResponse>(endpoint, data);
+    return response.data;
+  }
+
+  static async remove(id: number, endpoint: string): Promise<QueryResponse> {
+    const response = await apiClient.delete<QueryResponse>(`${endpoint}/${id}`);
+    return response.data;
+  }
+
+  static async getAll<T>(endpoint: string): Promise<T[]> {
+    const response = await apiClient.get<T[]>(endpoint);
+    return response.data;
+  }
+
+  static async get<T>(id: number, endpoint: string): Promise<T> {
+    const response = await apiClient.get<T>(`${endpoint}/${id}`);
+    return response.data;
+  }
+}
+export interface QueryResponse {
+  status: number;
+  statusText: string;
+  message: string;
+}

@@ -25,8 +25,7 @@ const useGetTournamentBestFullRides = (
 ) => {
   return useQuery({
     queryKey: ["tournamentBestFullRides", tournamentId],
-    queryFn: async () =>
-      await RideService.getTournamentBestFullRides(tournamentId),
+    queryFn: async () => await RideService.getTournamentBestRides(tournamentId),
     enabled: !!tournamentId,
     ...options,
   });
@@ -38,8 +37,7 @@ const useGetTournamentLastFullRide = (
 ) => {
   return useQuery({
     queryKey: ["tournamentLastFullRide", tournamentId],
-    queryFn: async () =>
-      await RideService.getTournamentLastFullRide(tournamentId),
+    queryFn: async () => await RideService.getTournamentLastRide(tournamentId),
     enabled: !!tournamentId,
     ...options,
   });
@@ -102,7 +100,7 @@ const useGetPlayersWithTimes = (
   return useQuery({
     queryKey: ["playersWithTimes", tournamentId],
     queryFn: async () =>
-      await RideService.getAllFullRidesForTournament(tournamentId),
+      await RideService.getAllRidesForTournament(tournamentId),
     ...options,
   });
 };
