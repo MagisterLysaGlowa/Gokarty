@@ -27,12 +27,7 @@ export const TournamentRides = () => {
   const removeModal = useDisclosure();
   const editModal = useDisclosure();
 
-  const { data, isLoading } = RideQueries.getAllPlayersWithTimes(
-    Number(tournamentId),
-    {
-      refetchInterval: 10_000,
-    }
-  );
+  const { data, isLoading } = RideQueries.getAllPlayersWithTimes(Number(tournamentId));
   const { data: gokarts } = GokartQueries.getAllGokarts();
 
   const { mutateAsync: removeRide } = RideQueries.removeRide({

@@ -21,6 +21,8 @@ namespace api.Repositories
 
         public async Task<Tournament?> UpdateAsync(Tournament data)
         {
+            data.TournamentState = null;
+            data.TournamentType = null;
             _context.Tournaments.Update(data);
             await _context.SaveChangesAsync();
             return data;
@@ -38,12 +40,16 @@ namespace api.Repositories
 
         public async Task<List<Tournament>> GetAllAsync()
         {
-            return await _context.Tournaments.ToListAsync();
+            return await _context.Tournaments
+                .Include(t => t.TournamentState)
+                .Include(t => t.TournamentType)
+                .ToListAsync();
         }
 
         public async Task<Tournament?> GetAsync(int tournamentId)
         {
-            return await _context.Tournaments.Include(z => z.TournamentType)
+            return await _context.Tournaments
+                .Include(z => z.TournamentType)
                 .Include(z => z.TournamentState)
                 .FirstOrDefaultAsync(z => z.TournamentId == tournamentId);
         }

@@ -31,6 +31,11 @@ export interface TournamentData {
   tournamentType?: TournamentType;
 }
 
+export interface TournamentState {
+  turnamentStateId?: number;
+  state: string;
+}
+
 export interface TournamentType {
   tournamentTypeId?: number;
   name: string;
@@ -67,9 +72,11 @@ export interface SchoolData {
 }
 
 export interface RideFormData {
+  deleteQueueId: number;
   tournamentId: number;
   playerId: number;
   gokartId: number;
+  classId: number;
   time: number;
   isDisqualified: number;
   penaltyPoints: number;
@@ -83,19 +90,25 @@ export interface RideAndPersonData {
 }
 
 export type RideGroup = {
+  rideGroupId: number;
   rides: RideData[];
+  playerId: number;
   player: PlayerData;
+  classId: number;
   class: Class;
+  tournamentId: number;
   tournament: TournamentData;
 };
 
 export interface RideData {
-  gokart: GokartData;
+  gokartId: number;
+  gokart?: GokartData;
   rideNumber: number;
   time: number;
   rideId: number;
   isDisqualified: boolean;
   penaltyPoints: number;
+  rideGroupId: number;
 }
 
 export type ModalProps = {

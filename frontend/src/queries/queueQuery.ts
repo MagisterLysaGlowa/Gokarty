@@ -10,6 +10,7 @@ import { successToast } from "../Utils/ToastNotifications";
 
 const useCreateQueue = (options?: MutationType<QueueFormData>) => {
   return useMutation({
+    ...options,
     mutationFn: async (data) => {
       return await QueueService.create(data, "/queue");
     },
@@ -22,12 +23,12 @@ const useCreateQueue = (options?: MutationType<QueueFormData>) => {
         _
       );
     },
-    ...options,
   });
 };
 
 const useRemoveQueue = (options?: MutationType<number>) => {
   return useMutation({
+    ...options,
     mutationFn: async (queueId) => await QueueService.remove(queueId, "/queue"),
     onError: handleError,
     onSuccess: (res, vars, _) => {
@@ -38,7 +39,6 @@ const useRemoveQueue = (options?: MutationType<number>) => {
         _
       );
     },
-    ...options,
   });
 };
 

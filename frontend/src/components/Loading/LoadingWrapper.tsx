@@ -8,10 +8,10 @@ type LoadingWrapperProps<T> = {
 
 export const LoadingWrapper = <T,>({ isLoading, data, children }: LoadingWrapperProps<T>) => {
   if (isLoading) {
-    return <Loading />;
+    return <div className="w-full h-full flex justify-center"><Loading /></div>;
   }
   
-  if (data != null) {
+  if (data) {
     const content = children(data);
     return <>{content ?? null}</>;
   }

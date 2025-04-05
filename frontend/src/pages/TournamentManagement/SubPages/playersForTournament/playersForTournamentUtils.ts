@@ -20,13 +20,12 @@ export const useGetMemorizedData = (
 ) => {
   return useMemo(
     () =>
-      data
-        ?.filter((z) =>
-          `${z.name} ${z.surname}`
-            .toLocaleLowerCase()
-            .includes(filterSearch.toLocaleLowerCase())
-        )
-        ?.map((z, index) => ({Lp: (index + 1).toString(), id: z.playerId.toString(), name: z.name, surname: z.surname, school: z.school.acronym, birthDate: z.birthDate.toLocaleDateString()})) || [],
+      data?.filter((z) =>
+        `${z.name} ${z.surname}`
+          .toLocaleLowerCase()
+          .includes(filterSearch.toLocaleLowerCase())
+      )
+      ?.map((z, index) => ({Lp: (index + 1).toString(), id: z.playerId?.toString() || "", name: z.name, surname: z.surname, class: z.class?.name || "", school: z.class?.school?.acronym || "", birthDate: z.birthDate.toLocaleDateString()})) || [],
     [data, filterSearch]
   );
 };

@@ -10,7 +10,7 @@ import {
   SelectItem,
   Checkbox,
 } from "@heroui/react";
-import { GokartData, ModalProps, RideFormData } from "../../../../../../types";
+import { GokartData, ModalProps, RideData } from "../../../../../../types";
 import { RideQueries } from "../../../../../queries/rideQuery";
 import { useState } from "react";
 import {
@@ -40,13 +40,14 @@ export const EditRideModal: React.FC<EditModalProps> = ({
   gokarts,
 }) => {
   const { id: tournamentId } = useParams();
-  const [rideToEdit, setRideToEdit] = useState<RideFormData>({
-    gokartId: Number(ride.timeData?.gokart.gokartId),
-    isDisqualified: Number(ride.timeData?.isDSQ),
-    playerId: ride.playerId,
+  const [rideToEdit, setRideToEdit] = useState<RideData>({
+    gokartId: Number(ride?.timeData?.gokart?.gokartId),
+    isDisqualified: Boolean(ride.timeData?.isDisqualified),
     time: Number(ride.timeData?.time),
-    tournamentId: Number(tournamentId),
-    penaltyPoints: Number(ride.penaltyPoints),
+    penaltyPoints: Number(ride.timeData?.penaltyPoints),
+    rideId: Number(ride.timeData?.rideId),
+    rideNumber: Number(ride.timeData?.rideNumber),
+    rideGroupId: Number(ride.timeData?.rideGroupId)
   });
 
   const [time, setTime] = useState<string>(
@@ -99,7 +100,7 @@ export const EditRideModal: React.FC<EditModalProps> = ({
               <Checkbox
                 isSelected={Boolean(rideToEdit.isDisqualified)}
                 onValueChange={(e) =>
-                  setRideToEdit((p) => ({ ...p, isDisqualified: Number(e) }))
+                  setRideToEdit((p) => ({ ...p, isDisqualified: e }))
                 }
               >
                 Dyskwalifikacja
@@ -132,11 +133,8 @@ export const EditRideModal: React.FC<EditModalProps> = ({
                   const timeRegex = /^\d{2}:\d{2}:\d{3}$/;
                   if (rideToEdit && timeRegex.test(time)) {
                     await updateRide({
-                      rideId: Number(ride.timeData?.rideId),
-                      data: {
                         ...rideToEdit,
-                        time: calculateTimeFromStringToMs(time),
-                      },
+                        time: calculateTimeFromStringToMs(time)
                     });
                     onClose();
                   }

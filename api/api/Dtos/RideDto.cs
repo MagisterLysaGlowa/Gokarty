@@ -5,6 +5,7 @@ namespace api.Dtos
 {
     public class RideDto
     {
+        public int deleteQueueId { get; set; }
         public int TournamentId { get; set; }
         public int PlayerId { get; set; }
         public int GokartId { get; set; }

@@ -30,11 +30,8 @@ type TournamentCreateModalParams = {
 export const CreateTournamentModal: React.FC<TournamentCreateModalParams> = ({
   modal,
 }) => {
-  const [tournament, setTournament] = useState<TournamentData>(
-    tournamentDefaultValue
-  );
-  const { mutateAsync: createTournament } =
-    TournamentQueries.createTournament();
+  const [tournament, setTournament] = useState<TournamentData>(tournamentDefaultValue);
+  const { mutateAsync: createTournament } = TournamentQueries.createTournament();
 
   useEffect(() => {
     setTournament(tournamentDefaultValue);

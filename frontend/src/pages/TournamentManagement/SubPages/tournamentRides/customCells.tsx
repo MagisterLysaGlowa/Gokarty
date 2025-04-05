@@ -30,15 +30,15 @@ export const useCustomCell = (
         case "times": {
           const val = cellValue as RideData[];
           return (
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-3">
               {val.map((z, index) => (
                 <div
-                  className="flex gap-3"
+                  className="flex gap-3 h-[32px]"
                   key={`${row.lp}-${z.rideId}-${index}`}
                 >
                   <span className="w-1/6">{z.rideNumber}.</span>
                   <span className="w-5/6">
-                    {!z.isDSQ ? (
+                    {!z.isDisqualified ? (
                       convertTimeToString(z.time)
                     ) : (
                       <span className="text-red-600">DSQ</span>
@@ -51,9 +51,9 @@ export const useCustomCell = (
         }
         case "gokart": {
           return (
-            <div className={`grid grid-rows-${row.times.length}`}>
+            <div className={`grid grid-rows-${row.times.length} gap-3`}>
               {row.times.map((z, index) => (
-                <div key={`${z}-${index}`}>{z.gokart.name}</div>
+                <div className="h-[32px]" key={`${z}-${index}`}>{z?.gokart?.name}</div>
               ))}
             </div>
           );

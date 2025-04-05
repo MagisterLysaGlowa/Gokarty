@@ -3,6 +3,7 @@ using api.Exceptions;
 using api.Helpers;
 using api.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Controllers {
     [Route("api/[controller]")]
@@ -53,6 +54,8 @@ namespace api.Controllers {
                     return StatusCode(200, new ResponseHelper(201, "Ok", "Pomyślnie usunięto kolejkę"));
                 }
                 return StatusCode(404, new ResponseHelper(404, "NotFound", "Nie znaleziono kolejki"));
+            } catch (DbUpdateException) {
+                return StatusCode(409, new ResponseHelper(409, "Conflict", "Obiekt ma powiązane encje, usuń je i spróbuj ponownie"));
             } catch (TimeoutException) {
                 return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
             } catch (Exception) {

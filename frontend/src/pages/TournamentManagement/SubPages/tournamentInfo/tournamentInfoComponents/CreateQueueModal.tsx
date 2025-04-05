@@ -33,16 +33,13 @@ export const CreateQueueModal: React.FC<CreateQueueProps> = ({
   tournament,
   refetchQueue,
 }) => {
-  const [numberOfRidesInOneGokart, setNumberOfRidesInOneGokart] =
-    useState<number>(1);
+  const [numberOfRidesInOneGokart, setNumberOfRidesInOneGokart] = useState<number>(1);
   const [gokartIds, setGokartIds] = useState<number[]>([]);
 
   const { data: gokarts } = GokartQueries.getAllGokarts();
   const { mutateAsync: createQueuesAsync } = QueueQueries.createQueue({
     onSuccess: () => refetchQueue(),
   });
-
-  const variant = "underlined";
 
   if (!gokarts) return;
 
@@ -65,7 +62,6 @@ export const CreateQueueModal: React.FC<CreateQueueProps> = ({
                 type="number"
                 label="Ilość przejazdów na gokart"
                 value={numberOfRidesInOneGokart}
-                variant={variant}
                 onValueChange={setNumberOfRidesInOneGokart}
               />
               <Select

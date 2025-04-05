@@ -19,6 +19,7 @@ namespace api.Repositories {
 
         public async Task<Player> UpdateAsync(Player player)
         {
+            player.Class = null;
             _context.Players.Update(player);
             await _context.SaveChangesAsync();
             return player;
@@ -68,9 +69,10 @@ namespace api.Repositories {
         public async Task<List<Player>> GetAllForTournamentAsync(int tournamentId) {
            return await _context.PlayerTournaments
                 .Where(pt => pt.TournamentsId == tournamentId)
+                .Include(pt => pt.Player)
+                    .ThenInclude(p => p.Class)
+                        .ThenInclude(c => c.School)
                 .Select(pt => pt.Player)
-                .Include(p => p.Class)
-                .ThenInclude(c => c.School)
                 .OrderBy(p=>p.PlayerId)
                 .ToListAsync();
         }

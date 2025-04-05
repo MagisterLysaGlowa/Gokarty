@@ -31,7 +31,7 @@ export const useGetRows = (players: QueueData[] | undefined) =>
         lp: `${index + 1}`,
         person: `${z.player.name} ${z.player.surname}`,
         gokart: z.gokart.name,
-        school: z.player.school.name,
+        school: z.player?.class?.school?.name || "",
       })) || [],
     [players]
   );

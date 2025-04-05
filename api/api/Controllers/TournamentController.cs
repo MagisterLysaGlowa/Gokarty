@@ -5,6 +5,7 @@ using api.Models;
 using api.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Controllers
 {
@@ -82,6 +83,8 @@ namespace api.Controllers
                 if (await tournamentRepository.RemoveAsync(tournamentId) is int id)
                     return StatusCode(200, new ResponseHelper(200, "OK", "Pomyślnie usunięto zawody"));
                 return StatusCode(404, new ResponseHelper(400, "Not found", "Nie znaleziono zawodów"));
+            } catch (DbUpdateException) {
+                return StatusCode(409, new ResponseHelper(409, "Conflict", "Obiekt ma powiązane encje, usuń je i spróbuj ponownie"));
             } catch (TimeoutException) {
                 return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
             } catch (Exception) {

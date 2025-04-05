@@ -4,6 +4,7 @@ using api.Interfaces;
 using api.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Controllers {
     [Route("api/[controller]")]
@@ -51,6 +52,8 @@ namespace api.Controllers {
                 if (await schoolRepository.RemoveAsync(schoolId) is int sId)
                     return StatusCode(200, new ResponseHelper(200, "Ok", "Pomyślnie usunięto szkołe"));
                 return NotFound();
+            } catch (DbUpdateException) {
+                return StatusCode(409, new ResponseHelper(409, "Conflict", "Obiekt ma powiązane encje, usuń je i spróbuj ponownie"));
             } catch (TimeoutException) {
                 return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
             } catch (Exception) {

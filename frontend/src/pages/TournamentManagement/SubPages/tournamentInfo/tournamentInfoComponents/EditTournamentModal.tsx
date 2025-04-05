@@ -35,10 +35,8 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
   modal,
   tournament,
 }) => {
-  const [tournamentToEdit, setTournamentToEdit] =
-    useState<TournamentData>(tournament);
-  const { mutateAsync: updateTournamentAsync } =
-    TournamentQueries.updateTournament();
+  const [tournamentToEdit, setTournamentToEdit] = useState<TournamentData>(tournament);
+  const { mutateAsync: updateTournamentAsync } = TournamentQueries.updateTournament();
 
   return (
     <Modal
@@ -77,12 +75,12 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
               <Select
                 {...selectConfig}
                 label="Rodzaj kolejki"
-                selectedKeys={tournamentToEdit.tournamentTypeId.toString()}
+                selectedKeys={[tournamentToEdit.tournamentTypeId.toString()]}
                 selectionMode="single"
                 onChange={(e) =>
                   setTournamentToEdit((p) => ({
                     ...p,
-                    tournamentTypeId: Number(e.target.value),
+                    tournamentTypeId: Number(e.target.value)
                   }))
                 }
               >
@@ -97,7 +95,7 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
                 onChange={(e) =>
                   setTournamentToEdit((p) => ({
                     ...p,
-                    tournamentStateId: Number(e.target.value),
+                    tournamentStateId: Number(e.target.value)
                   }))
                 }
               >
@@ -114,9 +112,9 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
                 {...confirmButtonConfig}
                 onPress={async () => {
                   if (
-                    await validateData(tournamentValidateSchema, tournament)
+                    await validateData(tournamentValidateSchema, tournamentToEdit)
                   ) {
-                    await updateTournamentAsync(tournament);
+                    await updateTournamentAsync(tournamentToEdit);
                     onClose();
                   }
                 }}

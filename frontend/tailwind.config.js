@@ -33,7 +33,10 @@ export default {
       },
       minWidth: {
         'nav-w': "100px"
-      }
+      },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+      },
     },
   },
   darkMode: "class",

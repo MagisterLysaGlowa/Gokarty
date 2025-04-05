@@ -4,6 +4,7 @@ using api.Interfaces;
 using api.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Controllers
 {
@@ -12,8 +13,12 @@ namespace api.Controllers
     public class RideController : ControllerBase
     {
         private readonly IRideRepository rideRepository;
+        private readonly IQueueRepository queueRepository;
 
-        public RideController(IRideRepository rideRepository) => this.rideRepository = rideRepository;
+        public RideController(IRideRepository rideRepository, IQueueRepository queueRepository) {
+            this.rideRepository = rideRepository;
+            this.queueRepository = queueRepository;
+        }
 
         [HttpPost]
         public async Task<IActionResult> Create(RideDto dto)
@@ -30,6 +35,7 @@ namespace api.Controllers
                     PenaltyPoints = dto.PenaltyPoints,
                 };
                 await rideRepository.CreateAsync(ride);
+                await queueRepository.RemoveAsync(dto.deleteQueueId);
                 return StatusCode(201, new ResponseHelper(201, "Created", "Pomyślnie utworzono przejazd"));
             } catch (TimeoutException) {
                 return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
@@ -61,6 +67,8 @@ namespace api.Controllers
                 if (await rideRepository.RemoveAsync(rideId) is int id)
                     return StatusCode(200, new ResponseHelper(200, "Ok", "Pomyślnie usunięto przejazd"));
                 return StatusCode(404, new ResponseHelper(404, "NotFound", "Nie znaleziono przejazdu"));
+            } catch (DbUpdateException) {
+                return StatusCode(409, new ResponseHelper(409, "Conflict", "Obiekt ma powiązane encje, usuń je i spróbuj ponownie"));
             } catch (TimeoutException) {
                 return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
             } catch (Exception) {

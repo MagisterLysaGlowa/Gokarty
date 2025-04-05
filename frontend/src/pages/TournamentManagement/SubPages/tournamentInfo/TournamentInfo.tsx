@@ -2,7 +2,6 @@ import { Button, useDisclosure } from "@heroui/react";
 import {
   FaDice,
   FaEdit,
-  FaList,
   FaPlay,
   FaStop,
   FaTrash,
@@ -87,21 +86,17 @@ export const TournamentInfo = () => {
                   />
                 </Tooltip>
               )}
-              {tournament.tournamentStateId == 2 && (
+              {tournament.tournamentStateId == 2 && !queue?.length && (
                 <Tooltip
-                  content={`${!queue?.length ? "Wylosuj kolejke" : "Zarządzaj kolejką"}`}
+                  content={"Wylosuj kolejke"}
                   showArrow
                 >
                   <Button
                     isIconOnly
-                    endContent={!queue?.length ? <FaDice /> : <FaList />}
+                    endContent={<FaDice />}
                     className={`tournamentButton ${!queue?.length ? "bg-orange-600" : "bg-green-700"
                       }`}
-                    onPress={() =>
-                      !queue?.length
-                        ? queueModal.onOpen()
-                        : navigate(`/zawody/${id}/kolejka`)
-                    }
+                    onPress={queueModal.onOpen}
                   />
                 </Tooltip>
               )}
@@ -119,7 +114,7 @@ export const TournamentInfo = () => {
             <EditTournamentModal
               modal={editModal}
               tournament={tournament}
-              key={`edit-${tournament.tournamentId}`}
+              key={`edit-${editModal.isOpen}`}
             />
             <CreateQueueModal
               refetchQueue={refetchQueue}
@@ -138,7 +133,7 @@ export const TournamentInfo = () => {
               onYes={async () =>
                 updateTournament({
                   ...tournament,
-                  tournamentStateId: tournament.tournamentStateId + 1,
+                  tournamentStateId: tournament.tournamentStateId + 1
                 })
               }
               key={`state-${tournament.tournamentId}`}

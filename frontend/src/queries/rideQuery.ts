@@ -41,7 +41,7 @@ const useCreateRide = (options?: MutationType<RideFormData>) => {
     onError: handleError,
     onSuccess: (res, vars, _) => {
       successToast(res.message);
-      handleSuccessWithRefreshOnSuccess([["rides"]], options?.onSuccess)(
+      handleSuccessWithRefreshOnSuccess([["rides"], ["queues"]], options?.onSuccess)(
         res,
         vars,
         _

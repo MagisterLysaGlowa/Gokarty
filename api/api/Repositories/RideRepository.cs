@@ -23,6 +23,8 @@ namespace api.Repositories
 
         public async Task<Ride> UpdateAsync(Ride data)
         {
+            data.RideGroup = null;
+            data.Gokart = null;
             _context.Rides.Update(data);
             await _context.SaveChangesAsync();
             return data;
@@ -31,7 +33,7 @@ namespace api.Repositories
         public async Task<int?> RemoveAsync(int rideId)
         {
             if (await _context.Rides.FindAsync(rideId) is Ride ride &&
-                await _context.RideGroups.FirstOrDefaultAsync(rg => rg.Rides.Select(r => r.RideId).Contains(rideId)) is RideGroup rideGroup)
+                await _context.RideGroups.Include(rg => rg.Rides).FirstOrDefaultAsync(rg => rg.Rides.Select(r => r.RideId).Contains(rideId)) is RideGroup rideGroup)
             {
                 _context.Rides.Remove(ride);
                 if (rideGroup.Rides.Count == 1)
@@ -139,6 +141,7 @@ namespace api.Repositories
                 ClassId = classId
             };
             await _context.RideGroups.AddAsync(newRideGroup);
+            await _context.SaveChangesAsync();
             return newRideGroup;
         }
 

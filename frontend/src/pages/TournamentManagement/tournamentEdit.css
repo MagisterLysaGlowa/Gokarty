@@ -11,7 +11,7 @@
 }
 
 .adminActions {
-  @apply fixed right-10 bottom-10 flex  gap-4;
+  @apply fixed left-[50%] translate-x-[-50%] bottom-10 flex  gap-4;
 }
 
 .selectedNavIcon {

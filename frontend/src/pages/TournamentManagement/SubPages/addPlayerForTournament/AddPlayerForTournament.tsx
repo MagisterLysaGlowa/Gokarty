@@ -12,11 +12,11 @@ import {
 import { useColumns, useMemorizedPlayers } from "./AddPlayerForTournamentUtils";
 import { useCustomTableCells } from "../../../../components/CustomTableCells/CustomTableCells";
 import { useDebounce } from "../../../../Utils/debounce";
-import { Loading } from "../../../../components/Loading/Loading";
 import { TableComponent } from "../../../../components/Table/TableComponent";
 import { YesNoModal } from "../../../../components/YesNoModal/YesNoModal";
 import { inputConfig } from "../../../../configs/inputConfig";
 import { selectConfig } from "../../../../configs/selectConfig";
+import { LoadingWrapper } from "../../../../components/Loading/LoadingWrapper";
 
 export const AddPlayerForTournament = () => {
   const { id: tournamentId } = useParams();
@@ -28,36 +28,27 @@ export const AddPlayerForTournament = () => {
   });
   const serverFilter = useDebounce(playerFilter);
 
+  const { mutateAsync: addPlayer } = PlayerQueries.addPlayerToTournament();
   const { data: schools } = SchoolQueries.getAllSchools();
-  const {
-    data: players,
-    refetch,
-    isFetching,
-  } = PlayerQueries.filterPlayers(serverFilter);
+  const { data: players, refetch, isFetching } = PlayerQueries.filterPlayers(serverFilter);
 
   useEffect(() => {
     refetch();
   }, [serverFilter, refetch]);
 
-  const columns = useColumns();
-  const rows = useMemorizedPlayers(players);
-
-  const [selectedPlayerId, setSelectedPlayerId] = useState<number | undefined>(
-    undefined
-  );
-  const selectedPlayer = players?.find(
-    (player) => player.playerId == selectedPlayerId
-  );
-
+  const [selectedPlayerId, setSelectedPlayerId] = useState<number | undefined>(undefined);
+  const selectedPlayer = players?.find((player) => player.playerId == selectedPlayerId);
+  
   const addModal = useDisclosure();
-
+  const columns = useColumns();
+  const memorizedData = useMemorizedPlayers(players);
   const customCell = useCustomTableCells(setSelectedPlayerId, [
     { modal: addModal, buttonProps: defaultAddButtonProps },
   ]);
 
-  const { mutateAsync: addPlayer } = PlayerQueries.addPlayerToTournament();
 
   return (
+    
     <div className="flex flex-col h-full max-h-full overflow-hidden gap-3">
       <div className="flex gap-2">
         <Input
@@ -93,12 +84,11 @@ export const AddPlayerForTournament = () => {
           {(s) => <SelectItem key={s.schoolId}>{s.acronym}</SelectItem>}
         </Select>
       </div>
+      
+      <LoadingWrapper data={memorizedData} isLoading={isFetching}>
+        {(data) => <TableComponent columns={columns} rows={data} tableCells={customCell} />}
+      </LoadingWrapper>
 
-      {isFetching ? (
-        <Loading />
-      ) : (
-        <TableComponent columns={columns} rows={rows} tableCells={customCell} />
-      )}
       {selectedPlayer && (
         <YesNoModal
           buttonText="Dodaj"

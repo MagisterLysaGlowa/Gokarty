@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { PlayerWithRides, RideData } from "../../../../../types";
+import { RideGroup, RideData } from "../../../../../types";
 
 export const useGetColumns = () =>
   useMemo(
@@ -28,11 +28,10 @@ export type RideModalData = {
   school: string;
   playerId: number;
   timeData?: RideData;
-  penaltyPoints?: number;
 };
 
 export const useMemorizedRidesData = (
-  data: PlayerWithRides[] | undefined,
+  data: RideGroup[] | undefined,
   filter: string
 ) => {
   return useMemo(() => {
@@ -46,17 +45,11 @@ export const useMemorizedRidesData = (
         ?.map((z, index) => ({
           lp: index + 1,
           person: {
-            id: z.player.playerId,
+            id: Number(z.player.playerId),
             name: `${z.player.name} ${z.player.surname}`,
-            school: z.player.school.acronym,
+            school: String(z.player?.class?.school?.acronym),
           },
-          times: z.rides.map(({ time, rideNumber, gokart, rideId, isDSQ }) => ({
-            time,
-            rideNumber,
-            gokart,
-            rideId,
-            isDSQ,
-          })),
+          times: z.rides,
         })) || []
     );
   }, [data, filter]);

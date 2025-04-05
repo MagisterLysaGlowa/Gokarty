@@ -14,37 +14,28 @@ import {
 } from "./playersForTournamentUtils";
 import { useCustomTableCells } from "../../../../components/CustomTableCells/CustomTableCells";
 import { TableComponent } from "../../../../components/Table/TableComponent";
-import { Loading } from "../../../../components/Loading/Loading";
 import { YesNoModal } from "../../../../components/YesNoModal/YesNoModal";
 import { inputConfig } from "../../../../configs/inputConfig";
+import { LoadingWrapper } from "../../../../components/Loading/LoadingWrapper";
 
 export const PlayersForTournament = () => {
   const { id: tournamentId } = useParams();
-  const { data, isLoading } = PlayerQueries.getPlayersForTournament(
-    Number(tournamentId),
-    {
-      refetchInterval: 10_000,
-    }
-  );
+  const { data, isLoading } = PlayerQueries.getPlayersForTournament(Number(tournamentId));
+  const { mutateAsync: removePlayerFromTournament } = PlayerQueries.removePlayerFromTournament();
+
   const [filter, setFilter] = useState("");
   const filterSearch = useDebounce(filter);
-  const memoizedData = useGetMemorizedData(data, filterSearch);
-  const columns = useGetColumns();
+  
+  const [selectedPlayerId, setSelectedPlayerId] = useState<number | undefined>(undefined);
+  const selectedPlayer = data?.find((player) => player.playerId == selectedPlayerId);
+  
   const removeModal = useDisclosure();
-
-  const [selectedPlayerId, setSelectedPlayerId] = useState<number | undefined>(
-    undefined
-  );
-  const selectedPlayer = data?.find(
-    (player) => player.playerId == selectedPlayerId
-  );
-
+  const columns = useGetColumns();
+  const memoizedData = useGetMemorizedData(data, filterSearch);
   const customCell = useCustomTableCells(setSelectedPlayerId, [
     { modal: removeModal, buttonProps: defaultRemoveButtonProps },
   ]);
 
-  const { mutateAsync: removePlayerFromTournament } =
-    PlayerQueries.removePlayerFromTournament();
 
   return (
     <div className="flex flex-col h-full max-h-full overflow-hidden gap-3">
@@ -58,17 +49,13 @@ export const PlayersForTournament = () => {
           {...inputConfig}
         />
       </div>
+      
       <div className="flex-1 overflow-auto">
-        {isLoading ? (
-          <Loading />
-        ) : (
-          <TableComponent
-            columns={columns}
-            rows={memoizedData}
-            tableCells={customCell}
-          />
-        )}
+        <LoadingWrapper data={memoizedData} isLoading={isLoading}>
+          {(rows) => <TableComponent columns={columns} rows={rows} tableCells={customCell}/>}
+        </LoadingWrapper>
       </div>
+
       {selectedPlayer && (
         <YesNoModal
           header="Usuwanie gracza z turnieju"

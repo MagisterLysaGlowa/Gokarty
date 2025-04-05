@@ -11,8 +11,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={queryClient}>
     <RouterProvider router={router} />
     <ToastContainer
-      position="bottom-right"
-      autoClose={3000}
+      position="top-right"
+      autoClose={4000}
       style={{ width: "500px" }}
     />
     <ReactQueryDevtools initialIsOpen={false} />

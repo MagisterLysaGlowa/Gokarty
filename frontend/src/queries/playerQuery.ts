@@ -133,8 +133,8 @@ const useRemovePlayerFromTournament = (
       successToast(res.message);
       handleSuccessWithRefreshOnSuccess(
         [
-          ["players" + "tournament" + "withSchool"],
-          ["playerstournamentwithSchool", vars.tournamentId],
+          ["players" + "tournament"],
+          ["playerstournament", vars.tournamentId],
         ],
         options?.onSuccess
       )(res, vars, _);

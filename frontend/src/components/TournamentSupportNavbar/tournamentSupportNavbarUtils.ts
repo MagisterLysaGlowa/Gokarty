@@ -1,5 +1,5 @@
 import { AiOutlineUsergroupAdd } from "react-icons/ai";
-import { FaUsers, FaEdit, FaCar } from "react-icons/fa";
+import { FaUsers, FaEdit, FaCar, FaList } from "react-icons/fa";
 
 export const navList = (id: number, name: string | undefined) => [
   {
@@ -25,6 +25,12 @@ export const navList = (id: number, name: string | undefined) => [
     name: "Przejazdy",
     icon: FaCar,
     path: `${id}/${name}/przejazdy`,
+  },
+  {
+    id: 4,
+    name: "Kolejka",
+    icon: FaList,
+    path: `${id}/${name}/kolejka`,
   },
 ];
 

@@ -11,7 +11,6 @@ namespace api.Models
         public Tournament? Tournament { get; set; } = default!;
         public int ClassId { get; set; }
         public Class? Class { get; set; } = default!;
-        [JsonIgnore]
         public ICollection<Ride> Rides { get; } = [];
     }
 }

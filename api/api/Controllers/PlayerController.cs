@@ -3,6 +3,7 @@ using api.Helpers;
 using api.Interfaces;
 using api.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Controllers {
     [Route("api/[controller]")]
@@ -49,6 +50,8 @@ namespace api.Controllers {
                 if (await playerRepository.RemoveAsync(playerId) is int)
                     return StatusCode(200, new ResponseHelper(200, "Ok", "Pomyślnie usunięto gracza"));
                 return StatusCode(404, new ResponseHelper(404, "NotFound", "Nie znaleziono gracza"));
+            } catch (DbUpdateException) {
+                return StatusCode(409, new ResponseHelper(409, "Conflict", "Obiekt ma powiązane encje, usuń je i spróbuj ponownie"));
             } catch (TimeoutException) {
                 return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
             } catch (Exception) {
