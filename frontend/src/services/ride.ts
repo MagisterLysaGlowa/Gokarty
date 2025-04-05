@@ -1,4 +1,4 @@
-import { RideAndPersonData } from "../../types";
+import { RideAndPersonData, RideGroup } from "../../types";
 import apiClient from "./apiClient";
 import { BaseService } from "./baseService";
 
@@ -23,8 +23,8 @@ class RideService extends BaseService {
 
   static async getAllRidesForTournament(
     tournamentId: number
-  ): Promise<RideAndPersonData[]> {
-    const response = await apiClient.get<RideAndPersonData[]>(
+  ): Promise<RideGroup[]> {
+    const response = await apiClient.get<RideGroup[]>(
       `/ride/tournament/${tournamentId}`
     );
     return response.data;

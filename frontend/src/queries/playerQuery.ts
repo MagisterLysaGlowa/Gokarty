@@ -1,121 +1,86 @@
-import {
-  UseQueryOptions,
-  useMutation,
-  UseMutationOptions,
-  useQuery,
-} from "react-query";
+import { UseQueryOptions, useMutation, useQuery } from "react-query";
 import PlayerService from "../services/player";
+import { PlayerFilterFormData, PlayerData } from "../../types";
+import { successToast } from "../Utils/ToastNotifications";
 import {
-  PlayerDataDeleted,
-  PlayerFilterFormData,
-  PlayerFormData,
-  PlayerData,
-} from "../../types";
-import {
-  addPlayerToTournament,
-  createPlayerTexts,
-  promiseToast,
-  removePlayerTexts,
-  updatePlayerTexts,
-} from "../Utils/ToastNotifications";
-import { handleSuccessWithRefreshWithOnSuccess as handleSuccessWithRefreshOnSuccess } from "./queryUtils";
+  handleError,
+  handleSuccessWithRefreshWithOnSuccess as handleSuccessWithRefreshOnSuccess,
+  MutationType,
+} from "./queryUtils";
 
 const useGetPlayerByID = (
   id: number,
-  options?: UseQueryOptions<PlayerDataDeleted, Error>
+  options?: UseQueryOptions<PlayerData, Error>
 ) => {
   return useQuery({
     queryKey: ["player", id],
-    queryFn: async () => await PlayerService.getPlayer(id),
+    queryFn: async () => await PlayerService.get<PlayerData>(id, "/player"),
     enabled: !!id,
     ...options,
   });
 };
 
-const useCreatePlayer = (
-  options?: UseMutationOptions<
-    PlayerFormData,
-    Error,
-    { tournamentId: number; data: PlayerFormData }
-  >
-) => {
+const useCreatePlayer = (options?: MutationType<PlayerData>) => {
   return useMutation({
     ...options,
-    mutationFn: async ({ data }) => {
-      return await promiseToast(
-        PlayerService.createPlayer(data),
-        createPlayerTexts
+    mutationFn: async (data) => {
+      return await PlayerService.create(data, "/player");
+    },
+    onError: handleError,
+    onSuccess: (res, vars, _) => {
+      successToast(res.message);
+      handleSuccessWithRefreshOnSuccess([["players"]], options?.onSuccess)(
+        res,
+        vars,
+        _
       );
     },
-    onSuccess: handleSuccessWithRefreshOnSuccess(
-      [["players"]],
-      options?.onSuccess
-    ),
   });
 };
 
-const useUpdatePlayer = (
-  options?: UseMutationOptions<
-    PlayerDataDeleted,
-    Error,
-    { playerId: number; data: PlayerFormData }
-  >
-) => {
+const useUpdatePlayer = (options?: MutationType<PlayerData>) => {
   return useMutation({
     ...options,
-    mutationFn: async ({ playerId, data }) => {
-      return await promiseToast(
-        PlayerService.updatePlayer(playerId, data),
-        updatePlayerTexts
-      );
+    mutationFn: async (data) => {
+      return await PlayerService.update(data, "/player");
     },
-    onSuccess: (r, v, c) =>
+    onError: handleError,
+    onSuccess: (r, v, c) => {
+      successToast(r.message);
       handleSuccessWithRefreshOnSuccess(
-        [["player", r.playerId]],
+        [["player", v.playerId]],
         options?.onSuccess
-      )(r, v, c),
+      )(r, v, c);
+    },
   });
 };
 
-const useRemovePlayer = (
-  options?: UseMutationOptions<number, Error, number>
-) => {
+const useRemovePlayer = (options?: MutationType<number>) => {
   return useMutation({
     ...options,
-    mutationFn: async (id: number) => {
-      return await promiseToast(
-        PlayerService.removePlayer(id),
-        removePlayerTexts
+    mutationFn: async (id) => {
+      return await PlayerService.remove(id, "/player");
+    },
+    onError: handleError,
+    onSuccess: (res, vars, _) => {
+      successToast(res.message);
+      handleSuccessWithRefreshOnSuccess([["players"]], options?.onSuccess)(
+        res,
+        vars,
+        _
       );
     },
-    onSuccess: handleSuccessWithRefreshOnSuccess(
-      [["players"]],
-      options?.onSuccess
-    ),
   });
 };
 
 const useGetPlayersForTournament = (
   tournamentId: number,
-  options?: UseQueryOptions<PlayerDataDeleted[], Error>
+  options?: UseQueryOptions<PlayerData[], Error>
 ) => {
   return useQuery({
     queryKey: ["players" + "tournament", tournamentId],
     queryFn: async () =>
       await PlayerService.getPlayersForTournament(tournamentId),
-    enabled: !!tournamentId,
-    ...options,
-  });
-};
-
-const useGetPlayersForTournamentWithSchool = (
-  tournamentId: number,
-  options?: UseQueryOptions<PlayerData[], Error>
-) => {
-  return useQuery({
-    queryKey: ["players" + "tournament" + "withSchool", tournamentId],
-    queryFn: async () =>
-      await PlayerService.getPlayersForTournamentWithSchool(tournamentId),
     enabled: !!tournamentId,
     ...options,
   });
@@ -134,53 +99,46 @@ const useFilterPlayers = (
 };
 
 const useAddPlayerToTournament = (
-  options?: UseMutationOptions<
-    number,
-    Error,
-    { tournamentId: number; playerId: number }
-  >
+  options?: MutationType<{ tournamentId: number; playerId: number }>
 ) => {
   return useMutation({
     ...options,
     mutationFn: async ({ tournamentId, playerId }) => {
-      return await promiseToast(
-        PlayerService.addPlayerToTournament(tournamentId, playerId),
-        addPlayerToTournament
-      );
+      return await PlayerService.addPlayerToTournament(tournamentId, playerId);
     },
-    //Todo: do sprawdzenia
-    onSuccess: (r, v, c) => {
+    onError: handleError,
+    onSuccess: (res, vars, _) => {
+      successToast(res.message);
       handleSuccessWithRefreshOnSuccess(
         [["players" + "tournament" + "withSchool"], ["players" + "filter"]],
         options?.onSuccess
-      )(r, v, c);
+      )(res, vars, _);
     },
   });
 };
 
 const useRemovePlayerFromTournament = (
-  options?: UseMutationOptions<
-    number,
-    Error,
-    { tournamentId: number; playerId: number }
-  >
+  options?: MutationType<{ tournamentId: number; playerId: number }>
 ) => {
   return useMutation({
     ...options,
     mutationFn: async ({ tournamentId, playerId }) => {
-      return await promiseToast(
-        PlayerService.removePlayerFromTournament(tournamentId, playerId),
-        removePlayerTexts
+      return await PlayerService.removePlayerFromTournament(
+        tournamentId,
+        playerId
       );
     },
-    onSuccess: (r, v, c) =>
+    onError: handleError,
+    onSuccess: (res, vars, _) => {
+      successToast(res.message);
       handleSuccessWithRefreshOnSuccess(
         [
           ["players" + "tournament" + "withSchool"],
-          ["playerstournamentwithSchool", v.tournamentId],
+          ["playerstournamentwithSchool", vars.tournamentId],
         ],
         options?.onSuccess
-      )(r, v, c),
+      )(res, vars, _);
+    },
   });
 };
 
@@ -190,7 +148,6 @@ export const PlayerQueries = {
   updatePlayer: useUpdatePlayer,
   removePlayer: useRemovePlayer,
   getPlayersForTournament: useGetPlayersForTournament,
-  getPlayersForTournamentWithSchool: useGetPlayersForTournamentWithSchool,
   filterPlayers: useFilterPlayers,
   addPlayerToTournament: useAddPlayerToTournament,
   removePlayerFromTournament: useRemovePlayerFromTournament,

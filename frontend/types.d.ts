@@ -43,11 +43,6 @@ export interface PlayerData {
   class?: Class;
 }
 
-export interface PlayerWithRides {
-  player: PlayerData;
-  rides: RideData[];
-}
-
 export interface PlayerFilterFormData {
   name: string;
   surname: string;
@@ -86,7 +81,7 @@ export interface RideAndPersonData {
 }
 
 export type RideGroup = {
-  ride: RideData;
+  rides: RideData[];
   player: PlayerData;
   class: Class;
   tournament: TournamentData;
