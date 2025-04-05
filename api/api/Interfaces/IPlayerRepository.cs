@@ -13,5 +13,6 @@ namespace api.Interfaces
         Task<List<Player>> GetAllForTournamentAsync(int tournamentId);
         Task<int?> AddToTournamentAsync(int tournamentId, int playerId);
         Task<int?> RemoveFromTournamentAsync(int tournamentId,int playerId);
+        Task<bool> ExistsAsync(int playerId);
     }
 }

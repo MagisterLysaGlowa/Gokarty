@@ -9,18 +9,16 @@ import {
   ModalFooter,
   Button,
 } from "@heroui/react";
-import { tournamentValidate } from "../../../validations/TournamentValidation";
-import { defaultVariant } from "../../../Utils/globalUtils";
-import { TournamentQueries } from "../../../queries/tournamentQuery";
 import { useEffect, useState } from "react";
 import { tournamentDefaultValue } from "../TournamentUtils";
 import { modalConfig } from "../../../configs/modalConfig";
 import { inputConfig } from "../../../configs/inputConfig";
-import {
-  cancelButtonConfig,
-  confirmButtonConfig,
-} from "../../../configs/buttonConfig";
+import { cancelButtonConfig, confirmButtonConfig } from "../../../configs/buttonConfig";
 import { dateRangePickerConfig } from "../../../configs/dateRangePickerConfig";
+import { TournamentQueries } from "../../../queries/tournamentQuery";
+import { defaultVariant } from "../../../Utils/globalUtils";
+import { tournamentValidateSchema } from "../../../validations/TournamentValidation";
+import { validateData } from "../../../validations/validationUtils";
 
 type TournamentCreateModalParams = {
   modal: ModalProps;
@@ -30,7 +28,6 @@ export const CreateTournamentModal: React.FC<TournamentCreateModalParams> = ({
   modal,
 }) => {
   const [tournament, setTournament] = useState<TournamentData>(tournamentDefaultValue);
-
   const { mutateAsync: createTournament } = TournamentQueries.createTournament();
 
   useEffect(() => {
@@ -81,7 +78,9 @@ export const CreateTournamentModal: React.FC<TournamentCreateModalParams> = ({
               <Button
                 {...confirmButtonConfig}
                 onPress={async () => {
-                  if (await tournamentValidate(tournament)) {
+                  if (
+                    await validateData(tournamentValidateSchema, tournament)
+                  ) {
                     await createTournament(tournament);
                     onClose();
                   }

@@ -37,7 +37,10 @@ namespace api.Repositories {
         }
 
         public async Task<List<Gokart>> GetAllAsync() {
-            return await _context.Gokarts.ToListAsync();
+            return await _context.Gokarts.OrderBy(g=>g.GokartId).ToListAsync();
+        }
+        public async Task<bool> ExistsAsync(int gokartId) {
+            return await _context.Gokarts.AnyAsync(g => g.GokartId == gokartId);
         }
     }
 }

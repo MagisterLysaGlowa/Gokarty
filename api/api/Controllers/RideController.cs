@@ -44,7 +44,7 @@ namespace api.Controllers
             try {
                 if (!ModelState.IsValid)
                     return StatusCode(400, new ResponseHelper(400, "BadRequest", "Nie poprawne dane dla przejazdu"));
-                if (await rideRepository.GetAsync(data.RideId) is null)
+                if (!await rideRepository.ExistsAsync(data.RideId))
                     return StatusCode(404, new ResponseHelper(404, "NotFound", "Nie znaleziono przejazdu"));
                 await rideRepository.UpdateAsync(data);
                 return StatusCode(200, new ResponseHelper(200, "Ok", "Pomyślnie uaktualniono przejazd"));

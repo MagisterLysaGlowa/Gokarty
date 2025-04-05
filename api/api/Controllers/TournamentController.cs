@@ -64,7 +64,7 @@ namespace api.Controllers
             try {
                 if (!ModelState.IsValid)
                     return StatusCode(400, new ResponseHelper(400, "BadRequest", "Podano błędne dane dla zawodów"));
-                if (await tournamentRepository.GetAsync(data.TournamentId) is null)
+                if (!await tournamentRepository.ExistsAsync(data.TournamentId))
                     return StatusCode(404, new ResponseHelper(404, "NotFound", "Nie znaleziono zawodów"));
                 await tournamentRepository.UpdateAsync(data);
                 return StatusCode(200, new ResponseHelper(200, "Ok", "Pomyślnie uaktualniono zawody"));

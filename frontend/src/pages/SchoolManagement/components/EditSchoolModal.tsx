@@ -8,16 +8,18 @@ import {
   Input,
 } from "@heroui/react";
 import { useState } from "react";
-import { ModalProps, SchoolData, SchoolFormData } from "../../../../types";
+import { ModalProps, SchoolData } from "../../../../types";
 import { SchoolQueries } from "../../../queries/schoolQuery";
 import { queryClient } from "../../../Utils/ReactQueryConfig";
-import { schoolValidate } from "../../../validations/SchoolValidation";
+
 import { modalConfig } from "../../../configs/modalConfig";
 import { inputConfig } from "../../../configs/inputConfig";
 import {
   cancelButtonConfig,
   confirmButtonConfig,
 } from "../../../configs/buttonConfig";
+import { validateData } from "../../../validations/validationUtils";
+import { schoolValidationSchema } from "../../../validations/schoolValidation";
 
 type EditModalProps = {
   modal: ModalProps;
@@ -28,7 +30,7 @@ export const EditSchoolModal: React.FC<EditModalProps> = ({
   modal,
   school,
 }) => {
-  const [schoolToEdit, setSchoolToEdit] = useState<SchoolFormData>(school);
+  const [schoolToEdit, setSchoolToEdit] = useState<SchoolData>(school);
 
   const { mutateAsync: updateSchool } = SchoolQueries.updateSchool({
     onSuccess: async () => {
@@ -88,11 +90,10 @@ export const EditSchoolModal: React.FC<EditModalProps> = ({
               <Button
                 {...confirmButtonConfig}
                 onPress={async () => {
-                  if (await schoolValidate(schoolToEdit)) {
-                    await updateSchool({
-                      schoolId: Number(school.schoolId),
-                      data: schoolToEdit,
-                    });
+                  if (
+                    await validateData(schoolValidationSchema, schoolToEdit)
+                  ) {
+                    await updateSchool(schoolToEdit);
                     onClose();
                   }
                 }}

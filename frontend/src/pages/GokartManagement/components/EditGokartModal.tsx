@@ -10,13 +10,14 @@ import {
 import { FC, useState } from "react";
 import { GokartData, ModalProps } from "../../../../types";
 import { GokartQueries } from "../../../queries/gokartQuery";
-import { gokartValidate } from "../../../validations/GokartValidation";
 import { modalConfig } from "../../../configs/modalConfig";
 import { inputConfig } from "../../../configs/inputConfig";
 import {
   cancelButtonConfig,
   confirmButtonConfig,
 } from "../../../configs/buttonConfig";
+import { validateData } from "../../../validations/validationUtils";
+import { gokartValidationSchema } from "../../../validations/gokartValidation";
 
 type EditGokartModalProps = {
   modal: ModalProps;
@@ -65,15 +66,8 @@ export const EditGokartModal: FC<EditGokartModalProps> = ({
               <Button
                 {...confirmButtonConfig}
                 onPress={async () => {
-                  if (
-                    await gokartValidate({
-                      name: String(gokartToEdit?.name),
-                    })
-                  ) {
-                    await editGokartAsync({
-                      gokartId: Number(gokartToEdit?.gokartId),
-                      name: String(gokartToEdit?.name),
-                    });
+                  if (await validateData(gokartValidationSchema, gokart)) {
+                    await editGokartAsync(gokartToEdit);
                     onClose();
                   }
                 }}
