@@ -7,9 +7,9 @@ namespace api.Models {
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public int TournamentStateId { get; set; }
-        public TournamentState TournamentState { get; set; } = default!;
+        public TournamentState? TournamentState { get; set; } = default!;
         public int? TournamentTypeId { get; set; }
-        public TournamentType TournamentType { get; set; } = default!;
+        public TournamentType? TournamentType { get; set; } = default!;
         [JsonIgnore]
         public ICollection<PlayerTournament> PlayerTournaments { get; set; } = [];
         [JsonIgnore]

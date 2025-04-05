@@ -44,7 +44,7 @@ namespace api.Repositories {
         }
 
         public async Task<List<Player>> FilterPlayersAsync(PlayerFilterDto dto) {
-            var players = await _context.Players.Include(z => z.Class.SchoolId).ToListAsync();
+            var players = await _context.Players.Include(z => z.Class).ThenInclude(z=>z.School).ToListAsync();
 
             if (!string.IsNullOrEmpty(dto.Name)) {
                 players = players.Where(p => p.Name.ToLower().Contains(dto.Name.ToLower())).ToList();

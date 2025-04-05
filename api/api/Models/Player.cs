@@ -9,7 +9,7 @@ namespace api.Models
         public string Surname { get; set; } = String.Empty;
         public DateTime BirthDate { get; set; }
         public int? ClassId { get; set; }
-        public Class Class { get; set; } = default!;
+        public Class? Class { get; set; } = default!;
         [JsonIgnore]
         public ICollection<PlayerTournament> PlayerTournaments { get; set; } = [];
         [JsonIgnore]

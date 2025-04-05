@@ -5,9 +5,9 @@ namespace api.Models
     {
         public int RideId { get; set; }
         public int? RideGroupId { get; set; }
-        public RideGroup RideGroup { get; set; } = default!;
+        public RideGroup? RideGroup { get; set; } = default!;
         public int GokartId { get; set; }
-        public Gokart Gokart { get; set; } = default!;
+        public Gokart? Gokart { get; set; } = default!;
         public int Time { get; set; }
         public int RideNumber { get; set; }
         public bool IsDisqualified { get; set; }

@@ -7,7 +7,7 @@ namespace api.Models
         public int ClassId { get; set; }
         public string Name { get; set; } = String.Empty;
         public int SchoolId { get; set; }
-        public School School { get; set; } = default!;
+        public School? School { get; set; } = default!;
         [JsonIgnore]
         public ICollection<Player> Players { get; } = [];
         [JsonIgnore]

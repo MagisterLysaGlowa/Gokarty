@@ -28,8 +28,7 @@ namespace api.Controllers {
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(Player data)
-        {
+        public async Task<IActionResult> Update(Player data) {
             try {
                 if (!ModelState.IsValid)
                     return StatusCode(400, new ResponseHelper(400, "BadRequest", "Podano błędne dane dla gracza"));
@@ -45,8 +44,7 @@ namespace api.Controllers {
         }
 
         [HttpDelete("{playerId}")]
-        public async Task<IActionResult> Remove(int playerId)
-        {
+        public async Task<IActionResult> Remove(int playerId) {
             try {
                 if (await playerRepository.RemoveAsync(playerId) is int)
                     return StatusCode(200, new ResponseHelper(200, "Ok", "Pomyślnie usunięto gracza"));
@@ -72,9 +70,7 @@ namespace api.Controllers {
         [HttpGet("filter")]
         public async Task<IActionResult> Filter([FromQuery] PlayerFilterDto dto) {
             try {
-                if (await playerRepository.FilterPlayersAsync(dto) is List<Player> players && players.Count > 0)
-                    return Ok(players);
-                return NotFound();
+                return Ok(await playerRepository.FilterPlayersAsync(dto));
             } catch (TimeoutException) {
                 return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
             } catch (Exception) {
