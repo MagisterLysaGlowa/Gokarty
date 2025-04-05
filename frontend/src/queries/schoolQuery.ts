@@ -1,83 +1,68 @@
 import {
-  UseQueryOptions,
   useMutation,
-  UseMutationOptions,
   useQuery,
+  UseQueryOptions,
 } from "react-query";
 import SchoolService from "../services/school";
-import { SchoolData, SchoolFormData } from "../../types";
-import {
-  createSchoolTexts,
-  promiseToast,
-  removeSchoolTexts,
-  updateSchoolTexts,
-} from "../Utils/ToastNotifications";
-import { handleSuccessWithRefreshWithOnSuccess as handleSuccessWithRefreshOnSuccess } from "./queryUtils";
+import { SchoolData } from "../../types";
+import { handleError, handleSuccessWithRefreshWithOnSuccess as handleSuccessWithRefreshOnSuccess, MutationType } from "./queryUtils";
+import { successToast } from "../Utils/ToastNotifications";
 
 const useGetAllSchools = (options?: UseQueryOptions<SchoolData[], Error>) => {
   return useQuery({
     queryKey: ["schools"],
-    queryFn: SchoolService.getAllSchools,
+    queryFn: async () => await SchoolService.getAll<SchoolData>("/school"),
     ...options,
   });
 };
 
 const useCreateSchool = (
-  options?: UseMutationOptions<SchoolData, Error, SchoolFormData>
+  options?: MutationType<SchoolData>
 ) => {
   return useMutation({
     ...options,
-    mutationFn: async (data: SchoolFormData) => {
-      return await promiseToast(
-        SchoolService.createSchool(data),
-        createSchoolTexts
-      );
-    },
-    onSuccess: handleSuccessWithRefreshOnSuccess(
-      [["schools"]],
-      options?.onSuccess
-    ),
+    mutationFn: async (data) => await SchoolService.create<SchoolData>(data, "/school"),
+    onError: handleError,
+    onSuccess: (res, vars, _) => {
+      successToast(res.message);
+      handleSuccessWithRefreshOnSuccess(
+        [["schools"]],
+        options?.onSuccess
+      )(res, vars, _);
+    } 
   });
 };
 
 const useUpdateSchool = (
-  options?: UseMutationOptions<
-    SchoolData,
-    Error,
-    { schoolId: number; data: SchoolFormData }
-  >
+  options?: MutationType<SchoolData>
 ) => {
   return useMutation({
     ...options,
-    mutationFn: async ({ schoolId, data }) => {
-      return await promiseToast(
-        SchoolService.updateSchool(schoolId, data),
-        updateSchoolTexts
-      );
-    },
-    onSuccess: (r, v, c) =>
+    mutationFn: async (data) => await SchoolService.update<SchoolData>(data, "/school"),
+    onSuccess: (res, vars, _) => {
+      successToast(res.message);
       handleSuccessWithRefreshOnSuccess(
-        [["school", r.schoolId], ["schools"]],
+        [["school", vars.schoolId], ["schools"]],
         options?.onSuccess
-      )(r, v, c),
+      )(res, vars, _);
+    }
   });
 };
 
 const useRemoveSchool = (
-  options?: UseMutationOptions<number, Error, number>
+  options?: MutationType<number>
 ) => {
   return useMutation({
     ...options,
-    mutationFn: async (id: number) => {
-      return await promiseToast(
-        SchoolService.removeSchool(id),
-        removeSchoolTexts
-      );
-    },
-    onSuccess: handleSuccessWithRefreshOnSuccess(
-      [["schools"]],
-      options?.onSuccess
-    ),
+    mutationFn: async (id) => await SchoolService.remove(id, "/school"),
+    onError: handleError,
+    onSuccess: (res, vars, _) => {
+      successToast(res.message);
+      handleSuccessWithRefreshOnSuccess(
+        [["schools"]],
+        options?.onSuccess
+      )(res, vars, _);
+    }
   });
 };
 

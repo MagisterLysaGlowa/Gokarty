@@ -1,19 +1,15 @@
 export interface GokartData {
-  gokartId: number;
-  name: string;
-}
-
-export interface GokartFormData {
+  gokartId?: number;
   name: string;
 }
 
 export interface QueueData {
   queueId: number;
   tournamentId: number;
-  playerId: number;
-  queuePosition: number;
   tournament: TournamentData;
+  playerId: number;
   player: PlayerData;
+  queuePosition: number;
   gokartId: number;
   gokart: GokartData;
 }
@@ -25,42 +21,26 @@ export interface QueueFormData {
 }
 
 export interface TournamentData {
-  tournamentId: number;
+  tournamentId?: number;
   name: string;
   startDate: Date;
   endDate: Date;
   tournamentStateId: number;
-  tournamentType: TournamentType;
+  tournamentTypeId: number;
 }
 
 export interface TournamentType {
-  tournamentTypeId: number;
+  tournamentTypeId?: number;
   name: string;
-}
-
-export interface TournamentFormData {
-  name: string;
-  startDate: Date;
-  endDate: Date;
-  tournamentStateId: number;
-  tournamentTypeId: number;
-}
-
-export interface PlayerFormData {
-  name: string;
-  surname: string;
-  birthDate: Date;
-  school: SchoolData;
-  class: Class;
 }
 
 export interface PlayerData {
-  playerId: number;
+  playerId?: number;
   name: string;
   surname: string;
   birthDate: Date;
-  school: SchoolData;
-  class: Class;
+  classId: number;
+  class?: Class;
 }
 
 export interface PlayerWithRides {
@@ -68,7 +48,7 @@ export interface PlayerWithRides {
   rides: RideData[];
 }
 
-interface PlayerFilterFormData {
+export interface PlayerFilterFormData {
   name: string;
   surname: string;
   schoolId: number;
@@ -76,18 +56,14 @@ interface PlayerFilterFormData {
 }
 
 export interface Class {
-  classId: number;
+  classId?: number;
   name: string;
+  schoolId: number;
+  school?: SchoolData;
 }
 
 export interface SchoolData {
-  schoolId: number;
-  name: string;
-  city: string;
-  acronym: string;
-}
-
-export interface SchoolFormData {
+  schoolId?: number;
   name: string;
   city: string;
   acronym: string;

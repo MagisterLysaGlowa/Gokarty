@@ -1,100 +1,88 @@
 import {
   useMutation,
-  UseMutationOptions,
   useQuery,
   UseQueryOptions,
 } from "react-query";
 import TournamentService from "../services/tournament";
-import { TournamentData, TournamentFormData } from "../../types";
+import { TournamentData } from "../../types";
 import {
-  createTournamentTexts,
-  promiseToast,
-  removeTournamentTexts,
-  updateTournamentTexts,
+  successToast,
 } from "../Utils/ToastNotifications";
-import { handleSuccessWithRefreshWithOnSuccess } from "./queryUtils";
+import { handleError, handleSuccessWithRefreshWithOnSuccess, MutationType } from "./queryUtils";
 
-const useGetAllTournaments = (
-  options?: UseQueryOptions<TournamentData[], Error>
-) => {
+const useGetAllTournaments = (options?: UseQueryOptions<TournamentData[], Error>) => {
   return useQuery({
     queryKey: ["tournaments"],
-    queryFn: TournamentService.getAllTournaments,
+    queryFn: () => TournamentService.getAll<TournamentData>("/tournament"),
     ...options,
   });
 };
 
-const useGetTournamentByID = (
+const useGetTournament = (
   id: number,
   options?: UseQueryOptions<TournamentData, Error>
 ) => {
   return useQuery({
     queryKey: ["tournament", id],
-    queryFn: async () => await TournamentService.getTournament(id),
+    queryFn: async () => await TournamentService.get<TournamentData>(id, "/tournament"),
     enabled: !!id,
     ...options,
   });
 };
 
 const useCreateTournament = (
-  options?: UseMutationOptions<TournamentData, Error, TournamentFormData>
+  options?: MutationType<TournamentData>
 ) => {
   return useMutation({
     ...options,
-    mutationFn: async (data: TournamentFormData) => {
-      return await promiseToast(
-        TournamentService.createTournament(data),
-        createTournamentTexts
-      );
-    },
-    onSuccess: handleSuccessWithRefreshWithOnSuccess(
-      [["tournaments"]],
-      options?.onSuccess
-    ),
+    mutationFn: async (data) => await TournamentService.create<TournamentData>(data, "/tournament"),
+    onError: handleError,
+    onSuccess: (res, vars, _) => {
+      successToast(res.message);
+      handleSuccessWithRefreshWithOnSuccess(
+        [["tournaments"]],
+        options?.onSuccess
+      )(res, vars, _);
+    }
   });
 };
 
 const useUpdateTournament = (
-  options?: UseMutationOptions<TournamentData, Error, TournamentData>
+  options?: MutationType<TournamentData>
 ) => {
   return useMutation({
     ...options,
-    mutationFn: async (data: TournamentData) => {
-      return await promiseToast(
-        TournamentService.updateTournament(data.tournamentId, data),
-        updateTournamentTexts
-      );
-    },
-    onSuccess: (r, v, c) => {
+    mutationFn: async (data) => await TournamentService.update<TournamentData>(data, "/tournament"),
+    onError: handleError,
+    onSuccess: (res, vars, _) => {
+      successToast(res.message);
       handleSuccessWithRefreshWithOnSuccess(
-        [["tournament", r.tournamentId]],
+        [["tournament", vars.tournamentId]],
         options?.onSuccess
-      )(r, v, c);
+      )(res, vars, _);
     },
   });
 };
 
 const useRemoveTournament = (
-  options?: UseMutationOptions<number, Error, number>
+  options?: MutationType<number>
 ) => {
   return useMutation({
     ...options,
-    mutationFn: async (id: number) => {
-      return await promiseToast(
-        TournamentService.removeTournament(id),
-        removeTournamentTexts
-      );
-    },
-    onSuccess: handleSuccessWithRefreshWithOnSuccess(
-      [["tournaments"]],
-      options?.onSuccess
-    ),
+    mutationFn: async (id) => await TournamentService.remove(id, "/tournament"),
+    onSuccess: (res, vars, _) => {
+      successToast(res.message);
+      handleSuccessWithRefreshWithOnSuccess(
+        [["tournaments"]],
+        options?.onSuccess
+      )(res, vars, _);
+    }
   });
 };
 
 export const TournamentQueries = {
   getAllTournaments: useGetAllTournaments,
-  getTournament: useGetTournamentByID,
+  getTournament: useGetTournament,
   createTournament: useCreateTournament,
   updateTournament: useUpdateTournament,
   removeTournament: useRemoveTournament,

@@ -1,6 +1,5 @@
 import {
   useMutation,
-  UseMutationOptions,
   useQuery,
   UseQueryOptions,
 } from "react-query";
@@ -9,11 +8,9 @@ import { GokartData } from "../../types";
 import {
   handleError,
   handleSuccessWithRefreshWithOnSuccess as handleSuccessWithRefreshOnSuccess,
+  MutationType,
 } from "./queryUtils";
-import { QueryResponse } from "../services/baseService";
 import { successToast } from "../Utils/ToastNotifications";
-
-type MutationType<T> = UseMutationOptions<QueryResponse, QueryResponse, T>;
 
 const useGetAllGokarts = (options?: UseQueryOptions<GokartData[], Error>) => {
   return useQuery({

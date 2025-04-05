@@ -13,7 +13,7 @@ namespace api.Controllers {
         public PlayerController(IPlayerRepository playerRepository) => this.playerRepository = playerRepository;
 
 
-        [HttpPost("{tournamentId}")]
+        [HttpPost]
         public async Task<IActionResult> Create(Player data) {
             try {
                 if (!ModelState.IsValid)
