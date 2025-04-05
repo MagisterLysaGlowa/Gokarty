@@ -5,7 +5,7 @@ import { Loading } from "../../../components/Loading/Loading";
 export const TournamentsListContainer = () => {
   const { data, isLoading } = TournamentQueries.getAllTournaments();
 
-  if (isLoading) return <Loading isLoading />;
+  if (isLoading) return <Loading />;
 
   return (
     <div className="grid 2xl:grid-cols-4 xl:grid-cols-4 gap-3 lg:grid-cols-3  md:grid-cols-2 py-4">

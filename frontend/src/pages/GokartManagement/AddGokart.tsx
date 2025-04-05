@@ -58,7 +58,7 @@ export const AddGokart = () => {
         />
       </div>
       {isLoading ? (
-        <Loading isLoading={isLoading} />
+        <Loading/>
       ) : (
         <TableComponent columns={columns} rows={rows} tableCells={gokartCell} />
       )}

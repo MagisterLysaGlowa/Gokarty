@@ -1,6 +1,6 @@
-import { TournamentFormData } from "../../../types";
+import { TournamentData } from "../../../types";
 
-export const resetTournamentValues: TournamentFormData = {
+export const tournamentDefaultValue: TournamentData = {
   name: "",
   endDate: new Date(),
   startDate: new Date(),

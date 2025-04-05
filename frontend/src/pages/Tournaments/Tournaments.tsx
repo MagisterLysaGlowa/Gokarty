@@ -1,7 +1,6 @@
-import "./tournaments.css";
 import { Button, useDisclosure } from "@heroui/react";
 import { IoMdAdd } from "react-icons/io";
-import { CreateTournamentModal } from "./TournamentCreateModal";
+import { CreateTournamentModal } from "./tournamentsComponents/TournamentCreateModal";
 import { TournamentsListContainer } from "./tournamentsComponents/TournamentsListContainer";
 
 const Tournaments = () => {

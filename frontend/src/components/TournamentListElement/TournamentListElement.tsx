@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { TournamentData } from "../../../types";
 import { Image } from "@heroui/react";
 import { FaCalendar, FaEdit, FaTable } from "react-icons/fa";
+
 interface TournamentListElementProps {
   data: TournamentData;
 }

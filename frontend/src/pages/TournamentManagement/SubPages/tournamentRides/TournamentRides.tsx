@@ -56,7 +56,7 @@ export const TournamentRides = () => {
         />
       </div>
       {isLoading ? (
-        <Loading isLoading={isLoading} />
+        <Loading />
       ) : (
         <TournamentRidesTable
           data={data}

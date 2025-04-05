@@ -22,29 +22,19 @@ import {
 } from "../../../../../configs/buttonConfig";
 import { selectConfig } from "../../../../../configs/selectConfig";
 import { dateRangePickerConfig } from "../../../../../configs/dateRangePickerConfig";
+import { useState } from "react";
 
 type EditModalProps = {
   modal: ModalProps;
   tournament: TournamentData;
-  setTournament: React.Dispatch<React.SetStateAction<TournamentData>>;
 };
 
 export const EditTournamentModal: React.FC<EditModalProps> = ({
   modal,
   tournament,
-  setTournament,
 }) => {
-  const { mutateAsync: updateTournamentAsync } =
-    TournamentQueries.updateTournament();
-
-  const handleEdit = async (onClose: () => void) => {
-    if (await tournamentValidate(tournament)) {
-      await updateTournamentAsync(tournament);
-      onClose();
-    }
-  };
-
-  const variant = "underlined";
+  const [tournamentToEdit, setTournamentToEdit] = useState<TournamentData>(tournament);
+  const { mutateAsync: updateTournamentAsync } = TournamentQueries.updateTournament();
 
   return (
     <Modal
@@ -62,9 +52,9 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
             <ModalBody>
               <Input
                 label="Nazwa"
-                value={tournament.name}
+                value={tournamentToEdit.name}
                 onChange={(e) =>
-                  setTournament((p) => ({ ...p, name: e.target.value }))
+                  setTournamentToEdit((p) => ({ ...p, name: e.target.value }))
                 }
                 {...inputConfig}
               />
@@ -72,22 +62,21 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
                 {...dateRangePickerConfig}
                 defaultValue={{
                   start: parseDate(
-                    tournament.startDate.toISOString().split("T")[0]
+                    tournamentToEdit.startDate.toISOString().split("T")[0]
                   ),
                   end: parseDate(
-                    tournament.endDate.toISOString().split("T")[0]
+                    tournamentToEdit.endDate.toISOString().split("T")[0]
                   ),
                 }}
-                variant={variant}
                 label="Czas trwania"
               />
               <Select
                 {...selectConfig}
                 label="Rodzaj kolejki"
-                selectedKeys={tournament.tournamentTypeId.toString()}
+                selectedKeys={tournamentToEdit.tournamentTypeId.toString()}
                 selectionMode="single"
                 onChange={(e) =>
-                  setTournament((p) => ({
+                  setTournamentToEdit((p) => ({
                     ...p,
                     tournamentTypeId: Number(e.target.value),
                   }))
@@ -100,9 +89,9 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
                 {...selectConfig}
                 label="Etap turnieju"
                 selectionMode="single"
-                selectedKeys={[tournament.tournamentStateId.toString()]}
+                selectedKeys={[tournamentToEdit.tournamentStateId.toString()]}
                 onChange={(e) =>
-                  setTournament((p) => ({
+                  setTournamentToEdit((p) => ({
                     ...p,
                     tournamentStateId: Number(e.target.value),
                   }))
@@ -119,7 +108,12 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
               </Button>
               <Button
                 {...confirmButtonConfig}
-                onPress={() => handleEdit(onClose)}
+                onPress={async () => {
+                  if (await tournamentValidate(tournament)) {
+                    await updateTournamentAsync(tournament);
+                    onClose();
+                  }
+                }}
               >
                 Zatwierdź
               </Button>

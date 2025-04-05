@@ -67,7 +67,7 @@ export const SchoolManagement = () => {
       </div>
       <div>
         {isLoading ? (
-          <Loading isLoading={isLoading} />
+          <Loading/>
         ) : (
           <TableComponent
             columns={columns}

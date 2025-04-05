@@ -60,7 +60,7 @@ export const PlayersForTournament = () => {
       </div>
       <div className="flex-1 overflow-auto">
         {isLoading ? (
-          <Loading isLoading={isLoading} />
+          <Loading/>
         ) : (
           <TableComponent
             columns={columns}
