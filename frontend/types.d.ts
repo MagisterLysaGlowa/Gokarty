@@ -27,6 +27,8 @@ export interface TournamentData {
   endDate: Date;
   tournamentStateId: number;
   tournamentTypeId: number;
+  tournamentState?: TournamentState;
+  tournamentType?: TournamentType;
 }
 
 export interface TournamentType {
@@ -46,7 +48,7 @@ export interface PlayerData {
 export interface PlayerFilterFormData {
   name: string;
   surname: string;
-  schoolId: number;
+  schoolId?: number;
   tournamentId: number;
 }
 

@@ -23,6 +23,8 @@ import {
 import { selectConfig } from "../../../../../configs/selectConfig";
 import { dateRangePickerConfig } from "../../../../../configs/dateRangePickerConfig";
 import { useState } from "react";
+import { validateData } from "../../../../../validations/validationUtils";
+import { tournamentValidateSchema } from "../../../../../validations/TournamentValidation";
 
 type EditModalProps = {
   modal: ModalProps;
@@ -33,8 +35,10 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
   modal,
   tournament,
 }) => {
-  const [tournamentToEdit, setTournamentToEdit] = useState<TournamentData>(tournament);
-  const { mutateAsync: updateTournamentAsync } = TournamentQueries.updateTournament();
+  const [tournamentToEdit, setTournamentToEdit] =
+    useState<TournamentData>(tournament);
+  const { mutateAsync: updateTournamentAsync } =
+    TournamentQueries.updateTournament();
 
   return (
     <Modal
@@ -109,7 +113,9 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
               <Button
                 {...confirmButtonConfig}
                 onPress={async () => {
-                  if (await tournamentValidate(tournament)) {
+                  if (
+                    await validateData(tournamentValidateSchema, tournament)
+                  ) {
                     await updateTournamentAsync(tournament);
                     onClose();
                   }

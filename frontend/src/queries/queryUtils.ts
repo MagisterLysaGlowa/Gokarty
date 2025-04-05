@@ -52,8 +52,4 @@ export const handleError = (err: AxiosError) => {
   errorToast((err.response?.data as QueryResponse).message);
 };
 
-export type MutationType<T> = UseMutationOptions<
-  QueryResponse,
-  QueryResponse,
-  T
->;
+export type MutationType<T> = UseMutationOptions<QueryResponse, Error, T>;

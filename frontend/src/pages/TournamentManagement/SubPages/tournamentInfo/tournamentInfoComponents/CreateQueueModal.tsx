@@ -13,13 +13,14 @@ import { ModalProps, TournamentData } from "../../../../../../types";
 import { useState } from "react";
 import { GokartQueries } from "../../../../../queries/gokartQuery";
 import { QueueQueries } from "../../../../../queries/queueQuery";
-import { queueValidation } from "../../../../../validations/queueValidation";
 import { modalConfig } from "../../../../../configs/modalConfig";
 import {
   cancelButtonConfig,
   confirmButtonConfig,
 } from "../../../../../configs/buttonConfig";
 import { selectConfig } from "../../../../../configs/selectConfig";
+import { validateData } from "../../../../../validations/validationUtils";
+import { queueValidationSchema } from "../../../../../validations/queueValidation";
 
 type CreateQueueProps = {
   modal: ModalProps;
@@ -89,7 +90,7 @@ export const CreateQueueModal: React.FC<CreateQueueProps> = ({
                 {...confirmButtonConfig}
                 onPress={async () => {
                   if (
-                    await queueValidation({
+                    await validateData(queueValidationSchema, {
                       gokartIds: gokartIds,
                       numberOfRidesInOneGokart: numberOfRidesInOneGokart,
                       tournamentId: tournament.tournamentId,
@@ -98,7 +99,7 @@ export const CreateQueueModal: React.FC<CreateQueueProps> = ({
                     await createQueuesAsync({
                       gokartIds: gokartIds,
                       numberOfRidesInOneGokart: numberOfRidesInOneGokart,
-                      tournamentId: tournament.tournamentId,
+                      tournamentId: Number(tournament.tournamentId),
                     });
                   }
                   onClose();

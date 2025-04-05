@@ -20,7 +20,7 @@ import { inputConfig } from "../../../../configs/inputConfig";
 
 export const PlayersForTournament = () => {
   const { id: tournamentId } = useParams();
-  const { data, isLoading } = PlayerQueries.getPlayersForTournamentWithSchool(
+  const { data, isLoading } = PlayerQueries.getPlayersForTournament(
     Number(tournamentId),
     {
       refetchInterval: 10_000,
@@ -60,7 +60,7 @@ export const PlayersForTournament = () => {
       </div>
       <div className="flex-1 overflow-auto">
         {isLoading ? (
-          <Loading/>
+          <Loading />
         ) : (
           <TableComponent
             columns={columns}
@@ -84,7 +84,7 @@ export const PlayersForTournament = () => {
           <div className="flex flex-col gap-2">
             <div>{selectedPlayer.name + " " + selectedPlayer.surname}</div>
             <div>{selectedPlayer.birthDate.toLocaleDateString()}</div>
-            <div>{selectedPlayer.school.acronym}</div>
+            <div>{selectedPlayer.class?.school?.acronym ?? ""}</div>
           </div>
         </YesNoModal>
       )}

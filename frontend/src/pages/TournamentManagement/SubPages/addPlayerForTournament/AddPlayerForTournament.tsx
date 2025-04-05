@@ -95,7 +95,7 @@ export const AddPlayerForTournament = () => {
       </div>
 
       {isFetching ? (
-        <Loading/>
+        <Loading />
       ) : (
         <TableComponent columns={columns} rows={rows} tableCells={customCell} />
       )}

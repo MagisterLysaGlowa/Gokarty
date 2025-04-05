@@ -13,7 +13,10 @@ import { useEffect, useState } from "react";
 import { tournamentDefaultValue } from "../TournamentUtils";
 import { modalConfig } from "../../../configs/modalConfig";
 import { inputConfig } from "../../../configs/inputConfig";
-import { cancelButtonConfig, confirmButtonConfig } from "../../../configs/buttonConfig";
+import {
+  cancelButtonConfig,
+  confirmButtonConfig,
+} from "../../../configs/buttonConfig";
 import { dateRangePickerConfig } from "../../../configs/dateRangePickerConfig";
 import { TournamentQueries } from "../../../queries/tournamentQuery";
 import { defaultVariant } from "../../../Utils/globalUtils";
@@ -27,8 +30,11 @@ type TournamentCreateModalParams = {
 export const CreateTournamentModal: React.FC<TournamentCreateModalParams> = ({
   modal,
 }) => {
-  const [tournament, setTournament] = useState<TournamentData>(tournamentDefaultValue);
-  const { mutateAsync: createTournament } = TournamentQueries.createTournament();
+  const [tournament, setTournament] = useState<TournamentData>(
+    tournamentDefaultValue
+  );
+  const { mutateAsync: createTournament } =
+    TournamentQueries.createTournament();
 
   useEffect(() => {
     setTournament(tournamentDefaultValue);

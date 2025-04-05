@@ -1,16 +1,16 @@
-import {
-  useMutation,
-  useQuery,
-  UseQueryOptions,
-} from "react-query";
+import { useMutation, useQuery, UseQueryOptions } from "react-query";
 import TournamentService from "../services/tournament";
 import { TournamentData } from "../../types";
+import { successToast } from "../Utils/ToastNotifications";
 import {
-  successToast,
-} from "../Utils/ToastNotifications";
-import { handleError, handleSuccessWithRefreshWithOnSuccess, MutationType } from "./queryUtils";
+  handleError,
+  handleSuccessWithRefreshWithOnSuccess,
+  MutationType,
+} from "./queryUtils";
 
-const useGetAllTournaments = (options?: UseQueryOptions<TournamentData[], Error>) => {
+const useGetAllTournaments = (
+  options?: UseQueryOptions<TournamentData[], Error>
+) => {
   return useQuery({
     queryKey: ["tournaments"],
     queryFn: () => TournamentService.getAll<TournamentData>("/tournament"),
@@ -24,18 +24,18 @@ const useGetTournament = (
 ) => {
   return useQuery({
     queryKey: ["tournament", id],
-    queryFn: async () => await TournamentService.get<TournamentData>(id, "/tournament"),
+    queryFn: async () =>
+      await TournamentService.get<TournamentData>(id, "/tournament"),
     enabled: !!id,
     ...options,
   });
 };
 
-const useCreateTournament = (
-  options?: MutationType<TournamentData>
-) => {
+const useCreateTournament = (options?: MutationType<TournamentData>) => {
   return useMutation({
     ...options,
-    mutationFn: async (data) => await TournamentService.create<TournamentData>(data, "/tournament"),
+    mutationFn: async (data) =>
+      await TournamentService.create<TournamentData>(data, "/tournament"),
     onError: handleError,
     onSuccess: (res, vars, _) => {
       successToast(res.message);
@@ -43,16 +43,15 @@ const useCreateTournament = (
         [["tournaments"]],
         options?.onSuccess
       )(res, vars, _);
-    }
+    },
   });
 };
 
-const useUpdateTournament = (
-  options?: MutationType<TournamentData>
-) => {
+const useUpdateTournament = (options?: MutationType<TournamentData>) => {
   return useMutation({
     ...options,
-    mutationFn: async (data) => await TournamentService.update<TournamentData>(data, "/tournament"),
+    mutationFn: async (data) =>
+      await TournamentService.update<TournamentData>(data, "/tournament"),
     onError: handleError,
     onSuccess: (res, vars, _) => {
       successToast(res.message);
@@ -64,9 +63,7 @@ const useUpdateTournament = (
   });
 };
 
-const useRemoveTournament = (
-  options?: MutationType<number>
-) => {
+const useRemoveTournament = (options?: MutationType<number>) => {
   return useMutation({
     ...options,
     mutationFn: async (id) => await TournamentService.remove(id, "/tournament"),
@@ -76,7 +73,7 @@ const useRemoveTournament = (
         [["tournaments"]],
         options?.onSuccess
       )(res, vars, _);
-    }
+    },
   });
 };
 
