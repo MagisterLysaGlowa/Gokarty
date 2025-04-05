@@ -7,5 +7,6 @@ namespace api.Interfaces {
         Task<int?> RemoveAsync(int gokartId);
         Task<Gokart?> GetAsync(int gokartId);
         Task<List<Gokart>> GetAllAsync();
+        Task<bool> ExistsAsync(int gokartId);
     }
 }

@@ -9,6 +9,7 @@ namespace api.Interfaces
         Task<int?> RemoveAsync(int schoolId);
         Task<List<School>> GetAllAsync();
         Task<School?> GetAsync(int schoolId);
+        Task<bool> ExistsAsync(int schoolId);
 
     }
 }

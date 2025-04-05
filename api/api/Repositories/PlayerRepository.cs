@@ -71,6 +71,7 @@ namespace api.Repositories {
                 .Select(pt => pt.Player)
                 .Include(p => p.Class)
                 .ThenInclude(c => c.School)
+                .OrderBy(p=>p.PlayerId)
                 .ToListAsync();
         }
 
@@ -96,6 +97,10 @@ namespace api.Repositories {
                 return playerTournament.PlayersId;
             }
             return null;
+        }
+
+        public async Task<bool> ExistsAsync(int playerId) {
+            return await _context.Players.AnyAsync(p=>p.PlayerId==playerId);
         }
     }
 }

@@ -47,5 +47,9 @@ namespace api.Repositories
                 .Include(z => z.TournamentState)
                 .FirstOrDefaultAsync(z => z.TournamentId == tournamentId);
         }
+
+        public async Task<bool> ExistsAsync(int tournamentId) {
+           return await _context.Tournaments.AnyAsync(t=>t.TournamentId==tournamentId);
+        }
     }
 }

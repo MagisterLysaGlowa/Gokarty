@@ -13,7 +13,7 @@ import { ModalProps, TournamentData } from "../../../../../../types";
 import { useState } from "react";
 import { GokartQueries } from "../../../../../queries/gokartQuery";
 import { QueueQueries } from "../../../../../queries/queueQuery";
-import { queueValidation } from "../../../../../validations/QueueRandomizationValidation";
+import { queueValidation } from "../../../../../validations/queueValidation";
 import { modalConfig } from "../../../../../configs/modalConfig";
 import {
   cancelButtonConfig,

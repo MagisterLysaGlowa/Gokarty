@@ -7,7 +7,7 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { queueValidation } from "../../validations/QueueRandomizationValidation";
+import { queueValidation } from "../../validations/queueValidation";
 import { QueueFormData } from "../../../types";
 import { GokartQueries } from "../../queries/gokartQuery";
 import { QueueQueries } from "../../queries/queueQuery";

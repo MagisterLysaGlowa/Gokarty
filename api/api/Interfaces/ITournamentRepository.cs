@@ -9,5 +9,6 @@ namespace api.Interfaces
         Task<Tournament> CreateAsync(Tournament tournament);
         Task<Tournament?> UpdateAsync(Tournament tournament);
         Task<int?> RemoveAsync(int tournamentId);
+        Task<bool> ExistsAsync(int tournamentId);
     }
 }

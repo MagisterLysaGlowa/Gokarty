@@ -1,6 +1,4 @@
 import * as yup from "yup";
-import { PlayerFormData } from "../../types";
-import { errorToast } from "../Utils/ToastNotifications";
 
 const playerValidationSchema = yup.object().shape({
   name: yup
@@ -25,13 +23,3 @@ const playerValidationSchema = yup.object().shape({
       return value <= new Date();
     }),
 });
-
-export const validatePlayer = async (data: PlayerFormData) => {
-  try {
-    await playerValidationSchema.validate(data);
-    return true;
-  } catch (error) {
-    if (error instanceof yup.ValidationError) errorToast(error.errors[0]);
-    return false;
-  }
-};

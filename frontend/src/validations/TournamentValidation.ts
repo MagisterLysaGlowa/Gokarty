@@ -1,8 +1,6 @@
 import * as yup from "yup";
-import { TournamentFormData } from "../../types";
-import { errorToast } from "../Utils/ToastNotifications";
 
-const createTournamentValidateSchema = yup.object().shape({
+export const tournamentValidateSchema = yup.object().shape({
   name: yup
     .string()
     .required("Nazwa jest wymagana")
@@ -29,15 +27,3 @@ const createTournamentValidateSchema = yup.object().shape({
     .required()
     .min(1, "Rodzaj zawodów jest wymagany"),
 });
-
-export const tournamentValidate = async (data: TournamentFormData) => {
-  try {
-    await createTournamentValidateSchema.validate(data, { abortEarly: false });
-    return true;
-  } catch (error) {
-    if (error instanceof yup.ValidationError) {
-      errorToast(error.errors[0]);
-    }
-    return false;
-  }
-};

@@ -1,8 +1,6 @@
 import * as yup from "yup";
-import { SchoolFormData } from "../../types";
-import { errorToast } from "../Utils/ToastNotifications";
 
-const schoolValidationSchema = yup.object().shape({
+export const schoolValidationSchema = yup.object().shape({
   name: yup
     .string()
     .required("Nazwa jest wymagana")
@@ -19,13 +17,3 @@ const schoolValidationSchema = yup.object().shape({
     .min(2, "Skrót musi mieć ponad 2 znaki")
     .max(20, "Skrót musi mieć mniej niż 20 znaków"),
 });
-
-export const schoolValidate = async (data: SchoolFormData) => {
-  try {
-    await schoolValidationSchema.validate(data);
-    return true;
-  } catch (error) {
-    if (error instanceof yup.ValidationError) errorToast(error.errors[0]);
-    return false;
-  }
-};

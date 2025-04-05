@@ -25,7 +25,7 @@ namespace api.Repositories
 
         public async Task<List<School>> GetAllAsync()
         {
-            return await _context.Schools.ToListAsync();
+            return await _context.Schools.OrderBy(s=>s.SchoolId).ToListAsync();
         }
 
         public async Task<int?> RemoveAsync(int schoolId)
@@ -43,6 +43,10 @@ namespace api.Repositories
             _context.Update(data);
             await _context.SaveChangesAsync();
             return data;
+        }
+
+        public async Task<bool> ExistsAsync(int schoolId) {
+            return await _context.Schools.AnyAsync(s => s.SchoolId == schoolId);
         }
     }
 }

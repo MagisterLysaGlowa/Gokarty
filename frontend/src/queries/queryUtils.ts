@@ -1,7 +1,13 @@
-import { MutationOptions, QueryClient, QueryKey, UseMutationOptions } from "react-query";
+import {
+  MutationOptions,
+  QueryClient,
+  QueryKey,
+  UseMutationOptions,
+} from "react-query";
 import { queryClient } from "../Utils/ReactQueryConfig";
 import { QueryResponse } from "../services/baseService";
 import { errorToast } from "../Utils/ToastNotifications";
+import { AxiosError } from "axios";
 
 /**
  *
@@ -42,8 +48,12 @@ export const handleSuccessWithRefreshWithOnSuccess = <
   };
 };
 
-export const handleError = (err: QueryResponse) => {
-  errorToast(err.message);
+export const handleError = (err: AxiosError) => {
+  errorToast((err.response?.data as QueryResponse).message);
 };
 
-export type MutationType<T> = UseMutationOptions<QueryResponse, QueryResponse, T>;
+export type MutationType<T> = UseMutationOptions<
+  QueryResponse,
+  QueryResponse,
+  T
+>;

@@ -34,7 +34,7 @@ namespace api.Controllers {
             try {
                 if (!ModelState.IsValid)
                     return StatusCode(400, new ResponseHelper(400, "BadRequest", "Podano błedne dane dla szkoły"));
-                if (await schoolRepository.GetAsync(data.SchoolId) is null)
+                if (!await schoolRepository.ExistsAsync(data.SchoolId))
                     return StatusCode(404, new ResponseHelper(404, "NotFound", "Nie znaleziono szkoły"));
                 await schoolRepository.UpdateAsync(data);
                 return StatusCode(200, new ResponseHelper(200, "Ok", "Pomyślnie uaktualniono szkołe"));

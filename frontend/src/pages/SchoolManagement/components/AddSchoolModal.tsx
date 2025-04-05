@@ -8,22 +8,24 @@ import {
   Input,
 } from "@heroui/react";
 import { useEffect, useState } from "react";
-import { ModalProps, SchoolFormData } from "../../../../types";
+import { ModalProps, SchoolData } from "../../../../types";
 import { SchoolQueries } from "../../../queries/schoolQuery";
-import { schoolValidate } from "../../../validations/SchoolValidation";
+
 import { modalConfig } from "../../../configs/modalConfig";
 import { inputConfig } from "../../../configs/inputConfig";
 import {
   cancelButtonConfig,
   confirmButtonConfig,
 } from "../../../configs/buttonConfig";
+import { validateData } from "../../../validations/validationUtils";
+import { schoolValidationSchema } from "../../../validations/schoolValidation";
 
 type AddSchoolModalProps = {
   modal: ModalProps;
 };
 
 export const AddSchoolModal: React.FC<AddSchoolModalProps> = ({ modal }) => {
-  const [school, setSchool] = useState<SchoolFormData>({
+  const [school, setSchool] = useState<SchoolData>({
     name: "",
     acronym: "",
     city: "",
@@ -78,7 +80,7 @@ export const AddSchoolModal: React.FC<AddSchoolModalProps> = ({ modal }) => {
               <Button
                 {...confirmButtonConfig}
                 onPress={async () => {
-                  if (await schoolValidate(school)) {
+                  if (await validateData(schoolValidationSchema, school)) {
                     await createSchool(school);
                     onClose();
                   }

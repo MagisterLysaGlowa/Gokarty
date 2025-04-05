@@ -141,5 +141,9 @@ namespace api.Repositories
             await _context.RideGroups.AddAsync(newRideGroup);
             return newRideGroup;
         }
+
+        public Task<bool> ExistsAsync(int rideId) {
+            return _context.Rides.AnyAsync(r => r.RideId == rideId);
+        }
     }
 }

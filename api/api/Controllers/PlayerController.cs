@@ -33,7 +33,7 @@ namespace api.Controllers {
             try {
                 if (!ModelState.IsValid)
                     return StatusCode(400, new ResponseHelper(400, "BadRequest", "Podano błędne dane dla gracza"));
-                if (await playerRepository.GetAsync(data.PlayerId) is null)
+                if (!await playerRepository.ExistsAsync(data.PlayerId))
                     return StatusCode(404, new ResponseHelper(404, "NotFound", "Nie znaleziono gracza"));
                 await playerRepository.UpdateAsync(data);
                 return StatusCode(200, new ResponseHelper(200, "Ok", "Pomyślnie uaktualniono gracza"));

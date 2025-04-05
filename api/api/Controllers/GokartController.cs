@@ -37,7 +37,7 @@ namespace api.Controllers
             try {
                 if (!ModelState.IsValid)
                     return StatusCode(400, new ResponseHelper(400, "BadRequest", "Podano błędne dane dla gokarta"));
-                if (await gokartRepository.GetAsync(data.GokartId) is null)
+                if (!await gokartRepository.ExistsAsync(data.GokartId))
                     return StatusCode(404, new ResponseHelper(404, "NotFound", "Nie znaleziono gokarta"));
                 await gokartRepository.UpdateAsync(data);
                 return StatusCode(200, new ResponseHelper(200, "Ok", "Pomyślnie uaktualniono gokart"));

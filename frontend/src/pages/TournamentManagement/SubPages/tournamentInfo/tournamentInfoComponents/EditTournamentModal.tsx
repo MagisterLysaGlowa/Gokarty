@@ -12,7 +12,7 @@ import {
 } from "@heroui/react";
 import { parseDate } from "@internationalized/date";
 import { TournamentQueries } from "../../../../../queries/tournamentQuery";
-import { tournamentValidate } from "../../../../../validations/TournamentValidation";
+
 import { ModalProps, TournamentData } from "../../../../../../types";
 import { modalConfig } from "../../../../../configs/modalConfig";
 import { inputConfig } from "../../../../../configs/inputConfig";

@@ -14,5 +14,6 @@ namespace api.Interfaces
         Task<Ride?> GetAsync(int rideId);
         Task<int> FindRideNumberAsync(int tournamentId, int playerId);
         Task<RideGroup> GetRideGroup(int tournamentId, int playerId, int classId);
+        Task<bool> ExistsAsync(int rideId);
     }
 }
