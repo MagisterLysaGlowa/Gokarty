@@ -1,12 +1,12 @@
 import { useCallback, useEffect } from "react";
-import { QueueData, RideData } from "../../../types";
+import { QueueData, RideAndPersonData } from "../../../types";
 import { convertTimeToString } from "../../Utils/TimeUtils";
 import * as signalR from "@microsoft/signalr";
 
 export type TournamentTableUpdateData = {
   queue: QueueData[];
-  lastRide: RideData;
-  rides: RideData[];
+  lastRide: RideAndPersonData;
+  rides: RideAndPersonData[];
 };
 
 export const useTableUpdate = (
@@ -75,25 +75,24 @@ export const columns = [
 ];
 
 export const getRows = (
-  data: RideData[] | undefined | null,
+  data: RideAndPersonData[] | undefined | null,
   page: number,
   quantity: number
 ): TableRowsType[] | undefined => {
   return data
     ?.map((z, index, array) => ({
       difference:
-        index === 0
-          ? ""
-          : "+" +
-            convertTimeToString(
-              index == 0 ? 0 : array[index].time - array[0].time
-            ),
+        index === 0 && !z.ride.isDisqualified ? 
+        "" :
+        (z.ride.isDisqualified ?
+        "DSQ" :
+        `+${convertTimeToString(z.ride.time - array[0].ride.time)}`),
       position: index < 9 ? `#0${index + 1}` : `#${index + 1}`,
       key: index,
-      person: `${z.player?.name} ${z.player?.surname}`,
-      gokart: z.gokart?.name,
-      time: convertTimeToString(z.time),
-      school: z.player?.school.acronym,
+      person: `${z.player.name} ${z.player?.surname}`,
+      gokart: z.ride.gokart?.name,
+      time: convertTimeToString(z.ride.time),
+      school: z.player.class?.school?.acronym,
     }))
     .slice(page * quantity, (page + 1) * quantity);
 };

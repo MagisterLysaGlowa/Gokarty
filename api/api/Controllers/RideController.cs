@@ -2,7 +2,6 @@
 using api.Helpers;
 using api.Interfaces;
 using api.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,10 +13,12 @@ namespace api.Controllers
     {
         private readonly IRideRepository rideRepository;
         private readonly IQueueRepository queueRepository;
+        private readonly ITournamentTableHubSender hubSender;
 
-        public RideController(IRideRepository rideRepository, IQueueRepository queueRepository) {
+        public RideController(IRideRepository rideRepository, IQueueRepository queueRepository, ITournamentTableHubSender hubSender) {
             this.rideRepository = rideRepository;
             this.queueRepository = queueRepository;
+            this.hubSender = hubSender;
         }
 
         [HttpPost]
@@ -25,7 +26,7 @@ namespace api.Controllers
         {
             try {
                 int rideNumber = await rideRepository.FindRideNumberAsync(dto.TournamentId, dto.PlayerId);
-                var rideGroup = await rideRepository.GetRideGroup(dto.TournamentId, dto.PlayerId, dto.ClassId);
+                var rideGroup = await rideRepository.GetRideGroupAsync(dto.TournamentId, dto.PlayerId, dto.ClassId);
                 var ride = new Ride() {
                     RideGroupId = rideGroup.RideGroupId,
                     GokartId = dto.GokartId,
@@ -36,6 +37,7 @@ namespace api.Controllers
                 };
                 await rideRepository.CreateAsync(ride);
                 await queueRepository.RemoveAsync(dto.deleteQueueId);
+                await hubSender.SendUpdate(dto.TournamentId);
                 return StatusCode(201, new ResponseHelper(201, "Created", "Pomyślnie utworzono przejazd"));
             } catch (TimeoutException) {
                 return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
@@ -106,7 +108,7 @@ namespace api.Controllers
         public async Task<IActionResult> GetAllForTournament(int tournamentId)
         {
             try {
-                return Ok(await rideRepository.GetRideGroupsForTournament(tournamentId));
+                return Ok(await rideRepository.GetRideGroupsForTournamentAsync(tournamentId));
             } catch (TimeoutException) {
                 return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
             } catch (Exception) {

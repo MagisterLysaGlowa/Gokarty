@@ -1,13 +1,13 @@
 import { Dispatch, FC, SetStateAction } from "react";
-import { QueueData, RideData, TournamentData } from "../../../../types";
+import { QueueData, RideAndPersonData, TournamentData } from "../../../../types";
 import { FaArrowRightLong, FaArrowLeftLong } from "react-icons/fa6";
 import { convertTimeToString } from "../../../Utils/TimeUtils";
 import { FaGripLinesVertical } from "react-icons/fa";
 
 type TournamentRightPanelProps = {
   tournament: TournamentData | undefined;
-  lastRide: RideData | null | undefined;
-  rides: RideData[] | undefined | null;
+  lastRide: RideAndPersonData | null | undefined;
+  rides: RideAndPersonData[] | undefined | null;
   currentRide: QueueData | undefined | null;
   queue: QueueData[] | undefined | null;
   isVisible: boolean;
@@ -59,10 +59,10 @@ export const TournamentRightPanel: FC<TournamentRightPanelProps> = ({
                   <div className="flex-1 flex-col flex justify-evenly">
                     <div className="text-center flex text-2xl flex-col">
                       <span>
-                        {lastRide.player?.name + " " + lastRide.player?.surname}
+                        {lastRide.player.name + " " + lastRide.player.surname}
                       </span>
                       <span className="text-sm">
-                        {lastRide.player?.school.acronym}
+                        {lastRide.player.class?.school?.acronym}
                       </span>
                     </div>
 
@@ -73,8 +73,8 @@ export const TournamentRightPanel: FC<TournamentRightPanelProps> = ({
                       </div>
 
                       <div className="grid grid-cols-2 text-center text-lg lg:text-xl">
-                        <span>{lastRide.gokart?.name}</span>
-                        <span>{convertTimeToString(lastRide.time)}</span>
+                        <span>{lastRide.ride.gokart?.name}</span>
+                        <span>{convertTimeToString(lastRide.ride.time)}</span>
                       </div>
                     </div>
 
@@ -86,7 +86,7 @@ export const TournamentRightPanel: FC<TournamentRightPanelProps> = ({
                       </div>
 
                       <div className="grid grid-cols-3 text-center text-lg lg:text-xl">
-                        <span className="text-red-700">2</span>
+                        <span className="text-red-700">{lastRide.ride.penaltyPoints}</span>
                         <span>
                           {rides && lastRide
                             ? rides.findIndex(
@@ -95,10 +95,9 @@ export const TournamentRightPanel: FC<TournamentRightPanelProps> = ({
                             : "Brak pozycji"}
                         </span>
                         <span className="text-red-700">
-                          +
-                          {convertTimeToString(
-                            lastRide.time - (rides?.[0]?.time ?? 0)
-                          )}
+                          {lastRide.ride.isDisqualified ?
+                          "DSQ" :
+                          `+${convertTimeToString(lastRide.ride.time - (rides?.[0].ride.time ?? 0))}`}
                         </span>
                       </div>
                     </div>
@@ -117,9 +116,7 @@ export const TournamentRightPanel: FC<TournamentRightPanelProps> = ({
                       <FaArrowRightLong className="text-4xl text-main-default" />
                       <div className="flex w-full justify-evenly text-2xl">
                         <div>
-                          {currentRide.player.name +
-                            " " +
-                            currentRide.player.surname}
+                          {`${currentRide.player.name} ${currentRide.player.surname}`}
                         </div>
                         <div>{currentRide.gokart.name}</div>
                       </div>

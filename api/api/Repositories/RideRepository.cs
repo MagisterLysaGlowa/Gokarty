@@ -38,6 +38,8 @@ namespace api.Repositories
                 _context.Rides.Remove(ride);
                 if (rideGroup.Rides.Count == 1)
                     _context.RideGroups.Remove(rideGroup);
+                else
+                    await _context.Rides.Where(r => r.RideNumber > ride.RideNumber).ForEachAsync(r => r.RideNumber--);
                 await _context.SaveChangesAsync();
                 return rideId;
             }
@@ -63,7 +65,8 @@ namespace api.Repositories
                         }
                     },
                     Ride = rg.Rides
-                        .OrderBy(r => r.Time)
+                        .OrderBy(r => r.IsDisqualified)
+                            .ThenBy(r => r.Time)
                         .Select(r => new Ride() {
                             RideId = r.RideId,
                             RideNumber = r.RideNumber,
@@ -71,8 +74,12 @@ namespace api.Repositories
                             PenaltyPoints = r.PenaltyPoints,
                             Time = r.Time,
                             Gokart = r.Gokart,
-                        }).FirstOrDefault()!
-                }).ToListAsync();
+                        })
+                        .FirstOrDefault()!
+                })
+                .OrderBy(rg => rg.Ride.IsDisqualified)
+                    .ThenBy(rg => rg.Ride.Time)
+                .ToListAsync();
         }
 
         public async Task<RideWithGroupDto?> GetLastAddedForTournamentAsync(int tournamentId) {
@@ -108,7 +115,7 @@ namespace api.Repositories
                 }).FirstOrDefaultAsync();
         }
 
-        public async Task<List<RideGroup>> GetRideGroupsForTournament(int tournamentId) {
+        public async Task<List<RideGroup>> GetRideGroupsForTournamentAsync(int tournamentId) {
             return await _context.RideGroups
                 .Where(rg => rg.TournamentId == tournamentId)
                 .Include(rg => rg.Tournament)
@@ -132,7 +139,7 @@ namespace api.Repositories
                 .CountAsync() + 1;
         }
 
-        public async Task<RideGroup> GetRideGroup(int tournamentId, int playerId, int classId) {
+        public async Task<RideGroup> GetRideGroupAsync(int tournamentId, int playerId, int classId) {
             if (await _context.RideGroups.FirstOrDefaultAsync(rg => rg.TournamentId == tournamentId && rg.PlayerId == playerId) is RideGroup rideGroup)
                 return rideGroup;
             var newRideGroup = new RideGroup() {

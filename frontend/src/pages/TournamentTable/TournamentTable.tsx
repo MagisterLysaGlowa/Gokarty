@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { RideQueries } from "../../queries/rideQuery";
 import { QueueQueries } from "../../queries/queueQuery";
-import { QueueData, RideData } from "../../../types";
+import { QueueData, RideAndPersonData } from "../../../types";
 import { TournamentQueries } from "../../queries/tournamentQuery";
 import { PaginationButtons } from "./tournamentTableComponents/PaginationButtons";
 import { PaginationProgressBar } from "./tournamentTableComponents/PaginationProgressBar";
@@ -60,10 +60,10 @@ const TournamentTable = () => {
     QueueData | null | undefined
   >(null);
   const [queue, setQueue] = useState<QueueData[] | null | undefined>([]);
-  const [lastRide, setLastRide] = useState<RideData | null | undefined>(
+  const [lastRide, setLastRide] = useState<RideAndPersonData | null | undefined>(
     null
   );
-  const [rides, setRides] = useState<RideData[] | null | undefined>([]);
+  const [rides, setRides] = useState<RideAndPersonData[] | null | undefined>([]);
 
   const { data: tournament } = TournamentQueries.getTournament(Number(id));
   const { data: queueData } = QueueQueries.getAllFullQueuesForTournament(

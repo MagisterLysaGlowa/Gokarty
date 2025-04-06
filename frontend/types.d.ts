@@ -84,8 +84,11 @@ export interface RideFormData {
 
 export interface RideAndPersonData {
   ride: RideData;
+  playerId: number;
   player: PlayerData;
+  classId: number;
   class: Class;
+  tournamentId: number;
   tournament: TournamentData;
 }
 

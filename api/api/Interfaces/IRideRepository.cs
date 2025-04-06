@@ -10,10 +10,10 @@ namespace api.Interfaces
         Task<int?> RemoveAsync(int rideId);
         Task<List<RideWithGroupDto>> GetBestForTournamentAsync(int tournamentId);
         Task<RideWithGroupDto?> GetLastAddedForTournamentAsync(int tournamentId);
-        Task<List<RideGroup>> GetRideGroupsForTournament(int tournamentId);
+        Task<List<RideGroup>> GetRideGroupsForTournamentAsync(int tournamentId);
         Task<Ride?> GetAsync(int rideId);
         Task<int> FindRideNumberAsync(int tournamentId, int playerId);
-        Task<RideGroup> GetRideGroup(int tournamentId, int playerId, int classId);
+        Task<RideGroup> GetRideGroupAsync(int tournamentId, int playerId, int classId);
         Task<bool> ExistsAsync(int rideId);
     }
 }
