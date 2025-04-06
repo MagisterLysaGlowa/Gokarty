@@ -10,10 +10,6 @@
   duration-100;
 }
 
-.adminActions {
-  @apply fixed left-[50%] translate-x-[-50%] bottom-10 flex  gap-4;
-}
-
 .selectedNavIcon {
   @apply border-2 border-main-default;
 }

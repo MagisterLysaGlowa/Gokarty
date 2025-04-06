@@ -16,6 +16,7 @@ export const RidesTable: React.FC<RidesTableProps> = ({ rows }) => {
   const handleResize = () => {
     setIsSmallScreen(window.innerWidth < 1024);
   };
+  
 
   useEffect(() => {
     window.addEventListener("resize", handleResize);

@@ -10,7 +10,7 @@ export const TournamentInfoComponent: React.FC<InfoProps> = ({
 }) => {
 
   return (
-    <div className="gap-5 text-center flex-1">
+    <div className="gap-5 text-center flex-1 flex flex-col justify-center">
       <div className="flex flex-col gap-2">
         <h2 className="text-main-default text-center text-4xl">Nazwa</h2>
         <span className="text-xl">{tournament.name}</span>

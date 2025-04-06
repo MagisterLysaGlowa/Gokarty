@@ -41,7 +41,7 @@ export const TournamentInfo = () => {
     });
 
   return (
-    <div className="grid place-items-center h-full">
+    <div className="flex flex-col items-center h-full">
       <LoadingWrapper data={tournamentData} isLoading={isLoading}>
         {(tournament) => (
           <>
@@ -50,7 +50,7 @@ export const TournamentInfo = () => {
               isLoading={isLoading}
               key={id}
             />
-            <div className="adminActions">
+            <div className="flex gap-4">
               <Tooltip content="Edytuj zawody" showArrow>
                 <Button
                   className="tournamentButton bg-main-default"

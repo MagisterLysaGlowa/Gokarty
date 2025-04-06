@@ -62,7 +62,7 @@ export const TournamentRightPanel: FC<TournamentRightPanelProps> = ({
                         {lastRide.player.name + " " + lastRide.player.surname}
                       </span>
                       <span className="text-sm">
-                        {lastRide.player.class?.school?.acronym}
+                        {lastRide.class.school?.acronym}
                       </span>
                     </div>
 

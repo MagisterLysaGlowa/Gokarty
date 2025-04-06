@@ -61,6 +61,10 @@ export const columns = [
     label: "OSOBA",
   },
   {
+    key: "school",
+    label: "Szkoła"
+  },
+  {
     key: "gokart",
     label: "Gokart",
   },
@@ -92,7 +96,7 @@ export const getRows = (
       person: `${z.player.name} ${z.player?.surname}`,
       gokart: z.ride.gokart?.name,
       time: convertTimeToString(z.ride.time),
-      school: z.player.class?.school?.acronym,
+      school: z.class.school?.acronym,
     }))
     .slice(page * quantity, (page + 1) * quantity);
 };
