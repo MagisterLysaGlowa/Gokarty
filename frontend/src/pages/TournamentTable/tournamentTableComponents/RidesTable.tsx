@@ -1,6 +1,19 @@
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, useDisclosure } from "@heroui/react";
+import {
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+  useDisclosure,
+} from "@heroui/react";
 import { useState, useEffect } from "react";
-import { TableRowsType, useCustomTableRows, columns, getTableTextColor } from "../tournamentTableUtils";
+import {
+  TableRowsType,
+  useCustomTableRows,
+  columns,
+  getTableTextColor,
+} from "../tournamentTableUtils";
 import { RideInfoModal } from "./RideInfoModal";
 
 type RidesTableProps = {
@@ -8,7 +21,9 @@ type RidesTableProps = {
 };
 
 export const RidesTable: React.FC<RidesTableProps> = ({ rows }) => {
-  const [selectedRide, setSelectedRide] = useState<TableRowsType | undefined>(undefined);
+  const [selectedRide, setSelectedRide] = useState<TableRowsType | undefined>(
+    undefined
+  );
   const customCell = useCustomTableRows();
   const rideInfoModal = useDisclosure();
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 1024);
@@ -16,7 +31,6 @@ export const RidesTable: React.FC<RidesTableProps> = ({ rows }) => {
   const handleResize = () => {
     setIsSmallScreen(window.innerWidth < 1024);
   };
-  
 
   useEffect(() => {
     window.addEventListener("resize", handleResize);
@@ -28,12 +42,14 @@ export const RidesTable: React.FC<RidesTableProps> = ({ rows }) => {
   return (
     <>
       <Table
-        className="bg-transparent table flex-1 !p-0"
+        className="bg-transparent table flex-1 !p-0 mr-2"
         hideHeader
         removeWrapper
       >
         <TableHeader columns={columns}>
-          {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
+          {(column) => (
+            <TableColumn key={column.key}>{column.label}</TableColumn>
+          )}
         </TableHeader>
         <TableBody items={rows ?? []}>
           {(item) => (
@@ -47,7 +63,11 @@ export const RidesTable: React.FC<RidesTableProps> = ({ rows }) => {
               key={item.key}
             >
               {(columnKey) => (
-                <TableCell className={`${getTableTextColor(item.key)} text-sm sm:text-lg lg:text-xl`}>
+                <TableCell
+                  className={`${getTableTextColor(
+                    item.key
+                  )} text-sm sm:text-lg md:text-md lg:text-lg xl:text-xl`}
+                >
                   {customCell(item, columnKey)}
                 </TableCell>
               )}
@@ -55,7 +75,13 @@ export const RidesTable: React.FC<RidesTableProps> = ({ rows }) => {
           )}
         </TableBody>
       </Table>
-      {selectedRide && <RideInfoModal modal={rideInfoModal} ride={selectedRide} key={`info-${selectedRide.key}`}/>}
+      {selectedRide && (
+        <RideInfoModal
+          modal={rideInfoModal}
+          ride={selectedRide}
+          key={`info-${selectedRide.key}`}
+        />
+      )}
     </>
   );
 };

@@ -15,6 +15,7 @@ import {
   getRows,
 } from "./tournamentTableUtils";
 import { Footer } from "../../components/componentsExport";
+import { Separator } from "../../components/StaticPageComponents/Separator";
 
 const TournamentTable = () => {
   //swipe detector
@@ -56,14 +57,16 @@ const TournamentTable = () => {
   const [page, setPage] = useState(0);
   const pos = 10;
 
-  const [currentRide, setCurrentRide] = useState<
-    QueueData | null | undefined
-  >(null);
-  const [queue, setQueue] = useState<QueueData[] | null | undefined>([]);
-  const [lastRide, setLastRide] = useState<RideAndPersonData | null | undefined>(
+  const [currentRide, setCurrentRide] = useState<QueueData | null | undefined>(
     null
   );
-  const [rides, setRides] = useState<RideAndPersonData[] | null | undefined>([]);
+  const [queue, setQueue] = useState<QueueData[] | null | undefined>([]);
+  const [lastRide, setLastRide] = useState<
+    RideAndPersonData | null | undefined
+  >(null);
+  const [rides, setRides] = useState<RideAndPersonData[] | null | undefined>(
+    []
+  );
 
   const { data: tournament } = TournamentQueries.getTournament(Number(id));
   const { data: queueData } = QueueQueries.getAllFullQueuesForTournament(
@@ -78,14 +81,14 @@ const TournamentTable = () => {
 
   useEffect(() => {
     setQueue(queueData ? queueData.splice(1, queueData.length - 1) : []);
-    setCurrentRide(queueData ? queueData[0] : null)
+    setCurrentRide(queueData ? queueData[0] : null);
   }, [queueData]);
   useEffect(() => {
     setLastRide(lastRideData);
   }, [lastRideData]);
   useEffect(() => {
     console.log(ridesData);
-    
+
     setRides(ridesData);
   }, [ridesData]);
 
@@ -146,7 +149,7 @@ const TournamentTable = () => {
         <span>Tabela</span>
         <span className="text-main-default">Wyników</span>
       </div>
-      <div className="py-4 bg-white w-full border-y-8 border-main-default" />
+      <Separator />
       <div className="flex-1 flex lg:p-3 pb-3">
         {/* tournament table */}
         <div
@@ -154,21 +157,23 @@ const TournamentTable = () => {
           className={`!overflow-hidden w-full lg:w-8/12 flex flex-col`}
         >
           <RidesTable rows={rows} />
-          <div className="grid lg:grid-cols-[25%_50%_25%] gap-2 lg:gap-0 place-content-center justify-center items-center">
-            <div></div>
-            <div className="flex justify-center items-center gap-3">
-              <PaginationButtons
-                intervalRef={intervalRef}
-                pageState={[page, setPage]}
-                itemCount={Number(rides?.length)}
-                time={time}
-                quantity={pos}
-              />
+          {getPaginationLength(rides?.length, pos) >= 1 && (
+            <div className="grid lg:grid-cols-[25%_50%_25%] gap-2 lg:gap-0 place-content-center justify-center items-center">
+              <div></div>
+              <div className="flex justify-center items-center gap-3">
+                <PaginationButtons
+                  intervalRef={intervalRef}
+                  pageState={[page, setPage]}
+                  itemCount={Number(rides?.length)}
+                  time={time}
+                  quantity={pos}
+                />
+              </div>
+              <div className="mx-auto">
+                <PaginationProgressBar page={page} time={time} />
+              </div>
             </div>
-            <div className="mx-auto">
-              <PaginationProgressBar page={page} time={time} />
-            </div>
-          </div>
+          )}
         </div>
 
         {/* right panel */}
@@ -182,7 +187,7 @@ const TournamentTable = () => {
           setIsRightPanelVisible={setIsRightPanelVisible}
         />
       </div>
-      <div className="py-4 bg-white w-full border-y-8 border-main-default" />
+      <Separator />
       <Footer />
     </div>
   );
