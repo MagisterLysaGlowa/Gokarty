@@ -157,7 +157,7 @@ const TournamentTable = () => {
           className={`!overflow-hidden w-full lg:w-8/12 flex flex-col`}
         >
           <RidesTable rows={rows} />
-          {getPaginationLength(rides?.length, pos) >= 1 && (
+          {getPaginationLength(rides?.length, pos) > 1 && (
             <div className="grid lg:grid-cols-[25%_50%_25%] gap-2 lg:gap-0 place-content-center justify-center items-center">
               <div></div>
               <div className="flex justify-center items-center gap-3">
