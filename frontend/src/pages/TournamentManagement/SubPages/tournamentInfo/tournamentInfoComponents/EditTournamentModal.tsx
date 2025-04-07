@@ -10,7 +10,6 @@ import {
   Select,
   SelectItem,
 } from "@heroui/react";
-import { parseDate } from "@internationalized/date";
 import { TournamentQueries } from "../../../../../queries/tournamentQuery";
 
 import { ModalProps, TournamentData } from "../../../../../../types";
@@ -25,6 +24,8 @@ import { dateRangePickerConfig } from "../../../../../configs/dateRangePickerCon
 import { useState } from "react";
 import { validateData } from "../../../../../validations/validationUtils";
 import { tournamentValidateSchema } from "../../../../../validations/TournamentValidation";
+import { removeSecondsAndMiliseconds } from "../../../../../Utils/TimeUtils";
+import { fromDate, getLocalTimeZone } from "@internationalized/date";
 
 type EditModalProps = {
   modal: ModalProps;
@@ -62,13 +63,18 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
               />
               <DateRangePicker
                 {...dateRangePickerConfig}
+                hideTimeZone
                 defaultValue={{
-                  start: parseDate(
-                    tournamentToEdit.startDate.toISOString().split("T")[0]
-                  ),
-                  end: parseDate(
-                    tournamentToEdit.endDate.toISOString().split("T")[0]
-                  ),
+                  start: fromDate(tournamentToEdit.startDate, getLocalTimeZone()),
+                  end: fromDate(tournamentToEdit.endDate, getLocalTimeZone()),
+                }}
+                onChange={(e) => {
+                  if (e?.start && e.end)
+                    setTournamentToEdit((prev) => ({
+                      ...prev,
+                      startDate: removeSecondsAndMiliseconds(e.start.toDate()),
+                      endDate: removeSecondsAndMiliseconds(e.end.toDate()),
+                    }));
                 }}
                 label="Czas trwania"
               />

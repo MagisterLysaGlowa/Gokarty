@@ -22,6 +22,8 @@ import { TournamentQueries } from "../../../queries/tournamentQuery";
 import { defaultVariant } from "../../../Utils/globalUtils";
 import { tournamentValidateSchema } from "../../../validations/TournamentValidation";
 import { validateData } from "../../../validations/validationUtils";
+import { now } from "@internationalized/date";
+import { removeSecondsAndMiliseconds } from "../../../Utils/TimeUtils";
 
 type TournamentCreateModalParams = {
   modal: ModalProps;
@@ -63,13 +65,15 @@ export const CreateTournamentModal: React.FC<TournamentCreateModalParams> = ({
               />
               <DateRangePicker
                 {...dateRangePickerConfig}
+                hideTimeZone
                 label="Czas trwania turnieju"
+                defaultValue={{start: now("Europe/Warsaw"), end: now("Europe/Warsaw")}}
                 onChange={(e) => {
                   if (e?.start && e.end)
                     setTournament((prev) => ({
                       ...prev,
-                      startDate: e.start.toDate("Europe/Warsaw"),
-                      endDate: e.end.toDate("Europe/Warsaw"),
+                      startDate: removeSecondsAndMiliseconds(e.start.toDate()),
+                      endDate: removeSecondsAndMiliseconds(e.end.toDate()),
                     }));
                 }}
               />

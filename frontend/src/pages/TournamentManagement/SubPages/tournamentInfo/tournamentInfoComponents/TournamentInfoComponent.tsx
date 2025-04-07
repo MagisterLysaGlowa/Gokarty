@@ -1,4 +1,5 @@
 import { TournamentData } from "../../../../../../types";
+import { displayDateRange } from "../../../../../Utils/TimeUtils";
 
 type InfoProps = {
   tournament: TournamentData;
@@ -18,9 +19,7 @@ export const TournamentInfoComponent: React.FC<InfoProps> = ({
       <div className="flex flex-col gap-2">
         <h2 className="text-main-default text-center text-4xl">Data trwania</h2>
         <span className="text-xl">
-          {tournament.startDate.toLocaleDateString() +
-            " - " +
-            tournament.endDate.toLocaleDateString()}
+          {displayDateRange(tournament.startDate, tournament.endDate)}
         </span>
       </div>
     </div>

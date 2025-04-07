@@ -87,8 +87,6 @@ const TournamentTable = () => {
     setLastRide(lastRideData);
   }, [lastRideData]);
   useEffect(() => {
-    console.log(ridesData);
-
     setRides(ridesData);
   }, [ridesData]);
 

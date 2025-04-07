@@ -15,7 +15,7 @@ namespace api.Repositories {
             return _class;
         }
 
-        public Task<Class> DeleteClass(int id) {
+        public Task<Class> RemoveClass(int id) {
             throw new NotImplementedException();
         }
 

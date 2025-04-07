@@ -78,7 +78,7 @@ namespace api.Controllers {
                 if (await classRepository.GetAsync(id) is null)
                     return StatusCode(404, new ResponseHelper(404, "NotFound", "Nie znaleziono klasy"));
 
-                await classRepository.DeleteClass(id);
+                await classRepository.RemoveClass(id);
                 return StatusCode(200, new ResponseHelper(200, "Ok", "Pomyślnie usunięto klasę"));
             } catch (DbUpdateException) {
                 return StatusCode(409, new ResponseHelper(409, "Conflict", "Obiekt ma powiązane encje, usuń je i spróbuj ponownie"));

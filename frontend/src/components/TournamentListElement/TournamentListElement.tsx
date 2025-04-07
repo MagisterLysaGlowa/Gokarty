@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { TournamentData } from "../../../types";
 import { Image } from "@heroui/react";
 import { FaCalendar, FaEdit, FaTable } from "react-icons/fa";
+import { displayDateRange } from "../../Utils/TimeUtils";
 
 interface TournamentListElementProps {
   data: TournamentData;
@@ -26,9 +27,7 @@ const TournamentListElement: React.FC<TournamentListElementProps> = ({
           <p className="text-2xl">{data.name}</p>
           <span className="text-[13px] text-center flex items-center gap-2">
             <span className="flex gap-2">
-              <span>{data.startDate.toLocaleDateString()}</span>
-              <span>-</span>
-              <span>{data.endDate.toLocaleDateString()}</span>
+              {displayDateRange(data.startDate, data.endDate)}
             </span>
             <FaCalendar />
           </span>

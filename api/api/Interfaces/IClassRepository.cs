@@ -6,6 +6,6 @@ namespace api.Interfaces {
         Task<Class?> GetAsync(int id);
         Task<Class> CreateClass(Class _class);
         Task<Class> UpdateClass(Class _class);
-        Task<Class> DeleteClass(int id);
+        Task<Class> RemoveClass(int id);
     }
 }
