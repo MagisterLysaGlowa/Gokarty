@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { SchoolData } from "../../../types";
+import { Class, SchoolData } from "../../../types";
 
 export const useGetColumns = () =>
   useMemo(
@@ -21,11 +21,49 @@ export const useMemorizedSchoolsData = (
     return (
       data
         ?.filter((z) =>
-          z.name
-          .toLocaleLowerCase()
-          .includes(filter.toLocaleLowerCase())
-        ).map((z, index) => ({lp: (index + 1).toString(), id: z.schoolId.toString(), name: z.name, city: z.city, acronym: z.acronym})
-      ) || []
+          z.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())
+        )
+        .map((z, index) => ({
+          lp: (index + 1).toString(),
+          id: z.schoolId?.toString() ?? "",
+          name: z.name,
+          city: z.city,
+          acronym: z.acronym,
+        })) || []
     );
   }, [data, filter]);
 };
+
+export const useGetClassesColumns = () =>
+  useMemo(
+    () => [
+      {
+        key: "lp",
+        label: "Lp.",
+      },
+      {
+        key: "name",
+        label: "Nazwa",
+      },
+      {
+        key: "actions",
+        label: "Akcje",
+      },
+    ],
+    []
+  );
+
+export const useGetClassRows = (
+  classes: Class[] | undefined,
+  selectedRow: number | undefined
+) =>
+  useMemo(
+    () =>
+      classes
+        ?.filter((z) => z.schoolId == selectedRow)
+        .map((z, index) => ({
+          lp: (index + 1).toString() ?? "",
+          name: z.name,
+        })) || [],
+    [classes, selectedRow]
+  );

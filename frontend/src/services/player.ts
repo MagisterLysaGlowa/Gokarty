@@ -16,7 +16,7 @@ class PlayerService extends BaseService {
     data: PlayerFilterFormData
   ): Promise<PlayerData[]> {
     const response = await apiClient.get<PlayerData[]>(
-      `/player/filter?name=${data.name}&surname=${data.surname}&schoolId=${data.schoolId}&tournamentId=${data.tournamentId}`
+      `/player/filter?${new URLSearchParams(Object.entries(data)).toString()}`
     );
     return response.data;
   }

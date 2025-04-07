@@ -15,7 +15,7 @@ namespace api
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.WebHost.UseUrls(new[] { "http://0.0.0.0:5079","http://localhost:5079" });
+            builder.WebHost.UseUrls([ "http://0.0.0.0:5079","http://localhost:5079" ]);
 
             // Add services to the container.
             builder.Services.AddSignalR();
@@ -29,6 +29,7 @@ namespace api
             builder.Services.AddScoped<IQueueRepository, QueueRepository>();
             builder.Services.AddScoped<IJwtService, JwtService>();
             builder.Services.AddScoped<ITournamentTableHubSender, TournamentTableHubSender>();
+            builder.Services.AddScoped<IClassRepository, ClassRepository>();
 
             builder.Services.AddDbContext<AppDbContext>(options =>
             {

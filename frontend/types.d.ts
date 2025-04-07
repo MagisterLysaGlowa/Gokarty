@@ -54,6 +54,7 @@ export interface PlayerFilterFormData {
   name: string;
   surname: string;
   schoolId?: number;
+  classId?: number;
   tournamentId: number;
 }
 

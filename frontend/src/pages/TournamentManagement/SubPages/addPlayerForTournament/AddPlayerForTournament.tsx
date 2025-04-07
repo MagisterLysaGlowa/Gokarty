@@ -17,28 +17,39 @@ import { YesNoModal } from "../../../../components/YesNoModal/YesNoModal";
 import { inputConfig } from "../../../../configs/inputConfig";
 import { selectConfig } from "../../../../configs/selectConfig";
 import { LoadingWrapper } from "../../../../components/Loading/LoadingWrapper";
+import { ClassQueries } from "../../../../queries/classQuery";
 
 export const AddPlayerForTournament = () => {
   const { id: tournamentId } = useParams();
   const [playerFilter, setPlayerFilter] = useState<PlayerFilterFormData>({
     name: "",
-    schoolId: -1,
+    schoolId: 0,
     surname: "",
+    classId: 0,
     tournamentId: Number(tournamentId),
   });
   const serverFilter = useDebounce(playerFilter);
 
   const { mutateAsync: addPlayer } = PlayerQueries.addPlayerToTournament();
   const { data: schools } = SchoolQueries.getAllSchools();
-  const { data: players, refetch, isFetching } = PlayerQueries.filterPlayers(serverFilter);
+  const {
+    data: players,
+    refetch,
+    isFetching,
+  } = PlayerQueries.filterPlayers(serverFilter);
+  const { data: classes } = ClassQueries.getAllClasses();
 
   useEffect(() => {
     refetch();
   }, [serverFilter, refetch]);
 
-  const [selectedPlayerId, setSelectedPlayerId] = useState<number | undefined>(undefined);
-  const selectedPlayer = players?.find((player) => player.playerId == selectedPlayerId);
-  
+  const [selectedPlayerId, setSelectedPlayerId] = useState<number | undefined>(
+    undefined
+  );
+  const selectedPlayer = players?.find(
+    (player) => player.playerId == selectedPlayerId
+  );
+
   const addModal = useDisclosure();
   const columns = useColumns();
   const memorizedData = useMemorizedPlayers(players);
@@ -46,14 +57,11 @@ export const AddPlayerForTournament = () => {
     { modal: addModal, buttonProps: defaultAddButtonProps },
   ]);
 
-
   return (
-    
     <div className="flex flex-col h-full max-h-full overflow-hidden gap-3">
-      <div className="flex gap-2">
+      <div className="grid grid-cols-4 gap-2">
         <Input
           placeholder="Imie"
-          className="w-max"
           variant={defaultVariant}
           value={playerFilter.name}
           onChange={(e) =>
@@ -63,7 +71,6 @@ export const AddPlayerForTournament = () => {
         />
         <Input
           placeholder="Nazwisko"
-          className="w-max"
           variant={defaultVariant}
           value={playerFilter.surname}
           onChange={(e) =>
@@ -83,10 +90,29 @@ export const AddPlayerForTournament = () => {
         >
           {(s) => <SelectItem key={s.schoolId}>{s.acronym}</SelectItem>}
         </Select>
+        <Select
+          {...selectConfig}
+          items={
+            classes?.filter((z) => z.schoolId == playerFilter.schoolId) || []
+          }
+          aria-label="Wybierz klasę"
+          placeholder="Wybierz klasę"
+          onChange={(e) =>
+            setPlayerFilter((p) => ({ ...p, classId: Number(e.target.value) }))
+          }
+        >
+          {(c) => <SelectItem key={c.classId}>{c.name}</SelectItem>}
+        </Select>
       </div>
-      
+
       <LoadingWrapper data={memorizedData} isLoading={isFetching}>
-        {(data) => <TableComponent columns={columns} rows={data} tableCells={customCell} />}
+        {(data) => (
+          <TableComponent
+            columns={columns}
+            rows={data}
+            tableCells={customCell}
+          />
+        )}
       </LoadingWrapper>
 
       {selectedPlayer && (

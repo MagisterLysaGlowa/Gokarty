@@ -45,26 +45,37 @@ namespace api.Repositories {
         }
 
         public async Task<List<Player>> FilterPlayersAsync(PlayerFilterDto dto) {
-            var players = await _context.Players.Include(z => z.Class).ThenInclude(z=>z.School).ToListAsync();
+            var players = await _context.Players
+                .Include(z => z.Class)
+                .ThenInclude(z => z.School)
+                .ToListAsync();
 
             if (!string.IsNullOrEmpty(dto.Name)) {
                 players = players.Where(p => p.Name.ToLower().Contains(dto.Name.ToLower())).ToList();
             }
+
             if (!string.IsNullOrEmpty(dto.Surname)) {
                 players = players.Where(p => p.Surname.ToLower().Contains(dto.Surname.ToLower())).ToList();
             }
+
             if (dto.SchoolId != 0) {
                 players = players.Where(p => p.Class.SchoolId == dto.SchoolId).ToList();
+            }
+
+            if (dto.ClassId != 0) {
+                players = players.Where(p => p.ClassId == dto.ClassId).ToList();
             }
 
             var playersInThisTournament = await _context.PlayerTournaments
                 .Where(t => t.TournamentsId == dto.TournamentId)
                 .Select(t => t.PlayersId)
                 .ToListAsync();
+
             players = players.Where(p => !playersInThisTournament.Contains(p.PlayerId)).ToList();
 
             return players;
         }
+
 
         public async Task<List<Player>> GetAllForTournamentAsync(int tournamentId) {
            return await _context.PlayerTournaments
