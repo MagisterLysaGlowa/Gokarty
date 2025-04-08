@@ -1,5 +1,17 @@
 import { useMemo } from "react";
 import { QueueData } from "../../../types";
+import { Socket } from "socket.io-client";
+
+export const onEvent = (
+  socket: Socket | undefined,
+  event: string,
+  callback: (data: any) => void
+) => {
+  socket?.on(event, callback);
+  return () => {
+    socket?.off(event, callback);
+  };
+};
 
 export const useGetCols = () =>
   useMemo(
