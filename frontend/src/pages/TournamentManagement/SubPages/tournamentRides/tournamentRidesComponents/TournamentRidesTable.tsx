@@ -50,7 +50,7 @@ export const TournamentRidesTable: React.FC<TournamentTableProps> = ({
           <TableColumn key={column.key}>{column.label}</TableColumn>
         ))}
       </TableHeader>
-      <TableBody items={rows}>
+      <TableBody items={rows} emptyContent={<span>Tutaj pojawią się zatwierdzone przejazdy zawodników.</span>}>
         {(item) => (
           <TableRow key={item.lp}>
             {(columnKey) => (

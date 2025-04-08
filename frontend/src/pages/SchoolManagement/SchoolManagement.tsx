@@ -76,7 +76,7 @@ export const SchoolManagement = () => {
         />
       </div>
       <div className="flex gap-3 w-full">
-        <div className={`w-${selectedRow ? "1/2" : "full"}`}>
+        <div className={`${selectedRow ? "w-2/3" : "w-full"} duration-300 ease-in-out transition-all`}>
           <TableComponent
             columns={columns}
             rows={rows}
@@ -93,7 +93,7 @@ export const SchoolManagement = () => {
             }}
           />
         </div>
-        <div className={`w-${selectedRow ? "1/2" : "0"}`}>
+        <div className={`${selectedRow ? "w-1/3" : "w-0"} duration-300 ease-in-out transition-all`}>
           <TableComponent
             columns={useGetClassesColumns()}
             rows={useGetClassRows(classes, selectedRow)}

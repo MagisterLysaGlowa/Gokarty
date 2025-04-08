@@ -1,6 +1,9 @@
 .table tr td:last-child {
   @apply text-red-700;
 }
+.table tr td:only-child {
+  @apply text-zinc-500;
+}
 
 .tableInfoBox {
   @apply w-full bg-[#3F3E3E]/[0.09] rounded-xl p-5;

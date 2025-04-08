@@ -51,7 +51,7 @@ export const RidesTable: React.FC<RidesTableProps> = ({ rows }) => {
             <TableColumn key={column.key}>{column.label}</TableColumn>
           )}
         </TableHeader>
-        <TableBody items={rows ?? []}>
+        <TableBody emptyContent="Tutaj pokażą się wyniki zawodników." items={rows ?? []}>
           {(item) => (
             <TableRow
               onClick={() => {
@@ -63,7 +63,7 @@ export const RidesTable: React.FC<RidesTableProps> = ({ rows }) => {
               key={item.key}
             >
               {(columnKey) => (
-                <TableCell
+                <TableCell 
                   className={`${getTableTextColor(
                     item.key
                   )} text-sm sm:text-lg md:text-md lg:text-lg xl:text-xl`}

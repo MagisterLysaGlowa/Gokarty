@@ -152,7 +152,7 @@ const TournamentTable = () => {
         {/* tournament table */}
         <div
           id="tournament-table"
-          className={`!overflow-hidden w-full lg:w-8/12 flex flex-col`}
+          className={`!overflow-hidden w-full flex flex-col`}
         >
           <RidesTable rows={rows} />
           {getPaginationLength(rides?.length, pos) > 1 && (
@@ -173,8 +173,8 @@ const TournamentTable = () => {
             </div>
           )}
         </div>
-
         {/* right panel */}
+        {((tournament?.tournamentStateId!=3 && !(currentRide==null && lastRide==null && queue?.length==0)))&&
         <TournamentRightPanel
           tournament={tournament}
           lastRide={lastRide}
@@ -183,7 +183,7 @@ const TournamentTable = () => {
           queue={queue}
           isVisible={isRightPanelVisible}
           setIsRightPanelVisible={setIsRightPanelVisible}
-        />
+            />}
       </div>
       <Separator />
       <Footer />

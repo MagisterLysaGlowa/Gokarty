@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { PlayerQueries } from "../../../../queries/playerQuery";
 import { useState } from "react";
 import { Input, useDisclosure } from "@heroui/react";
@@ -19,7 +19,7 @@ import { inputConfig } from "../../../../configs/inputConfig";
 import { LoadingWrapper } from "../../../../components/Loading/LoadingWrapper";
 
 export const PlayersForTournament = () => {
-  const { id: tournamentId } = useParams();
+  const { id: tournamentId, tournamentName } = useParams();
   const { data, isLoading } = PlayerQueries.getPlayersForTournament(Number(tournamentId));
   const { mutateAsync: removePlayerFromTournament } = PlayerQueries.removePlayerFromTournament();
 
@@ -52,7 +52,7 @@ export const PlayersForTournament = () => {
       
       <div className="flex-1 overflow-auto">
         <LoadingWrapper data={memoizedData} isLoading={isLoading}>
-          {(rows) => <TableComponent columns={columns} rows={rows} tableCells={customCell}/>}
+          {(rows) => <TableComponent emptyContent={<span>Brak zawodników! Dodaj ich <Link className="text-main-default underline" to={`/zawody/${tournamentId}/${tournamentName}/dodaj zawodnikow`}>tutaj.</Link></span>} columns={columns} rows={rows} tableCells={customCell}/>}
         </LoadingWrapper>
       </div>
 

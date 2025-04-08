@@ -5,6 +5,7 @@ import { Image } from "@heroui/react";
 import { FaCalendar, FaEdit, FaTable } from "react-icons/fa";
 import { displayDateRange } from "../../Utils/TimeUtils";
 
+
 interface TournamentListElementProps {
   data: TournamentData;
 }
@@ -15,7 +16,8 @@ const TournamentListElement: React.FC<TournamentListElementProps> = ({
   const navigate = useNavigate();
 
   return (
-    <div className="bg-nav-bg-hover p-5 rounded-xl gap-5 border-2 grid grid-rows-[70%-30%] border-main-default">
+    <div className={`bg-nav-bg-hover rounded-xl gap-5 border-2 pb-5 grid grid-rows-[70%-30%] border-main-default`}>
+      <span className={`text-center w-auto rounded-t-lg m-1 ${data.tournamentStateId==1 ? "bg-main-default" : data.tournamentStateId==2 ? "bg-green-500" : "bg-red-600"}`}>{data.tournamentState?.state}</span>
       <div className=" flex justify-center items-center">
         <Image
           src="https://t4.ftcdn.net/jpg/04/38/89/23/360_F_438892395_rBFn1ok5VpKxI9Qc3cP1ggypplEBkcJS.jpg"
@@ -24,7 +26,7 @@ const TournamentListElement: React.FC<TournamentListElementProps> = ({
       </div>
       <div>
         <div className=" flex flex-col gap-3 justify-center items-center">
-          <p className="text-2xl">{data.name}</p>
+          <p className="text-pretty text-lg text-center">{data.name}</p>
           <span className="text-[13px] text-center flex items-center gap-2">
             <span className="flex gap-2">
               {displayDateRange(data.startDate, data.endDate)}

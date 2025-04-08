@@ -17,7 +17,7 @@ export const TournamentSupportNavbar = () => {
             <Tooltip content={el.name} showArrow placement="left">
               <Link
                 to={el.path}
-                className={`w-4/6 aspect-square bg-support grid place-items-center text-3xl rounded-lg hover:bg-nav-bg duration-300 text-main-default ${selected}`}
+                className={`w-4/6 aspect-square bg-support grid place-items-center text-3xl rounded-lg hover:bg-nav-bg select-none text-main-default ${selected}`}
               >
                 <button>
                   <el.icon />

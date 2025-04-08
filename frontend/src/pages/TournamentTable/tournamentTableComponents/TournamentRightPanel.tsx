@@ -23,12 +23,11 @@ export const TournamentRightPanel: FC<TournamentRightPanelProps> = ({
   lastRide,
   queue,
   rides,
-  tournament,
   isVisible,
   setIsRightPanelVisible,
 }) => {
   return (
-    <div className="lg:w-4/12">
+    <div>
       {/* BACKDROP (mobile only) */}
       {isVisible && (
         <div
@@ -39,7 +38,7 @@ export const TournamentRightPanel: FC<TournamentRightPanelProps> = ({
 
       {/* PANEL + TOGGLE BUTTON CONTAINER */}
       <div
-        className={`fixed lg:static top-0 right-0 z-50 h-full transition-transform duration-300 ease-in-out transform flex
+        className={`fixed lg:static xl:w-[400px] lg:w-[300px] top-0 right-0 z-50 h-full transition-transform duration-300 ease-in-out transform flex
         ${isVisible ? "translate-x-0" : "translate-x-full"} lg:translate-x-0`}
       >
         {/* TOGGLE BUTTON (mobile only) */}
@@ -52,7 +51,6 @@ export const TournamentRightPanel: FC<TournamentRightPanelProps> = ({
 
         {/* PANEL */}
         <div className="flex flex-col gap-3 w-[300px] lg:w-full bg-nav-bg h-dvh lg:h-auto overflow-hidden rounded-l-lg lg:rounded-none ">
-          {tournament && tournament.tournamentStateId === 2 && (
             <div className="w-full flex-1 grid grid-rows-[40%-30%-40%] gap-3 tableInfoBox overflow-y-auto border-2 border-main-default rounded-lg overflow-hidden">
               {/* LAST RIDE */}
               <div className="flex flex-col">
@@ -158,7 +156,6 @@ export const TournamentRightPanel: FC<TournamentRightPanelProps> = ({
                 </ol>
               </div>
             </div>
-          )}
         </div>
       </div>
     </div>

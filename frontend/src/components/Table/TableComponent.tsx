@@ -7,7 +7,7 @@ import {
   TableCell,
   Selection,
 } from "@heroui/react";
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 
 export type TableProps = {
   tableCells: (
@@ -16,6 +16,7 @@ export type TableProps = {
   ) => string | JSX.Element;
   columns: { label: string; key: string }[];
   rows: Record<string, string>[];
+  emptyContent?: ReactNode;
   onSelectionChange?: (keys: Selection) => void;
 };
 
@@ -23,11 +24,12 @@ export const TableComponent: FC<TableProps> = ({
   tableCells,
   columns,
   rows,
+  emptyContent,
   onSelectionChange,
 }) => {
   return (
     <Table
-      className="overflow-y-auto"
+      className="overflow-y-auto overflow-x-hidden"
       isHeaderSticky
       removeWrapper
       aria-label="table"
@@ -38,7 +40,7 @@ export const TableComponent: FC<TableProps> = ({
       <TableHeader columns={columns}>
         {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
       </TableHeader>
-      <TableBody items={rows}>
+      <TableBody items={rows} emptyContent={emptyContent}>
         {(item) => (
           <TableRow key={item.lp}>
             {(columnKey) => (
