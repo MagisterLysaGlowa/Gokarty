@@ -104,8 +104,11 @@ export const TournamentInfo = () => {
             <YesNoModal
               header={tournament.name}
               modal={removeModal}
-              onYes={async () =>
-                removeTournamentAsync(Number(tournament.tournamentId))
+              onYes={async () => {
+                const res = await removeTournamentAsync(Number(tournament.tournamentId));
+                if(res.status === 200)
+                  navigate("/zawody");
+              }
               }
               key={`remove-${tournament.tournamentId}`}
             >

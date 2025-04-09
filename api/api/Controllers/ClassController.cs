@@ -1,6 +1,7 @@
 ﻿using api.Helpers;
 using api.Interfaces;
 using api.Models;
+using api.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,10 +29,9 @@ namespace api.Controllers {
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id) {
             try {
-                var _class = await classRepository.GetAsync(id);
-                if (_class == null)
-                    return StatusCode(404, new ResponseHelper(404, "NotFound", "Nie znaleziono klasy"));
-                return Ok(_class);
+                if (await classRepository.GetAsync(id) is Class _class)
+                    return Ok(_class);
+                return StatusCode(404, new ResponseHelper(404, "NotFound", "Nie znaleziono klasy"));
             } catch (TimeoutException) {
                 return StatusCode(408, new ResponseHelper(408, "Timeout", "Przekroczono czas wykonania operacji"));
             } catch (Exception) {
@@ -44,8 +44,7 @@ namespace api.Controllers {
             try {
                 if (!ModelState.IsValid)
                     return StatusCode(400, new ResponseHelper(400, "BadRequest", "Podano błędne dane dla klasy"));
-
-                await classRepository.CreateClass(data);
+                await classRepository.CreateAsync(data);
                 return StatusCode(201, new ResponseHelper(201, "Created", "Pomyślnie dodano klasę"));
             } catch (TimeoutException) {
                 return StatusCode(408, new ResponseHelper(408, "Timeout", "Przekroczono czas wykonania operacji"));
@@ -59,11 +58,9 @@ namespace api.Controllers {
             try {
                 if (!ModelState.IsValid)
                     return StatusCode(400, new ResponseHelper(400, "BadRequest", "Podano błędne dane dla klasy"));
-
-                if (await classRepository.GetAsync(data.ClassId) is null)
+                if (!await classRepository.ExistsAsync(data.ClassId))
                     return StatusCode(404, new ResponseHelper(404, "NotFound", "Nie znaleziono klasy"));
-
-                await classRepository.UpdateClass(data);
+                await classRepository.UpdateAsync(data);
                 return StatusCode(200, new ResponseHelper(200, "Ok", "Pomyślnie uaktualniono klasę"));
             } catch (TimeoutException) {
                 return StatusCode(408, new ResponseHelper(408, "Timeout", "Przekroczono czas wykonania operacji"));
@@ -72,14 +69,12 @@ namespace api.Controllers {
             }
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id) {
+        [HttpDelete("{classId}")]
+        public async Task<IActionResult> Delete(int classId) {
             try {
-                if (await classRepository.GetAsync(id) is null)
-                    return StatusCode(404, new ResponseHelper(404, "NotFound", "Nie znaleziono klasy"));
-
-                await classRepository.RemoveClass(id);
-                return StatusCode(200, new ResponseHelper(200, "Ok", "Pomyślnie usunięto klasę"));
+                if (await classRepository.RemoveAsync(classId) is int)
+                    return StatusCode(200, new ResponseHelper(200, "Ok", "Pomyślnie usunięto klasę"));
+                return StatusCode(404, new ResponseHelper(404, "NotFound", "Nie znaleziono klasy"));
             } catch (DbUpdateException) {
                 return StatusCode(409, new ResponseHelper(409, "Conflict", "Obiekt ma powiązane encje, usuń je i spróbuj ponownie"));
             } catch (TimeoutException) {

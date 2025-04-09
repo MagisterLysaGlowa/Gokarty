@@ -27,16 +27,16 @@ export interface TournamentData {
   endDate: Date;
   tournamentStateId: number;
   tournamentTypeId: number;
-  tournamentState?: TournamentState;
-  tournamentType?: TournamentType;
+  tournamentState?: TournamentStateData;
+  tournamentType?: TournamentTypeData;
 }
 
-export interface TournamentState {
+export interface TournamentStateData {
   turnamentStateId?: number;
   state: string;
 }
 
-export interface TournamentType {
+export interface TournamentTypeData {
   tournamentTypeId?: number;
   name: string;
 }
@@ -47,7 +47,7 @@ export interface PlayerData {
   surname: string;
   birthDate: Date;
   classId: number;
-  class?: Class;
+  class?: ClassData;
 }
 
 export interface PlayerFilterFormData {
@@ -58,7 +58,7 @@ export interface PlayerFilterFormData {
   tournamentId: number;
 }
 
-export interface Class {
+export interface ClassData {
   classId?: number;
   name: string;
   schoolId: number;
@@ -88,18 +88,18 @@ export interface RideAndPersonData {
   playerId: number;
   player: PlayerData;
   classId: number;
-  class: Class;
+  class: ClassData;
   tournamentId: number;
   tournament: TournamentData;
 }
 
-export type RideGroup = {
+export type RideGroupData = {
   rideGroupId: number;
   rides: RideData[];
   playerId: number;
   player: PlayerData;
   classId: number;
-  class: Class;
+  class: ClassData;
   tournamentId: number;
   tournament: TournamentData;
 };

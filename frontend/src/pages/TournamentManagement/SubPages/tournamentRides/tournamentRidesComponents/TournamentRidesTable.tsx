@@ -9,12 +9,12 @@ import {
 
 import { useCustomCell } from "../customCells";
 import { RideModalData, useGetColumns, useMemorizedRidesData } from "../tournamentRidesUtils";
-import { ModalProps, RideGroup } from "../../../../../../types";
+import { ModalProps, RideGroupData } from "../../../../../../types";
 import { Dispatch, SetStateAction } from "react";
 
 type TournamentTableProps = {
   setSelectedRide: Dispatch<SetStateAction<RideModalData | undefined>>;
-  data: RideGroup[] | undefined;
+  data: RideGroupData[] | undefined;
   searchFilter: string;
   editModal: ModalProps;
   removeModal: ModalProps;

@@ -36,7 +36,7 @@ namespace api.Controllers
             try {
                 if (await tournamentRepository.GetAsync(tournamentId) is Tournament tournament)
                     return Ok(tournament);
-                return NotFound();
+                return StatusCode(404, new ResponseHelper(404, "NotFound", "Nie znaleziono zawodów"));
             } catch (TimeoutException) {
                 return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
             } catch (Exception) {

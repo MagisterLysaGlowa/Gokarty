@@ -30,12 +30,14 @@ namespace api.Data {
             modelBuilder.Entity<PlayerTournament>()
                         .HasOne(pt => pt.Player)
                         .WithMany(p => p.PlayerTournaments)
-                        .HasForeignKey(pt => pt.PlayersId);
+                        .HasForeignKey(pt => pt.PlayersId)
+                        .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<PlayerTournament>()
                         .HasOne(pt => pt.Tournament)
                         .WithMany(t => t.PlayerTournaments)
-                        .HasForeignKey(pt => pt.TournamentsId);
+                        .HasForeignKey(pt => pt.TournamentsId)
+                        .OnDelete(DeleteBehavior.Restrict);
 
 
             //PLAYER TO CLASS (ONE TO MANY)
@@ -43,82 +45,96 @@ namespace api.Data {
             modelBuilder.Entity<Player>()
                 .HasOne(c => c.Class)
                 .WithMany(p => p.Players)
-                .HasForeignKey(p => p.ClassId);
+                .HasForeignKey(p => p.ClassId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             //CLASS TO SCHOOL (ONE TO MANY)
 
             modelBuilder.Entity<Class>()
                 .HasOne(c => c.School)
                 .WithMany(s => s.Classes)
-                .HasForeignKey(c => c.SchoolId);
+                .HasForeignKey(c => c.SchoolId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             //TOURNAMENT TO TOURNAMENT STATE (ONE TO MANY)
 
             modelBuilder.Entity<Tournament>()
                         .HasOne(ts => ts.TournamentState)
                         .WithMany(t => t.Tournaments)
-                        .HasForeignKey(ts => ts.TournamentStateId);
+                        .HasForeignKey(ts => ts.TournamentStateId)
+                        .OnDelete(DeleteBehavior.Restrict);
 
             //TOURNAMEN TO TOURNAMENT TYPE (ONE TO MANY)
 
             modelBuilder.Entity<Tournament>()
                         .HasOne(t=>t.TournamentType)
                         .WithMany(tt=>tt.Tournaments)
-                        .HasForeignKey(t=>t.TournamentTypeId);
+                        .HasForeignKey(t=>t.TournamentTypeId)
+                        .OnDelete(DeleteBehavior.Restrict);
 
             //RIDEGROUP TO CLASS (ONE TO MANY)
 
             modelBuilder.Entity<RideGroup>()
                         .HasOne(r => r.Class)
                         .WithMany(c => c.RideGroups)
-                        .HasForeignKey(r => r.ClassId);
+                        .HasForeignKey(r => r.ClassId)
+                        .OnDelete(DeleteBehavior.Restrict);
 
             //RIDEGROUP TO TOURNAMENT (ONE TO MANY)
 
             modelBuilder.Entity<RideGroup>()
                         .HasOne(r => r.Tournament)
                         .WithMany(t => t.RideGroups)
-                        .HasForeignKey(r => r.TournamentId);
+                        .HasForeignKey(r => r.TournamentId)
+                        .OnDelete(DeleteBehavior.Restrict);
 
             //RIDEGROUP TO PLAYER (ONE TO MANY)
 
             modelBuilder.Entity<RideGroup>()
                         .HasOne(r => r.Player)
                         .WithMany(p => p.RideGroups)
-                        .HasForeignKey(r => r.PlayerId);
+                        .HasForeignKey(r => r.PlayerId)
+                        .OnDelete(DeleteBehavior.Restrict);
 
             //RIDE TO GOKARTS (ONE TO MANY)
 
             modelBuilder.Entity<Ride>()
                         .HasOne(r => r.Gokart)
                         .WithMany(g => g.Rides)
-                        .HasForeignKey(r => r.GokartId);
+                        .HasForeignKey(r => r.GokartId)
+                        .OnDelete(DeleteBehavior.Restrict);
+
+            //RIDES TO RIDEGROUP (MANY TO ONE)
 
             modelBuilder.Entity<Ride>()
                         .HasOne(r => r.RideGroup)
                         .WithMany(rg => rg.Rides)
-                        .HasForeignKey(r => r.RideGroupId);
+                        .HasForeignKey(r => r.RideGroupId)
+                        .OnDelete(DeleteBehavior.Restrict);
 
             //QUEUE TO TOURNAMENT (ONE TO MANY)
 
             modelBuilder.Entity<Queue>()
                         .HasOne(q => q.Tournament)
                         .WithMany(t => t.Queues)
-                        .HasForeignKey(q => q.TournamentId);
+                        .HasForeignKey(q => q.TournamentId)
+                        .OnDelete(DeleteBehavior.Restrict);
 
             //QUEUE TO PLAYER (ONE TO MANY)
 
             modelBuilder.Entity<Queue>()
                         .HasOne(q => q.Player)
                         .WithMany(P => P.Queues)
-                        .HasForeignKey(q => q.PlayerId);
+                        .HasForeignKey(q => q.PlayerId)
+                        .OnDelete(DeleteBehavior.Restrict);
 
             //QUEUE TO GOKART (ONE TO MANY)
 
             modelBuilder.Entity<Queue>()
                         .HasOne(q => q.Gokart)
                         .WithMany(g => g.Queues)
-                        .HasForeignKey(q => q.GokartId);
+                        .HasForeignKey(q => q.GokartId)
+                        .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<TournamentState>().HasData(
                 new TournamentState() { TournamentStateId = 1, State = "Zaplanowane" },

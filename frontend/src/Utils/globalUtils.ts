@@ -52,7 +52,7 @@ export const defaultVariant: "flat" | "bordered" | "underlined" | "faded" =
 export const defaultEditButtonProps: TableActionButtonProps = {
   size: "sm",
   endContent: FaEdit({}),
-  variant: "shadow",
+  variant: "solid",
   color: "primary",
   isIconOnly: true,
 }
@@ -61,7 +61,7 @@ export const defaultRemoveButtonProps: TableActionButtonProps = {
   size: "sm",
   endContent: FaTrash({}),
   isIconOnly: true,
-  variant: "shadow",
+  variant: "solid",
   className: "bg-red-600"
 }
 
@@ -69,6 +69,6 @@ export const defaultAddButtonProps: TableActionButtonProps = {
   size: "sm",
   endContent: CgAdd({}),
   isIconOnly: true,
-  variant: "shadow",
-  color: "primary",
+  variant: "solid",
+  color: "warning",
 }

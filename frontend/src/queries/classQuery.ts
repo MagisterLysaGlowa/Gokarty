@@ -1,5 +1,5 @@
 import { useMutation, useQuery, UseQueryOptions } from "react-query";
-import { Class } from "../../types";
+import { ClassData } from "../../types";
 import ClassService from "../services/class";
 import {
   handleError,
@@ -8,19 +8,19 @@ import {
 } from "./queryUtils";
 import { successToast } from "../Utils/ToastNotifications";
 
-const useGetAllClasses = (options?: UseQueryOptions<Class[], Error>) => {
+const useGetAllClasses = (options?: UseQueryOptions<ClassData[], Error>) => {
   return useQuery({
     queryKey: ["classes"],
-    queryFn: async () => await ClassService.getAll<Class>("/class"),
+    queryFn: async () => await ClassService.getAll<ClassData>("/class"),
     ...options,
   });
 };
 
-const useCreateClass = (options?: MutationType<Class>) => {
+const useCreateClass = (options?: MutationType<ClassData>) => {
   return useMutation({
     ...options,
-    mutationFn: async (data: Class) => {
-      return await ClassService.create<Class>(data, "/class");
+    mutationFn: async (data: ClassData) => {
+      return await ClassService.create<ClassData>(data, "/class");
     },
     onError: handleError,
     onSuccess: (res, vars, _) => {
@@ -34,11 +34,11 @@ const useCreateClass = (options?: MutationType<Class>) => {
   });
 };
 
-const useUpdateClass = (options?: MutationType<Class>) => {
+const useUpdateClass = (options?: MutationType<ClassData>) => {
   return useMutation({
     ...options,
-    mutationFn: async (data: Class) => {
-      return await ClassService.update<Class>(data, "/class");
+    mutationFn: async (data: ClassData) => {
+      return await ClassService.update<ClassData>(data, "/class");
     },
     onError: handleError,
     onSuccess: (res, vars, _) => {
@@ -51,11 +51,11 @@ const useUpdateClass = (options?: MutationType<Class>) => {
   });
 };
 
-const useRemoveGokart = (options?: MutationType<number>) => {
+const useRemoveClass = (options?: MutationType<number>) => {
   return useMutation({
     ...options,
     mutationFn: async (id: number) => {
-      return await ClassService.remove(id, "/gokart");
+      return await ClassService.remove(id, "/class");
     },
     onError: handleError,
     onSuccess: (res, vars, _) => {
@@ -71,7 +71,7 @@ const useRemoveGokart = (options?: MutationType<number>) => {
 
 export const ClassQueries = {
   getAllClasses: useGetAllClasses,
-  createClasse: useCreateClass,
+  createClass: useCreateClass,
   updateClass: useUpdateClass,
-  removeClass: useRemoveGokart,
+  removeClass: useRemoveClass,
 };

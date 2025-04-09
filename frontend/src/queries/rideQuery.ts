@@ -1,6 +1,6 @@
 import { useMutation, useQuery, UseQueryOptions } from "react-query";
 import RideService from "../services/ride";
-import { RideAndPersonData, RideData, RideFormData, RideGroup } from "../../types";
+import { RideAndPersonData, RideData, RideFormData, RideGroupData } from "../../types";
 import { successToast } from "../Utils/ToastNotifications";
 import {
   handleError,
@@ -87,7 +87,7 @@ const useRemoveRide = (options?: MutationType<number>) => {
 
 const useGetPlayersWithTimes = (
   tournamentId: number,
-  options?: UseQueryOptions<RideGroup[], Error>
+  options?: UseQueryOptions<RideGroupData[], Error>
 ) => {
   return useQuery({
     queryKey: ["playersWithTimes", tournamentId],

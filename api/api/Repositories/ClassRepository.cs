@@ -9,14 +9,20 @@ namespace api.Repositories {
         public ClassRepository(AppDbContext context) =>_context = context;
             
         
-        public async Task<Class> CreateClass(Class _class) {
+        public async Task<Class> CreateAsync(Class _class) {
             await _context.Classes.AddAsync(_class);
             await _context.SaveChangesAsync();
             return _class;
         }
 
-        public Task<Class> RemoveClass(int id) {
-            throw new NotImplementedException();
+        public async Task<int?> RemoveAsync(int classId)
+        {
+            if (await _context.Classes.FindAsync(classId) is Class _class) {
+                _context.Classes.Remove(_class);
+                await _context.SaveChangesAsync();
+                return classId;
+            }
+            return null;
         }
 
         public async Task<List<Class>> GetAllAsync() {
@@ -27,10 +33,15 @@ namespace api.Repositories {
            return await _context.Classes.FindAsync(id);
         }
 
-        public async Task<Class> UpdateClass(Class _class) {
+        public async Task<Class> UpdateAsync(Class _class) {
             _context.Update(_class);
             await _context.SaveChangesAsync();
             return _class;
+        }
+
+        public async Task<bool> ExistsAsync(int classId)
+        {
+            return await _context.Classes.AnyAsync(c => c.ClassId == classId);
         }
     }
 }

@@ -43,6 +43,8 @@ namespace api.Repositories
             return await _context.Tournaments
                 .Include(t => t.TournamentState)
                 .Include(t => t.TournamentType)
+                .OrderBy(t => t.TournamentStateId)
+                    .ThenByDescending(t => t.StartDate)
                 .ToListAsync();
         }
 

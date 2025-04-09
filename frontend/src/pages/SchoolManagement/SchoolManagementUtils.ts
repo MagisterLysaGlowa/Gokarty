@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Class, SchoolData } from "../../../types";
+import { ClassData, SchoolData } from "../../../types";
 
 export const useGetColumns = () =>
   useMemo(
@@ -54,7 +54,7 @@ export const useGetClassesColumns = () =>
   );
 
 export const useGetClassRows = (
-  classes: Class[] | undefined,
+  classes: ClassData[] | undefined,
   selectedRow: number | undefined
 ) =>
   useMemo(
@@ -63,6 +63,7 @@ export const useGetClassRows = (
         ?.filter((z) => z.schoolId == selectedRow)
         .map((z, index) => ({
           lp: (index + 1).toString() ?? "",
+          id: z.classId?.toString() ?? "",
           name: z.name,
         })) || [],
     [classes, selectedRow]

@@ -5,6 +5,7 @@ import { Button, Input, useDisclosure } from "@heroui/react";
 import { useDebounce } from "../../Utils/debounce";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import {
+  defaultAddButtonProps,
   defaultEditButtonProps,
   defaultRemoveButtonProps,
   defaultVariant,
@@ -19,49 +20,61 @@ import {
 } from "./SchoolManagementUtils";
 import { TableComponent } from "../../components/Table/TableComponent";
 import { YesNoModal } from "../../components/YesNoModal/YesNoModal";
-import { queryClient } from "../../Utils/ReactQueryConfig";
 import { IoMdAdd } from "react-icons/io";
 import { AddSchoolModal } from "./components/AddSchoolModal";
 import { inputConfig } from "../../configs/inputConfig";
 import { ClassQueries } from "../../queries/classQuery";
+import { AddClassModal } from "./components/AddClassModal";
+import { EditClassModal } from "./components/EditClassModal";
 
 export const SchoolManagement = () => {
   const [filter, setFilter] = useState<string>("");
   const searchFilter = useDebounce(filter);
 
-  const { data } = SchoolQueries.getAllSchools({
-    refetchInterval: 10_000,
-  });
+  const { data: schools } = SchoolQueries.getAllSchools();
+  const { data: classes } = ClassQueries.getAllClasses();
 
   const [selectedSchoolId, setSelectedSchoolId] = useState<number | undefined>(
     undefined
   );
-  const selectedSchool = data?.find(
-    (school) => school.schoolId === selectedSchoolId
+  const selectedSchool = schools?.find(
+    (s) => s.schoolId === selectedSchoolId
   );
-
-  const editModal = useDisclosure();
-  const removeModal = useDisclosure();
-  const addModal = useDisclosure();
+  const [selectedClassId, setSelectedClassId] = useState<number | undefined>(
+    undefined
+  );
+  const selectedClass = classes?.find(
+    (c) => c.classId === selectedClassId
+  );
   const [selectedRow, setSelectedRow] = useState<number | undefined>(undefined);
+  const selectedRowSchool = schools?.find(
+    (s) => s.schoolId === selectedRow
+  )
+
+  const addSchoolModal = useDisclosure();
+  const editSchoolModal = useDisclosure();
+  const removeSchoolModal = useDisclosure();
+
+  const addClassModal = useDisclosure();
+  const editClassModal = useDisclosure();
+  const removeClassModal = useDisclosure();
 
   const columns = useGetColumns();
-  const rows = useMemorizedSchoolsData(data, searchFilter);
-  const renderCell = useCustomTableCells(setSelectedSchoolId, [
-    { modal: editModal, buttonProps: defaultEditButtonProps },
-    { modal: removeModal, buttonProps: defaultRemoveButtonProps },
+  const rows = useMemorizedSchoolsData(schools, searchFilter);
+  const renderSchoolCells = useCustomTableCells(setSelectedSchoolId, [
+    { modal: addClassModal, buttonProps: defaultAddButtonProps },
+    { modal: editSchoolModal, buttonProps: defaultEditButtonProps },
+    { modal: removeSchoolModal, buttonProps: defaultRemoveButtonProps },
   ]);
 
-  const renderClassesCell = useCustomTableCells(setSelectedRow, [
-    { modal: editModal, buttonProps: defaultEditButtonProps },
-    { modal: removeModal, buttonProps: defaultRemoveButtonProps },
+  const renderClassCells = useCustomTableCells(setSelectedClassId, [
+    { modal: editClassModal, buttonProps: defaultEditButtonProps },
+    { modal: removeClassModal, buttonProps: defaultRemoveButtonProps },
   ]);
 
-  const { mutateAsync: removeSchool } = SchoolQueries.removeSchool({
-    onSuccess: async () => await queryClient.invalidateQueries(["schools"]),
-  });
+  const { mutateAsync: removeSchool } = SchoolQueries.removeSchool();
+  const { mutateAsync: removeClass } = ClassQueries.removeClass();
 
-  const { data: classes } = ClassQueries.getAllClasses();
 
   return (
     <div className="flex flex-col h-full max-h-full overflow-hidden gap-3">
@@ -80,7 +93,7 @@ export const SchoolManagement = () => {
           <TableComponent
             columns={columns}
             rows={rows}
-            tableCells={renderCell}
+            tableCells={renderSchoolCells}
             onSelectionChange={(e) => {
               if (e === "all" || e.size === 0) {
                 setSelectedRow(undefined);
@@ -97,7 +110,7 @@ export const SchoolManagement = () => {
           <TableComponent
             columns={useGetClassesColumns()}
             rows={useGetClassRows(classes, selectedRow)}
-            tableCells={renderClassesCell}
+            tableCells={renderClassCells}
           />
         </div>
       </div>
@@ -105,8 +118,8 @@ export const SchoolManagement = () => {
         <>
           <YesNoModal
             header="Usuwanie szkoły"
-            modal={removeModal}
-            onYes={async () => removeSchool(Number(selectedSchoolId))}
+            modal={removeSchoolModal}
+            onYes={async () => await removeSchool(Number(selectedSchoolId))}
             key={`remove-${selectedSchoolId}`}
           >
             <div className="flex flex-col gap-2">
@@ -118,17 +131,41 @@ export const SchoolManagement = () => {
           </YesNoModal>
           <EditSchoolModal
             school={selectedSchool}
-            modal={editModal}
+            modal={editSchoolModal}
             key={`edit-${selectedSchoolId}`}
           />
         </>
       )}
-      <AddSchoolModal modal={addModal} key={`add`} />
+      {selectedClass && (
+        <>
+          <YesNoModal
+            header="Usuwanie klasy"
+            modal={removeClassModal}
+            onYes={async () => await removeClass(Number(selectedClassId))}
+            key={`remove-${selectedClassId}`}
+          >
+            <div className="flex flex-col gap-2">
+              <div>
+                {selectedClass.name}
+              </div>
+            </div>
+          </YesNoModal>
+          <EditClassModal
+            _class={selectedClass}
+            modal={editClassModal}
+            key={`edit-${selectedClassId}`}
+          />
+        </>
+      )}
+      {selectedRowSchool && (
+          <AddClassModal school={selectedRowSchool} modal={addClassModal} key={`add-class`} />
+      )}
+      <AddSchoolModal modal={addSchoolModal} key={`add-school`} />
       <div className="fixed right-10 bottom-10">
         <Button
           isIconOnly
           endContent={<IoMdAdd />}
-          onPress={addModal.onOpen}
+          onPress={addSchoolModal.onOpen}
           className="rounded-[50%] bg-main-default w-[100px] h-[100px] text-[60px] fixed right-5 bottom-5"
         />
       </div>

@@ -4,7 +4,7 @@ export const schoolValidationSchema = yup.object().shape({
   name: yup
     .string()
     .required("Nazwa jest wymagana")
-    .min(5, "Nazwa szkoła musi mieć ponad 5 znaków")
+    .min(5, "Nazwa szkoły musi mieć ponad 5 znaków")
     .max(40, "Nazwa szkoły musi mieć mniej niż 40 znaków"),
   city: yup
     .string()

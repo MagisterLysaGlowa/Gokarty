@@ -8,8 +8,7 @@ import {
   Input,
 } from "@heroui/react";
 import { useState } from "react";
-import { ModalProps, SchoolData } from "../../../../types";
-import { SchoolQueries } from "../../../queries/schoolQuery";
+import { ClassData, ModalProps } from "../../../../types";
 import { modalConfig } from "../../../configs/modalConfig";
 import { inputConfig } from "../../../configs/inputConfig";
 import {
@@ -17,20 +16,20 @@ import {
   confirmButtonConfig,
 } from "../../../configs/buttonConfig";
 import { validateData } from "../../../validations/validationUtils";
-import { schoolValidationSchema } from "../../../validations/SchoolValidation";
+import { ClassQueries } from "../../../queries/classQuery";
+import { classValidationSchema } from "../../../validations/ClassValidation";
 
 type EditModalProps = {
   modal: ModalProps;
-  school: SchoolData;
+  _class: ClassData;
 };
 
-export const EditSchoolModal: React.FC<EditModalProps> = ({
+export const EditClassModal: React.FC<EditModalProps> = ({
   modal,
-  school,
+  _class,
 }) => {
-  const [schoolToEdit, setSchoolToEdit] = useState<SchoolData>(school);
-
-  const { mutateAsync: updateSchool } = SchoolQueries.updateSchool();
+  const [classToEdit, setClassToEdit] = useState<ClassData>(_class);
+  const { mutateAsync: updateClass } = ClassQueries.updateClass();
 
   return (
     <Modal
@@ -42,37 +41,21 @@ export const EditSchoolModal: React.FC<EditModalProps> = ({
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-col gap-1">
-              Edytuj szkołę
+              Edytuj klasę
             </ModalHeader>
             <ModalBody>
               <Input
                 disabled
-                value={String(school.schoolId)}
+                value={String(_class.classId)}
                 readOnly
-                label="Identyfikator szkoły"
+                label="Identyfikator klasy"
                 {...inputConfig}
               />
               <Input
-                value={schoolToEdit.name}
+                value={classToEdit.name}
                 label="Nazwa"
                 onValueChange={(e) =>
-                  setSchoolToEdit((prev) => ({ ...prev, name: e }))
-                }
-                {...inputConfig}
-              />
-              <Input
-                value={schoolToEdit.city}
-                label="Miasto"
-                onValueChange={(e) =>
-                  setSchoolToEdit((prev) => ({ ...prev, city: e }))
-                }
-                {...inputConfig}
-              />
-              <Input
-                value={schoolToEdit.acronym}
-                label="Skrót"
-                onValueChange={(e) =>
-                  setSchoolToEdit((prev) => ({ ...prev, acronym: e }))
+                  setClassToEdit((prev) => ({ ...prev, name: e }))
                 }
                 {...inputConfig}
               />
@@ -85,9 +68,9 @@ export const EditSchoolModal: React.FC<EditModalProps> = ({
                 {...confirmButtonConfig}
                 onPress={async () => {
                   if (
-                    await validateData(schoolValidationSchema, schoolToEdit)
+                    await validateData(classValidationSchema, classToEdit)
                   ) {
-                    await updateSchool(schoolToEdit);
+                    await updateClass(classToEdit);
                     onClose();
                   }
                 }}

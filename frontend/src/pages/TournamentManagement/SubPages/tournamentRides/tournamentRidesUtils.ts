@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { RideGroup, RideData } from "../../../../../types";
+import { RideGroupData, RideData } from "../../../../../types";
 
 export const useGetColumns = () =>
   useMemo(
@@ -31,7 +31,7 @@ export type RideModalData = {
 };
 
 export const useMemorizedRidesData = (
-  data: RideGroup[] | undefined,
+  data: RideGroupData[] | undefined,
   filter: string
 ) => {
   return useMemo(() => {
