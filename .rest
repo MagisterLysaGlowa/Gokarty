@@ -1,7 +1,24 @@
-POST http://localhost:5079/api/class HTTP/1.1
+POST http://localhost:5079/api/user/register HTTP/1.1
 Content-Type: application/json
 
 {
-    "name":"DupaDupa",
-    "schoolId":1
+    "Login":"test1",
+    "Password":"test1",
+    "Email":"test1"
 }
+
+###
+
+POST http://localhost:5079/api/user/login HTTP/1.1
+Content-Type: application/json
+
+{
+    "LoginOrEmail":"test1",
+    "Password":"test1"
+}
+
+###
+
+POST http://localhost:5079/api/user/logout HTTP/1.1
+Content-Type: application/json
+

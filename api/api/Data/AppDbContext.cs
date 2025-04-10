@@ -19,7 +19,7 @@ namespace api.Data {
         public DbSet<TournamentType> TournamentTypes { get; set; } = default!;
         public DbSet<Class> Classes { get; set; } = default!;
         public DbSet<RideGroup> RideGroups { get; set; } = default!;
-
+        public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }=default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             /*PLAYER TO TOURNAMENT (MANY TO MANY)*/
@@ -135,6 +135,13 @@ namespace api.Data {
                         .WithMany(g => g.Queues)
                         .HasForeignKey(q => q.GokartId)
                         .OnDelete(DeleteBehavior.Restrict);
+
+
+            modelBuilder.Entity<UserRefreshToken>()
+                        .HasOne(u=>u.User)
+                        .WithMany(g=>g.UserRefreshTokens)
+                        .HasForeignKey(u => u.UserId)
+                        .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<TournamentState>().HasData(
                 new TournamentState() { TournamentStateId = 1, State = "Zaplanowane" },

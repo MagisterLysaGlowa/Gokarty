@@ -30,6 +30,7 @@ namespace api
             builder.Services.AddScoped<IJwtService, JwtService>();
             builder.Services.AddScoped<ITournamentTableHubSender, TournamentTableHubSender>();
             builder.Services.AddScoped<IClassRepository, ClassRepository>();
+            builder.Services.AddScoped<JwtService>();
 
             builder.Services.AddDbContext<AppDbContext>(options =>
             {
