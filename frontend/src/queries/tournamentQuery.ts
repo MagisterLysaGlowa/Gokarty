@@ -67,6 +67,7 @@ const useRemoveTournament = (options?: MutationType<number>) => {
   return useMutation({
     ...options,
     mutationFn: async (id) => await TournamentService.remove(id, "/tournament"),
+    onError: handleError,
     onSuccess: (res, vars, _) => {
       successToast(res.message);
       handleSuccessWithRefreshWithOnSuccess(

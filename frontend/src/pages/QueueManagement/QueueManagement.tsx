@@ -81,6 +81,7 @@ export const QueueManagement = () => {
     socket?.emit("startReadingData");
     setWaitingForDetonator(true);
     setShouldCountTime(false);
+    localStorage.setItem("fakeTimeStart", "");
     setQueues((prev) => (drivingNow ? [drivingNow, ...prev] : prev));
     setDrivingNow(undefined);
   }
@@ -98,6 +99,8 @@ export const QueueManagement = () => {
         penaltyPoints: penaltyPoints,
       });
       setDrivingNow(undefined);
+      setTime("00:00:000");
+      setPenaltyPoints(0);
       localStorage.setItem("isAnyoneDrivingNow" + tournamentId, "");
     }
   }
@@ -109,12 +112,25 @@ export const QueueManagement = () => {
   const [shouldCountTime, setShouldCountTime] = useState<boolean>(false);
 
   useEffect(() => {
-    try {
-      setSocket(io("http://localhost:2137"));
+    if (!tournamentId) return;
+
+    const socket = io("http://localhost:2137", {
+      auth: {
+        tournamentId,
+      },
+      reconnectionAttempts: 2,
+      timeout: 3000,
+    });
+
+    socket.on("connect", () => {
+      setSocket(socket);
       successToast("Dziala papiez");
-    } catch (error) {
-      errorToast("Siema, nie działa");
-    }
+    });
+
+    socket.on("connect_error", (err) => {
+      setSocket(undefined);
+      errorToast("Siema, nie działa " + err.message);
+    });
 
     return () => {
       socket?.emit("papaj");
@@ -122,7 +138,7 @@ export const QueueManagement = () => {
       setSocket(undefined);
       successToast("Pomyslnie rozlaczono");
     };
-  }, []);
+  }, [tournamentId]);
 
   useEffect(() => {
     if (!socket) return;
@@ -143,7 +159,24 @@ export const QueueManagement = () => {
 
   useEffect(() => {
     if (!socket) return;
+    onEvent(socket, "rip_papiez", () => {
+      console.log("rip");
+      errorToast("2137 moment");
+    });
+  }, [socket]);
+
+  useEffect(() => {
+    if (!socket) return;
     onEvent(socket, "start", () => {
+      console.log("start");
+      setShouldCountTime(true);
+    });
+  }, [socket]);
+
+  useEffect(() => {
+    if (!socket) return;
+    onEvent(socket, "reconn", () => {
+      console.log("reconn");
       setShouldCountTime(true);
     });
   }, [socket]);
@@ -151,17 +184,37 @@ export const QueueManagement = () => {
   useEffect(() => {
     if (!socket) return;
     onEvent(socket, "finish", (time: number) => {
+      console.log("finish");
       setShouldCountTime(false);
+      localStorage.setItem("fakeTimeStart", "");
       setTime(convertTimeToString(time));
     });
   }, [socket]);
 
   useEffect(() => {
+    let startTime: number;
     let interval: number = 0;
+
     if (shouldCountTime) {
-      interval = setInterval(() => {
-        setFakeTime((prev) => (prev == null ? 0 : prev + 10));
-      }, 10);
+      // Używamy Date.now() zamiast performance.now() do zapisywania startowego czasu
+      startTime = Date.now();
+
+      const lcFaketime = localStorage.getItem("fakeTimeStart");
+      console.log(lcFaketime);
+
+      if (lcFaketime) {
+        // Jeśli faketime jest w localStorage, to pobieramy go i obliczamy różnicę względem obecnego czasu
+        startTime = parseInt(lcFaketime);
+      } else {
+        // Jeśli faketime nie istnieje w localStorage, zapisujemy aktualny czas
+        localStorage.setItem("fakeTimeStart", String(startTime));
+      }
+
+      interval = window.setInterval(() => {
+        // Używamy Date.now() do obliczenia upływającego czasu, zamiast performance.now()
+        const elapsed = Date.now() - startTime;
+        setFakeTime(elapsed); // Ustawiamy faktyczny czas
+      }, 50);
     } else {
       clearInterval(interval);
       setFakeTime(null);
@@ -177,7 +230,12 @@ export const QueueManagement = () => {
       <LoadingWrapper data={[]} isLoading={isLoading}>
         {() => (
           <div className="flex h-full overflow-hidden gap-3">
-            <TableComponent emptyContent={<span>Brak zawodników w kolejce</span>} rows={rows} columns={cols} tableCells={tableCells} />
+            <TableComponent
+              emptyContent={<span>Brak zawodników w kolejce</span>}
+              rows={rows}
+              columns={cols}
+              tableCells={tableCells}
+            />
             <div className=" h-full flex items-center justify-center relative w-2/5">
               <div className="w-[90%] h-[90%] border-2 border-main-default grid grid-rows-[30%_5%_35%_5%_25%] rounded-xl p-3">
                 <div className="flex flex-col gap-3">

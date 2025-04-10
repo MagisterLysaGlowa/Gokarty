@@ -4,7 +4,7 @@ const jsdom = require('jsdom');
 const app = express()
 const port = 3000
 const http = require("http");
-const { Server, Socket } = require('socket.io');
+const { Server } = require('socket.io');
 const { log } = require('console');
 
 const server = http.createServer(app)
@@ -18,59 +18,94 @@ const io = new Server(server, {
     }
 })
 
-
+const clientStates = {};
+let interval;
 
 io.on("connection", (socket) => {
-    let interval;
-    let isDetonatorClicked = false;
-    let isStarted = false
+    const clientId = socket.handshake.auth.tournamentId;
+    console.log("Połączenie od klienta:", clientId);
 
+    if (!clientId) {
+        socket.disconnect();
+        return;
+    }
+
+    if (!clientStates[clientId]) {
+        clientStates[clientId] = {
+            isDetonatorClicked: false,
+            isStarted: false,
+        };
+    } else {
+        log("emitreconnect");
+        if (clientStates[clientId].isDetonatorClicked) {
+            log("emitreconnectwifie");
+            startInterval(clientStates[clientId]);
+            setTimeout(() => {
+                socket.emit("reconn");
+            }, 100);
+        }
+    }
 
     socket.on("startReadingData", () => {
-        try {
-            console.log("Dostalem");
-            isDetonatorClicked = false
-            isStarted = false
-            interval = setInterval(async () => {
-                const data = await getData()
-                if (!data) return
-                if (isDetonatorClicked) {
-                    if (isStarted) {
-                        if (data.fotoLap == 1) io.emit("lap", data.lapsLeft)
-                        if (data.fotoFinish == 1) {
-                            log("dupa")
-                            log(data);
-                            io.emit('finish', data.time);
-                            clearInterval(interval)
-                            isDetonatorClicked = false
-                            isStarted = false
-                        }
-                    }
-                    else if (data.fotoStart == 1) {
-                        io.emit("start")
-                        isStarted = true;
-                    }
+        const state = clientStates[clientId];
+        console.log("Start od klienta:", clientId);
 
-                }
-                else if (data.detonator == 1) {
-                    io.emit("boom", data.lapsLeft);
-                    isDetonatorClicked = true;
-                }
-                console.log(123);
-            }, 1000)
-        } catch (error) { }
-    })
+        startInterval(state);
+    });
+
     socket.on("papaj", () => {
-        isDetonatorClicked = false;
-        isStarted = false;
-        clearInterval(interval)
-    })
-})
+        clearInterval(interval);
+        delete clientStates[clientId];
+        console.log("Papaj od:", clientId);
+    });
+
+    socket.on("disconnect", () => {
+        console.log("Rozłączenie klienta:", clientId);
+        clearInterval(interval);
+    });
+
+    function startInterval(state) {
+        if (interval) clearInterval(interval);
+
+        interval = setInterval(async () => {
+            const data = await getData();
+
+            if (!data) {
+                socket.emit("rip_papiez");
+                clearInterval(interval);
+                state.isDetonatorClicked = false;
+                state.isStarted = false;
+                return;
+            }
+
+            if (state.isDetonatorClicked) {
+                if (state.isStarted) {
+                    if (data.fotoLap == 1) io.emit("lap", data.lapsLeft);
+                    if (data.fotoFinish == 1) {
+                        log("koniec");
+                        io.emit('finish', data.time);
+                        clearInterval(interval);
+                        state.isDetonatorClicked = false;
+                        state.isStarted = false;
+                    }
+                } else if (data.fotoStart == 1) {
+                    io.emit("start");
+                    state.isStarted = true;
+                }
+            } else if (data.detonator == 1) {
+                io.emit("boom", data.lapsLeft);
+                state.isDetonatorClicked = true;
+            }
+
+            console.log("tick");
+        }, 1000);
+    }
+});
 
 
 const getData = async () => {
     try {
-        const data = (await axios.get("http://192.168.0.1/awp/1/index.html")).data;
+        const data = (await axios.get("http://192.168.0.1/awp/1/index.html", { timeout: 3000 })).data;
         const html = new jsdom.JSDOM(data);
         const ps = html.window.document;
 
