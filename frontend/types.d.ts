@@ -147,3 +147,22 @@ export type TableActionProps = {
   modal: ModalProps;
   buttonProps: TableActionButtonProps;
 };
+
+export type User = {
+  UserId: number;
+  Login: string;
+  Password: string;
+  Email: string;
+};
+
+export type UserLogin = {
+  LoginOrEmail: string;
+  Password: string;
+};
+
+export type UserRegister = {
+  Login: string;
+  Password: string;
+  PasswordRepeat: string;
+  Email: string;
+};

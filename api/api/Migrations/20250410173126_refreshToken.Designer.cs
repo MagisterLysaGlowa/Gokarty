@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using api.Data;
@@ -11,9 +12,11 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250410173126_refreshToken")]
+    partial class refreshToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -403,10 +406,6 @@ namespace api.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("UserId"));
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("Login")
                         .IsRequired()
                         .HasColumnType("text");
@@ -422,11 +421,11 @@ namespace api.Migrations
 
             modelBuilder.Entity("api.Models.UserRefreshToken", b =>
                 {
-                    b.Property<int>("RefreshTokenId")
+                    b.Property<int>("RefreshTokenID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("RefreshTokenId"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("RefreshTokenID"));
 
                     b.Property<DateTime>("ExpiryDate")
                         .HasColumnType("timestamp with time zone");
@@ -438,11 +437,11 @@ namespace api.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
-                    b.HasKey("RefreshTokenId");
+                    b.HasKey("RefreshTokenID");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserRefreshTokens");
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("api.Models.Class", b =>
@@ -578,7 +577,7 @@ namespace api.Migrations
             modelBuilder.Entity("api.Models.UserRefreshToken", b =>
                 {
                     b.HasOne("api.Models.User", "User")
-                        .WithMany("UserRefreshTokens")
+                        .WithMany("userRefreshTokens")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -640,7 +639,7 @@ namespace api.Migrations
 
             modelBuilder.Entity("api.Models.User", b =>
                 {
-                    b.Navigation("UserRefreshTokens");
+                    b.Navigation("userRefreshTokens");
                 });
 #pragma warning restore 612, 618
         }

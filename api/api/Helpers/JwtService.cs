@@ -1,36 +1,51 @@
 ﻿using api.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 
-namespace api.Helpers
-{
-    public class JwtService : IJwtService
-    {
-        private string secureKey = "advertising portal zstio project";
+namespace api.Helpers {
+    public class JwtService : IJwtService {
+        private readonly string _secureKey;
+        private readonly int _expiryMinutes;
 
-        public string Generate(int userId)
-        {
-            var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secureKey));
-            var credentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256Signature);
-            var header = new JwtHeader(credentials);
-
-            var payload = new JwtPayload(userId.ToString(), null, null, null, DateTime.Today.AddDays(1));
-            var securityToken = new JwtSecurityToken(header, payload);
-
-            return new JwtSecurityTokenHandler().WriteToken(securityToken);
+        public JwtService(IConfiguration config) {
+            _secureKey = config["Jwt:Key"] ?? throw new Exception("Brak klucza JWT w konfiguracji");
+            _expiryMinutes = int.TryParse(config["Jwt:ExpiryMinutes"], out int minutes) ? minutes : 15;
         }
 
-        public JwtSecurityToken Verify(string jwt)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(secureKey);
-            tokenHandler.ValidateToken(jwt, new TokenValidationParameters
+        public string Generate(int userId) {
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secureKey));
+            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var claims = new[]
             {
-                IssuerSigningKey = new SymmetricSecurityKey(key),
+                new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim("userId", userId.ToString())
+            };
+
+            var token = new JwtSecurityToken(
+                issuer: null,
+                audience: null,
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(_expiryMinutes),
+                signingCredentials: credentials
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public JwtSecurityToken Verify(string jwt) {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(_secureKey);
+
+            tokenHandler.ValidateToken(jwt, new TokenValidationParameters {
                 ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
                 ValidateIssuer = false,
-                ValidateAudience = false
+                ValidateAudience = false,
+                ClockSkew = TimeSpan.Zero // brak dodatkowego czasu na spóźnienie tokena
             }, out SecurityToken validatedToken);
 
             return (JwtSecurityToken)validatedToken;

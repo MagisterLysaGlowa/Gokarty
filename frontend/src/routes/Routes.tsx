@@ -17,6 +17,7 @@ import { PlayersForTournament } from "../pages/TournamentManagement/SubPages/pla
 import { InfoPage } from "../pages/InfoPage/InfoPage";
 import { GokartsPage } from "../pages/GokartsPage/GokartsPage";
 import { QueueManagement } from "../pages/QueueManagement/QueueManagement";
+import { LoginRegister } from "../pages/LoginRegister/LoginRegister";
 
 export const router = createBrowserRouter([
   {
@@ -33,6 +34,7 @@ export const router = createBrowserRouter([
           { path: "zawody/:id/wyniki", element: <TournamentTable /> },
           { path: "informacje", element: <InfoPage /> },
           { path: "gokarty", element: <GokartsPage /> },
+          { path: "logowanie", element: <LoginRegister /> },
         ],
       },
       {
@@ -49,10 +51,19 @@ export const router = createBrowserRouter([
         element: <DualNavigationManagment />,
         children: [
           { path: ":id/:tournamentName", element: <TournamentInfo /> },
-          { path: ":id/:tournamentName/przejazdy", element: <TournamentRides /> },
-          { path: ":id/:tournamentName/zawodnicy", element: <PlayersForTournament /> },
-          { path: ":id/:tournamentName/dodaj zawodnikow", element: <AddPlayerForTournament /> },
-          { path: ":id/:tournamentName/kolejka", element: <QueueManagement /> }
+          {
+            path: ":id/:tournamentName/przejazdy",
+            element: <TournamentRides />,
+          },
+          {
+            path: ":id/:tournamentName/zawodnicy",
+            element: <PlayersForTournament />,
+          },
+          {
+            path: ":id/:tournamentName/dodaj zawodnikow",
+            element: <AddPlayerForTournament />,
+          },
+          { path: ":id/:tournamentName/kolejka", element: <QueueManagement /> },
         ],
       },
     ],

@@ -1,7 +1,7 @@
 import { Button, Image } from "@heroui/react";
 import { FaArrowRight } from "react-icons/fa";
 import { staticPageNav } from "../../components/Navbar/navbarUtils";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./HomePage.css";
 import { Footer } from "../../components/componentsExport";
 import { Separator } from "../../components/StaticPageComponents/Separator";
@@ -21,7 +21,7 @@ const HomePage = () => {
             hub
           </span>
         </h1>
-        <span>Zapodaj logowanie</span>
+        <Link to="/logowanie">Zapodaj logowanie</Link>
       </Header>
       <div className="grid grid-cols-3 bg-white py-3 border-y-8 border-main-default ">
         <Image src="images/mainPage.jpg" className="rounded-none" />

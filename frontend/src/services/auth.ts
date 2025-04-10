@@ -1,23 +1,20 @@
-import { UserData } from "../../types";
+import { UserLogin, UserRegister } from "../../types";
 import apiClient from "./apiClient";
 
-class AuthService {
-  static async login(login: string, password: string): Promise<string> {
-    const response = await apiClient.post<string>("/auth/login", {
-      login,
-      password,
-    });
+export class AuthService {
+  static async login(data: UserLogin) {
+    const response = await apiClient.post("/user/login", data);
     return response.data;
   }
 
-  static async logout(): Promise<void> {
-    await apiClient.post<string>("/auth/logout");
+  static async register(data: UserRegister) {
+    const response = await apiClient.post("/user/register", data);
+    return response.data;
   }
 
-  static async getUser(): Promise<UserData> {
-    const response = await apiClient.get<UserData>("/auth/user");
+  static async logout() {
+    const response = await apiClient.post("/user/logout");
     return response.data;
   }
 }
-
 export default AuthService;
