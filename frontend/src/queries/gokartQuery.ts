@@ -20,11 +20,15 @@ const useGetAllGokarts = (options?: UseQueryOptions<GokartData[], Error>) => {
   });
 };
 
-const useCreateGokart = (options?: MutationType<GokartData>) => {
+const useCreateGokart = (options?: MutationType<{gokart: GokartData, image?: File}>) => {
   return useMutation({
     ...options,
-    mutationFn: async (data: GokartData) => {
-      return await GokartService.create<GokartData>(data, "/gokart");
+    mutationFn: async (data) => {
+      const formData = new FormData();
+      formData.append("gokart", JSON.stringify(data.gokart));
+      if(data.image)
+        formData.append("image", data.image);
+      return await GokartService.create<GokartData>(formData, "/gokart");
     },
     onError: handleError,
     onSuccess: (res, vars, _) => {

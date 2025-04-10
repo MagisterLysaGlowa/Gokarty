@@ -7,7 +7,7 @@ import { FaMagnifyingGlass } from "react-icons/fa6";
 import { GokartQueries } from "../../queries/gokartQuery";
 import { Loading } from "../../components/Loading/Loading";
 import { useCustomTableCells } from "../../components/CustomTableCells/CustomTableCells";
-import { useGetGokartColumns, useGetGokartRows } from "./AddGokartUtils";
+import { useGetGokartColumns, useGetGokartRows } from "./GokartManagementUtils";
 import {
   defaultEditButtonProps,
   defaultRemoveButtonProps,

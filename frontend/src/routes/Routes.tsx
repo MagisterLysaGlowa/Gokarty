@@ -6,7 +6,7 @@ import RegisterPage from "../pages/RegisterPage/RegisterPage";
 import Tournaments from "../pages/Tournaments/Tournaments";
 import TournamentTable from "../pages/TournamentTable/TournamentTable";
 import { SchoolManagement } from "../pages/SchoolManagement/SchoolManagement";
-import { AddGokart } from "../pages/GokartManagement/AddGokart";
+import { AddGokart } from "../pages/GokartManagement/GokartManagement";
 import { EmptyLayout } from "../layouts/EmptyLayout";
 import { MainNavigationLayout } from "../layouts/MainNavigationLayout";
 import { DualNavigationManagment } from "../layouts/DualNavigationManagment";

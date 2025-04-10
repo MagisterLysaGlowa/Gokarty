@@ -61,7 +61,7 @@ export const AddGokartModal: FC<AddGokartModalProps> = ({ modal }) => {
                 {...confirmButtonConfig}
                 onPress={async () => {
                   if (await validateData(gokartValidationSchema, gokart)) {
-                    await createGokart(gokart);
+                    await createGokart({gokart});
                     onClose();
                   }
                 }}

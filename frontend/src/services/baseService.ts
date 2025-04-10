@@ -1,8 +1,10 @@
 import apiClient from "./apiClient";
 
 export class BaseService {
-  static async create<T>(data: T, endpoint: string): Promise<QueryResponse> {
-    const response = await apiClient.post<QueryResponse>(endpoint, data);
+  static async create<T>(data: T | FormData, endpoint: string): Promise<QueryResponse> {
+    const response = await apiClient.post<QueryResponse>(endpoint, data, {
+      headers: data instanceof FormData ? { "Content-Type": "multipart/form-data" } : undefined,
+    });
     return response.data;
   }
 

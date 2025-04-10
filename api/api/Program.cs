@@ -57,6 +57,8 @@ namespace api
 
             app.MapHub<TournamentTableHub>("/hubs/tournamentTable");
 
+            app.UseStaticFiles();
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {

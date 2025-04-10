@@ -1,8 +1,11 @@
-﻿using api.Helpers;
+﻿using api.Dtos;
+using api.Exceptions;
+using api.Helpers;
 using api.Interfaces;
 using api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace api.Controllers
 {
@@ -18,13 +21,19 @@ namespace api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Gokart data)
+        public async Task<IActionResult> Create([FromForm] GokartDto data)
         {
             try {
-                if (!ModelState.IsValid)
+                if (!ModelState.IsValid || JsonSerializer.Deserialize<Gokart>(data.Gokart) is not Gokart gokart)
                     return StatusCode(400, new ResponseHelper(400, "BadRequest", "Podano błędne dane dla gokarta"));
-                await gokartRepository.CreateAsync(data);
+                string filename = await ImageUploadHelper.UploadImage(data.Image);
+                gokart.Image = filename;
+                await gokartRepository.CreateAsync(gokart);
                 return StatusCode(201, new ResponseHelper(201, "Created", "Pomyślnie dodano gokart"));
+            } catch (NotAllowedExtensionException) {
+                return StatusCode(400, new ResponseHelper(400, "BadRequest", "Niedozwolony format. Wybierz jeden z tych: " + String.Join(' ', ImageUploadHelper.AllowedExtensions)));
+            } catch (UploadedFileIsNotAnImageException) {
+                return StatusCode(400, new ResponseHelper(400, "BadRequest", "Przesłany plik nie jest obrazem"));
             } catch (TimeoutException) {
                 return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
             } catch (Exception) {
