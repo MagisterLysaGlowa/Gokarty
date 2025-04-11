@@ -1,4 +1,5 @@
 ﻿using api.Data;
+using api.Helpers;
 using api.Interfaces;
 using api.Models;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +24,7 @@ namespace api.Repositories {
         }
 
         public async Task<int?> RemoveAsync(int gokartId) {
-            if (await _context.Gokarts.FindAsync(gokartId) is Gokart gokart) {
+            if (await _context.Gokarts.FindAsync(gokartId) is Gokart gokart && await ImageHelper.DeleteImage(gokart.Image)) {
                 _context.Gokarts.Remove(gokart);
                 await _context.SaveChangesAsync();
                 return gokartId;

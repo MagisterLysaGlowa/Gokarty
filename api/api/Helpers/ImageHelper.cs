@@ -1,13 +1,10 @@
-﻿using api.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Linq;
-using api.Exceptions;
+﻿using api.Exceptions;
 
 namespace api.Helpers
 {
-    public class ImageUploadHelper
+    public class ImageHelper
     {
-        public static string[] AllowedExtensions { get; set; } = { ".jpg", ".jpeg", ".png" };
+        public static string[] AllowedExtensions { get; set; } = { ".jpg", ".jpeg", ".png", ".webp" };
         public async static Task<string> UploadImage(IFormFile? image)
         {
             if (image != null && image.Length > 0) {
@@ -24,6 +21,23 @@ namespace api.Helpers
                 return fileName;
             }
             return "https://www.tuningblog.eu/wp-content/uploads/2015/05/Lazareth-Twingo-V8-Widebody-Tuning-1.jpg";
+        }
+        public async static Task<bool> DeleteImage(string fileName)
+        {
+            if (string.IsNullOrWhiteSpace(fileName))
+                return false;
+
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName);
+
+            if (!File.Exists(path))
+                return false;
+
+            try {
+                await Task.Run(() => File.Delete(path));
+                return true;
+            } catch {
+                return false;
+            }
         }
     }
 }

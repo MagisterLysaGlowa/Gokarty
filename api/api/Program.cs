@@ -38,9 +38,9 @@ namespace api
                     throw new InvalidOperationException("Connection string 'DefaultConnection' not found"));
             });
 
-            builder.Services.AddControllers().AddJsonOptions(x =>
-                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles
-            );
+            builder.Services.AddControllers().AddJsonOptions((x) => {
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+            });
 
             builder.Services.AddCors(options =>
             {

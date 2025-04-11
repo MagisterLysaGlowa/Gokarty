@@ -24,14 +24,14 @@ namespace api.Controllers
         public async Task<IActionResult> Create([FromForm] GokartDto data)
         {
             try {
-                if (!ModelState.IsValid || JsonSerializer.Deserialize<Gokart>(data.Gokart) is not Gokart gokart)
+                if (!ModelState.IsValid || JsonSerializer.Deserialize<Gokart>(data.Gokart, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true }) is not Gokart gokart)
                     return StatusCode(400, new ResponseHelper(400, "BadRequest", "Podano błędne dane dla gokarta"));
-                string filename = await ImageUploadHelper.UploadImage(data.Image);
+                string filename = await ImageHelper.UploadImage(data.Image);
                 gokart.Image = filename;
                 await gokartRepository.CreateAsync(gokart);
                 return StatusCode(201, new ResponseHelper(201, "Created", "Pomyślnie dodano gokart"));
             } catch (NotAllowedExtensionException) {
-                return StatusCode(400, new ResponseHelper(400, "BadRequest", "Niedozwolony format. Wybierz jeden z tych: " + String.Join(' ', ImageUploadHelper.AllowedExtensions)));
+                return StatusCode(400, new ResponseHelper(400, "BadRequest", "Niedozwolony format. Wybierz jeden z tych: " + String.Join(' ', ImageHelper.AllowedExtensions)));
             } catch (UploadedFileIsNotAnImageException) {
                 return StatusCode(400, new ResponseHelper(400, "BadRequest", "Przesłany plik nie jest obrazem"));
             } catch (TimeoutException) {

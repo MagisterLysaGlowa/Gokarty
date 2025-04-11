@@ -24,9 +24,6 @@ export const handleInputChange =
     seter((prev) => ({ ...prev, [key]: value || e.target.value }));
   };
 
-export const convertDateToInputValue = (date: Date) =>
-  date.toISOString().split("T")[0];
-
 export const basicTableClasses:
   | SlotsToClasses<
       | "base"
