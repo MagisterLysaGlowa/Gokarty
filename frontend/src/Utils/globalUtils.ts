@@ -2,6 +2,7 @@ import { SlotsToClasses } from "@heroui/react";
 import { TableActionButtonProps } from "../../types";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { CgAdd } from "react-icons/cg";
+import { validateImageFile } from "../validations/ImageFileValidation";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type DeepKeys<T, Prefix extends string = ""> = {
@@ -23,6 +24,20 @@ export const handleInputChange =
   (e: React.ChangeEvent<HTMLInputElement>) => {
     seter((prev) => ({ ...prev, [key]: value || e.target.value }));
   };
+
+export const imagesPath = "http://localhost:5079/images/";
+
+export const fileChange = (
+  e: React.ChangeEvent<HTMLInputElement>,
+  setImage: React.Dispatch<React.SetStateAction<File | undefined>>,
+  setPreview: React.Dispatch<React.SetStateAction<string | undefined>>,
+) => {
+  const file = e.target.files?.[0];
+  if(file && validateImageFile(file)) {
+    setImage(file);
+    setPreview(URL.createObjectURL(file));
+  }
+}
 
 export const basicTableClasses:
   | SlotsToClasses<

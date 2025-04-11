@@ -12,13 +12,11 @@ import {
 } from "@heroui/react";
 import { GokartData, ModalProps, RideData } from "../../../../../../types";
 import { RideQueries } from "../../../../../queries/rideQuery";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   calculateTimeFromStringToMs,
   convertTimeToString,
 } from "../../../../../Utils/TimeUtils";
-import { useParams } from "react-router-dom";
-import { queryClient } from "../../../../../Utils/ReactQueryConfig";
 import { RideModalData } from "../tournamentRidesUtils";
 import { modalConfig } from "../../../../../configs/modalConfig";
 import { inputConfig } from "../../../../../configs/inputConfig";
@@ -39,8 +37,7 @@ export const EditRideModal: React.FC<EditModalProps> = ({
   ride,
   gokarts,
 }) => {
-  const { id: tournamentId } = useParams();
-  const [rideToEdit, setRideToEdit] = useState<RideData>({
+  const rideDefault = {
     gokartId: Number(ride?.timeData?.gokart?.gokartId),
     isDisqualified: Boolean(ride.timeData?.isDisqualified),
     time: Number(ride.timeData?.time),
@@ -48,19 +45,18 @@ export const EditRideModal: React.FC<EditModalProps> = ({
     rideId: Number(ride.timeData?.rideId),
     rideNumber: Number(ride.timeData?.rideNumber),
     rideGroupId: Number(ride.timeData?.rideGroupId)
-  });
-
+  }
+  
+  const [rideToEdit, setRideToEdit] = useState<RideData>(rideDefault);
   const [time, setTime] = useState<string>(
     convertTimeToString(Number(ride.timeData?.time))
   );
+  const { mutateAsync: updateRide } = RideQueries.updateRide();
 
-  const { mutateAsync: updateRide } = RideQueries.updateRide({
-    onSuccess: async () =>
-      await queryClient.invalidateQueries([
-        "playersWithTimes",
-        Number(tournamentId),
-      ]),
-  });
+  useEffect(() => {
+    setRideToEdit(rideDefault);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ride, gokarts])
 
   if (!gokarts) return;
 

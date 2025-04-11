@@ -1,9 +1,12 @@
 import { Autoplay, Navigation } from "swiper/modules";
-import { gokartsArray } from "../GokartPageUtils";
 import { Swiper } from "swiper/react";
 import { SwiperSlide } from "swiper/react";
 import { Image, Divider } from "@heroui/react";
+import { GokartQueries } from "../../../queries/gokartQuery";
+import { imagesPath } from "../../../Utils/globalUtils";
 export const GokartSliderContainer = () => {
+  const { data: gokarts } = GokartQueries.getAllGokarts();
+
   return (
     <Swiper
       className="px-3 w-full flex-1"
@@ -17,21 +20,21 @@ export const GokartSliderContainer = () => {
       grabCursor={true} // Możliwość przeciągania myszką
       navigation={true}
     >
-      {gokartsArray.map((element, index) => (
+      {gokarts?.map((gokart, i) => (
         <SwiperSlide
-          key={index}
+          key={i}
           className="flex flex-col gap-10 xl:px-5 lg:px-4 md:px-3 sm:px-2 px-1"
         >
           <Image
-            src={element.src}
-            alt={`Slide ${index + 1}`}
+            src={imagesPath + gokart.image}
+            alt={`Slide ${i + 1}`}
             className="rounded-none aspect-square object-cover w-full"
           />
           <h3 className="xl:text-4xl lg:text-3xl md:text-xl text-center text-main-default">
-            {element.name}
+            {gokart.name}
           </h3>
           <Divider className="w-10/12 mx-auto h-2 rounded-lg" />
-          <p className="lg:text-lg md:text-md">{element.description}</p>
+          <p className="lg:text-lg md:text-md">Zapdaj opisy w bazie</p>
         </SwiperSlide>
       ))}
     </Swiper>

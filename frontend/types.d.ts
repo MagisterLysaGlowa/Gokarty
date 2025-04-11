@@ -1,6 +1,7 @@
 export interface GokartData {
   gokartId?: number;
   name: string;
+  image?: string;
 }
 
 export interface QueueData {

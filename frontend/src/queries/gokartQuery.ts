@@ -33,26 +33,29 @@ const useCreateGokart = (options?: MutationType<{gokart: GokartData, image?: Fil
     onError: handleError,
     onSuccess: (res, vars, _) => {
       successToast(res.message);
-      handleSuccessWithRefreshOnSuccess([["gokarts"]], options?.onSuccess)(
-        res,
-        vars,
-        _
-      );
+      handleSuccessWithRefreshOnSuccess(
+        [["gokart", vars.gokart.gokartId], ["gokarts"]],
+        options?.onSuccess
+      )(res, vars, _);
     },
   });
 };
 
-const useUpdateGokart = (options?: MutationType<GokartData>) => {
+const useUpdateGokart = (options?: MutationType<{gokart: GokartData, image?: File}>) => {
   return useMutation({
     ...options,
-    mutationFn: async (data: GokartData) => {
-      return await GokartService.update<GokartData>(data, "/gokart");
+    mutationFn: async (data) => {
+      const formData = new FormData();
+      formData.append("gokart", JSON.stringify(data.gokart));
+      if(data.image)
+        formData.append("image", data.image);
+      return await GokartService.update<GokartData>(formData, "/gokart");
     },
     onError: handleError,
     onSuccess: (res, vars, _) => {
       successToast(res.message);
       handleSuccessWithRefreshOnSuccess(
-        [["gokart", vars.gokartId], ["gokarts"]],
+        [["gokart", vars.gokart.gokartId], ["gokarts"]],
         options?.onSuccess
       )(res, vars, _);
     },

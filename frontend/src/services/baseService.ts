@@ -8,8 +8,10 @@ export class BaseService {
     return response.data;
   }
 
-  static async update<T>(data: T, endpoint: string): Promise<QueryResponse> {
-    const response = await apiClient.put<QueryResponse>(endpoint, data);
+  static async update<T>(data: T | FormData, endpoint: string): Promise<QueryResponse> {
+    const response = await apiClient.put<QueryResponse>(endpoint, data, {
+      headers: data instanceof FormData ? { "Content-Type": "multipart/form-data" } : undefined,
+    });
     return response.data;
   }
 

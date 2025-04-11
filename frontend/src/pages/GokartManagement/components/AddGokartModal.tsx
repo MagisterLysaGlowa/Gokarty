@@ -10,7 +10,7 @@ import {
 import { GokartData, ModalProps } from "../../../../types";
 import { FC, useEffect, useRef, useState } from "react";
 import { GokartQueries } from "../../../queries/gokartQuery";
-import { gokartValidationSchema } from "../../../validations/gokartValidation";
+import { gokartValidationSchema } from "../../../validations/GokartValidation";
 import { modalConfig } from "../../../configs/modalConfig";
 import { inputConfig } from "../../../configs/inputConfig";
 import {
@@ -18,8 +18,9 @@ import {
   confirmButtonConfig,
 } from "../../../configs/buttonConfig";
 import { validateData } from "../../../validations/validationUtils";
-import { validateImageFile } from "../../../validations/ImageFileValidation";
 import { IoCloseCircleOutline } from "react-icons/io5";
+import { fileChange } from "../../../Utils/globalUtils";
+import { allowedExtensions } from "../../../validations/ImageFileValidation";
 
 type AddGokartModalProps = {
   modal: ModalProps;
@@ -39,14 +40,6 @@ export const AddGokartModal: FC<AddGokartModalProps> = ({ modal }) => {
     setImage(undefined);
     setImagePreview(undefined);
   }, [modal.isOpen]);
-
-  const fileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if(file && validateImageFile(file)) {
-      setImage(file);
-      setImagePreview(URL.createObjectURL(file));
-    }
-  }
 
   return (
     <Modal
@@ -69,8 +62,8 @@ export const AddGokartModal: FC<AddGokartModalProps> = ({ modal }) => {
               />
               <input
                 type="file"
-                accept=".jpg,.jpeg,.png,.webp"
-                onChange={fileChange}
+                accept={allowedExtensions.join(',')}
+                onChange={(e) => fileChange(e, setImage, setImagePreview)}
                 ref={fileInput}
                 className="hidden"
                 />
@@ -82,7 +75,7 @@ export const AddGokartModal: FC<AddGokartModalProps> = ({ modal }) => {
                   <img 
                     src={imagePreview} 
                     alt="Podgląd wybranego zdjęcia"
-                    className="rounded-xl max-h-[500px]"
+                    className="rounded-xl max-h-[400px]"
                   />
                   <Button
                     onPress={() => {

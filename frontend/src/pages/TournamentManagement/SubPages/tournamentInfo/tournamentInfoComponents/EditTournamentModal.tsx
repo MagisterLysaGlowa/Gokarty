@@ -21,7 +21,7 @@ import {
 } from "../../../../../configs/buttonConfig";
 import { selectConfig } from "../../../../../configs/selectConfig";
 import { dateRangePickerConfig } from "../../../../../configs/dateRangePickerConfig";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { validateData } from "../../../../../validations/validationUtils";
 import { tournamentValidateSchema } from "../../../../../validations/TournamentValidation";
 import { removeSecondsAndMiliseconds } from "../../../../../Utils/TimeUtils";
@@ -38,6 +38,10 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
 }) => {
   const [tournamentToEdit, setTournamentToEdit] = useState<TournamentData>(tournament);
   const { mutateAsync: updateTournamentAsync } = TournamentQueries.updateTournament();
+
+  useEffect(() => {
+    setTournamentToEdit(tournament);
+  }, [tournament]);
 
   return (
     <Modal

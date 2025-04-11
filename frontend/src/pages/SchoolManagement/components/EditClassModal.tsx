@@ -7,7 +7,7 @@ import {
   Button,
   Input,
 } from "@heroui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ClassData, ModalProps } from "../../../../types";
 import { modalConfig } from "../../../configs/modalConfig";
 import { inputConfig } from "../../../configs/inputConfig";
@@ -30,6 +30,10 @@ export const EditClassModal: React.FC<EditModalProps> = ({
 }) => {
   const [classToEdit, setClassToEdit] = useState<ClassData>(_class);
   const { mutateAsync: updateClass } = ClassQueries.updateClass();
+
+  useEffect(() => {
+    setClassToEdit(_class);
+  }, [_class]);
 
   return (
     <Modal

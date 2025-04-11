@@ -20,7 +20,7 @@ export const validateImageFile = (file: File | undefined): boolean => {
         return false;
     }
   
-    if (file.size > 10 * 1024 * 1024) {
+    if (file.size > 5 * 1024 * 1024) {
         errorToast("Przekroczono maksymalny rozmiar pliku (5MB)");
         return false;
     }

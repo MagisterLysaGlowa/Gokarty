@@ -7,7 +7,7 @@ import {
   Button,
   Input,
 } from "@heroui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ModalProps, SchoolData } from "../../../../types";
 import { SchoolQueries } from "../../../queries/schoolQuery";
 import { modalConfig } from "../../../configs/modalConfig";
@@ -29,8 +29,11 @@ export const EditSchoolModal: React.FC<EditModalProps> = ({
   school,
 }) => {
   const [schoolToEdit, setSchoolToEdit] = useState<SchoolData>(school);
-
   const { mutateAsync: updateSchool } = SchoolQueries.updateSchool();
+
+  useEffect(() => {
+    setSchoolToEdit(school);
+  }, [school])
 
   return (
     <Modal

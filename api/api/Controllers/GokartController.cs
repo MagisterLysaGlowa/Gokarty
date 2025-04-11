@@ -26,10 +26,14 @@ namespace api.Controllers
             try {
                 if (!ModelState.IsValid || JsonSerializer.Deserialize<Gokart>(data.Gokart, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true }) is not Gokart gokart)
                     return StatusCode(400, new ResponseHelper(400, "BadRequest", "Podano błędne dane dla gokarta"));
-                string filename = await ImageHelper.UploadImage(data.Image);
+                string filename = await ImageHelper.SaveImage(data.Image);
+                if (string.IsNullOrEmpty(filename))
+                    filename = "defaultGokartImage.jpg";
                 gokart.Image = filename;
                 await gokartRepository.CreateAsync(gokart);
                 return StatusCode(201, new ResponseHelper(201, "Created", "Pomyślnie dodano gokart"));
+            } catch (FileSizeTooBigException) {
+                return StatusCode(400, new ResponseHelper(400, "BadRequest", "Rozmiar przesłanego pliku jest zbyt duży"));
             } catch (NotAllowedExtensionException) {
                 return StatusCode(400, new ResponseHelper(400, "BadRequest", "Niedozwolony format. Wybierz jeden z tych: " + String.Join(' ', ImageHelper.AllowedExtensions)));
             } catch (UploadedFileIsNotAnImageException) {
@@ -42,15 +46,27 @@ namespace api.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(Gokart data)
+        public async Task<IActionResult> Update(GokartDto data)
         {
             try {
-                if (!ModelState.IsValid)
+                if (!ModelState.IsValid || JsonSerializer.Deserialize<Gokart>(data.Gokart, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true }) is not Gokart gokart)
                     return StatusCode(400, new ResponseHelper(400, "BadRequest", "Podano błędne dane dla gokarta"));
-                if (!await gokartRepository.ExistsAsync(data.GokartId))
+                if (!await gokartRepository.ExistsAsync(gokart.GokartId))
                     return StatusCode(404, new ResponseHelper(404, "NotFound", "Nie znaleziono gokarta"));
-                await gokartRepository.UpdateAsync(data);
+                string filename = await ImageHelper.UpdateImage(data.Image, gokart.Image);
+                if (string.IsNullOrEmpty(filename))
+                    filename = "defaultGokartImage.jpg";
+                gokart.Image = filename;
+                await gokartRepository.UpdateAsync(gokart);
                 return StatusCode(200, new ResponseHelper(200, "Ok", "Pomyślnie uaktualniono gokart"));
+            } catch (CouldNotDeleteFileException) {
+                return StatusCode(400, new ResponseHelper(500, "ServerError", "Wystąpił błąd przy aktualizacji zdjęcia"));
+            } catch (FileSizeTooBigException) {
+                return StatusCode(400, new ResponseHelper(400, "BadRequest", "Przekroczono maksymalny rozmiar pliku (5MB)"));
+            } catch (NotAllowedExtensionException) {
+                return StatusCode(400, new ResponseHelper(400, "BadRequest", "Niedozwolony format. Wybierz jeden z tych: " + String.Join(' ', ImageHelper.AllowedExtensions)));
+            } catch (UploadedFileIsNotAnImageException) {
+                return StatusCode(400, new ResponseHelper(400, "BadRequest", "Przesłany plik nie jest obrazem"));
             } catch (TimeoutException) {
                 return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
             } catch (Exception) {
