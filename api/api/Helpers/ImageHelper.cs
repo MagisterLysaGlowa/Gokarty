@@ -5,7 +5,7 @@ namespace api.Helpers
     public class ImageHelper
     {
         public static string[] AllowedExtensions { get; } = { ".jpg", ".jpeg", ".png", ".webp" };
-        public static string[] DefaultImages { get; } = { "defaultGokartImage.jpg" };
+        public static string[] DefaultImages { get; } = { "defaultGokartImage.jpg", "defaultTournamentImage.jpg" };
         public async static Task<string> SaveImage(IFormFile? image)
         {
             if (image != null && image.Length > 0) {

@@ -4,6 +4,7 @@ import { TournamentData } from "../../../types";
 import { Image } from "@heroui/react";
 import { FaCalendar, FaEdit, FaTable } from "react-icons/fa";
 import { displayDateRange } from "../../Utils/TimeUtils";
+import { imagesPath } from "../../Utils/globalUtils";
 
 
 interface TournamentListElementProps {
@@ -20,7 +21,7 @@ const TournamentListElement: React.FC<TournamentListElementProps> = ({
       <span className={`text-center w-auto rounded-t-lg m-1 ${data.tournamentStateId==1 ? "bg-main-default" : data.tournamentStateId==2 ? "bg-green-500" : "bg-red-600"}`}>{data.tournamentState?.state}</span>
       <div className=" flex justify-center items-center">
         <Image
-          src="https://t4.ftcdn.net/jpg/04/38/89/23/360_F_438892395_rBFn1ok5VpKxI9Qc3cP1ggypplEBkcJS.jpg"
+          src={imagesPath + data.image}
           className="aspect-square 2xl:w-[250px] xl:w-[225px] lg:w-[225px] w-[200px]"
         />
       </div>

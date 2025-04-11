@@ -21,11 +21,14 @@ import {
 } from "../../../../../configs/buttonConfig";
 import { selectConfig } from "../../../../../configs/selectConfig";
 import { dateRangePickerConfig } from "../../../../../configs/dateRangePickerConfig";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { validateData } from "../../../../../validations/validationUtils";
 import { tournamentValidateSchema } from "../../../../../validations/TournamentValidation";
 import { removeSecondsAndMiliseconds } from "../../../../../Utils/TimeUtils";
 import { fromDate, getLocalTimeZone } from "@internationalized/date";
+import { allowedExtensions } from "../../../../../validations/ImageFileValidation";
+import { fileChange } from "../../../../../Utils/globalUtils";
+import { IoCloseCircleOutline } from "react-icons/io5";
 
 type EditModalProps = {
   modal: ModalProps;
@@ -36,11 +39,16 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
   modal,
   tournament,
 }) => {
+  const fileInput = useRef<HTMLInputElement | null>(null);
   const [tournamentToEdit, setTournamentToEdit] = useState<TournamentData>(tournament);
   const { mutateAsync: updateTournamentAsync } = TournamentQueries.updateTournament();
+  const [image, setImage] = useState<File | undefined>(undefined);
+  const [imagePreview, setImagePreview] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     setTournamentToEdit(tournament);
+    setImage(undefined);
+    setImagePreview(undefined);
   }, [tournament]);
 
   return (
@@ -113,6 +121,34 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
                 <SelectItem key={"2"}>W trakcie</SelectItem>
                 <SelectItem key={"3"}>Zakończone</SelectItem>
               </Select>
+              <input
+                type="file"
+                accept={allowedExtensions.join(',')}
+                onChange={(e) => fileChange(e, setImage, setImagePreview)}
+                ref={fileInput}
+                className="hidden"
+                />
+              <Button onPress={() => fileInput.current?.click()}>
+                {image ? "Zmień zdjęcie" : "Dodaj zdjęcie"}
+              </Button>
+              {imagePreview && (
+                <div className="relative flex items-center justify-center">
+                  <img 
+                    src={imagePreview} 
+                    alt="Podgląd wybranego zdjęcia"
+                    className="rounded-xl max-h-[400px]"
+                  />
+                  <Button
+                    onPress={() => {
+                      setImage(undefined);
+                      setImagePreview(undefined);
+                    }}
+                    isIconOnly
+                    className="absolute right-1 top-1 rounded-full text-3xl">
+                    <IoCloseCircleOutline />
+                  </Button>
+                </div>
+              )}
             </ModalBody>
             <ModalFooter>
               <Button {...cancelButtonConfig} onPress={onClose}>
@@ -121,10 +157,8 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
               <Button
                 {...confirmButtonConfig}
                 onPress={async () => {
-                  if (
-                    await validateData(tournamentValidateSchema, tournamentToEdit)
-                  ) {
-                    await updateTournamentAsync(tournamentToEdit);
+                  if (await validateData(tournamentValidateSchema, tournamentToEdit)) {
+                    await updateTournamentAsync({tournament: tournamentToEdit, image});
                     onClose();
                   }
                 }}

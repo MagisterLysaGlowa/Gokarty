@@ -1,4 +1,5 @@
 ﻿using api.Data;
+using api.Helpers;
 using api.Interfaces;
 using api.Models;
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +31,7 @@ namespace api.Repositories
 
         public async Task<int?> RemoveAsync(int tournamentId)
         {
-            if (await _context.Tournaments.FindAsync(tournamentId) is Tournament t) {
+            if (await _context.Tournaments.FindAsync(tournamentId) is Tournament t && await ImageHelper.DeleteImage(t.Image)) {
                 _context.Tournaments.Remove(t);
                 await _context.SaveChangesAsync();
                 return tournamentId;

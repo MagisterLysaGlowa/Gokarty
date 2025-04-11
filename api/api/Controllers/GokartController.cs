@@ -33,9 +33,9 @@ namespace api.Controllers
                 await gokartRepository.CreateAsync(gokart);
                 return StatusCode(201, new ResponseHelper(201, "Created", "Pomyślnie dodano gokart"));
             } catch (FileSizeTooBigException) {
-                return StatusCode(400, new ResponseHelper(400, "BadRequest", "Rozmiar przesłanego pliku jest zbyt duży"));
+                return StatusCode(400, new ResponseHelper(400, "BadRequest", "Przekroczono maksymalny rozmiar pliku (5MB)"));
             } catch (NotAllowedExtensionException) {
-                return StatusCode(400, new ResponseHelper(400, "BadRequest", "Niedozwolony format. Wybierz jeden z tych: " + String.Join(' ', ImageHelper.AllowedExtensions)));
+                return StatusCode(400, new ResponseHelper(400, "BadRequest", "Niedozwolony format zdjęcia. Wybierz jeden z tych: " + String.Join(' ', ImageHelper.AllowedExtensions)));
             } catch (UploadedFileIsNotAnImageException) {
                 return StatusCode(400, new ResponseHelper(400, "BadRequest", "Przesłany plik nie jest obrazem"));
             } catch (TimeoutException) {
@@ -46,7 +46,7 @@ namespace api.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(GokartDto data)
+        public async Task<IActionResult> Update([FromForm] GokartDto data)
         {
             try {
                 if (!ModelState.IsValid || JsonSerializer.Deserialize<Gokart>(data.Gokart, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true }) is not Gokart gokart)
@@ -64,7 +64,7 @@ namespace api.Controllers
             } catch (FileSizeTooBigException) {
                 return StatusCode(400, new ResponseHelper(400, "BadRequest", "Przekroczono maksymalny rozmiar pliku (5MB)"));
             } catch (NotAllowedExtensionException) {
-                return StatusCode(400, new ResponseHelper(400, "BadRequest", "Niedozwolony format. Wybierz jeden z tych: " + String.Join(' ', ImageHelper.AllowedExtensions)));
+                return StatusCode(400, new ResponseHelper(400, "BadRequest", "Niedozwolony format zdjęcia. Wybierz jeden z tych: " + String.Join(' ', ImageHelper.AllowedExtensions)));
             } catch (UploadedFileIsNotAnImageException) {
                 return StatusCode(400, new ResponseHelper(400, "BadRequest", "Przesłany plik nie jest obrazem"));
             } catch (TimeoutException) {

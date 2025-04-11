@@ -39,6 +39,8 @@ export const EditGokartModal: FC<EditGokartModalProps> = ({
 
   useEffect(() => {
     setGokartToEdit(gokart)
+    setImage(undefined);
+    setImagePreview(undefined);
   }, [gokart]);
 
   return (

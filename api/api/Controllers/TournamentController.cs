@@ -1,11 +1,11 @@
 ﻿using api.Dtos;
+using api.Exceptions;
 using api.Helpers;
 using api.Interfaces;
 using api.Models;
-using api.Repositories;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace api.Controllers
 {
@@ -45,13 +45,23 @@ namespace api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Tournament data)
+        public async Task<IActionResult> Create([FromForm] TournamentDto data)
         {
             try {
-                if (!ModelState.IsValid)
+                if (!ModelState.IsValid || JsonSerializer.Deserialize<Tournament>(data.Tournament, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true }) is not Tournament tournament)
                     return StatusCode(400, new ResponseHelper(400, "BadRequest", "Podano błędne dane dla zawodów"));
-                await tournamentRepository.CreateAsync(data);
-                return StatusCode(201, new ResponseHelper(201, "OK", "Pomyślnie dodano zawody"));
+                string filename = await ImageHelper.SaveImage(data.Image);
+                if (string.IsNullOrEmpty(filename))
+                    filename = "defaultTournamentImage.jpg";
+                tournament.Image = filename;
+                await tournamentRepository.CreateAsync(tournament);
+                return StatusCode(201, new ResponseHelper(201, "Created", "Pomyślnie dodano zawody"));
+            } catch (FileSizeTooBigException) {
+                return StatusCode(400, new ResponseHelper(400, "BadRequest", "Przekroczono maksymalny rozmiar pliku (5MB)"));
+            } catch (NotAllowedExtensionException) {
+                return StatusCode(400, new ResponseHelper(400, "BadRequest", "Niedozwolony format zdjęcia. Wybierz jeden z tych: " + String.Join(' ', ImageHelper.AllowedExtensions)));
+            } catch (UploadedFileIsNotAnImageException) {
+                return StatusCode(400, new ResponseHelper(400, "BadRequest", "Przesłany plik nie jest obrazem"));
             } catch (TimeoutException) {
                 return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
             } catch (Exception) {
@@ -60,15 +70,27 @@ namespace api.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(Tournament data)
+        public async Task<IActionResult> Update([FromForm] TournamentDto data)
         {
             try {
-                if (!ModelState.IsValid)
+                if (!ModelState.IsValid || JsonSerializer.Deserialize<Tournament>(data.Tournament, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true }) is not Tournament tournament)
                     return StatusCode(400, new ResponseHelper(400, "BadRequest", "Podano błędne dane dla zawodów"));
-                if (!await tournamentRepository.ExistsAsync(data.TournamentId))
+                if (!await tournamentRepository.ExistsAsync(tournament.TournamentId))
                     return StatusCode(404, new ResponseHelper(404, "NotFound", "Nie znaleziono zawodów"));
-                await tournamentRepository.UpdateAsync(data);
+                string filename = await ImageHelper.UpdateImage(data.Image, tournament.Image);
+                if (string.IsNullOrEmpty(filename))
+                    filename = "defaultTournamentImage.jpg";
+                tournament.Image = filename;
+                await tournamentRepository.UpdateAsync(tournament);
                 return StatusCode(200, new ResponseHelper(200, "Ok", "Pomyślnie uaktualniono zawody"));
+            } catch (CouldNotDeleteFileException) {
+                return StatusCode(400, new ResponseHelper(500, "ServerError", "Wystąpił błąd przy aktualizacji zdjęcia"));
+            } catch (FileSizeTooBigException) {
+                return StatusCode(400, new ResponseHelper(400, "BadRequest", "Przekroczono maksymalny rozmiar pliku (5MB)"));
+            } catch (NotAllowedExtensionException) {
+                return StatusCode(400, new ResponseHelper(400, "BadRequest", "Niedozwolony format zdjęcia. Wybierz jeden z tych: " + String.Join(' ', ImageHelper.AllowedExtensions)));
+            } catch (UploadedFileIsNotAnImageException) {
+                return StatusCode(400, new ResponseHelper(400, "BadRequest", "Przesłany plik nie jest obrazem"));
             } catch (TimeoutException) {
                 return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
             } catch (Exception) {

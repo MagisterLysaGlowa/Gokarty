@@ -31,11 +31,16 @@ const useGetTournament = (
   });
 };
 
-const useCreateTournament = (options?: MutationType<TournamentData>) => {
+const useCreateTournament = (options?: MutationType<{tournament: TournamentData, image?: File}>) => {
   return useMutation({
     ...options,
-    mutationFn: async (data) =>
-      await TournamentService.create<TournamentData>(data, "/tournament"),
+    mutationFn: async (data) => {
+      const formData = new FormData();
+      formData.append("tournament", JSON.stringify(data.tournament));
+      if(data.image)
+        formData.append("image", data.image);
+      return await TournamentService.create<TournamentData>(formData, "/tournament");
+    },
     onError: handleError,
     onSuccess: (res, vars, _) => {
       successToast(res.message);
@@ -47,16 +52,21 @@ const useCreateTournament = (options?: MutationType<TournamentData>) => {
   });
 };
 
-const useUpdateTournament = (options?: MutationType<TournamentData>) => {
+const useUpdateTournament = (options?: MutationType<{tournament: TournamentData, image?: File}>) => {
   return useMutation({
     ...options,
-    mutationFn: async (data) =>
-      await TournamentService.update<TournamentData>(data, "/tournament"),
+    mutationFn: async (data) => {
+      const formData = new FormData();
+      formData.append("tournament", JSON.stringify(data.tournament));
+      if(data.image)
+        formData.append("image", data.image);
+      return await TournamentService.update<TournamentData>(formData, "/tournament");
+    },
     onError: handleError,
     onSuccess: (res, vars, _) => {
       successToast(res.message);
       handleSuccessWithRefreshWithOnSuccess(
-        [["tournament", vars.tournamentId]],
+        [["tournament", vars.tournament.tournamentId]],
         options?.onSuccess
       )(res, vars, _);
     },

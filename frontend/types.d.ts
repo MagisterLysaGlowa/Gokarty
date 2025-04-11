@@ -30,6 +30,7 @@ export interface TournamentData {
   tournamentTypeId: number;
   tournamentState?: TournamentStateData;
   tournamentType?: TournamentTypeData;
+  image?: string;
 }
 
 export interface TournamentStateData {

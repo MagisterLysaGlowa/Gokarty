@@ -37,6 +37,7 @@ export const fileChange = (
     setImage(file);
     setPreview(URL.createObjectURL(file));
   }
+  e.target.value = "";
 }
 
 export const basicTableClasses:

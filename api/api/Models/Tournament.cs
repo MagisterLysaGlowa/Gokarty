@@ -10,6 +10,7 @@ namespace api.Models {
         public TournamentState? TournamentState { get; set; } = default!;
         public int? TournamentTypeId { get; set; }
         public TournamentType? TournamentType { get; set; } = default!;
+        public string Image { get; set; } = String.Empty;
         [JsonIgnore]
         public ICollection<PlayerTournament> PlayerTournaments { get; set; } = [];
         [JsonIgnore]
