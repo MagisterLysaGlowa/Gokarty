@@ -6,6 +6,7 @@ import {
   ModalFooter,
   Button,
   Input,
+  Textarea,
 } from "@heroui/react";
 import { FC, useEffect, useRef, useState } from "react";
 import { GokartData, ModalProps } from "../../../../types";
@@ -68,6 +69,12 @@ export const EditGokartModal: FC<EditGokartModalProps> = ({
                 onValueChange={(e) =>
                   setGokartToEdit((p) => ({ ...p, name: e }))
                 }
+                {...inputConfig}
+              />
+              <Textarea
+                label="Opis"
+                value={gokartToEdit.description}
+                onValueChange={(e) => setGokartToEdit((p) => ({ ...p, description: e }))}
                 {...inputConfig}
               />
               <input

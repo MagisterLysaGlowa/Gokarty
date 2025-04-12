@@ -6,8 +6,10 @@ import {
   TableRow,
   TableCell,
   Selection,
+  Button,
 } from "@heroui/react";
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, SetStateAction } from "react";
+import { TableActionProps } from "../../../types";
 
 export type TableProps = {
   tableCells: (
@@ -17,7 +19,11 @@ export type TableProps = {
   columns: { label: string; key: string }[];
   rows: Record<string, string>[];
   emptyContent?: ReactNode;
+  selectedItems?: number[];
   onSelectionChange?: (keys: Selection) => void;
+  massActions?: TableActionProps[];
+  massActionsItemsCount?: number;
+  setMassActionsItems?: React.Dispatch<SetStateAction<number[]>>;
 };
 
 export const TableComponent: FC<TableProps> = ({
@@ -25,30 +31,55 @@ export const TableComponent: FC<TableProps> = ({
   columns,
   rows,
   emptyContent,
+  selectedItems,
   onSelectionChange,
+  massActions = [],
+  setMassActionsItems,
 }) => {
   return (
-    <Table
-      className="overflow-y-auto overflow-x-hidden"
-      isHeaderSticky
-      removeWrapper
-      aria-label="table"
-      classNames={{ td: "text-xl" }}
-      selectionMode="single"
-      onSelectionChange={onSelectionChange}
-    >
-      <TableHeader columns={columns}>
-        {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
-      </TableHeader>
-      <TableBody items={rows} emptyContent={emptyContent}>
-        {(item) => (
-          <TableRow key={item.lp}>
-            {(columnKey) => (
-              <TableCell>{tableCells(item, columnKey)}</TableCell>
-            )}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+    <div className="relative flex-1">
+      <div className={`absolute top-[-55px] right-0 z-10 flex gap-2 items-center bg-[#27272A] py-2 overflow-hidden rounded-xl transition-all duration-500 ease-in-out origin-right ${selectedItems?.length ? 'max-w-[500px] px-2' : 'max-w-0 px-0'}`}>
+        <span className="whitespace-nowrap">Wybranych obiektów: {selectedItems?.length}</span>
+        {massActions.map((action, i) => (
+          <Button 
+            key={i}
+            {...action.buttonProps}
+            onPress={selectedItems?.length ? action.modal.onOpen : () => {}}
+          />
+        ))}
+      </div>
+      <Table
+        className="overflow-y-auto overflow-x-hidden"
+        isHeaderSticky
+        removeWrapper
+        selectedKeys={selectedItems?.map(i => i.toString())}
+        aria-label="table"
+        classNames={{ td: "text-xl", th: massActions.length > 0 ? "first:w-[50px]" : "" }}
+        selectionMode={massActions.length > 0 ? "multiple" : "single"}
+        onSelectionChange={(e) => {
+          if(onSelectionChange)
+            onSelectionChange(e);
+          else if(setMassActionsItems) {
+            let keys = Array.from(e).map(e => Number(e));
+            if(e == "all")
+              keys = rows.map((row) => Number(row.id));
+            setMassActionsItems(keys);
+          }
+        }}
+      >
+        <TableHeader columns={columns}>
+          {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
+        </TableHeader>
+        <TableBody items={rows} emptyContent={emptyContent}>
+          {(item) => (
+            <TableRow key={item.id}>
+              {(columnKey) => (
+                <TableCell>{tableCells(item, columnKey)}</TableCell>
+              )}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </div>
   );
 };

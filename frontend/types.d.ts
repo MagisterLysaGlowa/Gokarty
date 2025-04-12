@@ -1,6 +1,7 @@
 export interface GokartData {
   gokartId?: number;
   name: string;
+  description?: string;
   image?: string;
 }
 

@@ -71,11 +71,27 @@ const useRemoveGokart = (options?: MutationType<number>) => {
     onError: handleError,
     onSuccess: (res, vars, _) => {
       successToast(res.message);
-      handleSuccessWithRefreshOnSuccess([["gokarts"]], options?.onSuccess)(
-        res,
-        vars,
-        _
-      );
+      handleSuccessWithRefreshOnSuccess(
+        [["gokarts"]],
+        options?.onSuccess
+      )(res, vars, _);
+    },
+  });
+};
+
+const useRemoveGokarts = (options?: MutationType<number[]>) => {
+  return useMutation({
+    ...options,
+    mutationFn: async (ids) => {
+      return await GokartService.massRemove(ids, "/gokart/massRemove");
+    },
+    onError: handleError,
+    onSuccess: (res, vars, _) => {
+      successToast(res.message);
+      handleSuccessWithRefreshOnSuccess(
+        [["gokarts"]],
+        options?.onSuccess
+      )(res, vars, _);
     },
   });
 };
@@ -85,4 +101,5 @@ export const GokartQueries = {
   createGokart: useCreateGokart,
   updateGokart: useUpdateGokart,
   removeGokart: useRemoveGokart,
+  removeGokarts: useRemoveGokarts,
 };

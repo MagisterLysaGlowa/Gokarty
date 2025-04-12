@@ -34,7 +34,7 @@ export const GokartSliderContainer = () => {
             {gokart.name}
           </h3>
           <Divider className="w-10/12 mx-auto h-2 rounded-lg" />
-          <p className="lg:text-lg md:text-md">Zapdaj opisy w bazie</p>
+          <p className="lg:text-lg md:text-md">{gokart.description}</p>
         </SwiperSlide>
       ))}
     </Swiper>

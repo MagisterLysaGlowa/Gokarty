@@ -15,6 +15,7 @@ import {
 import { TableComponent } from "../../components/Table/TableComponent";
 import { YesNoModal } from "../../components/YesNoModal/YesNoModal";
 import { inputConfig } from "../../configs/inputConfig";
+import { TableActionProps } from "../../../types";
 
 export const AddGokart = () => {
   const { data: data, isLoading } = GokartQueries.getAllGokarts();
@@ -24,26 +25,26 @@ export const AddGokart = () => {
   const selectedGokart = data?.find(
     (gokart) => gokart.gokartId == selectedGokartId
   );
+  const [selectedGokartIds, setSelectedGokartIds] = useState<number[]>([]);
   const [filter, setFilter] = useState("");
 
   const editGokartModal = useDisclosure();
   const removeGokartModal = useDisclosure();
   const addGokartModal = useDisclosure();
+  const massRemoveGokartModal = useDisclosure();
 
   const gokartCell = useCustomTableCells(setSelectedGokartId, [
-    {
-      modal: editGokartModal,
-      buttonProps: defaultEditButtonProps,
-    },
-    {
-      modal: removeGokartModal,
-      buttonProps: defaultRemoveButtonProps,
-    },
+    { modal: editGokartModal, buttonProps: defaultEditButtonProps },
+    { modal: removeGokartModal, buttonProps: defaultRemoveButtonProps },
   ]);
+  const massActions: TableActionProps[] = [
+    { modal: massRemoveGokartModal, buttonProps: defaultRemoveButtonProps }
+  ];
   const columns = useGetGokartColumns();
   const rows = useGetGokartRows(data, filter);
 
   const { mutateAsync: removeGokartAsync } = GokartQueries.removeGokart();
+  const { mutateAsync: removeGokartsAsync } = GokartQueries.removeGokarts();
 
   return (
     <div className="flex-1">
@@ -60,7 +61,14 @@ export const AddGokart = () => {
       {isLoading ? (
         <Loading/>
       ) : (
-        <TableComponent columns={columns} rows={rows} tableCells={gokartCell} />
+        <TableComponent
+          columns={columns}
+          rows={rows}
+          tableCells={gokartCell}
+          selectedItems={selectedGokartIds}
+          massActions={massActions}
+          setMassActionsItems={setSelectedGokartIds}
+        />
       )}
       {selectedGokart && (
         <>
@@ -72,12 +80,26 @@ export const AddGokart = () => {
           <YesNoModal
             header="Usuń gokart"
             modal={removeGokartModal}
-            onYes={async () => removeGokartAsync(Number(selectedGokartId))}
+            onYes={async () => await removeGokartAsync(Number(selectedGokartId))}
             key={`remove-${selectedGokartId}`}
           >
             {selectedGokart.name}
           </YesNoModal>
         </>
+      )}
+      {selectedGokartIds && (
+        <YesNoModal
+          header="Usuń gokarty"
+          modal={massRemoveGokartModal}
+          onYes={async () => {
+            const res = await removeGokartsAsync(selectedGokartIds);
+            if(res.status === 200)
+              setSelectedGokartIds([]);
+          }}
+          key={`remove-${selectedGokartIds[selectedGokartIds.length - 1]}`}
+        >
+          {`Czy chcesz usunąć ${selectedGokartIds.length} gokartów?`}
+        </YesNoModal>
       )}
       <AddGokartModal modal={addGokartModal} key={`add`} />
       <div className="fixed right-10 bottom-10">

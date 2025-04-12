@@ -90,6 +90,24 @@ namespace api.Controllers
             }
         }
 
+        [HttpDelete("massRemove")]
+        public async Task<IActionResult> MassRemove(int[] gokartIds)
+        {
+            try {
+                foreach(int gokartId in gokartIds) {
+                    if (await gokartRepository.RemoveAsync(gokartId) is null)
+                        return StatusCode(404, new ResponseHelper(404, "NotFound", "Nie znaleziono jednego z gokartów"));
+                }
+                return StatusCode(200, new ResponseHelper(200, "Ok", "Pomyślnie usunięto gokarty"));
+            } catch (DbUpdateException) {
+                return StatusCode(409, new ResponseHelper(409, "Conflict", "Jeden z obiektów ma powiązane encje, usuń je i spróbuj ponownie"));
+            } catch (TimeoutException) {
+                return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
+            } catch (Exception) {
+                return StatusCode(500, new ResponseHelper(500, "ServerError", "Wystąpił nieoczekiwany błąd"));
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {

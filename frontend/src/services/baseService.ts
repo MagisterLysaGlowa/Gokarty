@@ -29,6 +29,11 @@ export class BaseService {
     const response = await apiClient.get<T>(`${endpoint}/${id}`);
     return response.data;
   }
+
+  static async massRemove(ids: number[], endpoint: string): Promise<QueryResponse> {
+    const response = await apiClient.delete<QueryResponse>(endpoint, {data: ids});
+    return response.data;
+  }
 }
 export interface QueryResponse {
   status: number;

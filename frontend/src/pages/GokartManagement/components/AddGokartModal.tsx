@@ -60,6 +60,12 @@ export const AddGokartModal: FC<AddGokartModalProps> = ({ modal }) => {
                 onValueChange={(e) => setGokart((p) => ({ ...p, name: e }))}
                 {...inputConfig}
               />
+              <Input
+                label="Opis"
+                value={gokart.description}
+                onValueChange={(e) => setGokart((p) => ({ ...p, description: e }))}
+                {...inputConfig}
+              />
               <input
                 type="file"
                 accept={allowedExtensions.join(',')}
