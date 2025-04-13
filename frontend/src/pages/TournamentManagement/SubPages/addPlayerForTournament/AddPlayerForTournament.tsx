@@ -1,14 +1,10 @@
 import { useEffect, useState } from "react";
 import { PlayerQueries } from "../../../../queries/playerQuery";
-import { PlayerFilterFormData } from "../../../../../types";
+import { PlayerFilterFormData, TableActionProps } from "../../../../../types";
 import { useParams } from "react-router-dom";
 import { SchoolQueries } from "../../../../queries/schoolQuery";
 import { Input, Select, SelectItem, useDisclosure } from "@heroui/react";
-
-import {
-  defaultAddButtonProps,
-  defaultVariant,
-} from "../../../../Utils/globalUtils";
+import {defaultAddButtonProps, defaultVariant } from "../../../../Utils/globalUtils";
 import { useColumns, useMemorizedPlayers } from "./AddPlayerForTournamentUtils";
 import { useCustomTableCells } from "../../../../components/CustomTableCells/CustomTableCells";
 import { useDebounce } from "../../../../Utils/debounce";
@@ -31,6 +27,7 @@ export const AddPlayerForTournament = () => {
   const serverFilter = useDebounce(playerFilter);
 
   const { mutateAsync: addPlayer } = PlayerQueries.addPlayerToTournament();
+  const { mutateAsync: addPlayers } = PlayerQueries.addPlayersToTournament();
   const { data: schools } = SchoolQueries.getAllSchools();
   const {
     data: players,
@@ -49,13 +46,20 @@ export const AddPlayerForTournament = () => {
   const selectedPlayer = players?.find(
     (player) => player.playerId == selectedPlayerId
   );
+  const [selectedPlayerIds, setSelectedPlayerIds] = useState<number[]>([]);
 
   const addModal = useDisclosure();
+  const massAddModal = useDisclosure();
+
   const columns = useColumns();
   const memorizedData = useMemorizedPlayers(players);
   const customCell = useCustomTableCells(setSelectedPlayerId, [
     { modal: addModal, buttonProps: defaultAddButtonProps },
   ]);
+
+  const massActions: TableActionProps[] = [
+    { modal: massAddModal, buttonProps: defaultAddButtonProps }
+  ];
 
   return (
     <div className="flex flex-col h-full max-h-full overflow-hidden gap-3">
@@ -111,6 +115,9 @@ export const AddPlayerForTournament = () => {
             columns={columns}
             rows={data}
             tableCells={customCell}
+            massActions={massActions}
+            selectedItems={selectedPlayerIds}
+            setSelectedItems={setSelectedPlayerIds}
           />
         )}
       </LoadingWrapper>
@@ -132,6 +139,22 @@ export const AddPlayerForTournament = () => {
           <span>
             {selectedPlayer.name} {selectedPlayer.surname}
           </span>
+        </YesNoModal>
+      )}
+      {selectedPlayerIds.length > 0 && (
+        <YesNoModal
+          buttonText="Dodaj"
+          header="Dodaj zawodników"
+          onYes={async () =>
+            await addPlayers({
+              tournamentId: Number(tournamentId),
+              playerIds: selectedPlayerIds,
+            })
+          }
+          modal={massAddModal}
+          key={`add-${selectedPlayerIds.length}`}
+        >
+          {`Czy napewno chcesz dodać ${selectedPlayerIds.length} zawodników`}
         </YesNoModal>
       )}
     </div>

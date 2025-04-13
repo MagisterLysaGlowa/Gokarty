@@ -2,12 +2,15 @@ import React, { useCallback } from "react";
 import { TableActionProps } from "../../../types";
 import { Button } from "@heroui/react";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type CustomCellsRow = Record<string, any>;
+
 export const useCustomTableCells = (
   setItem?: React.Dispatch<React.SetStateAction<number | undefined>>,
   actions?: TableActionProps[]
 ) =>
   useCallback(
-    (row: Record<string, string>, columnKey: React.Key) => {
+    (row: CustomCellsRow, columnKey: React.Key) => {
       const cellValue = row[columnKey as string];
 
       if (columnKey === "actions") {

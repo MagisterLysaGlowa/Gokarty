@@ -40,7 +40,7 @@ export const useGetRows = (players: QueueData[] | undefined) =>
   useMemo(
     () =>
       players?.map((z, index) => ({
-        lp: `${index + 1}`,
+        lp: index + 1,
         person: `${z.player.name} ${z.player.surname}`,
         gokart: z.gokart.name,
         school: z.player?.class?.school?.name || "",

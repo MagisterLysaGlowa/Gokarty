@@ -17,28 +17,37 @@ import { TableComponent } from "../../../../components/Table/TableComponent";
 import { YesNoModal } from "../../../../components/YesNoModal/YesNoModal";
 import { inputConfig } from "../../../../configs/inputConfig";
 import { LoadingWrapper } from "../../../../components/Loading/LoadingWrapper";
+import { TableActionProps } from "../../../../../types";
 
 export const PlayersForTournament = () => {
   const { id: tournamentId, tournamentName } = useParams();
   const { data, isLoading } = PlayerQueries.getPlayersForTournament(Number(tournamentId));
   const { mutateAsync: removePlayerFromTournament } = PlayerQueries.removePlayerFromTournament();
+  const { mutateAsync: removePlayersFromTournament } = PlayerQueries.removePlayersFromTournament();
 
   const [filter, setFilter] = useState("");
   const filterSearch = useDebounce(filter);
   
   const [selectedPlayerId, setSelectedPlayerId] = useState<number | undefined>(undefined);
   const selectedPlayer = data?.find((player) => player.playerId == selectedPlayerId);
+  const [selectedPlayerIds, setSelectedPlayerIds] = useState<number[]>([]);
   
   const removeModal = useDisclosure();
+  const massRemoveModal = useDisclosure();
+
   const columns = useGetColumns();
-  const memoizedData = useGetMemorizedData(data, filterSearch);
+  const memorizedData = useGetMemorizedData(data, filterSearch);
   const customCell = useCustomTableCells(setSelectedPlayerId, [
     { modal: removeModal, buttonProps: defaultRemoveButtonProps },
   ]);
 
+  const massActions: TableActionProps[] = [
+    {modal: massRemoveModal, buttonProps: defaultRemoveButtonProps}
+  ];
+
 
   return (
-    <div className="flex flex-col h-full max-h-full overflow-hidden gap-3">
+    <div className="flex flex-col h-full max-h-full gap-3">
       <div className="w-1/3">
         <Input
           placeholder={"Wyszukiwarka"}
@@ -50,9 +59,19 @@ export const PlayersForTournament = () => {
         />
       </div>
       
-      <div className="flex-1 overflow-auto">
-        <LoadingWrapper data={memoizedData} isLoading={isLoading}>
-          {(rows) => <TableComponent emptyContent={<span>Brak zawodników! Dodaj ich <Link className="text-main-default underline" to={`/zawody/${tournamentId}/${tournamentName}/dodaj zawodnikow`}>tutaj.</Link></span>} columns={columns} rows={rows} tableCells={customCell}/>}
+      <div className="flex-1 max-h-full h-full">
+        <LoadingWrapper data={memorizedData} isLoading={isLoading}>
+          {(rows) => 
+            <TableComponent
+              emptyContent={<span>Brak zawodników! Dodaj ich <Link className="text-main-default underline" to={`/zawody/${tournamentId}/${tournamentName}/dodaj zawodnikow`}>tutaj.</Link></span>}
+              columns={columns}
+              rows={rows}
+              tableCells={customCell}
+              massActions={massActions}
+              selectedItems={selectedPlayerIds}
+              setSelectedItems={setSelectedPlayerIds}
+            />
+          }
         </LoadingWrapper>
       </div>
 
@@ -73,6 +92,21 @@ export const PlayersForTournament = () => {
             <div>{selectedPlayer.birthDate.toLocaleDateString()}</div>
             <div>{selectedPlayer.class?.school?.acronym ?? ""}</div>
           </div>
+        </YesNoModal>
+      )}
+      {selectedPlayerIds.length > 0 && (
+        <YesNoModal
+          header="Usuwanie graczy z turnieju"
+          modal={massRemoveModal}
+          onYes={async () =>
+            await removePlayersFromTournament({
+              tournamentId: Number(tournamentId),
+              playerIds: selectedPlayerIds,
+            })
+          }
+          key={`remove-${selectedPlayerIds.length}`}
+        >
+          {`Czy na pewno chcesz usunąć ${selectedPlayerIds.length} graczy z zawodów?`}
         </YesNoModal>
       )}
     </div>

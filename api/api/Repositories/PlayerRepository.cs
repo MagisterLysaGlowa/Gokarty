@@ -90,7 +90,7 @@ namespace api.Repositories {
 
         public async Task<int?> AddToTournamentAsync(int tournamentId, int playerId)
         {
-            if (!_context.PlayerTournaments.Any(e => e.TournamentsId == tournamentId && e.PlayersId == playerId)) {
+            if (!_context.PlayerTournaments.Any(e => e.TournamentsId == tournamentId && e.PlayersId == playerId) && _context.Players.Any(p => p.PlayerId == playerId)) {
                 var playerTournament = new PlayerTournament() {
                     PlayersId = playerId,
                     TournamentsId = tournamentId

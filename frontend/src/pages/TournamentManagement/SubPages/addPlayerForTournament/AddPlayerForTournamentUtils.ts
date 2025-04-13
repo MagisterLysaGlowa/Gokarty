@@ -32,12 +32,10 @@ export const useMemorizedPlayers = (players: PlayerData[] | undefined) =>
   useMemo(
     () =>
       players?.map((player, i) => ({
-        lp: (i + 1).toString(),
-        id: player?.playerId?.toString() || "",
-        name: player.name,
-        surname: player.surname,
+        ...player,
+        lp: i + 1,
+        id: player?.playerId,
         birthDate: player.birthDate.toLocaleDateString(),
-        school: player?.class?.school?.acronym || "",
       })) || [],
     [players]
   );

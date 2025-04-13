@@ -2,8 +2,9 @@ import React, { useCallback } from "react";
 import { RideModalData, RowType } from "./tournamentRidesUtils";
 import { convertTimeToString } from "../../../../Utils/TimeUtils";
 import { ModalProps, RideData } from "../../../../../types";
-import { FaEdit, FaTrash } from "react-icons/fa";
 import { Button } from "@heroui/react";
+import { CustomCellsRow } from "../../../../components/CustomTableCells/CustomTableCells";
+import { defaultEditButtonProps, defaultRemoveButtonProps } from "../../../../Utils/globalUtils";
 
 export const useCustomCell = (
   setSelectedRide: React.Dispatch<React.SetStateAction<RideModalData | undefined>>,
@@ -11,7 +12,7 @@ export const useCustomCell = (
   editModalProps: ModalProps
 ) =>
   useCallback(
-    (row: RowType, columnKey: React.Key) => {
+    (row: CustomCellsRow, columnKey: React.Key) => {
       const cellValue = row[columnKey as keyof RowType];
 
       switch (columnKey) {
@@ -52,44 +53,38 @@ export const useCustomCell = (
         case "gokart": {
           return (
             <div className={`grid grid-rows-${row.times.length} gap-3`}>
-              {row.times.map((z, index) => (
+              {row.times.map((z: RideData, index: number) => (
                 <div className="h-[32px]" key={`${z}-${index}`}>{z?.gokart?.name}</div>
               ))}
             </div>
           );
         }
         case "actions": {
-          const ids = row.times.map(({ rideId }) => rideId);
+          const ids: number[] = row.times.map((time: RideData) => time.rideId);
           return (
             <div className="flex flex-col gap-3">
               {ids.map((id) => (
                 <div className="flex gap-3" key={`action-${id}`}>
                   <Button
-                    size="sm"
-                    endContent={<FaEdit />}
-                    variant="shadow"
-                    color="primary"
+                    {...defaultEditButtonProps}
                     onPress={() => {
                       setSelectedRide({
                         player: row.person.name,
                         playerId: row.person.id,
                         school: row.person.school,
-                        timeData: row.times.find(time => time.rideId == id),
+                        timeData: row.times.find((time: RideData) => time.rideId == id),
                       });
                       editModalProps.onOpen();
                     }}
                   />
                   <Button
-                    size="sm"
-                    endContent={<FaTrash />}
-                    variant="shadow"
-                    className="bg-red-600"
+                    {...defaultRemoveButtonProps}
                     onPress={() => {
                       setSelectedRide({
                         player: row.person.name,
                         playerId: row.person.id,
                         school: row.person.school,
-                        timeData: row.times.find(time => time.rideId == id),
+                        timeData: row.times.find((time: RideData) => time.rideId == id),
                       });
                       removeModalProps.onOpen();
                     }}

@@ -4,7 +4,7 @@ import { PlayerData } from "../../../../../types";
 export const useGetColumns = () =>
   useMemo(
     () => [
-      { key: "Lp", label: "Lp" },
+      { key: "lp", label: "Lp" },
       { key: "name", label: "name" },
       { key: "surname", label: "surname" },
       { key: "birthDate", label: "birthDate" },
@@ -25,7 +25,7 @@ export const useGetMemorizedData = (
           .toLocaleLowerCase()
           .includes(filterSearch.toLocaleLowerCase())
       )
-      ?.map((z, index) => ({Lp: (index + 1).toString(), id: z.playerId?.toString() || "", name: z.name, surname: z.surname, class: z.class?.name || "", school: z.class?.school?.acronym || "", birthDate: z.birthDate.toLocaleDateString()})) || [],
+      ?.map((z, index) => ({lp: index + 1, id: z.playerId || "", name: z.name, surname: z.surname, school: z.class?.school?.acronym || "", birthDate: z.birthDate.toLocaleDateString()})) || [],
     [data, filterSearch]
   );
 };

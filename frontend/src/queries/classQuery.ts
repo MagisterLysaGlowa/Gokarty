@@ -69,9 +69,28 @@ const useRemoveClass = (options?: MutationType<number>) => {
   });
 };
 
+const useRemoveClasses = (options?: MutationType<number[]>) => {
+  return useMutation({
+    ...options,
+    mutationFn: async (ids) => {
+      return await ClassService.massRemove(ids, "/class/massRemove");
+    },
+    onError: handleError,
+    onSuccess: (res, vars, _) => {
+      successToast(res.message);
+      handleSuccessWithRefreshWithOnSuccess([["classes"]], options?.onSuccess)(
+        res,
+        vars,
+        _
+      );
+    },
+  });
+};
+
 export const ClassQueries = {
   getAllClasses: useGetAllClasses,
   createClass: useCreateClass,
   updateClass: useUpdateClass,
   removeClass: useRemoveClass,
+  removeClasses: useRemoveClasses,
 };

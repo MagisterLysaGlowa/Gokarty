@@ -31,8 +31,8 @@ export const useGetGokartRows = (
           z.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())
         )
         .map((z, index) => ({
-          id: z.gokartId?.toString() ?? "",
-          lp: (index + 1).toString(),
+          id: z.gokartId,
+          lp: index + 1,
           name: z.name,
         })) || [],
     [gokarts, filter]

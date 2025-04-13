@@ -83,5 +83,23 @@ namespace api.Controllers {
                 return StatusCode(500, new ResponseHelper(500, "ServerError", "Wystąpił nieoczekiwany błąd"));
             }
         }
+
+        [HttpDelete("massRemove")]
+        public async Task<IActionResult> MassRemove(int[] classIds)
+        {
+            try {
+                foreach (int classId in classIds) {
+                    if (await classRepository.RemoveAsync(classId) is null)
+                        return StatusCode(404, new ResponseHelper(404, "NotFound", "Nie znaleziono jednej z klas"));
+                }
+                return StatusCode(200, new ResponseHelper(200, "Ok", "Pomyślnie usunięto klasy"));
+            } catch (DbUpdateException) {
+                return StatusCode(409, new ResponseHelper(409, "Conflict", "Jeden z obiektów ma powiązane encje, usuń je i spróbuj ponownie"));
+            } catch (TimeoutException) {
+                return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
+            } catch (Exception) {
+                return StatusCode(500, new ResponseHelper(500, "ServerError", "Wystąpił nieoczekiwany błąd"));
+            }
+        }
     }
 }

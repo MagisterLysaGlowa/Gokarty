@@ -43,6 +43,7 @@ export const useMemorizedRidesData = (
             .includes(filter.toLocaleLowerCase())
         )
         ?.map((z, index) => ({
+          id: z.rideGroupId,
           lp: index + 1,
           person: {
             id: Number(z.player.playerId),

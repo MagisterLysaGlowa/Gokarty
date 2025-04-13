@@ -62,8 +62,8 @@ export const useGetClassRows = (
       classes
         ?.filter((z) => z.schoolId == selectedRow)
         .map((z, index) => ({
-          lp: (index + 1).toString() ?? "",
-          id: z.classId?.toString() ?? "",
+          lp: index + 1,
+          id: z.classId,
           name: z.name,
         })) || [],
     [classes, selectedRow]

@@ -6,37 +6,39 @@ import { useState } from "react";
 import { useDebounce } from "../../../../Utils/debounce";
 import { defaultVariant } from "../../../../Utils/globalUtils";
 import { EditRideModal } from "./tournamentRidesComponents/EditRideModal";
-import { TournamentRidesTable } from "./tournamentRidesComponents/TournamentRidesTable";
 import { Loading } from "../../../../components/Loading/Loading";
 import { GokartQueries } from "../../../../queries/gokartQuery";
-import { RideModalData } from "./tournamentRidesUtils";
-import { queryClient } from "../../../../Utils/ReactQueryConfig";
+import { RideModalData, useGetColumns, useMemorizedRidesData } from "./tournamentRidesUtils";
 import { YesNoModal } from "../../../../components/YesNoModal/YesNoModal";
 import { convertTimeToString } from "../../../../Utils/TimeUtils";
 import { inputConfig } from "../../../../configs/inputConfig";
+import { TableComponent } from "../../../../components/Table/TableComponent";
+import { useCustomCell } from "./customCells";
 
 export const TournamentRides = () => {
   const { id: tournamentId } = useParams();
   const [filter, setFilter] = useState("");
-  const search_filter = useDebounce(filter);
+  const searchFilter = useDebounce(filter);
 
   const [selectedRide, setSelectedRide] = useState<RideModalData | undefined>(
     undefined
   );
 
-  const removeModal = useDisclosure();
-  const editModal = useDisclosure();
-
   const { data, isLoading } = RideQueries.getAllPlayersWithTimes(Number(tournamentId));
   const { data: gokarts } = GokartQueries.getAllGokarts();
 
-  const { mutateAsync: removeRide } = RideQueries.removeRide({
-    onSuccess: async () =>
-      await queryClient.invalidateQueries([
-        "playersWithTimes",
-        Number(tournamentId),
-      ]),
-  });
+  const removeModal = useDisclosure();
+  const editModal = useDisclosure();
+
+  const columns = useGetColumns();
+  const rows = useMemorizedRidesData(data, searchFilter);
+  const renderCell = useCustomCell(
+      setSelectedRide,
+      removeModal,
+      editModal
+    );
+
+  const { mutateAsync: removeRide } = RideQueries.removeRide();
 
   return (
     <div className="flex flex-col flex-1 max-h-full overflow-hidden gap-3">
@@ -53,12 +55,11 @@ export const TournamentRides = () => {
       {isLoading ? (
         <Loading />
       ) : (
-        <TournamentRidesTable
-          data={data}
-          editModal={editModal}
-          removeModal={removeModal}
-          searchFilter={search_filter}
-          setSelectedRide={setSelectedRide}
+        <TableComponent
+          columns={columns}
+          rows={rows}
+          tableCells={renderCell}
+          emptyContent={<span>Tutaj pojawią się zatwierdzone przejazdy zawodników.</span>}
         />
       )}
       {selectedRide && (

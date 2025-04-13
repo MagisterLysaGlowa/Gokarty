@@ -32,6 +32,17 @@ class PlayerService extends BaseService {
     return response.data;
   }
 
+  static async addPlayersToTournament(
+    tournamentId: number,
+    playerIds: number[]
+  ): Promise<QueryResponse> {
+    const response = await apiClient.post(
+      `/player/massAddToTournament/${tournamentId}`,
+      playerIds
+    );
+    return response.data;
+  }
+
   static async removePlayerFromTournament(
     tournamentId: number,
     playerId: number
@@ -39,6 +50,17 @@ class PlayerService extends BaseService {
     const response = await apiClient.post(
       `/player/removeFromTournament/${tournamentId}`,
       playerId
+    );
+    return response.data;
+  }
+
+  static async removePlayersFromTournament(
+    tournamentId: number,
+    playerIds: number[]
+  ): Promise<QueryResponse> {
+    const response = await apiClient.post(
+      `/player/massRemoveFromTournament/${tournamentId}`,
+      playerIds
     );
     return response.data;
   }

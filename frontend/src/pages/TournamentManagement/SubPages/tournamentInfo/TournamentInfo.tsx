@@ -134,10 +134,10 @@ export const TournamentInfo = () => {
               modal={startEndModal}
               buttonText="Tak"
               onYes={async () =>
-                updateTournament({
+                updateTournament({tournament: {
                   ...tournament,
                   tournamentStateId: tournament.tournamentStateId + 1
-                })
+                }})
               }
               key={`state-${tournament.tournamentId}`}
             >

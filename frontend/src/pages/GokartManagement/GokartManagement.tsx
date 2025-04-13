@@ -67,7 +67,7 @@ export const AddGokart = () => {
           tableCells={gokartCell}
           selectedItems={selectedGokartIds}
           massActions={massActions}
-          setMassActionsItems={setSelectedGokartIds}
+          setSelectedItems={setSelectedGokartIds}
         />
       )}
       {selectedGokart && (
@@ -91,12 +91,8 @@ export const AddGokart = () => {
         <YesNoModal
           header="Usuń gokarty"
           modal={massRemoveGokartModal}
-          onYes={async () => {
-            const res = await removeGokartsAsync(selectedGokartIds);
-            if(res.status === 200)
-              setSelectedGokartIds([]);
-          }}
-          key={`remove-${selectedGokartIds[selectedGokartIds.length - 1]}`}
+          onYes={async () => await removeGokartsAsync(selectedGokartIds)}
+          key={`remove-${selectedGokartIds.length}`}
         >
           {`Czy chcesz usunąć ${selectedGokartIds.length} gokartów?`}
         </YesNoModal>

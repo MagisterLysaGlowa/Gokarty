@@ -86,19 +86,50 @@ namespace api.Controllers {
             try {
                 if (await playerRepository.AddToTournamentAsync(tournamentId, playerId) is int)
                     return StatusCode(200, new ResponseHelper(200, "Ok", "Pomyślnie dodano gracza do zawodów"));
-                return StatusCode(409, new ResponseHelper(200, "Ok", "Gracz jest już dodany do zawodów"));
+                return StatusCode(409, new ResponseHelper(400, "BadRequest", "Gracz jest już dodany do zawodów lub nie istnieje"));
             } catch (TimeoutException) {
                 return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
             } catch (Exception) {
                 return StatusCode(500, new ResponseHelper(500, "ServerError", "Wystąpił nieoczekiwany błąd"));
             }
         }
+
+        [HttpPost("massAddToTournament/{tournamentId}")]
+        public async Task<IActionResult> MassAddToTournament(int tournamentId, [FromBody] int[] playerIds)
+        {
+            try {
+                foreach(int playerId in playerIds)
+                    if (await playerRepository.AddToTournamentAsync(tournamentId, playerId) is null)
+                        return StatusCode(409, new ResponseHelper(400, "BadRequest", "Jeden z graczy jest już dodany do zawodów lub nie istnieje"));
+                return StatusCode(200, new ResponseHelper(200, "Ok", "Pomyślnie dodano graczy do zawodów"));
+            } catch (TimeoutException) {
+                return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
+            } catch (Exception) {
+                return StatusCode(500, new ResponseHelper(500, "ServerError", "Wystąpił nieoczekiwany błąd"));
+            }
+        }
+
         [HttpPost("removeFromTournament/{tournamentId}")]
         public async Task<IActionResult> RemoveFromTournament(int tournamentId, [FromBody] int playerId) {
             try {
                 if (await playerRepository.RemoveFromTournamentAsync(tournamentId, playerId) is int)
                     return StatusCode(200, new ResponseHelper(200, "Ok", "Pomyślnie usunięto gracza z zawodów"));
-                return StatusCode(404, new ResponseHelper(404, "Ok", "Gracz nie jest w zawodach"));
+                return StatusCode(404, new ResponseHelper(404, "NotFound", "Gracz nie jest w zawodach"));
+            } catch (TimeoutException) {
+                return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
+            } catch (Exception) {
+                return StatusCode(500, new ResponseHelper(500, "ServerError", "Wystąpił nieoczekiwany błąd"));
+            }
+        }
+
+        [HttpPost("massRemoveFromTournament/{tournamentId}")]
+        public async Task<IActionResult> MassRemoveFromTournament(int tournamentId, [FromBody] int[] playerIds)
+        {
+            try {
+                foreach(int playerId in playerIds)
+                    if (await playerRepository.RemoveFromTournamentAsync(tournamentId, playerId) is null)
+                        return StatusCode(404, new ResponseHelper(404, "NotFound", "Któryś z graczy nie jest w zawodach"));
+                return StatusCode(200, new ResponseHelper(200, "Ok", "Pomyślnie usunięto graczy z zawodów"));
             } catch (TimeoutException) {
                 return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
             } catch (Exception) {

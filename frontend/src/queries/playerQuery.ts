@@ -117,6 +117,25 @@ const useAddPlayerToTournament = (
   });
 };
 
+const useAddPlayersToTournament = (
+  options?: MutationType<{ tournamentId: number; playerIds: number[] }>
+) => {
+  return useMutation({
+    ...options,
+    mutationFn: async ({ tournamentId, playerIds }) => {
+      return await PlayerService.addPlayersToTournament(tournamentId, playerIds);
+    },
+    onError: handleError,
+    onSuccess: (res, vars, _) => {
+      successToast(res.message);
+      handleSuccessWithRefreshOnSuccess(
+        [["players" + "tournament" + "withSchool"], ["players" + "filter"]],
+        options?.onSuccess
+      )(res, vars, _);
+    },
+  });
+};
+
 const useRemovePlayerFromTournament = (
   options?: MutationType<{ tournamentId: number; playerId: number }>
 ) => {
@@ -142,6 +161,31 @@ const useRemovePlayerFromTournament = (
   });
 };
 
+const useRemovePlayersFromTournament = (
+  options?: MutationType<{ tournamentId: number; playerIds: number[] }>
+) => {
+  return useMutation({
+    ...options,
+    mutationFn: async ({ tournamentId, playerIds }) => {
+      return await PlayerService.removePlayersFromTournament(
+        tournamentId,
+        playerIds
+      );
+    },
+    onError: handleError,
+    onSuccess: (res, vars, _) => {
+      successToast(res.message);
+      handleSuccessWithRefreshOnSuccess(
+        [
+          ["players" + "tournament"],
+          ["playerstournament", vars.tournamentId],
+        ],
+        options?.onSuccess
+      )(res, vars, _);
+    },
+  });
+};
+
 export const PlayerQueries = {
   getPlayer: useGetPlayerByID,
   createPlayer: useCreatePlayer,
@@ -151,4 +195,6 @@ export const PlayerQueries = {
   filterPlayers: useFilterPlayers,
   addPlayerToTournament: useAddPlayerToTournament,
   removePlayerFromTournament: useRemovePlayerFromTournament,
+  addPlayersToTournament: useAddPlayersToTournament,
+  removePlayersFromTournament: useRemovePlayersFromTournament,
 };
