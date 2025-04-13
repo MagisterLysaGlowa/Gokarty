@@ -38,20 +38,14 @@ export const SchoolManagement = () => {
   const [selectedSchoolId, setSelectedSchoolId] = useState<number | undefined>(
     undefined
   );
-  const selectedSchool = schools?.find(
-    (s) => s.schoolId === selectedSchoolId
-  );
+  const selectedSchool = schools?.find((s) => s.schoolId === selectedSchoolId);
   const [selectedClassId, setSelectedClassId] = useState<number | undefined>(
     undefined
   );
-  const selectedClass = classes?.find(
-    (c) => c.classId === selectedClassId
-  );
+  const selectedClass = classes?.find((c) => c.classId === selectedClassId);
   const [selectedClassIds, setSelectedClassIds] = useState<number[]>([]);
   const [selectedRow, setSelectedRow] = useState<number | undefined>(undefined);
-  const selectedRowSchool = schools?.find(
-    (s) => s.schoolId === selectedRow
-  )
+  const selectedRowSchool = schools?.find((s) => s.schoolId === selectedRow);
 
   const addSchoolModal = useDisclosure();
   const editSchoolModal = useDisclosure();
@@ -76,16 +70,15 @@ export const SchoolManagement = () => {
   ]);
 
   const massActions: TableActionProps[] = [
-    { modal: massRemoveClassModal, buttonProps: defaultRemoveButtonProps }
+    { modal: massRemoveClassModal, buttonProps: defaultRemoveButtonProps },
   ];
 
   const { mutateAsync: removeSchool } = SchoolQueries.removeSchool();
   const { mutateAsync: removeClass } = ClassQueries.removeClass();
   const { mutateAsync: removeClasses } = ClassQueries.removeClasses();
 
-
   return (
-    <div className="flex flex-col h-full max-h-full overflow-hidden gap-3">
+    <div className="grid grid-rows-[50px_calc(100%-50px)] h-full">
       <div className="w-1/3">
         <Input
           placeholder="Wyszukiwarka"
@@ -96,8 +89,12 @@ export const SchoolManagement = () => {
           {...inputConfig}
         />
       </div>
-      <div className="flex gap-3 w-full">
-        <div className={`${selectedRow ? "w-2/3" : "w-full"} duration-300 ease-in-out transition-all`}>
+      <div className="flex gap-3 w-full h-full max-h-full">
+        <div
+          className={`${
+            selectedRow ? "w-2/3" : "w-full"
+          } duration-300 ease-in-out transition-all h-full max-h-full`}
+        >
           <TableComponent
             columns={columns}
             rows={rows}
@@ -116,7 +113,11 @@ export const SchoolManagement = () => {
             }}
           />
         </div>
-        <div className={`${selectedRow ? "w-1/3" : "w-0"} duration-300 ease-in-out transition-all`}>
+        <div
+          className={`${
+            selectedRow ? "w-1/3" : "w-0"
+          } duration-300 ease-in-out transition-all`}
+        >
           <TableComponent
             columns={useGetClassesColumns()}
             rows={useGetClassRows(classes, selectedRow)}
@@ -124,6 +125,7 @@ export const SchoolManagement = () => {
             massActions={massActions}
             selectedItems={selectedClassIds}
             setSelectedItems={setSelectedClassIds}
+            emptyContent="Nie ma klas 💀"
           />
         </div>
       </div>
@@ -133,8 +135,8 @@ export const SchoolManagement = () => {
             header="Usuwanie szkoły"
             modal={removeSchoolModal}
             onYes={async () => {
-              const res = await removeSchool(Number(selectedSchoolId))
-              if(res.status === 200 && selectedSchoolId === selectedRow)
+              const res = await removeSchool(Number(selectedSchoolId));
+              if (res.status === 200 && selectedSchoolId === selectedRow)
                 setSelectedRow(undefined);
             }}
             key={`remove-${selectedSchoolId}`}
@@ -181,7 +183,11 @@ export const SchoolManagement = () => {
         </YesNoModal>
       )}
       {selectedRowSchool && (
-          <AddClassModal school={selectedRowSchool} modal={addClassModal} key={`add-class`} />
+        <AddClassModal
+          school={selectedRowSchool}
+          modal={addClassModal}
+          key={`add-class`}
+        />
       )}
       <AddSchoolModal modal={addSchoolModal} key={`add-school`} />
       <div className="fixed right-10 bottom-10">

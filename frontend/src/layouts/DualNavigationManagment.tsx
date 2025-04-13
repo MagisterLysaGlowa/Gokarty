@@ -5,14 +5,16 @@ import { PageHeader } from "../components/PageHeader/PageHeader";
 
 export const DualNavigationManagment = () => {
   return (
-    <div className="flex w-full max-h-dvh h-dvh">
+    <section className="flex w-full h-screen overflow-hidden">
       <Navbar />
       <div className="w-nav-w" />
-      <div className="flex h-full flex-col flex-1 p-4">
+      <div className="flex flex-col flex-1 h-full p-3">
         <PageHeader />
-        <Outlet />
+        <div className="flex flex-col min-h-0 h-full max-h-full">
+          <Outlet />
+        </div>
       </div>
       <TournamentSupportNavbar />
-    </div>
+    </section>
   );
 };

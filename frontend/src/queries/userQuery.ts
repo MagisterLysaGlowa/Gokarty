@@ -1,4 +1,4 @@
-import { useMutation } from "react-query";
+import { useMutation, useQuery, UseQueryOptions } from "react-query";
 import { handleError, MutationType } from "./queryUtils";
 import { UserLogin, UserRegister } from "../../types";
 import AuthService from "../services/auth";
@@ -36,8 +36,16 @@ const useLogout = () => {
   });
 };
 
+const useRefreshToken = (options?: UseQueryOptions) => {
+  return useQuery({
+    ...options,
+    queryFn: AuthService.refreshToken,
+  });
+};
+
 export const UserQuery = {
   login: useLoginUser,
   register: useRegisterUser,
   logout: useLogout,
+  refreshToken: useRefreshToken,
 };

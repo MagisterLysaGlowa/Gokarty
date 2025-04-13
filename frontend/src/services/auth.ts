@@ -16,5 +16,10 @@ export class AuthService {
     const response = await apiClient.post("/user/logout");
     return response.data;
   }
+
+  static async refreshToken() {
+    const response = await apiClient.post("/user/refreshtoken");
+    return response.data;
+  }
 }
 export default AuthService;

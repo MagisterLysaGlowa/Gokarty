@@ -21,17 +21,25 @@ import { TableActionProps } from "../../../../../types";
 
 export const PlayersForTournament = () => {
   const { id: tournamentId, tournamentName } = useParams();
-  const { data, isLoading } = PlayerQueries.getPlayersForTournament(Number(tournamentId));
-  const { mutateAsync: removePlayerFromTournament } = PlayerQueries.removePlayerFromTournament();
-  const { mutateAsync: removePlayersFromTournament } = PlayerQueries.removePlayersFromTournament();
+  const { data, isLoading } = PlayerQueries.getPlayersForTournament(
+    Number(tournamentId)
+  );
+  const { mutateAsync: removePlayerFromTournament } =
+    PlayerQueries.removePlayerFromTournament();
+  const { mutateAsync: removePlayersFromTournament } =
+    PlayerQueries.removePlayersFromTournament();
 
   const [filter, setFilter] = useState("");
   const filterSearch = useDebounce(filter);
-  
-  const [selectedPlayerId, setSelectedPlayerId] = useState<number | undefined>(undefined);
-  const selectedPlayer = data?.find((player) => player.playerId == selectedPlayerId);
+
+  const [selectedPlayerId, setSelectedPlayerId] = useState<number | undefined>(
+    undefined
+  );
+  const selectedPlayer = data?.find(
+    (player) => player.playerId == selectedPlayerId
+  );
   const [selectedPlayerIds, setSelectedPlayerIds] = useState<number[]>([]);
-  
+
   const removeModal = useDisclosure();
   const massRemoveModal = useDisclosure();
 
@@ -42,12 +50,11 @@ export const PlayersForTournament = () => {
   ]);
 
   const massActions: TableActionProps[] = [
-    {modal: massRemoveModal, buttonProps: defaultRemoveButtonProps}
+    { modal: massRemoveModal, buttonProps: defaultRemoveButtonProps },
   ];
 
-
   return (
-    <div className="flex flex-col h-full max-h-full gap-3">
+    <>
       <div className="w-1/3">
         <Input
           placeholder={"Wyszukiwarka"}
@@ -58,22 +65,30 @@ export const PlayersForTournament = () => {
           {...inputConfig}
         />
       </div>
-      
-      <div className="flex-1 max-h-full h-full">
-        <LoadingWrapper data={memorizedData} isLoading={isLoading}>
-          {(rows) => 
-            <TableComponent
-              emptyContent={<span>Brak zawodników! Dodaj ich <Link className="text-main-default underline" to={`/zawody/${tournamentId}/${tournamentName}/dodaj zawodnikow`}>tutaj.</Link></span>}
-              columns={columns}
-              rows={rows}
-              tableCells={customCell}
-              massActions={massActions}
-              selectedItems={selectedPlayerIds}
-              setSelectedItems={setSelectedPlayerIds}
-            />
-          }
-        </LoadingWrapper>
-      </div>
+
+      <LoadingWrapper data={memorizedData} isLoading={isLoading}>
+        {(rows) => (
+          <TableComponent
+            emptyContent={
+              <span>
+                Brak zawodników! Dodaj ich{" "}
+                <Link
+                  className="text-main-default underline"
+                  to={`/zawody/${tournamentId}/${tournamentName}/dodaj zawodnikow`}
+                >
+                  tutaj.
+                </Link>
+              </span>
+            }
+            columns={columns}
+            rows={rows}
+            tableCells={customCell}
+            massActions={massActions}
+            selectedItems={selectedPlayerIds}
+            setSelectedItems={setSelectedPlayerIds}
+          />
+        )}
+      </LoadingWrapper>
 
       {selectedPlayer && (
         <YesNoModal
@@ -109,6 +124,6 @@ export const PlayersForTournament = () => {
           {`Czy na pewno chcesz usunąć ${selectedPlayerIds.length} graczy z zawodów?`}
         </YesNoModal>
       )}
-    </div>
+    </>
   );
 };

@@ -1,6 +1,7 @@
 ﻿using api.Data;
 using api.Dtos;
 using api.Helpers;
+using api.Interfaces;
 using api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,9 +13,9 @@ namespace api.Controllers {
     [Route("api/[controller]")]
     public class UserController : ControllerBase {
         private readonly AppDbContext _db;
-        private readonly JwtService _jwtService;
+        private readonly IJwtService _jwtService;
 
-        public UserController(AppDbContext db, JwtService jwtService) {
+        public UserController(AppDbContext db, IJwtService jwtService) {
             _db = db;
             _jwtService = jwtService;
         }
@@ -27,7 +28,7 @@ namespace api.Controllers {
             var user = new User {
                 Login = request.Login,
                 Password = HashPassword(request.Password),
-                Email = request.Email,
+                Email = request.Email
             };
 
             _db.Users.Add(user);
@@ -46,52 +47,46 @@ namespace api.Controllers {
 
             var accessToken = _jwtService.Generate(user.UserId);
             var refreshToken = GenerateRefreshToken();
+            var userIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
 
             _db.UserRefreshTokens.Add(new UserRefreshToken {
                 UserId = user.UserId,
-                RefreshTokenId = 0,
+                RefreshToken = refreshToken,
                 ExpiryDate = DateTime.UtcNow.AddDays(7),
-                IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown"
+                IpAddress = userIp
             });
 
             await _db.SaveChangesAsync();
 
-            Response.Cookies.Append("refreshToken", refreshToken, new CookieOptions {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
-                Expires = DateTimeOffset.UtcNow.AddDays(7)
-            });
+            SetAuthCookies(accessToken, refreshToken);
 
-            Response.Cookies.Append("accessToken", accessToken, new CookieOptions {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
-                Expires = DateTimeOffset.UtcNow.AddMinutes(15)
-            });
-
-            return Ok("Dzialam");
+            return Ok("Logged in");
         }
 
-
-        [HttpPost("refresh")]
+        [HttpGet("refresh")]
         public async Task<IActionResult> Refresh() {
             var refreshToken = Request.Cookies["refreshToken"];
             if (string.IsNullOrEmpty(refreshToken))
                 return Unauthorized("Missing refresh token");
 
+            var userIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
             var storedToken = await _db.UserRefreshTokens
                 .Include(r => r.User)
-                .Where(r => r.IpAddress == HttpContext.Connection.RemoteIpAddress.ToString())
-                .OrderByDescending(r => r.ExpiryDate)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(r =>
+                    r.RefreshToken == refreshToken &&
+                    r.IpAddress == userIp &&
+                    r.ExpiryDate > DateTime.UtcNow);
 
-            if (storedToken == null || storedToken.ExpiryDate < DateTime.UtcNow)
-                return Unauthorized("Refresh token expired or not found");
+            if (storedToken == null)
+                return Unauthorized("Refresh token invalid or expired");
 
             var newAccessToken = _jwtService.Generate(storedToken.UserId);
-            return Ok(new { accessToken = newAccessToken });
+            SetAccessTokenCookie(newAccessToken);
+
+            return Ok("Access token refreshed");
         }
+
 
         [HttpPost("logout")]
         public async Task<IActionResult> Logout() {
@@ -99,11 +94,9 @@ namespace api.Controllers {
             if (string.IsNullOrEmpty(refreshToken))
                 return BadRequest("No refresh token found");
 
-            var userIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-
             var storedToken = await _db.UserRefreshTokens
                 .FirstOrDefaultAsync(r =>
-                    r.IpAddress == userIp &&
+                    r.RefreshToken == refreshToken &&
                     r.ExpiryDate > DateTime.UtcNow);
 
             if (storedToken != null) {
@@ -117,6 +110,7 @@ namespace api.Controllers {
             return Ok("Logged out successfully");
         }
 
+        // Helpers
         private string HashPassword(string password) {
             using var sha = SHA256.Create();
             var bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(password));
@@ -132,6 +126,36 @@ namespace api.Controllers {
             using var rng = RandomNumberGenerator.Create();
             rng.GetBytes(bytes);
             return Convert.ToBase64String(bytes);
+        }
+
+        private void SetAuthCookies(string accessToken, string refreshToken) {
+            var accessOptions = new CookieOptions {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTimeOffset.UtcNow.AddMinutes(15)
+            };
+
+            var refreshOptions = new CookieOptions {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTimeOffset.UtcNow.AddDays(7)
+            };
+
+            Response.Cookies.Append("accessToken", accessToken, accessOptions);
+            Response.Cookies.Append("refreshToken", refreshToken, refreshOptions);
+        }
+
+        private void SetAccessTokenCookie(string accessToken) {
+            var accessOptions = new CookieOptions {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTimeOffset.UtcNow.AddMinutes(15)
+            };
+
+            Response.Cookies.Append("accessToken", accessToken, accessOptions);
         }
     }
 }

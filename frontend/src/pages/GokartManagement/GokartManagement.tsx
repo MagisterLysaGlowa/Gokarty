@@ -5,7 +5,6 @@ import { IoMdAdd } from "react-icons/io";
 import { AddGokartModal } from "./components/AddGokartModal";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { GokartQueries } from "../../queries/gokartQuery";
-import { Loading } from "../../components/Loading/Loading";
 import { useCustomTableCells } from "../../components/CustomTableCells/CustomTableCells";
 import { useGetGokartColumns, useGetGokartRows } from "./GokartManagementUtils";
 import {
@@ -18,7 +17,7 @@ import { inputConfig } from "../../configs/inputConfig";
 import { TableActionProps } from "../../../types";
 
 export const AddGokart = () => {
-  const { data: data, isLoading } = GokartQueries.getAllGokarts();
+  const { data: data } = GokartQueries.getAllGokarts();
   const [selectedGokartId, setSelectedGokartId] = useState<number | undefined>(
     undefined
   );
@@ -38,7 +37,7 @@ export const AddGokart = () => {
     { modal: removeGokartModal, buttonProps: defaultRemoveButtonProps },
   ]);
   const massActions: TableActionProps[] = [
-    { modal: massRemoveGokartModal, buttonProps: defaultRemoveButtonProps }
+    { modal: massRemoveGokartModal, buttonProps: defaultRemoveButtonProps },
   ];
   const columns = useGetGokartColumns();
   const rows = useGetGokartRows(data, filter);
@@ -47,8 +46,8 @@ export const AddGokart = () => {
   const { mutateAsync: removeGokartsAsync } = GokartQueries.removeGokarts();
 
   return (
-    <div className="flex-1">
-      <div className="my-3">
+    <div className="max-h-full h-full grid grid-rows-[50px_calc(100%-50px)]">
+      <div>
         <Input
           className="w-1/3"
           placeholder="Wyszukiwarka"
@@ -58,18 +57,16 @@ export const AddGokart = () => {
           {...inputConfig}
         />
       </div>
-      {isLoading ? (
-        <Loading/>
-      ) : (
-        <TableComponent
-          columns={columns}
-          rows={rows}
-          tableCells={gokartCell}
-          selectedItems={selectedGokartIds}
-          massActions={massActions}
-          setSelectedItems={setSelectedGokartIds}
-        />
-      )}
+
+      <TableComponent
+        columns={columns}
+        rows={rows}
+        tableCells={gokartCell}
+        selectedItems={selectedGokartIds}
+        massActions={massActions}
+        setSelectedItems={setSelectedGokartIds}
+      />
+
       {selectedGokart && (
         <>
           <EditGokartModal
@@ -80,7 +77,9 @@ export const AddGokart = () => {
           <YesNoModal
             header="Usuń gokart"
             modal={removeGokartModal}
-            onYes={async () => await removeGokartAsync(Number(selectedGokartId))}
+            onYes={async () =>
+              await removeGokartAsync(Number(selectedGokartId))
+            }
             key={`remove-${selectedGokartId}`}
           >
             {selectedGokart.name}
