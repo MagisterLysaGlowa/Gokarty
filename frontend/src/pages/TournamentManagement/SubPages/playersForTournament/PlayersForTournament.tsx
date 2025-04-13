@@ -54,7 +54,7 @@ export const PlayersForTournament = () => {
   ];
 
   return (
-    <>
+    <div className="flex flex-col h-full max-h-full overflow-hidden gap-3">
       <div className="w-1/3">
         <Input
           placeholder={"Wyszukiwarka"}
@@ -124,6 +124,6 @@ export const PlayersForTournament = () => {
           {`Czy na pewno chcesz usunąć ${selectedPlayerIds.length} graczy z zawodów?`}
         </YesNoModal>
       )}
-    </>
+    </div>
   );
 };

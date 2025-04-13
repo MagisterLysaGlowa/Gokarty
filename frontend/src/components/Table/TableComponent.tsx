@@ -8,7 +8,7 @@ import {
   Selection,
   Button,
 } from "@heroui/react";
-import React, { FC, ReactNode, SetStateAction, useEffect } from "react";
+import React, { FC, ReactNode, SetStateAction, useEffect, useRef } from "react";
 import { TableActionProps } from "../../../types";
 import { CustomCellsRow } from "../CustomTableCells/CustomTableCells";
 
@@ -36,6 +36,7 @@ export const TableComponent: FC<TableProps> = ({
   massActions = [],
   setSelectedItems,
 }) => {
+  const wrapperBox = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     if (setSelectedItems)
       setSelectedItems((prev) => {
@@ -43,11 +44,17 @@ export const TableComponent: FC<TableProps> = ({
         return prev.filter((item) => rowIds.includes(item));
       });
   }, [rows, setSelectedItems]);
+  console.log(wrapperBox.current?.getBoundingClientRect());
+  
 
   return (
-    <div className="relative max-h-full overflow-y-auto overflow-x-hidden">
+    <div className="relative max-h-full overflow-y-auto overflow-x-hidden" ref={wrapperBox}>
       <div
-        className={`absolute right-0 top-0 z-30 flex gap-2 items-center bg-[#27272A] py-2 overflow-hidden rounded-xl transition-all duration-500 ease-in-out origin-right ${
+        style={{
+          top: Number(wrapperBox.current?.getBoundingClientRect().top) - 55,
+          right: window.innerWidth - Number(wrapperBox.current?.getBoundingClientRect().x) - Number(wrapperBox.current?.getBoundingClientRect().width),
+        }}
+        className={`fixed z-30 flex gap-2 items-center bg-[#27272A] py-2 overflow-hidden rounded-xl transition-all duration-500 ease-in-out origin-right ${
           selectedItems?.length ? "max-w-[500px] px-2" : "max-w-0 px-0"
         }`}
       >
