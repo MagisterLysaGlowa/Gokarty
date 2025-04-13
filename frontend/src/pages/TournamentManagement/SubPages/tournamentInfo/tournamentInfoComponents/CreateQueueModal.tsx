@@ -33,13 +33,15 @@ export const CreateQueueModal: React.FC<CreateQueueProps> = ({
   tournament,
   refetchQueue,
 }) => {
-  const [numberOfRidesInOneGokart, setNumberOfRidesInOneGokart] = useState<number>(1);
+  const [numberOfRidesInOneGokart, setNumberOfRidesInOneGokart] =
+    useState<number>(1);
   const [gokartIds, setGokartIds] = useState<number[]>([]);
 
   const { data: gokarts } = GokartQueries.getAllGokarts();
-  const { mutateAsync: createQueuesAsync } = QueueQueries.createQueue({
-    onSuccess: () => refetchQueue(),
-  });
+  const { mutateAsync: createQueuesAsync, isLoading } =
+    QueueQueries.createQueue({
+      onSuccess: () => refetchQueue(),
+    });
 
   if (!gokarts) return;
 
@@ -84,6 +86,7 @@ export const CreateQueueModal: React.FC<CreateQueueProps> = ({
               </Button>
               <Button
                 {...confirmButtonConfig}
+                isLoading={isLoading}
                 onPress={async () => {
                   if (
                     await validateData(queueValidationSchema, {
