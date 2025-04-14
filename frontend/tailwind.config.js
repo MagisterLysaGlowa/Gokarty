@@ -13,7 +13,8 @@ export default {
   theme: {
     extend: {
       screens: {
-        'xs': '375px'
+        'xs': '375px',
+        '2sm': '420px'
       },
       fontFamily: {
         jura: ["Jura", "sans-serif"],

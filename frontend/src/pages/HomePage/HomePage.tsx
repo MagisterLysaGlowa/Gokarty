@@ -17,7 +17,7 @@ const HomePage = () => {
         <Image src="images/gokart.png" height={60} />
         <h1 className="text-[40px] flex items-center gap-2 font-medium">
           <span>Gokarty</span>
-          <span className="bg-main-default text-black rounded-xl px-2">
+          <span className="text-main-default">
             hub
           </span>
         </h1>
@@ -29,44 +29,57 @@ const HomePage = () => {
         <Image src="images/mainPage.jpg" className="rounded-none" />
       </div>
       <div className="flex flex-col justify-evenly flex-1 items-center">
-        <h2 className="text-4xl font-bold text-center">Figma bols</h2>
-        <label className="text-balance text-[15px] w-2/3 text-center">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi
-          ullam tenetur quae delectus cum quisquam modi facere consequatur
-          voluptate sed culpa excepturi, expedita dolorum porro dolore earum
-          assumenda dicta eius?Lorem ipsum dolor sit amet consectetur
-          adipisicing elit. Eligendi ullam tenetur quae delectus cum quisquam
-          modi facere consequatur voluptate sed culpa excepturi, expedita
-          dolorum porro dolore earum assumenda dicta eius?Lorem ipsum dolor sit
-          amet consectetur adipisicing elit. Eligendi ullam tenetur quae
-          delectus cum quisquam modi facere consequatur voluptate sed culpa
-          excepturi, expedita dolorum porro dolore earum assumenda dicta eius?
-        </label>
+        <h2 className="text-4xl font-bold text-center m-5">Zawody kartingowe</h2>
+        <div className="text-balance space-y-2 text-center md:w-2/3 md:mx-0 mx-2 lg:text-md md:text-sm text-xs">
+        <p>
+          ZSTIO limanowa słynie z wysokiego poziomu nauczania zawodowego wielu profili technicznych, jednym z nich
+          jest technik pojazdów samochodowych. W celu promocji tego profilu, nasza szkoła decyduje się na organizację
+          zawodów.
+        </p>
+        <p>
+          Interesują cię gokarty? Myślisz, że to czas aby wygrać puchary? Chcesz spróbować swoich sił? Dołącz do nas!
+          Uczestnikami zawodów może być każdy uczeń Naszej szkoły, bądź uczeń szkoły zaprzyjaźnionej.
+        </p>
+        <p>
+          Zawody kartingowe są idealną okazją aby odnaleźć w sobie ukryty talent kierowcy, sprawdzić swoje umiejętności,
+          wzbudzić w sobie pasję do motoryzacji lub poprostu się dobrze bawić. Zawody są darmowe, odbywają się dla różnych grup
+          wiekowych, aby zachować balans umiejętności pomiędzy zawodnikami.
+        </p>
+        <p>
+          Baczne oko sędziów jak zarówno zaangażowanych opiekunów czuwa nad bezpieczeństwem i dokładnością przebiegu rywalizacji.
+        </p>
+        </div>
       </div>
-      <div className="menu flex flex-col justify-center items-center gap-7 flex-wrap">
-        <Button
-          color="warning"
-          className="text-white text-2xl h-[50px]"
-          size="lg"
-          endContent={<FaArrowRight />}
-          onPress={() => navigate("/zawody")}
-        >
-          Przejdź do zawodów
-        </Button>
-        <div className="navigation flex text-6xl gap-10 h-[100px] justify-center flex-wrap">
-          {staticPageNav.map((el, index, list) => (
-            <NavigationBox
-              element={el}
-              key={el.id}
-              showDivider={index !== list.length - 1}
-            />
-          ))}
+      <div className="flex flex-col justify-center items-center gap-7 m-5 flex-wrap">
+      <div className="flex-col btnImg navigation flex justify-center space-y-5 w-full lg:w-[40dvw] md:w-[60dvw] sm:w-[80dvw]">
+        <div className="justify-center w-full flex">
+          <Button
+            color="warning"
+            className="text-white xl:text-2xl lg:text-lg h-[50px]"
+            size="lg"
+            endContent={<FaArrowRight className="text-sm" />}
+            onPress={() => navigate("/zawody")}
+          >
+            Przejdź do zawodów
+          </Button>
         </div>
-        <div className="w-2/3 text-center mb-5">
-          Przed użyciem zapoznaj się z treścią ulotki dołączonej do opakowania
-          bądź skonsultuj się z lekarzem lub farmaceutą, gdyż każdy lek
-          niewłaściwie stosowany zagraża Twojemu życiu lub zdrowiu.
+
+        <div className="flex flex-row justify-center items-center md:gap-[2dvw] gap-[3dvw]" >
+        {staticPageNav.map((el, index, list) => (
+          <NavigationBox
+            element={el}
+            key={el.id}
+            showDivider={index !== list.length - 1}
+          />
+        ))}
         </div>
+      </div>
+        
+        <h2 className="text-2xl font-bold text-center">Spróbuj swoich sił!</h2>
+        <div className="w-2/3 text-center">
+          W celu zapisania się na zawody, skontaktuj się z nami.
+        </div>
+        <h2 className="text-xl font-bold text-center text-main-default">Powodzenia!</h2>
       </div>
       <Separator />
       <Footer />

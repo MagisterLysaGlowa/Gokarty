@@ -1,8 +1,8 @@
 import { SlotsToClasses } from "@heroui/react";
 import { TableActionButtonProps } from "../../types";
 import { FaEdit, FaTrash } from "react-icons/fa";
-import { CgAdd } from "react-icons/cg";
 import { validateImageFile } from "../validations/ImageFileValidation";
+import { HiPlus } from "react-icons/hi";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type DeepKeys<T, Prefix extends string = ""> = {
@@ -78,7 +78,7 @@ export const defaultRemoveButtonProps: TableActionButtonProps = {
 
 export const defaultAddButtonProps: TableActionButtonProps = {
   size: "sm",
-  endContent: CgAdd({}),
+  endContent: HiPlus({}),
   isIconOnly: true,
   variant: "solid",
   color: "warning",
