@@ -39,8 +39,8 @@ const TournamentListElement: React.FC<TournamentListElementProps> = ({
               className="flex items-center justify-around w-full bg-main-default p-2 rounded-lg text-black hover:bg-yellow-300 duration-300"
               onClick={() => navigate(`/zawody/${data.tournamentId}/wyniki`)}
             >
-              <FaTable />
-              <span>Tabela</span>
+              <FaTable className="fill-white" />
+              <span className="text-white">Tabela</span>
             </button>
             <button
               className="flex items-center justify-around w-full p-2 rounded-lg bg-black hover:bg-zinc-800 duration-300"

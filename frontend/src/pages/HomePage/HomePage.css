@@ -11,9 +11,9 @@
 }
 
 .homeNavigationElement {
-  @apply h-full 
-  text-5xl 
-  rounded-[15px] 
+  @apply w-full 
+  rounded-[2dvw]
+  md:rounded-[1dvw]
   bg-support 
   text-main-default 
   aspect-square 
@@ -21,8 +21,10 @@
   items-center 
   justify-center
   transition-all
-  duration-300
-  w-[100px];
+  duration-300;
 
   @apply hover:text-nav-selected hover:bg-nav-bg-hover;
+}
+.btnImg{
+  font-size: 250%;
 }

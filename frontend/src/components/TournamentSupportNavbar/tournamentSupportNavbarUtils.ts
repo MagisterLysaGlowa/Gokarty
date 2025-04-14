@@ -1,5 +1,7 @@
 import { AiOutlineUsergroupAdd } from "react-icons/ai";
-import { FaUsers, FaEdit, FaCar, FaList } from "react-icons/fa";
+import { HiOutlineQueueList } from "react-icons/hi2";
+import { PiFlagCheckeredFill, PiUsersThree } from "react-icons/pi";
+import { RiEditLine } from "react-icons/ri";
 
 export const navList = (id: number, name: string | undefined) => [
   {
@@ -11,25 +13,25 @@ export const navList = (id: number, name: string | undefined) => [
   {
     id: 1,
     name: "Zawodnicy",
-    icon: FaUsers,
+    icon: PiUsersThree,
     path: `${id}/${name}/zawodnicy`,
   },
   {
     id: 2,
     name: "Edycja turnieju",
-    icon: FaEdit,
+    icon: RiEditLine,
     path: `${id}/${name}`,
   },
   {
     id: 3,
     name: "Przejazdy",
-    icon: FaCar,
+    icon: PiFlagCheckeredFill,
     path: `${id}/${name}/przejazdy`,
   },
   {
     id: 4,
     name: "Kolejka",
-    icon: FaList,
+    icon: HiOutlineQueueList,
     path: `${id}/${name}/kolejka`,
   },
 ];
