@@ -4,7 +4,10 @@ import { PlayerFilterFormData, TableActionProps } from "../../../../../types";
 import { useParams } from "react-router-dom";
 import { SchoolQueries } from "../../../../queries/schoolQuery";
 import { Input, Select, SelectItem, useDisclosure } from "@heroui/react";
-import {defaultAddButtonProps, defaultVariant } from "../../../../Utils/globalUtils";
+import {
+  defaultAddButtonProps,
+  defaultVariant,
+} from "../../../../Utils/globalUtils";
 import { useColumns, useMemorizedPlayers } from "./AddPlayerForTournamentUtils";
 import { useCustomTableCells } from "../../../../components/CustomTableCells/CustomTableCells";
 import { useDebounce } from "../../../../Utils/debounce";
@@ -26,8 +29,10 @@ export const AddPlayerForTournament = () => {
   });
   const serverFilter = useDebounce(playerFilter);
 
-  const { mutateAsync: addPlayer } = PlayerQueries.addPlayerToTournament();
-  const { mutateAsync: addPlayers } = PlayerQueries.addPlayersToTournament();
+  const { mutateAsync: addPlayer, isLoading: isLoading } =
+    PlayerQueries.addPlayerToTournament();
+  const { mutateAsync: addPlayers, isLoading: isMassLoading } =
+    PlayerQueries.addPlayersToTournament();
   const { data: schools } = SchoolQueries.getAllSchools();
   const {
     data: players,
@@ -58,11 +63,11 @@ export const AddPlayerForTournament = () => {
   ]);
 
   const massActions: TableActionProps[] = [
-    { modal: massAddModal, buttonProps: defaultAddButtonProps }
+    { modal: massAddModal, buttonProps: defaultAddButtonProps },
   ];
 
   return (
-    <div className="flex flex-col h-full max-h-full overflow-hidden gap-3">
+    <div className="flex flex-col h-full max-h-full overflow-hidden gap-2">
       <div className="grid grid-cols-4 gap-2">
         <Input
           placeholder="Imie"
@@ -124,6 +129,7 @@ export const AddPlayerForTournament = () => {
 
       {selectedPlayer && (
         <YesNoModal
+          isFunctionLoading={isLoading}
           buttonText="Dodaj"
           header="Dodaj zawodnika"
           onYes={async () =>
@@ -143,6 +149,7 @@ export const AddPlayerForTournament = () => {
       )}
       {selectedPlayerIds.length > 0 && (
         <YesNoModal
+          isFunctionLoading={isMassLoading}
           buttonText="Dodaj"
           header="Dodaj zawodników"
           onYes={async () =>

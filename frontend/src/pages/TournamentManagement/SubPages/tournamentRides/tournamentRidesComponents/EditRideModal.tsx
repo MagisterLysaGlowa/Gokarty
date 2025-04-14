@@ -44,19 +44,19 @@ export const EditRideModal: React.FC<EditModalProps> = ({
     penaltyPoints: Number(ride.timeData?.penaltyPoints),
     rideId: Number(ride.timeData?.rideId),
     rideNumber: Number(ride.timeData?.rideNumber),
-    rideGroupId: Number(ride.timeData?.rideGroupId)
-  }
-  
+    rideGroupId: Number(ride.timeData?.rideGroupId),
+  };
+
   const [rideToEdit, setRideToEdit] = useState<RideData>(rideDefault);
   const [time, setTime] = useState<string>(
     convertTimeToString(Number(ride.timeData?.time))
   );
-  const { mutateAsync: updateRide } = RideQueries.updateRide();
+  const { mutateAsync: updateRide, isLoading } = RideQueries.updateRide();
 
   useEffect(() => {
     setRideToEdit(rideDefault);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ride, gokarts])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ride, gokarts]);
 
   if (!gokarts) return;
 
@@ -124,13 +124,14 @@ export const EditRideModal: React.FC<EditModalProps> = ({
                 Anuluj
               </Button>
               <Button
+                isLoading={isLoading}
                 {...confirmButtonConfig}
                 onPress={async () => {
                   const timeRegex = /^\d{2}:\d{2}:\d{3}$/;
                   if (rideToEdit && timeRegex.test(time)) {
                     await updateRide({
-                        ...rideToEdit,
-                        time: calculateTimeFromStringToMs(time)
+                      ...rideToEdit,
+                      time: calculateTimeFromStringToMs(time),
                     });
                     onClose();
                   }

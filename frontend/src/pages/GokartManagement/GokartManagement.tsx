@@ -42,12 +42,14 @@ export const AddGokart = () => {
   const columns = useGetGokartColumns();
   const rows = useGetGokartRows(data, filter);
 
-  const { mutateAsync: removeGokartAsync } = GokartQueries.removeGokart();
-  const { mutateAsync: removeGokartsAsync } = GokartQueries.removeGokarts();
+  const { mutateAsync: removeGokartAsync, isLoading: isRemoveLoading } =
+    GokartQueries.removeGokart();
+  const { mutateAsync: removeGokartsAsync, isLoading: isMassRemoveLoading } =
+    GokartQueries.removeGokarts();
 
   return (
-    <div className="max-h-full h-full grid grid-rows-[50px_calc(100%-50px)]">
-      <div>
+    <div className="flex flex-col h-full max-h-full overflow-hidden gap-2">
+      <div className="flex items-center">
         <Input
           className="w-1/3"
           placeholder="Wyszukiwarka"
@@ -75,6 +77,7 @@ export const AddGokart = () => {
             key={`edit-${selectedGokartId}`}
           />
           <YesNoModal
+            isFunctionLoading={isRemoveLoading}
             header="Usuń gokart"
             modal={removeGokartModal}
             onYes={async () =>
@@ -88,6 +91,7 @@ export const AddGokart = () => {
       )}
       {selectedGokartIds && (
         <YesNoModal
+          isFunctionLoading={isMassRemoveLoading}
           header="Usuń gokarty"
           modal={massRemoveGokartModal}
           onYes={async () => await removeGokartsAsync(selectedGokartIds)}

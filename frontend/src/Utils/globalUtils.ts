@@ -30,17 +30,17 @@ export const imagesPath = "http://localhost:5079/images/";
 export const fileChange = (
   e: React.ChangeEvent<HTMLInputElement>,
   setImage: React.Dispatch<React.SetStateAction<File | undefined>>,
-  setPreview: React.Dispatch<React.SetStateAction<string | undefined>>,
+  setPreview: React.Dispatch<React.SetStateAction<string | undefined>>
 ) => {
   const file = e.target.files?.[0];
-  if(file && validateImageFile(file)) {
+  if (file && validateImageFile(file)) {
     setImage(file);
     setPreview(URL.createObjectURL(file));
   }
   e.target.value = "";
-}
+};
 
-export const basicTableClasses:
+export type TableClasses =
   | SlotsToClasses<
       | "base"
       | "table"
@@ -55,9 +55,7 @@ export const basicTableClasses:
       | "emptyWrapper"
       | "loadingWrapper"
     >
-  | undefined = {
-  wrapper: "bg-transparent shadow-none px-0",
-};
+  | undefined;
 
 export const defaultVariant: "flat" | "bordered" | "underlined" | "faded" =
   "bordered";
@@ -68,15 +66,15 @@ export const defaultEditButtonProps: TableActionButtonProps = {
   variant: "solid",
   color: "primary",
   isIconOnly: true,
-}
+};
 
 export const defaultRemoveButtonProps: TableActionButtonProps = {
   size: "sm",
   endContent: FaTrash({}),
   isIconOnly: true,
   variant: "solid",
-  className: "bg-red-600"
-}
+  className: "bg-red-600",
+};
 
 export const defaultAddButtonProps: TableActionButtonProps = {
   size: "sm",
@@ -84,4 +82,4 @@ export const defaultAddButtonProps: TableActionButtonProps = {
   isIconOnly: true,
   variant: "solid",
   color: "warning",
-}
+};

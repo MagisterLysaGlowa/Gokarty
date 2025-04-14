@@ -24,13 +24,16 @@ type AddClassModalProps = {
   school: SchoolData;
 };
 
-export const AddClassModal: React.FC<AddClassModalProps> = ({ modal, school }) => {
+export const AddClassModal: React.FC<AddClassModalProps> = ({
+  modal,
+  school,
+}) => {
   const [_class, setClass] = useState<ClassData>({
     name: "",
     schoolId: Number(school.schoolId),
   });
 
-  const { mutateAsync: createClass } = ClassQueries.createClass();
+  const { mutateAsync: createClass, isLoading } = ClassQueries.createClass();
 
   useEffect(() => {
     setClass({
@@ -53,11 +56,11 @@ export const AddClassModal: React.FC<AddClassModalProps> = ({ modal, school }) =
             </ModalHeader>
             <ModalBody>
               <Input
-                  value={school.name}
-                  label="Szkoła"
-                  {...inputConfig}
-                  disabled
-                  readOnly
+                value={school.name}
+                label="Szkoła"
+                {...inputConfig}
+                disabled
+                readOnly
               />
               <Input
                 value={_class.name}
@@ -71,6 +74,7 @@ export const AddClassModal: React.FC<AddClassModalProps> = ({ modal, school }) =
                 Anuluj
               </Button>
               <Button
+                isLoading={isLoading}
                 {...confirmButtonConfig}
                 onPress={async () => {
                   if (await validateData(classValidationSchema, _class)) {

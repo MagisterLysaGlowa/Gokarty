@@ -25,6 +25,7 @@ const apiClient = axios.create({
     "Content-Type": "application/json",
   },
   withCredentials: true,
+  timeout: 5000,
 });
 
 // Interceptor odpowiedzi – automatyczna konwersja stringów na `Date`

@@ -35,10 +35,15 @@ export const CreateTournamentModal: React.FC<TournamentCreateModalParams> = ({
   modal,
 }) => {
   const fileInput = useRef<HTMLInputElement | null>(null);
-  const [tournament, setTournament] = useState<TournamentData>(tournamentDefaultValue);
-  const { mutateAsync: createTournament } = TournamentQueries.createTournament();
+  const [tournament, setTournament] = useState<TournamentData>(
+    tournamentDefaultValue
+  );
+  const { mutateAsync: createTournament, isLoading } =
+    TournamentQueries.createTournament();
   const [image, setImage] = useState<File | undefined>(undefined);
-  const [imagePreview, setImagePreview] = useState<string | undefined>(undefined);
+  const [imagePreview, setImagePreview] = useState<string | undefined>(
+    undefined
+  );
 
   useEffect(() => {
     setTournament(tournamentDefaultValue);
@@ -74,7 +79,10 @@ export const CreateTournamentModal: React.FC<TournamentCreateModalParams> = ({
                 {...dateRangePickerConfig}
                 hideTimeZone
                 label="Czas trwania turnieju"
-                defaultValue={{start: now("Europe/Warsaw"), end: now("Europe/Warsaw")}}
+                defaultValue={{
+                  start: now("Europe/Warsaw"),
+                  end: now("Europe/Warsaw"),
+                }}
                 onChange={(e) => {
                   if (e?.start && e.end)
                     setTournament((prev) => ({
@@ -86,18 +94,18 @@ export const CreateTournamentModal: React.FC<TournamentCreateModalParams> = ({
               />
               <input
                 type="file"
-                accept={allowedExtensions.join(',')}
+                accept={allowedExtensions.join(",")}
                 onChange={(e) => fileChange(e, setImage, setImagePreview)}
                 ref={fileInput}
                 className="hidden"
-                />
+              />
               <Button onPress={() => fileInput.current?.click()}>
                 {image ? "Zmień zdjęcie" : "Dodaj zdjęcie"}
               </Button>
               {imagePreview && (
                 <div className="relative flex items-center justify-center">
-                  <img 
-                    src={imagePreview} 
+                  <img
+                    src={imagePreview}
                     alt="Podgląd wybranego zdjęcia"
                     className="rounded-xl max-h-[400px]"
                   />
@@ -107,7 +115,8 @@ export const CreateTournamentModal: React.FC<TournamentCreateModalParams> = ({
                       setImagePreview(undefined);
                     }}
                     isIconOnly
-                    className="absolute right-1 top-1 rounded-full text-3xl">
+                    className="absolute right-1 top-1 rounded-full text-3xl"
+                  >
                     <IoCloseCircleOutline />
                   </Button>
                 </div>
@@ -118,10 +127,13 @@ export const CreateTournamentModal: React.FC<TournamentCreateModalParams> = ({
                 Anuluj
               </Button>
               <Button
+                isLoading={isLoading}
                 {...confirmButtonConfig}
                 onPress={async () => {
-                  if (await validateData(tournamentValidateSchema, tournament)) {
-                    await createTournament({tournament, image});
+                  if (
+                    await validateData(tournamentValidateSchema, tournament)
+                  ) {
+                    await createTournament({ tournament, image });
                     onClose();
                   }
                 }}

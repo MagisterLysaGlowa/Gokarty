@@ -14,7 +14,7 @@ export const LoginForms: FC<Props> = ({ setIsLogin }) => {
     Password: "",
   });
   const navigate = useNavigate();
-  const { mutateAsync: loginAsync } = UserQuery.login({
+  const { mutateAsync: loginAsync, isLoading } = UserQuery.login({
     onSuccess: () => navigate("/"),
   });
 
@@ -33,7 +33,11 @@ export const LoginForms: FC<Props> = ({ setIsLogin }) => {
         size="sm"
         onValueChange={(e) => setLogin((p) => ({ ...p, Password: e }))}
       />
-      <Button color="primary" onPress={async () => await loginAsync(login)}>
+      <Button
+        isLoading={isLoading}
+        color="primary"
+        onPress={async () => await loginAsync(login)}
+      >
         Zaloguj
       </Button>
       <span onClick={() => setIsLogin(false)}>Rejestracja</span>

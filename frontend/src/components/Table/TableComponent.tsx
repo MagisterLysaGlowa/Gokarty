@@ -11,6 +11,7 @@ import {
 import React, { FC, ReactNode, SetStateAction, useEffect, useRef } from "react";
 import { TableActionProps } from "../../../types";
 import { CustomCellsRow } from "../CustomTableCells/CustomTableCells";
+import { TableClasses } from "../../Utils/globalUtils";
 
 export type TableProps = {
   tableCells: (
@@ -24,6 +25,7 @@ export type TableProps = {
   onSelectionChange?: (keys: Selection) => void;
   massActions?: TableActionProps[];
   setSelectedItems?: React.Dispatch<SetStateAction<number[]>>;
+  classNames?: TableClasses;
 };
 
 export const TableComponent: FC<TableProps> = ({
@@ -35,6 +37,7 @@ export const TableComponent: FC<TableProps> = ({
   onSelectionChange,
   massActions = [],
   setSelectedItems,
+  classNames,
 }) => {
   const wrapperBox = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
@@ -44,15 +47,19 @@ export const TableComponent: FC<TableProps> = ({
         return prev.filter((item) => rowIds.includes(item));
       });
   }, [rows, setSelectedItems]);
-  console.log(wrapperBox.current?.getBoundingClientRect());
-  
 
   return (
-    <div className="relative max-h-full overflow-y-auto overflow-x-hidden" ref={wrapperBox}>
+    <div
+      className="relative max-h-full overflow-y-auto overflow-x-hidden"
+      ref={wrapperBox}
+    >
       <div
         style={{
           top: Number(wrapperBox.current?.getBoundingClientRect().top) - 55,
-          right: window.innerWidth - Number(wrapperBox.current?.getBoundingClientRect().x) - Number(wrapperBox.current?.getBoundingClientRect().width),
+          right:
+            window.innerWidth -
+            Number(wrapperBox.current?.getBoundingClientRect().x) -
+            Number(wrapperBox.current?.getBoundingClientRect().width),
         }}
         className={`fixed z-30 flex gap-2 items-center bg-[#27272A] py-2 overflow-hidden rounded-xl transition-all duration-500 ease-in-out origin-right ${
           selectedItems?.length ? "max-w-[500px] px-2" : "max-w-0 px-0"
@@ -75,9 +82,12 @@ export const TableComponent: FC<TableProps> = ({
         selectedKeys={selectedItems?.map((i) => i.toString())}
         aria-label="table"
         classNames={{
-          td: "text-xl",
-          th: massActions.length > 0 ? "first:w-[50px]" : "",
-          table: "table-fixed",
+          ...classNames,
+          td: "text-xl " + classNames?.td,
+          th:
+            massActions.length > 0
+              ? "first:w-[50px] " + classNames?.th
+              : classNames?.th,
         }}
         selectionMode={massActions.length > 0 ? "multiple" : "single"}
         onSelectionChange={(e) => {

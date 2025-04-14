@@ -20,6 +20,7 @@ type YesNoModalProps = {
   onYes: () => void;
   header: string;
   buttonText?: string;
+  isFunctionLoading?: boolean;
 };
 
 export const YesNoModal: React.FC<YesNoModalProps> = ({
@@ -28,6 +29,7 @@ export const YesNoModal: React.FC<YesNoModalProps> = ({
   onYes,
   header,
   buttonText = "Usuń",
+  isFunctionLoading = false,
 }) => {
   return (
     <Modal
@@ -45,6 +47,7 @@ export const YesNoModal: React.FC<YesNoModalProps> = ({
                 Anuluj
               </Button>
               <Button
+                isLoading={isFunctionLoading}
                 {...confirmButtonConfig}
                 onPress={() => {
                   onYes();

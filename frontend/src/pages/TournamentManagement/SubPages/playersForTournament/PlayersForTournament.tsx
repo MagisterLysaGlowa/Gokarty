@@ -24,10 +24,14 @@ export const PlayersForTournament = () => {
   const { data, isLoading } = PlayerQueries.getPlayersForTournament(
     Number(tournamentId)
   );
-  const { mutateAsync: removePlayerFromTournament } =
-    PlayerQueries.removePlayerFromTournament();
-  const { mutateAsync: removePlayersFromTournament } =
-    PlayerQueries.removePlayersFromTournament();
+  const {
+    mutateAsync: removePlayerFromTournament,
+    isLoading: isRemoveLoading,
+  } = PlayerQueries.removePlayerFromTournament();
+  const {
+    mutateAsync: removePlayersFromTournament,
+    isLoading: isMassRemoveLoading,
+  } = PlayerQueries.removePlayersFromTournament();
 
   const [filter, setFilter] = useState("");
   const filterSearch = useDebounce(filter);
@@ -92,6 +96,7 @@ export const PlayersForTournament = () => {
 
       {selectedPlayer && (
         <YesNoModal
+          isFunctionLoading={isRemoveLoading}
           header="Usuwanie gracza z turnieju"
           modal={removeModal}
           onYes={async () =>
@@ -111,6 +116,7 @@ export const PlayersForTournament = () => {
       )}
       {selectedPlayerIds.length > 0 && (
         <YesNoModal
+          isFunctionLoading={isMassRemoveLoading}
           header="Usuwanie graczy z turnieju"
           modal={massRemoveModal}
           onYes={async () =>

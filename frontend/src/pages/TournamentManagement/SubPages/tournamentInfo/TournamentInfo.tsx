@@ -1,11 +1,5 @@
 import { Button, useDisclosure } from "@heroui/react";
-import {
-  FaDice,
-  FaEdit,
-  FaPlay,
-  FaStop,
-  FaTrash,
-} from "react-icons/fa";
+import { FaDice, FaEdit, FaPlay, FaStop, FaTrash } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import { TournamentQueries } from "../../../../queries/tournamentQuery";
 import { EditTournamentModal } from "./tournamentInfoComponents/EditTournamentModal";
@@ -26,14 +20,17 @@ export const TournamentInfo = () => {
   const queueModal = useDisclosure();
   const startEndModal = useDisclosure();
 
-  const { data: tournamentData, isLoading } = TournamentQueries.getTournament(Number(id));
+  const { data: tournamentData, isLoading } = TournamentQueries.getTournament(
+    Number(id)
+  );
 
-  const { mutateAsync: removeTournamentAsync } =
+  const { mutateAsync: removeTournamentAsync, isLoading: isRemoveLoading } =
     TournamentQueries.removeTournament({
       onSuccess: () => navigate(-1),
     });
 
-  const { mutateAsync: updateTournament } = TournamentQueries.updateTournament();
+  const { mutateAsync: updateTournament, isLoading: isUpdateLoading } =
+    TournamentQueries.updateTournament();
 
   const { data: queue, refetch: refetchQueue } =
     QueueQueries.getAllFullQueuesForTournament(Number(id), {
@@ -79,7 +76,11 @@ export const TournamentInfo = () => {
                   <Button
                     isIconOnly
                     endContent={
-                      tournament.tournamentStateId == 1 ? <FaPlay /> : <FaStop />
+                      tournament.tournamentStateId == 1 ? (
+                        <FaPlay />
+                      ) : (
+                        <FaStop />
+                      )
                     }
                     className="tournamentButton bg-blue-600"
                     onPress={() => startEndModal.onOpen()}
@@ -87,32 +88,31 @@ export const TournamentInfo = () => {
                 </Tooltip>
               )}
               {tournament.tournamentStateId == 2 && !queue?.length && (
-                <Tooltip
-                  content={"Wylosuj kolejke"}
-                  showArrow
-                >
+                <Tooltip content={"Wylosuj kolejke"} showArrow>
                   <Button
                     isIconOnly
                     endContent={<FaDice />}
-                    className={`tournamentButton ${!queue?.length ? "bg-orange-600" : "bg-green-700"
-                      }`}
+                    className={`tournamentButton ${
+                      !queue?.length ? "bg-orange-600" : "bg-green-700"
+                    }`}
                     onPress={queueModal.onOpen}
                   />
                 </Tooltip>
               )}
             </div>
             <YesNoModal
-              header={tournament.name}
+              isFunctionLoading={isRemoveLoading}
+              header="Czy napewno chcesz usunąć te zawody?"
               modal={removeModal}
               onYes={async () => {
-                const res = await removeTournamentAsync(Number(tournament.tournamentId));
-                if(res.status === 200)
-                  navigate("/zawody");
-              }
-              }
+                const res = await removeTournamentAsync(
+                  Number(tournament.tournamentId)
+                );
+                if (res.status === 200) navigate("/zawody");
+              }}
               key={`remove-${tournament.tournamentId}`}
             >
-              {"Czy napewno chcesz usunąć te zawody?"}
+              {tournament.name}
             </YesNoModal>
             <EditTournamentModal
               modal={editModal}
@@ -126,6 +126,7 @@ export const TournamentInfo = () => {
               key={`queue-${tournament.tournamentId}`}
             />
             <YesNoModal
+              isFunctionLoading={isUpdateLoading}
               header={
                 (tournament.tournamentStateId == 1
                   ? "Rozpoczęcie"
@@ -134,10 +135,12 @@ export const TournamentInfo = () => {
               modal={startEndModal}
               buttonText="Tak"
               onYes={async () =>
-                updateTournament({tournament: {
-                  ...tournament,
-                  tournamentStateId: tournament.tournamentStateId + 1
-                }})
+                updateTournament({
+                  tournament: {
+                    ...tournament,
+                    tournamentStateId: tournament.tournamentStateId + 1,
+                  },
+                })
               }
               key={`state-${tournament.tournamentId}`}
             >

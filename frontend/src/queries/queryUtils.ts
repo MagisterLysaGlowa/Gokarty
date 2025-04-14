@@ -49,7 +49,11 @@ export const handleSuccessWithRefreshWithOnSuccess = <
 };
 
 export const handleError = (err: AxiosError) => {
-  errorToast((err.response?.data as QueryResponse).message);
+  errorToast(
+    err.response?.data
+      ? (err.response?.data as QueryResponse).message
+      : err.message
+  );
 };
 
 export type MutationType<T> = UseMutationOptions<QueryResponse, Error, T>;

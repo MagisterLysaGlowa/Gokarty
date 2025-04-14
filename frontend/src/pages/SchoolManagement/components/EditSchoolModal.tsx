@@ -29,11 +29,11 @@ export const EditSchoolModal: React.FC<EditModalProps> = ({
   school,
 }) => {
   const [schoolToEdit, setSchoolToEdit] = useState<SchoolData>(school);
-  const { mutateAsync: updateSchool } = SchoolQueries.updateSchool();
+  const { mutateAsync: updateSchool, isLoading } = SchoolQueries.updateSchool();
 
   useEffect(() => {
     setSchoolToEdit(school);
-  }, [school])
+  }, [school]);
 
   return (
     <Modal
@@ -85,6 +85,7 @@ export const EditSchoolModal: React.FC<EditModalProps> = ({
                 Anuluj
               </Button>
               <Button
+                isLoading={isLoading}
                 {...confirmButtonConfig}
                 onPress={async () => {
                   if (

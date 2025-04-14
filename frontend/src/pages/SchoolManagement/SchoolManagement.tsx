@@ -73,13 +73,16 @@ export const SchoolManagement = () => {
     { modal: massRemoveClassModal, buttonProps: defaultRemoveButtonProps },
   ];
 
-  const { mutateAsync: removeSchool } = SchoolQueries.removeSchool();
-  const { mutateAsync: removeClass } = ClassQueries.removeClass();
-  const { mutateAsync: removeClasses } = ClassQueries.removeClasses();
+  const { mutateAsync: removeSchool, isLoading: isRemoveSchoolLoading } =
+    SchoolQueries.removeSchool();
+  const { mutateAsync: removeClass, isLoading: isRemoveClassLoading } =
+    ClassQueries.removeClass();
+  const { mutateAsync: removeClasses, isLoading: isMassRemoveClassLoading } =
+    ClassQueries.removeClasses();
 
   return (
-    <div className="grid grid-rows-[50px_calc(100%-50px)] h-full">
-      <div className="w-1/3">
+    <div className="flex flex-col h-full max-h-full overflow-hidden gap-2">
+      <div className="grid w-1/3">
         <Input
           placeholder="Wyszukiwarka"
           startContent={<FaMagnifyingGlass />}
@@ -89,49 +92,42 @@ export const SchoolManagement = () => {
           {...inputConfig}
         />
       </div>
-      <div className="flex gap-3 w-full h-full max-h-full">
-        <div
-          className={`${
-            selectedRow ? "w-2/3" : "w-full"
-          } duration-300 ease-in-out transition-all h-full max-h-full`}
-        >
-          <TableComponent
-            columns={columns}
-            rows={rows}
-            tableCells={renderSchoolCells}
-            onSelectionChange={(e) => {
-              if (e === "all" || e.size === 0) {
-                setSelectedRow(undefined);
-                setSelectedClassIds([]);
-              } else {
-                const numberSelected = Number(Array.from(e)[0]);
-                if (!isNaN(numberSelected)) {
-                  setSelectedRow(numberSelected);
-                }
-                setSelectedClassIds([]);
+      <div
+        className={`grid overflow-hidden ${
+          selectedRow ? "grid-cols-[2fr_1fr]" : "grid-cols-[1fr_0fr]"
+        } w-full h-full max-h-full gap-3 transition-all duration-300`}
+      >
+        <TableComponent
+          columns={columns}
+          rows={rows}
+          tableCells={renderSchoolCells}
+          onSelectionChange={(e) => {
+            if (e === "all" || e.size === 0) {
+              setSelectedRow(undefined);
+              setSelectedClassIds([]);
+            } else {
+              const numberSelected = Number(Array.from(e)[0]);
+              if (!isNaN(numberSelected)) {
+                setSelectedRow(numberSelected);
               }
-            }}
-          />
-        </div>
-        <div
-          className={`${
-            selectedRow ? "w-1/3" : "w-0"
-          } duration-300 ease-in-out transition-all`}
-        >
-          <TableComponent
-            columns={useGetClassesColumns()}
-            rows={useGetClassRows(classes, selectedRow)}
-            tableCells={renderClassCells}
-            massActions={massActions}
-            selectedItems={selectedClassIds}
-            setSelectedItems={setSelectedClassIds}
-            emptyContent="Nie ma klas 💀"
-          />
-        </div>
+              setSelectedClassIds([]);
+            }
+          }}
+        />
+        <TableComponent
+          columns={useGetClassesColumns()}
+          rows={useGetClassRows(classes, selectedRow)}
+          tableCells={renderClassCells}
+          massActions={massActions}
+          selectedItems={selectedClassIds}
+          setSelectedItems={setSelectedClassIds}
+          emptyContent={selectedSchoolId && "Nie ma klas 💀"}
+        />
       </div>
       {selectedSchool && (
         <>
           <YesNoModal
+            isFunctionLoading={isRemoveSchoolLoading}
             header="Usuwanie szkoły"
             modal={removeSchoolModal}
             onYes={async () => {
@@ -158,6 +154,7 @@ export const SchoolManagement = () => {
       {selectedClass && (
         <>
           <YesNoModal
+            isFunctionLoading={isRemoveClassLoading}
             header="Usuwanie klasy"
             modal={removeClassModal}
             onYes={async () => await removeClass(Number(selectedClassId))}
@@ -174,6 +171,7 @@ export const SchoolManagement = () => {
       )}
       {selectedClassIds.length > 0 && (
         <YesNoModal
+          isFunctionLoading={isMassRemoveClassLoading}
           header="Usuwanie klas"
           modal={massRemoveClassModal}
           onYes={async () => await removeClasses(selectedClassIds)}

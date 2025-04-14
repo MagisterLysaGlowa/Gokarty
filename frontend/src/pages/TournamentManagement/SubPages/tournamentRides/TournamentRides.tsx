@@ -8,7 +8,11 @@ import { defaultVariant } from "../../../../Utils/globalUtils";
 import { EditRideModal } from "./tournamentRidesComponents/EditRideModal";
 import { Loading } from "../../../../components/Loading/Loading";
 import { GokartQueries } from "../../../../queries/gokartQuery";
-import { RideModalData, useGetColumns, useMemorizedRidesData } from "./tournamentRidesUtils";
+import {
+  RideModalData,
+  useGetColumns,
+  useMemorizedRidesData,
+} from "./tournamentRidesUtils";
 import { YesNoModal } from "../../../../components/YesNoModal/YesNoModal";
 import { convertTimeToString } from "../../../../Utils/TimeUtils";
 import { inputConfig } from "../../../../configs/inputConfig";
@@ -24,7 +28,9 @@ export const TournamentRides = () => {
     undefined
   );
 
-  const { data, isLoading } = RideQueries.getAllPlayersWithTimes(Number(tournamentId));
+  const { data, isLoading } = RideQueries.getAllPlayersWithTimes(
+    Number(tournamentId)
+  );
   const { data: gokarts } = GokartQueries.getAllGokarts();
 
   const removeModal = useDisclosure();
@@ -32,13 +38,10 @@ export const TournamentRides = () => {
 
   const columns = useGetColumns();
   const rows = useMemorizedRidesData(data, searchFilter);
-  const renderCell = useCustomCell(
-      setSelectedRide,
-      removeModal,
-      editModal
-    );
+  const renderCell = useCustomCell(setSelectedRide, removeModal, editModal);
 
-  const { mutateAsync: removeRide } = RideQueries.removeRide();
+  const { mutateAsync: removeRide, isLoading: isRemoveLoading } =
+    RideQueries.removeRide();
 
   return (
     <div className="flex flex-col flex-1 max-h-full overflow-hidden gap-3">
@@ -59,12 +62,15 @@ export const TournamentRides = () => {
           columns={columns}
           rows={rows}
           tableCells={renderCell}
-          emptyContent={<span>Tutaj pojawią się zatwierdzone przejazdy zawodników.</span>}
+          emptyContent={
+            <span>Tutaj pojawią się zatwierdzone przejazdy zawodników.</span>
+          }
         />
       )}
       {selectedRide && (
         <>
           <YesNoModal
+            isFunctionLoading={isRemoveLoading}
             header="Usuwanie przejazdu"
             modal={removeModal}
             onYes={async () =>

@@ -24,12 +24,9 @@ type EditModalProps = {
   _class: ClassData;
 };
 
-export const EditClassModal: React.FC<EditModalProps> = ({
-  modal,
-  _class,
-}) => {
+export const EditClassModal: React.FC<EditModalProps> = ({ modal, _class }) => {
   const [classToEdit, setClassToEdit] = useState<ClassData>(_class);
-  const { mutateAsync: updateClass } = ClassQueries.updateClass();
+  const { mutateAsync: updateClass, isLoading } = ClassQueries.updateClass();
 
   useEffect(() => {
     setClassToEdit(_class);
@@ -69,11 +66,10 @@ export const EditClassModal: React.FC<EditModalProps> = ({
                 Anuluj
               </Button>
               <Button
+                isLoading={isLoading}
                 {...confirmButtonConfig}
                 onPress={async () => {
-                  if (
-                    await validateData(classValidationSchema, classToEdit)
-                  ) {
+                  if (await validateData(classValidationSchema, classToEdit)) {
                     await updateClass(classToEdit);
                     onClose();
                   }

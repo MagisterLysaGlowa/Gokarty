@@ -18,7 +18,7 @@ import {
   confirmButtonConfig,
 } from "../../../configs/buttonConfig";
 import { validateData } from "../../../validations/validationUtils";
-import { schoolValidationSchema } from "../../../validations/schoolValidation";
+import { schoolValidationSchema } from "../../../validations/SchoolValidation";
 
 type AddSchoolModalProps = {
   modal: ModalProps;
@@ -31,7 +31,7 @@ export const AddSchoolModal: React.FC<AddSchoolModalProps> = ({ modal }) => {
     city: "",
   });
 
-  const { mutateAsync: createSchool } = SchoolQueries.createSchool();
+  const { mutateAsync: createSchool, isLoading } = SchoolQueries.createSchool();
 
   useEffect(() => {
     setSchool({
@@ -78,6 +78,7 @@ export const AddSchoolModal: React.FC<AddSchoolModalProps> = ({ modal }) => {
                 Anuluj
               </Button>
               <Button
+                isLoading={isLoading}
                 {...confirmButtonConfig}
                 onPress={async () => {
                   if (await validateData(schoolValidationSchema, school)) {

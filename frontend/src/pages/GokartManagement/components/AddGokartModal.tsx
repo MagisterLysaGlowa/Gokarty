@@ -32,8 +32,10 @@ export const AddGokartModal: FC<AddGokartModalProps> = ({ modal }) => {
     name: "",
   });
   const [image, setImage] = useState<File | undefined>(undefined);
-  const [imagePreview, setImagePreview] = useState<string | undefined>(undefined);
-  const { mutateAsync: createGokart } = GokartQueries.createGokart();
+  const [imagePreview, setImagePreview] = useState<string | undefined>(
+    undefined
+  );
+  const { mutateAsync: createGokart, isLoading } = GokartQueries.createGokart();
 
   useEffect(() => {
     setGokart({ name: "" });
@@ -63,23 +65,25 @@ export const AddGokartModal: FC<AddGokartModalProps> = ({ modal }) => {
               <Input
                 label="Opis"
                 value={gokart.description}
-                onValueChange={(e) => setGokart((p) => ({ ...p, description: e }))}
+                onValueChange={(e) =>
+                  setGokart((p) => ({ ...p, description: e }))
+                }
                 {...inputConfig}
               />
               <input
                 type="file"
-                accept={allowedExtensions.join(',')}
+                accept={allowedExtensions.join(",")}
                 onChange={(e) => fileChange(e, setImage, setImagePreview)}
                 ref={fileInput}
                 className="hidden"
-                />
+              />
               <Button onPress={() => fileInput.current?.click()}>
                 {image ? "Zmień zdjęcie" : "Dodaj zdjęcie"}
               </Button>
               {imagePreview && (
                 <div className="relative flex items-center justify-center">
-                  <img 
-                    src={imagePreview} 
+                  <img
+                    src={imagePreview}
                     alt="Podgląd wybranego zdjęcia"
                     className="rounded-xl max-h-[400px]"
                   />
@@ -89,7 +93,8 @@ export const AddGokartModal: FC<AddGokartModalProps> = ({ modal }) => {
                       setImagePreview(undefined);
                     }}
                     isIconOnly
-                    className="absolute right-1 top-1 rounded-full text-3xl">
+                    className="absolute right-1 top-1 rounded-full text-3xl"
+                  >
                     <IoCloseCircleOutline />
                   </Button>
                 </div>
@@ -100,10 +105,11 @@ export const AddGokartModal: FC<AddGokartModalProps> = ({ modal }) => {
                 Anuluj
               </Button>
               <Button
+                isLoading={isLoading}
                 {...confirmButtonConfig}
                 onPress={async () => {
                   if (await validateData(gokartValidationSchema, gokart)) {
-                    await createGokart({gokart, image});
+                    await createGokart({ gokart, image });
                     onClose();
                   }
                 }}

@@ -40,10 +40,14 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
   tournament,
 }) => {
   const fileInput = useRef<HTMLInputElement | null>(null);
-  const [tournamentToEdit, setTournamentToEdit] = useState<TournamentData>(tournament);
-  const { mutateAsync: updateTournamentAsync } = TournamentQueries.updateTournament();
+  const [tournamentToEdit, setTournamentToEdit] =
+    useState<TournamentData>(tournament);
+  const { mutateAsync: updateTournamentAsync, isLoading } =
+    TournamentQueries.updateTournament();
   const [image, setImage] = useState<File | undefined>(undefined);
-  const [imagePreview, setImagePreview] = useState<string | undefined>(undefined);
+  const [imagePreview, setImagePreview] = useState<string | undefined>(
+    undefined
+  );
 
   useEffect(() => {
     setTournamentToEdit(tournament);
@@ -77,7 +81,10 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
                 {...dateRangePickerConfig}
                 hideTimeZone
                 defaultValue={{
-                  start: fromDate(tournamentToEdit.startDate, getLocalTimeZone()),
+                  start: fromDate(
+                    tournamentToEdit.startDate,
+                    getLocalTimeZone()
+                  ),
                   end: fromDate(tournamentToEdit.endDate, getLocalTimeZone()),
                 }}
                 onChange={(e) => {
@@ -98,7 +105,7 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
                 onChange={(e) =>
                   setTournamentToEdit((p) => ({
                     ...p,
-                    tournamentTypeId: Number(e.target.value)
+                    tournamentTypeId: Number(e.target.value),
                   }))
                 }
               >
@@ -113,7 +120,7 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
                 onChange={(e) =>
                   setTournamentToEdit((p) => ({
                     ...p,
-                    tournamentStateId: Number(e.target.value)
+                    tournamentStateId: Number(e.target.value),
                   }))
                 }
               >
@@ -123,18 +130,18 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
               </Select>
               <input
                 type="file"
-                accept={allowedExtensions.join(',')}
+                accept={allowedExtensions.join(",")}
                 onChange={(e) => fileChange(e, setImage, setImagePreview)}
                 ref={fileInput}
                 className="hidden"
-                />
+              />
               <Button onPress={() => fileInput.current?.click()}>
                 {image ? "Zmień zdjęcie" : "Dodaj zdjęcie"}
               </Button>
               {imagePreview && (
                 <div className="relative flex items-center justify-center">
-                  <img 
-                    src={imagePreview} 
+                  <img
+                    src={imagePreview}
                     alt="Podgląd wybranego zdjęcia"
                     className="rounded-xl max-h-[400px]"
                   />
@@ -144,7 +151,8 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
                       setImagePreview(undefined);
                     }}
                     isIconOnly
-                    className="absolute right-1 top-1 rounded-full text-3xl">
+                    className="absolute right-1 top-1 rounded-full text-3xl"
+                  >
                     <IoCloseCircleOutline />
                   </Button>
                 </div>
@@ -155,10 +163,19 @@ export const EditTournamentModal: React.FC<EditModalProps> = ({
                 Anuluj
               </Button>
               <Button
+                isLoading={isLoading}
                 {...confirmButtonConfig}
                 onPress={async () => {
-                  if (await validateData(tournamentValidateSchema, tournamentToEdit)) {
-                    await updateTournamentAsync({tournament: tournamentToEdit, image});
+                  if (
+                    await validateData(
+                      tournamentValidateSchema,
+                      tournamentToEdit
+                    )
+                  ) {
+                    await updateTournamentAsync({
+                      tournament: tournamentToEdit,
+                      image,
+                    });
                     onClose();
                   }
                 }}

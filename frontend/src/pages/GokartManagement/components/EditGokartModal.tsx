@@ -35,11 +35,14 @@ export const EditGokartModal: FC<EditGokartModalProps> = ({
   const fileInput = useRef<HTMLInputElement | null>(null);
   const [gokartToEdit, setGokartToEdit] = useState<GokartData>(gokart);
   const [image, setImage] = useState<File | undefined>(undefined);
-  const [imagePreview, setImagePreview] = useState<string | undefined>(undefined);
-  const { mutateAsync: editGokartAsync } = GokartQueries.updateGokart();
+  const [imagePreview, setImagePreview] = useState<string | undefined>(
+    undefined
+  );
+  const { mutateAsync: editGokartAsync, isLoading } =
+    GokartQueries.updateGokart();
 
   useEffect(() => {
-    setGokartToEdit(gokart)
+    setGokartToEdit(gokart);
     setImage(undefined);
     setImagePreview(undefined);
   }, [gokart]);
@@ -74,23 +77,25 @@ export const EditGokartModal: FC<EditGokartModalProps> = ({
               <Textarea
                 label="Opis"
                 value={gokartToEdit.description}
-                onValueChange={(e) => setGokartToEdit((p) => ({ ...p, description: e }))}
+                onValueChange={(e) =>
+                  setGokartToEdit((p) => ({ ...p, description: e }))
+                }
                 {...inputConfig}
               />
               <input
                 type="file"
-                accept={allowedExtensions.join(',')}
+                accept={allowedExtensions.join(",")}
                 onChange={(e) => fileChange(e, setImage, setImagePreview)}
                 ref={fileInput}
                 className="hidden"
-                />
+              />
               <Button onPress={() => fileInput.current?.click()}>
                 {image ? "Zmień zdjęcie" : "Dodaj zdjęcie"}
               </Button>
               {imagePreview && (
                 <div className="relative flex items-center justify-center">
-                  <img 
-                    src={imagePreview} 
+                  <img
+                    src={imagePreview}
                     alt="Podgląd wybranego zdjęcia"
                     className="rounded-xl max-h-[400px]"
                   />
@@ -100,7 +105,8 @@ export const EditGokartModal: FC<EditGokartModalProps> = ({
                       setImagePreview(undefined);
                     }}
                     isIconOnly
-                    className="absolute right-1 top-1 rounded-full text-3xl">
+                    className="absolute right-1 top-1 rounded-full text-3xl"
+                  >
                     <IoCloseCircleOutline />
                   </Button>
                 </div>
@@ -111,12 +117,11 @@ export const EditGokartModal: FC<EditGokartModalProps> = ({
                 Anuluj
               </Button>
               <Button
+                isLoading={isLoading}
                 {...confirmButtonConfig}
                 onPress={async () => {
                   if (await validateData(gokartValidationSchema, gokart)) {
-                    console.log(gokartToEdit);
-                    
-                    await editGokartAsync({gokart: gokartToEdit, image});
+                    await editGokartAsync({ gokart: gokartToEdit, image });
                     onClose();
                   }
                 }}

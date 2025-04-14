@@ -62,7 +62,8 @@ export const QueueManagement = () => {
   const confirmSubmitModal = useDisclosure();
   const confirmRestartModal = useDisclosure();
 
-  const { mutateAsync: createRideAsync } = RideQueries.createRide();
+  const { mutateAsync: createRideAsync, isLoading: isCreateLoading } =
+    RideQueries.createRide();
 
   function startRide(lapsLeft: number) {
     setLapsLeft(lapsLeft);
@@ -229,14 +230,14 @@ export const QueueManagement = () => {
     <div className="h-full w-full max-h-full flex flex-col overflow-hidden max-w-full">
       <LoadingWrapper data={[]} isLoading={isLoading}>
         {() => (
-          <div className="flex h-full overflow-hidden gap-3">
+          <div className="grid grid-cols-[2fr_1fr] h-full overflow-hidden gap-3">
             <TableComponent
               emptyContent={<span>Brak zawodników w kolejce</span>}
               rows={rows}
               columns={cols}
               tableCells={tableCells}
             />
-            <div className=" h-full flex items-center justify-center relative w-2/5">
+            <div className=" h-full flex items-center justify-center relative">
               <div className="w-[90%] h-[90%] border-2 border-main-default grid grid-rows-[30%_5%_35%_5%_25%] rounded-xl p-3">
                 <div className="flex flex-col gap-3">
                   <p className="text-main-default text-center text-3xl">
@@ -390,6 +391,7 @@ export const QueueManagement = () => {
         )}
       </LoadingWrapper>
       <YesNoModal
+        isFunctionLoading={isCreateLoading}
         header={!isDisquaified ? "Dodanie przejazdu" : "Dyskwalifikacja"}
         modal={confirmSubmitModal}
         onYes={async () => await submitRide(isDisquaified)}

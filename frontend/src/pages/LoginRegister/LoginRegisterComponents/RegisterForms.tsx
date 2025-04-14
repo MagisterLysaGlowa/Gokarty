@@ -13,7 +13,7 @@ export const RegisterForms: FC<Props> = ({ setIsLogin }) => {
     Password: "",
     PasswordRepeat: "",
   });
-  const { mutateAsync: registerAsync } = UserQuery.register({
+  const { mutateAsync: registerAsync, isLoading } = UserQuery.register({
     onSuccess: () => setIsLogin(true),
   });
 
@@ -47,6 +47,7 @@ export const RegisterForms: FC<Props> = ({ setIsLogin }) => {
         onValueChange={(e) => setRegister((p) => ({ ...p, Email: e }))}
       />
       <Button
+        isLoading={isLoading}
         color="primary"
         onPress={async () => await registerAsync(register)}
       >
