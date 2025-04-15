@@ -2,6 +2,7 @@
 using api.Helpers;
 using api.Interfaces;
 using api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -60,6 +61,7 @@ namespace api.Controllers {
         }
 
         [HttpGet("tournament/{tournamentId}")]
+        [Authorize(Roles = "Admin, Operator")]
         public async Task<IActionResult> GetForTournament(int tournamentId) {
             try {
                 return Ok(await playerRepository.GetAllForTournamentAsync(tournamentId));
@@ -71,6 +73,7 @@ namespace api.Controllers {
         }
 
         [HttpGet("filter")]
+        [Authorize(Roles = "Admin, Operator")]
         public async Task<IActionResult> Filter([FromQuery] PlayerFilterDto dto) {
             try {
                 return Ok(await playerRepository.FilterPlayersAsync(dto));
@@ -82,6 +85,7 @@ namespace api.Controllers {
         }
 
         [HttpPost("addToTournament/{tournamentId}")]
+        [Authorize(Roles = "Admin, Operator")]
         public async Task<IActionResult> AddToTournament(int tournamentId, [FromBody] int playerId) {
             try {
                 if (await playerRepository.AddToTournamentAsync(tournamentId, playerId) is int)
@@ -95,6 +99,7 @@ namespace api.Controllers {
         }
 
         [HttpPost("massAddToTournament/{tournamentId}")]
+        [Authorize(Roles = "Admin, Operator")]
         public async Task<IActionResult> MassAddToTournament(int tournamentId, [FromBody] int[] playerIds)
         {
             try {
@@ -110,6 +115,7 @@ namespace api.Controllers {
         }
 
         [HttpPost("removeFromTournament/{tournamentId}")]
+        [Authorize(Roles = "Admin, Operator")]
         public async Task<IActionResult> RemoveFromTournament(int tournamentId, [FromBody] int playerId) {
             try {
                 if (await playerRepository.RemoveFromTournamentAsync(tournamentId, playerId) is int)
@@ -123,6 +129,7 @@ namespace api.Controllers {
         }
 
         [HttpPost("massRemoveFromTournament/{tournamentId}")]
+        [Authorize(Roles = "Admin, Operator")]
         public async Task<IActionResult> MassRemoveFromTournament(int tournamentId, [FromBody] int[] playerIds)
         {
             try {

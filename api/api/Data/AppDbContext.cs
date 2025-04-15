@@ -1,20 +1,12 @@
-﻿using api.Models;
-using Microsoft.AspNetCore.Identity;
+﻿using api.Helpers;
+using api.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Data {
-    public class AppDbContext : IdentityDbContext<
-        User,
-        IdentityRole,
-        string,
-        IdentityUserClaim<string>,
-        IdentityUserRole<string>,
-        IdentityUserLogin<string>,
-        IdentityRoleClaim<string>,
-        IdentityUserToken<string>>
+    public class AppDbContext : IdentityDbContext<User, Role, int>
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {
+        public AppDbContext(DbContextOptions options) : base(options) {
 
         }
 
@@ -31,9 +23,11 @@ namespace api.Data {
         public DbSet<RideGroup> RideGroups { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
-            /*PLAYER TO TOURNAMENT (MANY TO MANY)*/
             base.OnModelCreating(modelBuilder);
+            modelBuilder.ApplyConfiguration(new RoleConfiguration());
 
+
+            /*PLAYER TO TOURNAMENT (MANY TO MANY)*/
             modelBuilder.Entity<PlayerTournament>()
                         .HasKey(pt => new { pt.PlayersId, pt.TournamentsId });
 
@@ -49,9 +43,7 @@ namespace api.Data {
                         .HasForeignKey(pt => pt.TournamentsId)
                         .OnDelete(DeleteBehavior.Restrict);
 
-
             //PLAYER TO CLASS (ONE TO MANY)
-
             modelBuilder.Entity<Player>()
                 .HasOne(c => c.Class)
                 .WithMany(p => p.Players)
@@ -59,7 +51,6 @@ namespace api.Data {
                 .OnDelete(DeleteBehavior.Restrict);
 
             //CLASS TO SCHOOL (ONE TO MANY)
-
             modelBuilder.Entity<Class>()
                 .HasOne(c => c.School)
                 .WithMany(s => s.Classes)
@@ -67,7 +58,6 @@ namespace api.Data {
                 .OnDelete(DeleteBehavior.Restrict);
 
             //TOURNAMENT TO TOURNAMENT STATE (ONE TO MANY)
-
             modelBuilder.Entity<Tournament>()
                         .HasOne(ts => ts.TournamentState)
                         .WithMany(t => t.Tournaments)
@@ -75,7 +65,6 @@ namespace api.Data {
                         .OnDelete(DeleteBehavior.Restrict);
 
             //TOURNAMEN TO TOURNAMENT TYPE (ONE TO MANY)
-
             modelBuilder.Entity<Tournament>()
                         .HasOne(t=>t.TournamentType)
                         .WithMany(tt=>tt.Tournaments)
@@ -83,7 +72,6 @@ namespace api.Data {
                         .OnDelete(DeleteBehavior.Restrict);
 
             //RIDEGROUP TO CLASS (ONE TO MANY)
-
             modelBuilder.Entity<RideGroup>()
                         .HasOne(r => r.Class)
                         .WithMany(c => c.RideGroups)
@@ -91,7 +79,6 @@ namespace api.Data {
                         .OnDelete(DeleteBehavior.Restrict);
 
             //RIDEGROUP TO TOURNAMENT (ONE TO MANY)
-
             modelBuilder.Entity<RideGroup>()
                         .HasOne(r => r.Tournament)
                         .WithMany(t => t.RideGroups)
@@ -99,7 +86,6 @@ namespace api.Data {
                         .OnDelete(DeleteBehavior.Restrict);
 
             //RIDEGROUP TO PLAYER (ONE TO MANY)
-
             modelBuilder.Entity<RideGroup>()
                         .HasOne(r => r.Player)
                         .WithMany(p => p.RideGroups)
@@ -107,7 +93,6 @@ namespace api.Data {
                         .OnDelete(DeleteBehavior.Restrict);
 
             //RIDE TO GOKARTS (ONE TO MANY)
-
             modelBuilder.Entity<Ride>()
                         .HasOne(r => r.Gokart)
                         .WithMany(g => g.Rides)
@@ -115,7 +100,6 @@ namespace api.Data {
                         .OnDelete(DeleteBehavior.Restrict);
 
             //RIDES TO RIDEGROUP (MANY TO ONE)
-
             modelBuilder.Entity<Ride>()
                         .HasOne(r => r.RideGroup)
                         .WithMany(rg => rg.Rides)
@@ -123,7 +107,6 @@ namespace api.Data {
                         .OnDelete(DeleteBehavior.Restrict);
 
             //QUEUE TO TOURNAMENT (ONE TO MANY)
-
             modelBuilder.Entity<Queue>()
                         .HasOne(q => q.Tournament)
                         .WithMany(t => t.Queues)
@@ -131,7 +114,6 @@ namespace api.Data {
                         .OnDelete(DeleteBehavior.Restrict);
 
             //QUEUE TO PLAYER (ONE TO MANY)
-
             modelBuilder.Entity<Queue>()
                         .HasOne(q => q.Player)
                         .WithMany(P => P.Queues)
@@ -139,7 +121,6 @@ namespace api.Data {
                         .OnDelete(DeleteBehavior.Restrict);
 
             //QUEUE TO GOKART (ONE TO MANY)
-
             modelBuilder.Entity<Queue>()
                         .HasOne(q => q.Gokart)
                         .WithMany(g => g.Queues)

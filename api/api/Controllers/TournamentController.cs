@@ -3,6 +3,7 @@ using api.Exceptions;
 using api.Helpers;
 using api.Interfaces;
 using api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
@@ -45,6 +46,7 @@ namespace api.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin, Operator")]
         public async Task<IActionResult> Create([FromForm] TournamentDto data)
         {
             try {
@@ -70,6 +72,7 @@ namespace api.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "Admin, Operator")]
         public async Task<IActionResult> Update([FromForm] TournamentDto data)
         {
             try {
@@ -99,6 +102,7 @@ namespace api.Controllers
         }
 
         [HttpDelete("{tournamentId}")]
+        [Authorize(Roles = "Admin, Operator")]
         public async Task<IActionResult> Remove(int tournamentId)
         {
             try {

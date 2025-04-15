@@ -5,6 +5,7 @@ using api.Interfaces;
 using api.Models;
 using api.Repositories;
 using api.SignalRHubs;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
@@ -54,11 +55,11 @@ namespace api
                         .AllowCredentials());
             });
 
-
-            //builder.Services.AddAuthorizationBuilder();
-
+            builder.Services.AddAuthentication().AddCookie();
             builder.Services.AddAuthorization();
-            builder.Services.AddIdentityApiEndpoints<User>().AddRoles<IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
+            builder.Services.AddIdentityApiEndpoints<User>()
+                .AddRoles<Role>()
+                .AddEntityFrameworkStores<AppDbContext>();
 
 
             var app = builder.Build();
@@ -68,10 +69,7 @@ namespace api
             app.MapGroup("/api")
                     .MapIdentityApi<User>();
             app.UseStaticFiles();
-            app.UseAuthorization();
-
             
-
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -81,6 +79,8 @@ namespace api
             }
             app.UseHttpsRedirection();
             app.MapControllers();
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.Run();
         }
     }

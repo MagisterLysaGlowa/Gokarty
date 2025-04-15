@@ -2,6 +2,7 @@
 using api.Helpers;
 using api.Interfaces;
 using api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,6 +23,7 @@ namespace api.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin, Operator")]
         public async Task<IActionResult> Create(RideDto dto)
         {
             try {
@@ -47,6 +49,7 @@ namespace api.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "Admin, Operator")]
         public async Task<IActionResult> Update(Ride data)
         {
             try {
@@ -64,6 +67,7 @@ namespace api.Controllers
         }
 
         [HttpDelete("{rideId}")]
+        [Authorize(Roles = "Admin, Operator")]
         public async Task<IActionResult> Remove(int rideId) {
             try {
                 if (await rideRepository.RemoveAsync(rideId) is int id)

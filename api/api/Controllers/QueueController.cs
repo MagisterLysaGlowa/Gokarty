@@ -2,12 +2,14 @@
 using api.Exceptions;
 using api.Helpers;
 using api.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Controllers {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin, Operator")]
     public class QueueController : ControllerBase {
         private readonly IQueueRepository queueRepository;
         private readonly ITournamentTableHubSender hubSender;

@@ -2,13 +2,14 @@
 using api.Helpers;
 using api.Interfaces;
 using api.Models;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Controllers {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin, Operator")]
     public class SchoolController : ControllerBase {
         private readonly ISchoolRepository schoolRepository;
 

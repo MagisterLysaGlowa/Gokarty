@@ -12,6 +12,7 @@ namespace api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin, Operator")]
     public class GokartController : ControllerBase
     {
         private readonly IGokartRepository gokartRepository;
