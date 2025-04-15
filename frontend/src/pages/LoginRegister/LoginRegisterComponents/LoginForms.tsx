@@ -33,10 +33,10 @@ export const LoginForms: FC<Props> = ({ setIsLogin }) => {
         size="sm"
         onValueChange={(e) => setLogin((p) => ({ ...p, Password: e }))}
       />
-      <Button color="primary" onPress={async () => await loginAsync(login)}>
+      <Button className="bg-main-default disabled:cursor-not-allowed disabled:bg-zinc-800"  onPress={async () => await loginAsync(login)}>
         Zaloguj
       </Button>
-      <span onClick={() => setIsLogin(false)}>Rejestracja</span>
+      <span className="mx-auto">Nie masz konta? Zarejestruj się <span className="hover:cursor-pointer text-main-default underline" onClick={() => setIsLogin(false)}>tutaj</span></span>
     </>
   );
 };

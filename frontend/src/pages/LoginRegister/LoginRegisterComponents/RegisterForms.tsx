@@ -20,6 +20,13 @@ export const RegisterForms: FC<Props> = ({ setIsLogin }) => {
   return (
     <>
       <Input
+        value={register.Email}
+        label="Email"
+        type="email"
+        size="sm"
+        onValueChange={(e) => setRegister((p) => ({ ...p, Email: e }))}
+      />
+      <Input
         value={register.Login}
         label="Login"
         size="sm"
@@ -39,20 +46,13 @@ export const RegisterForms: FC<Props> = ({ setIsLogin }) => {
         size="sm"
         onValueChange={(e) => setRegister((p) => ({ ...p, PasswordRepeat: e }))}
       />
-      <Input
-        value={register.Email}
-        label="Email"
-        type="email"
-        size="sm"
-        onValueChange={(e) => setRegister((p) => ({ ...p, Email: e }))}
-      />
-      <Button
-        color="primary"
+      <Button 
+        className="bg-main-default  disabled:cursor-not-allowed disabled:bg-zinc-800" 
         onPress={async () => await registerAsync(register)}
       >
         Zarejestruj
       </Button>
-      <span onClick={() => setIsLogin(true)}>Logowanie</span>
+      <span className="text-center">Posiadasz konto? Zaloguj się tutaj <span className="hover:cursor-pointer text-main-default underline mx-auto" onClick={() => setIsLogin(true)}>tutaj</span></span>
     </>
   );
 };
