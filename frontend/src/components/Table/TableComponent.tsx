@@ -54,13 +54,18 @@ export const TableComponent: FC<TableProps> = ({
       ref={wrapperBox}
     >
       <div
-        style={{
-          top: Number(wrapperBox.current?.getBoundingClientRect().top) - 55,
-          right:
-            window.innerWidth -
-            Number(wrapperBox.current?.getBoundingClientRect().x) -
-            Number(wrapperBox.current?.getBoundingClientRect().width),
-        }}
+        style={
+          wrapperBox.current
+            ? {
+                top:
+                  Number(wrapperBox.current?.getBoundingClientRect().top) - 55,
+                right:
+                  window.innerWidth -
+                  Number(wrapperBox.current?.getBoundingClientRect().x) -
+                  Number(wrapperBox.current?.getBoundingClientRect().width),
+              }
+            : {}
+        }
         className={`fixed z-30 flex gap-2 items-center bg-[#27272A] py-2 overflow-hidden rounded-xl transition-all duration-500 ease-in-out origin-right ${
           selectedItems?.length ? "max-w-[500px] px-2" : "max-w-0 px-0"
         }`}

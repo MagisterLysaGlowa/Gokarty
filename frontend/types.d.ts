@@ -164,7 +164,7 @@ export type UserLogin = {
 };
 
 export type UserRegister = {
-  Login: string;
+  UserName: string;
   Password: string;
   PasswordRepeat: string;
   Email: string;

@@ -7,7 +7,7 @@ import {
   Button,
 } from "@heroui/react";
 import { ModalProps } from "../../../types";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { modalConfig } from "../../configs/modalConfig";
 import {
   cancelButtonConfig,
@@ -17,7 +17,7 @@ import {
 type YesNoModalProps = {
   modal: ModalProps;
   children: ReactNode;
-  onYes: () => void;
+  onYes: () => Promise<boolean> | boolean;
   header: string;
   buttonText?: string;
   isFunctionLoading?: boolean;
@@ -49,9 +49,8 @@ export const YesNoModal: React.FC<YesNoModalProps> = ({
               <Button
                 isLoading={isFunctionLoading}
                 {...confirmButtonConfig}
-                onPress={() => {
-                  onYes();
-                  onClose();
+                onPress={async () => {
+                  if (await onYes()) onClose();
                 }}
               >
                 {buttonText}

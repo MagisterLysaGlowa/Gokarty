@@ -1,16 +1,28 @@
 import apiClient from "./apiClient";
 
 export class BaseService {
-  static async create<T>(data: T | FormData, endpoint: string): Promise<QueryResponse> {
+  static async create<T>(
+    data: T | FormData,
+    endpoint: string
+  ): Promise<QueryResponse> {
     const response = await apiClient.post<QueryResponse>(endpoint, data, {
-      headers: data instanceof FormData ? { "Content-Type": "multipart/form-data" } : undefined,
+      headers:
+        data instanceof FormData
+          ? { "Content-Type": "multipart/form-data" }
+          : undefined,
     });
     return response.data;
   }
 
-  static async update<T>(data: T | FormData, endpoint: string): Promise<QueryResponse> {
+  static async update<T>(
+    data: T | FormData,
+    endpoint: string
+  ): Promise<QueryResponse> {
     const response = await apiClient.put<QueryResponse>(endpoint, data, {
-      headers: data instanceof FormData ? { "Content-Type": "multipart/form-data" } : undefined,
+      headers:
+        data instanceof FormData
+          ? { "Content-Type": "multipart/form-data" }
+          : undefined,
     });
     return response.data;
   }
@@ -30,8 +42,13 @@ export class BaseService {
     return response.data;
   }
 
-  static async massRemove(ids: number[], endpoint: string): Promise<QueryResponse> {
-    const response = await apiClient.delete<QueryResponse>(endpoint, {data: ids});
+  static async massRemove(
+    ids: number[],
+    endpoint: string
+  ): Promise<QueryResponse> {
+    const response = await apiClient.delete<QueryResponse>(endpoint, {
+      data: ids,
+    });
     return response.data;
   }
 }

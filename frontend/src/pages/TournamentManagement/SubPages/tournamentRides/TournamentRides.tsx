@@ -74,7 +74,8 @@ export const TournamentRides = () => {
             header="Usuwanie przejazdu"
             modal={removeModal}
             onYes={async () =>
-              removeRide(Number(selectedRide.timeData?.rideId))
+              (await removeRide(Number(selectedRide.timeData?.rideId)))
+                .status === 200
             }
             key={`remove-${selectedRide.timeData?.rideId}`}
           >

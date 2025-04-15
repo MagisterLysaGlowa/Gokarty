@@ -80,9 +80,12 @@ export const AddGokart = () => {
             isFunctionLoading={isRemoveLoading}
             header="Usuń gokart"
             modal={removeGokartModal}
-            onYes={async () =>
-              await removeGokartAsync(Number(selectedGokartId))
-            }
+            onYes={async () => {
+              return (
+                (await removeGokartAsync(Number(selectedGokartId))).status ===
+                200
+              );
+            }}
             key={`remove-${selectedGokartId}`}
           >
             {selectedGokart.name}
@@ -94,8 +97,11 @@ export const AddGokart = () => {
           isFunctionLoading={isMassRemoveLoading}
           header="Usuń gokarty"
           modal={massRemoveGokartModal}
-          onYes={async () => await removeGokartsAsync(selectedGokartIds)}
-          key={`remove-${selectedGokartIds.length}`}
+          onYes={async () => {
+            await removeGokartsAsync(selectedGokartIds);
+            return true;
+          }}
+          key={`remove-mass-${selectedGokartIds.length}`}
         >
           {`Czy chcesz usunąć ${selectedGokartIds.length} gokartów?`}
         </YesNoModal>

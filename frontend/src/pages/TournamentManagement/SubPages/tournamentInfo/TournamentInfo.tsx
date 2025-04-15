@@ -109,6 +109,7 @@ export const TournamentInfo = () => {
                   Number(tournament.tournamentId)
                 );
                 if (res.status === 200) navigate("/zawody");
+                return res.status === 200;
               }}
               key={`remove-${tournament.tournamentId}`}
             >
@@ -135,12 +136,14 @@ export const TournamentInfo = () => {
               modal={startEndModal}
               buttonText="Tak"
               onYes={async () =>
-                updateTournament({
-                  tournament: {
-                    ...tournament,
-                    tournamentStateId: tournament.tournamentStateId + 1,
-                  },
-                })
+                (
+                  await updateTournament({
+                    tournament: {
+                      ...tournament,
+                      tournamentStateId: tournament.tournamentStateId + 1,
+                    },
+                  })
+                ).status === 200
               }
               key={`state-${tournament.tournamentId}`}
             >

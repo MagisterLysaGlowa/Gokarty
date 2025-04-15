@@ -100,10 +100,12 @@ export const PlayersForTournament = () => {
           header="Usuwanie gracza z turnieju"
           modal={removeModal}
           onYes={async () =>
-            removePlayerFromTournament({
-              tournamentId: Number(tournamentId),
-              playerId: Number(selectedPlayerId),
-            })
+            (
+              await removePlayerFromTournament({
+                tournamentId: Number(tournamentId),
+                playerId: Number(selectedPlayerId),
+              })
+            ).status === 200
           }
           key={`remove-${selectedPlayerId}`}
         >
@@ -119,13 +121,14 @@ export const PlayersForTournament = () => {
           isFunctionLoading={isMassRemoveLoading}
           header="Usuwanie graczy z turnieju"
           modal={massRemoveModal}
-          onYes={async () =>
+          onYes={async () => {
             await removePlayersFromTournament({
               tournamentId: Number(tournamentId),
               playerIds: selectedPlayerIds,
-            })
-          }
-          key={`remove-${selectedPlayerIds.length}`}
+            });
+            return true;
+          }}
+          key={`remove-mass-${selectedPlayerIds.length}`}
         >
           {`Czy na pewno chcesz usunąć ${selectedPlayerIds.length} graczy z zawodów?`}
         </YesNoModal>

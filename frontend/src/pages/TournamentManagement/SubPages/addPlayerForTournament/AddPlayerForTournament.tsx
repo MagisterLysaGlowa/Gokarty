@@ -133,10 +133,12 @@ export const AddPlayerForTournament = () => {
           buttonText="Dodaj"
           header="Dodaj zawodnika"
           onYes={async () =>
-            addPlayer({
-              tournamentId: Number(tournamentId),
-              playerId: Number(selectedPlayerId),
-            })
+            (
+              await addPlayer({
+                tournamentId: Number(tournamentId),
+                playerId: Number(selectedPlayerId),
+              })
+            ).status === 201
           }
           modal={addModal}
           key={`add-${selectedPlayerId}`}
@@ -152,12 +154,13 @@ export const AddPlayerForTournament = () => {
           isFunctionLoading={isMassLoading}
           buttonText="Dodaj"
           header="Dodaj zawodników"
-          onYes={async () =>
+          onYes={async () => {
             await addPlayers({
               tournamentId: Number(tournamentId),
               playerIds: selectedPlayerIds,
-            })
-          }
+            });
+            return true;
+          }}
           modal={massAddModal}
           key={`add-${selectedPlayerIds.length}`}
         >

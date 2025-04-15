@@ -89,7 +89,7 @@ export const QueueManagement = () => {
 
   async function submitRide(isDisqualified: number) {
     if (drivingNow) {
-      await createRideAsync({
+      const res = await createRideAsync({
         deleteQueueId: Number(drivingNow.queueId),
         tournamentId: Number(tournamentId),
         gokartId: Number(drivingNow.gokart.gokartId),
@@ -99,10 +99,13 @@ export const QueueManagement = () => {
         isDisqualified: isDisqualified,
         penaltyPoints: penaltyPoints,
       });
-      setDrivingNow(undefined);
-      setTime("00:00:000");
-      setPenaltyPoints(0);
-      localStorage.setItem("isAnyoneDrivingNow" + tournamentId, "");
+      if (res && res.status === 201) {
+        setDrivingNow(undefined);
+        setTime("00:00:000");
+        setPenaltyPoints(0);
+        localStorage.setItem("isAnyoneDrivingNow" + tournamentId, "");
+      }
+      return res;
     }
   }
 
@@ -394,7 +397,7 @@ export const QueueManagement = () => {
         isFunctionLoading={isCreateLoading}
         header={!isDisquaified ? "Dodanie przejazdu" : "Dyskwalifikacja"}
         modal={confirmSubmitModal}
-        onYes={async () => await submitRide(isDisquaified)}
+        onYes={async () => (await submitRide(isDisquaified))?.status === 201}
         key={`confirmSubmit-${drivingNow?.queueId}`}
         buttonText="Zatwierdź"
       >
@@ -407,7 +410,10 @@ export const QueueManagement = () => {
       <YesNoModal
         header="Restart"
         modal={confirmRestartModal}
-        onYes={restartRide}
+        onYes={() => {
+          restartRide();
+          return true;
+        }}
         key={`confirmRestart-${drivingNow?.queueId}`}
         buttonText="Zatwierdź"
       >

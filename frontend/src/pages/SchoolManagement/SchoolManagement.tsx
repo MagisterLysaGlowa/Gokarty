@@ -134,6 +134,7 @@ export const SchoolManagement = () => {
               const res = await removeSchool(Number(selectedSchoolId));
               if (res.status === 200 && selectedSchoolId === selectedRow)
                 setSelectedRow(undefined);
+              return res.status === 200;
             }}
             key={`remove-${selectedSchoolId}`}
           >
@@ -157,7 +158,9 @@ export const SchoolManagement = () => {
             isFunctionLoading={isRemoveClassLoading}
             header="Usuwanie klasy"
             modal={removeClassModal}
-            onYes={async () => await removeClass(Number(selectedClassId))}
+            onYes={async () =>
+              (await removeClass(Number(selectedClassId))).status === 200
+            }
             key={`remove-${selectedClassId}`}
           >
             {selectedClass.name}
@@ -174,8 +177,11 @@ export const SchoolManagement = () => {
           isFunctionLoading={isMassRemoveClassLoading}
           header="Usuwanie klas"
           modal={massRemoveClassModal}
-          onYes={async () => await removeClasses(selectedClassIds)}
-          key={`remove-${selectedClassIds.length}`}
+          onYes={async () => {
+            await removeClasses(selectedClassIds);
+            return true;
+          }}
+          key={`remove-mass-${selectedClassIds.length}`}
         >
           {`Czy chcesz usunąć ${selectedClassIds.length} klas?`}
         </YesNoModal>

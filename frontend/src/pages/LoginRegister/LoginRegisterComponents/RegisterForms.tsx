@@ -8,7 +8,7 @@ type Props = {
 
 export const RegisterForms: FC<Props> = ({ setIsLogin }) => {
   const [register, setRegister] = useState<UserRegister>({
-    Login: "",
+    UserName: "",
     Email: "",
     Password: "",
     PasswordRepeat: "",
@@ -20,10 +20,10 @@ export const RegisterForms: FC<Props> = ({ setIsLogin }) => {
   return (
     <>
       <Input
-        value={register.Login}
-        label="Login"
+        value={register.UserName}
+        label="Nazwa użytkownika"
         size="sm"
-        onValueChange={(e) => setRegister((p) => ({ ...p, Login: e }))}
+        onValueChange={(e) => setRegister((p) => ({ ...p, UserName: e }))}
       />
       <Input
         value={register.Password}
