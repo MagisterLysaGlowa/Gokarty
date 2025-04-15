@@ -10,7 +10,7 @@ type Props = {
 
 export const LoginForms: FC<Props> = ({ setIsLogin }) => {
   const [login, setLogin] = useState<UserLogin>({
-    LoginOrEmail: "",
+    Email: "",
     Password: "",
   });
   const navigate = useNavigate();
@@ -21,10 +21,10 @@ export const LoginForms: FC<Props> = ({ setIsLogin }) => {
   return (
     <>
       <Input
-        value={login.LoginOrEmail}
-        label="Login lub Email"
+        value={login.Email}
+        label="Email"
         size="sm"
-        onValueChange={(e) => setLogin((p) => ({ ...p, LoginOrEmail: e }))}
+        onValueChange={(e) => setLogin((p) => ({ ...p, Email: e }))}
       />
       <Input
         value={login.Password}
@@ -35,12 +35,20 @@ export const LoginForms: FC<Props> = ({ setIsLogin }) => {
       />
       <Button
         isLoading={isLoading}
-        color="primary"
+        className="bg-main-default disabled:cursor-not-allowed disabled:bg-zinc-800"
         onPress={async () => await loginAsync(login)}
       >
         Zaloguj
       </Button>
-      <span onClick={() => setIsLogin(false)}>Rejestracja</span>
+      <span className="mx-auto">
+        Nie masz konta? Zarejestruj się{" "}
+        <span
+          className="hover:cursor-pointer text-main-default underline"
+          onClick={() => setIsLogin(false)}
+        >
+          tutaj
+        </span>
+      </span>
     </>
   );
 };

@@ -159,7 +159,7 @@ export type User = {
 };
 
 export type UserLogin = {
-  LoginOrEmail: string;
+  Email: string;
   Password: string;
 };
 

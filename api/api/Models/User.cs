@@ -1,19 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace api.Models
 {
-    public class User
+    public class User : IdentityUser
     {
-        [Key]
-        public int UserId { get; set; }
-        [Required]
-        public string Login { get; set; } = String.Empty;
-        [Required]
-        public string Password { get; set; } = String.Empty;
-        [Required]
-        public string Email { get; set; }=String.Empty;
-        [JsonIgnore]
-        public ICollection<UserRefreshToken> UserRefreshTokens { get; set; } = [];
     }
 }

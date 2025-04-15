@@ -2,8 +2,10 @@
 using api.Data;
 using api.Helpers;
 using api.Interfaces;
+using api.Models;
 using api.Repositories;
 using api.SignalRHubs;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
@@ -17,20 +19,20 @@ namespace api
 
             builder.WebHost.UseUrls([ "http://0.0.0.0:5079","http://localhost:5079" ]);
 
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
+
             // Add services to the container.
             builder.Services.AddSignalR();
             builder.Services.AddControllers();
-            builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<ITournamentRepository, TournamentRepository>();
             builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
             builder.Services.AddScoped<ISchoolRepository, SchoolRepository>();
             builder.Services.AddScoped<IGokartRepository, GokartRepository>();
             builder.Services.AddScoped<IRideRepository, RideRepository>();
             builder.Services.AddScoped<IQueueRepository, QueueRepository>();
-            builder.Services.AddScoped<IJwtService, JwtService>();
             builder.Services.AddScoped<ITournamentTableHubSender, TournamentTableHubSender>();
             builder.Services.AddScoped<IClassRepository, ClassRepository>();
-            builder.Services.AddScoped<JwtService>();
 
             builder.Services.AddDbContext<AppDbContext>(options =>
             {
@@ -52,21 +54,32 @@ namespace api
                         .AllowCredentials());
             });
 
+
+            //builder.Services.AddAuthorizationBuilder();
+
+            builder.Services.AddAuthorization();
+            builder.Services.AddIdentityApiEndpoints<User>().AddRoles<IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
+
+
             var app = builder.Build();
 
             app.UseCors("AllowReactApp");
-
             app.MapHub<TournamentTableHub>("/hubs/tournamentTable");
-
+            app.MapGroup("/api")
+                    .MapIdentityApi<User>();
             app.UseStaticFiles();
+            app.UseAuthorization();
+
+            
+
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
-
+                app.UseSwagger();
+                app.UseSwaggerUI();
             }
             app.UseHttpsRedirection();
-            app.UseAuthorization();
             app.MapControllers();
             app.Run();
         }

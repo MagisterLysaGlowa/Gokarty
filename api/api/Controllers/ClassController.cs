@@ -1,7 +1,6 @@
 ﻿using api.Helpers;
 using api.Interfaces;
 using api.Models;
-using api.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

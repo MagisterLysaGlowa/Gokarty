@@ -13,23 +13,27 @@ const HomePage = () => {
 
   return (
     <div className="h-full w-full flex flex-col overflow-auto">
-      <Header classNames="text-center flex justify-between items-center">
-        <Image src="images/gokart.png" height={60} />
-        <h1 className="text-[40px] flex items-center gap-2 font-medium">
-          <span>Gokarty</span>
-          <span className="text-main-default">
-            hub
-          </span>
-        </h1>
-        <Link to="/logowanie">Zapodaj logowanie</Link>
+      <Header className="grid grid-cols-[15%_70%_15%] content-center py-2">
+        <div  className="mx-auto">
+          {/* <Image src="images/gokart.png" className="h-[20px]"/> */}
+        </div>
+          <div className="lg:text-[40px] sm:text-[35px] xs:text-[30px] text-[25px] flex gap-2 font-medium text-center justify-center">
+            <span>Gokarty</span>
+            <span className="text-main-default">
+              hub
+            </span>
+          </div>
+        <label className="justify-center flex">
+          <Link to="/logowanie" className="text-center flex align-middle my-auto hover:text-zinc-300">Zapodaj logowanie</Link>
+        </label>
       </Header>
-      <div className="grid grid-cols-3 bg-white py-3 border-y-8 border-main-default ">
+      <div className="grid grid-cols-3 bg-white xl:p-4 lg:p-3 p-2 xl:border-y-8 lg:border-y-8 md:border-y-7 border-y-4 border-main-default w-full">
         <Image src="images/mainPage.jpg" className="rounded-none" />
         <Image src="images/mainPage.jpg" className="rounded-none" />
         <Image src="images/mainPage.jpg" className="rounded-none" />
       </div>
       <div className="flex flex-col justify-evenly flex-1 items-center">
-        <h2 className="text-4xl font-bold text-center m-5">Zawody kartingowe</h2>
+        <h2 className="lg:text-4xl md:text-3xl sm:text-2xl xs:text-xl text-lg font-bold text-center lg:m-5 md:m-3 m-2">Zawody kartingowe</h2>
         <div className="text-balance space-y-2 text-center md:w-2/3 md:mx-0 mx-2 lg:text-md md:text-sm text-xs">
         <p>
           ZSTIO limanowa słynie z wysokiego poziomu nauczania zawodowego wielu profili technicznych, jednym z nich

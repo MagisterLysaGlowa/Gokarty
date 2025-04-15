@@ -3,6 +3,7 @@ using api.Exceptions;
 using api.Helpers;
 using api.Interfaces;
 using api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
@@ -19,7 +20,7 @@ namespace api.Controllers
         {
             this.gokartRepository = gokartRepository;
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] GokartDto data)
         {
@@ -73,7 +74,7 @@ namespace api.Controllers
                 return StatusCode(500, new ResponseHelper(500, "ServerError", "Wystąpił nieoczekiwany błąd"));
             }
         }
-
+        [Authorize]
         [HttpDelete("{gokartId}")]
         public async Task<IActionResult> Remove(int gokartId)
         {

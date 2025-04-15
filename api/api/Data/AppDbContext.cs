@@ -1,8 +1,19 @@
 ﻿using api.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Data {
-    public class AppDbContext :DbContext {
+    public class AppDbContext : IdentityDbContext<
+        User,
+        IdentityRole,
+        string,
+        IdentityUserClaim<string>,
+        IdentityUserRole<string>,
+        IdentityUserLogin<string>,
+        IdentityRoleClaim<string>,
+        IdentityUserToken<string>>
+    {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {
 
         }
@@ -15,14 +26,13 @@ namespace api.Data {
         public DbSet<Ride> Rides { get; set; } = default!;
         public DbSet<Queue> Queues { get; set; } = default!;
         public DbSet<TournamentState> TournamentStates { get; set; } = default!;
-        public DbSet<User> Users { get; set; } = default!;
         public DbSet<TournamentType> TournamentTypes { get; set; } = default!;
         public DbSet<Class> Classes { get; set; } = default!;
         public DbSet<RideGroup> RideGroups { get; set; } = default!;
-        public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }=default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             /*PLAYER TO TOURNAMENT (MANY TO MANY)*/
+            base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<PlayerTournament>()
                         .HasKey(pt => new { pt.PlayersId, pt.TournamentsId });
@@ -136,13 +146,6 @@ namespace api.Data {
                         .HasForeignKey(q => q.GokartId)
                         .OnDelete(DeleteBehavior.Restrict);
 
-
-            modelBuilder.Entity<UserRefreshToken>()
-                        .HasOne(u=>u.User)
-                        .WithMany(g=>g.UserRefreshTokens)
-                        .HasForeignKey(u => u.UserId)
-                        .OnDelete(DeleteBehavior.Cascade);
-
             modelBuilder.Entity<TournamentState>().HasData(
                 new TournamentState() { TournamentStateId = 1, State = "Zaplanowane" },
                 new TournamentState() { TournamentStateId = 2, State = "W trakcie" },
@@ -150,8 +153,8 @@ namespace api.Data {
             );
 
             modelBuilder.Entity<Gokart>().HasData(
-                new Gokart() { GokartId = 1, Name = "Czarny 1" },
-                new Gokart() { GokartId = 2, Name = "Czarny 2" }
+                new Gokart() { GokartId = 1, Name = "Czarny 1", Image = "defaultGokartImage.jpg" },
+                new Gokart() { GokartId = 2, Name = "Czarny 2", Image = "defaultGokartImage.jpg" }
             );
 
             modelBuilder.Entity<School>().HasData(
@@ -178,7 +181,7 @@ namespace api.Data {
             );
 
             modelBuilder.Entity<Tournament>().HasData(
-                new Tournament() { TournamentId = 1, Name = "Wyścig", StartDate = new DateTime(2024, 10, 5, 12, 0, 0, DateTimeKind.Utc), EndDate = new DateTime(2024, 10, 5, 12, 0, 0, DateTimeKind.Utc), TournamentStateId = 1}
+                new Tournament() { TournamentId = 1, Name = "Wyścig", StartDate = new DateTime(2024, 10, 5, 12, 0, 0, DateTimeKind.Utc), EndDate = new DateTime(2024, 10, 5, 12, 0, 0, DateTimeKind.Utc), TournamentStateId = 1, Image = "defaultTournamentImage.jpg"}
             );
         }
     }

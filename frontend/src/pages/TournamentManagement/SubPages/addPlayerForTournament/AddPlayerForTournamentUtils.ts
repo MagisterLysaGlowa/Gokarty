@@ -35,6 +35,7 @@ export const useMemorizedPlayers = (players: PlayerData[] | undefined) =>
         ...player,
         lp: i + 1,
         id: player?.playerId,
+        school: player.class?.school?.name,
         birthDate: player.birthDate.toLocaleDateString(),
       })) || [],
     [players]
