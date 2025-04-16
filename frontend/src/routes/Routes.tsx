@@ -18,6 +18,10 @@ import { InfoPage } from "../pages/InfoPage/InfoPage";
 import { GokartsPage } from "../pages/GokartsPage/GokartsPage";
 import { QueueManagement } from "../pages/QueueManagement/QueueManagement";
 import { LoginRegister } from "../pages/LoginRegister/LoginRegister";
+import { ProtectedPathComponent } from "../components/ProtectedPathComponent/ProtectedPathComponent";
+import { Forbidden } from "../pages/Errors/Forbidden";
+import { TournamentsPage } from "../pages/TournamntsPage/TournamentsPage";
+import { protectedPathsWithRoles } from "../Utils/globalUtils";
 
 export const router = createBrowserRouter([
   {
@@ -35,11 +39,19 @@ export const router = createBrowserRouter([
           { path: "informacje", element: <InfoPage /> },
           { path: "gokarty", element: <GokartsPage /> },
           { path: "logowanie", element: <LoginRegister /> },
+          { path: "forbidden", element: <Forbidden /> },
+          { path: "turnieje", element: <TournamentsPage /> },
         ],
       },
       {
         path: "/",
-        element: <MainNavigationLayout />,
+        element: (
+          <ProtectedPathComponent
+            allowedRoles={protectedPathsWithRoles.get("management")}
+          >
+            <MainNavigationLayout />
+          </ProtectedPathComponent>
+        ),
         children: [
           { path: "zawody", element: <Tournaments /> },
           { path: "gokart", element: <AddGokart /> },

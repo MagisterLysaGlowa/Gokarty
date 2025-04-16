@@ -151,15 +151,8 @@ export type TableActionProps = {
   buttonProps: TableActionButtonProps;
 };
 
-export type User = {
-  UserId: number;
-  Login: string;
-  Password: string;
-  Email: string;
-};
-
 export type UserLogin = {
-  Email: string;
+  LoginOrEmail: string;
   Password: string;
 };
 
@@ -169,3 +162,16 @@ export type UserRegister = {
   PasswordRepeat: string;
   Email: string;
 };
+
+export type User = {
+  id: number;
+  userName: string;
+  email: string;
+  roles: Role[];
+};
+
+export type Role = {
+  id: number;
+  name: string;
+};
+export type Roles = "Admin" | "Operator";

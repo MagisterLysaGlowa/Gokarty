@@ -1,7 +1,8 @@
 import { Input, Button } from "@heroui/react";
 import { UserRegister } from "../../../../types";
 import { Dispatch, FC, useState } from "react";
-import { UserQuery } from "../../../queries/userQuery";
+import { AuthQuery } from "../../../queries/authQuery";
+import { successToast } from "../../../Utils/ToastNotifications";
 type Props = {
   setIsLogin: Dispatch<React.SetStateAction<boolean>>;
 };
@@ -13,8 +14,11 @@ export const RegisterForms: FC<Props> = ({ setIsLogin }) => {
     Password: "",
     PasswordRepeat: "",
   });
-  const { mutateAsync: registerAsync, isLoading } = UserQuery.register({
-    onSuccess: () => setIsLogin(true),
+  const { mutateAsync: registerAsync, isLoading } = AuthQuery.register({
+    onSuccess: () => {
+      setIsLogin(true);
+      successToast("Zarejestrowano");
+    },
   });
 
   return (

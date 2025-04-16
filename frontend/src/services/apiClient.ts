@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosResponse } from "axios";
 
+let sessionExpired: () => void;
+
+export const setSessionExpired = (fn: () => void) => {
+  sessionExpired = fn;
+};
+
 /**
  * Rekurencyjna funkcja zamieniająca stringi datowe na obiekty `Date`
  */
@@ -29,9 +35,20 @@ const apiClient = axios.create({
 });
 
 // Interceptor odpowiedzi – automatyczna konwersja stringów na `Date`
-apiClient.interceptors.response.use((response: AxiosResponse) => {
-  response.data = parseDates(response.data);
-  return response;
-});
+apiClient.interceptors.response.use(
+  (response: AxiosResponse) => {
+    response.data = parseDates(response.data);
+    return response;
+  },
+  (error) => {
+    if (
+      error.response?.status === 401 &&
+      typeof sessionExpired === "function"
+    ) {
+      sessionExpired();
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default apiClient;

@@ -1,5 +1,5 @@
 import { SlotsToClasses } from "@heroui/react";
-import { TableActionButtonProps } from "../../types";
+import { Roles, TableActionButtonProps, User } from "../../types";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { validateImageFile } from "../validations/ImageFileValidation";
 import { HiPlus } from "react-icons/hi";
@@ -82,4 +82,18 @@ export const defaultAddButtonProps: TableActionButtonProps = {
   isIconOnly: true,
   variant: "solid",
   color: "warning",
+};
+
+export const protectedPathsWithRoles = new Map<string, Roles[]>([
+  ["management", ["Admin", "Operator"]],
+]);
+
+export const amIAllowed = (
+  user: User | undefined,
+  alloweRoles: Roles[] | undefined
+) => {
+  if (!user?.roles.some((z) => alloweRoles?.includes(z.name as Roles))) {
+    return false;
+  }
+  return true;
 };

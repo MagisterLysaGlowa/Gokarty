@@ -1,47 +1,43 @@
 import { Input, Button } from "@heroui/react";
 import { Dispatch, FC, useState } from "react";
 import { UserLogin } from "../../../../types";
-import { UserQuery } from "../../../queries/userQuery";
-import { useNavigate } from "react-router-dom";
+import { AuthQuery } from "../../../queries/authQuery";
 
 type Props = {
   setIsLogin: Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const LoginForms: FC<Props> = ({ setIsLogin }) => {
-  const [login, setLogin] = useState<UserLogin>({
-    Email: "",
+  const [data, setData] = useState<UserLogin>({
+    LoginOrEmail: "",
     Password: "",
   });
-  const navigate = useNavigate();
-  const { mutateAsync: loginAsync, isLoading } = UserQuery.login({
-    onSuccess: () => navigate("/"),
-  });
+  const { mutateAsync: loginAsync, isLoading } = AuthQuery.login();
 
   return (
     <>
       <Input
-        value={login.Email}
+        value={data.LoginOrEmail}
         label="Email"
         size="sm"
-        onValueChange={(e) => setLogin((p) => ({ ...p, Email: e }))}
+        onValueChange={(e) => setData((p) => ({ ...p, LoginOrEmail: e }))}
       />
       <Input
-        value={login.Password}
+        value={data.Password}
         label="Hasło"
         type="password"
         size="sm"
-        onValueChange={(e) => setLogin((p) => ({ ...p, Password: e }))}
+        onValueChange={(e) => setData((p) => ({ ...p, Password: e }))}
       />
       <Button
         isLoading={isLoading}
         className="bg-main-default disabled:cursor-not-allowed disabled:bg-zinc-800"
-        onPress={async () => await loginAsync(login)}
+        onPress={async () => await loginAsync(data)}
       >
         Zaloguj
       </Button>
       <span className="mx-auto">
-        Nie masz konta? Zarejestruj się{" "}
+        Nie masz konta? Zarejestruj się
         <span
           className="hover:cursor-pointer text-main-default underline"
           onClick={() => setIsLogin(false)}
