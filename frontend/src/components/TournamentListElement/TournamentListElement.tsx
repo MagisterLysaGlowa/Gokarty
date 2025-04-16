@@ -1,4 +1,3 @@
-import "./tournamentListElement.css";
 import { useNavigate } from "react-router-dom";
 import { TournamentData } from "../../../types";
 import { Image } from "@heroui/react";

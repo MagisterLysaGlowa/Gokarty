@@ -15,7 +15,7 @@ export const StaticPageNavbar = () => {
     );
   }, [pathname, selected]);
   return (
-    <div className="text-md flex gap-10 justify-center items-center text-xl">
+    <div className="md:text-md lg:text-lg sm:text-sm text-xs flex lg:gap-10 md:gap-8 sm:gap-6 xs:gap-4 gap-2 justify-center items-center">
       {staticPageNav.map((z) => (
         <Link
           to={z.to}

@@ -6,19 +6,20 @@
 * {
   @apply p-0 m-0 box-border font-jura;
 }
+.customScroll::-webkit-scrollbar {
+  @apply w-2;
+}
+
+.customScroll::-webkit-scrollbar-track {
+  @apply bg-support rounded-xl;
+}
+
+.customScroll::-webkit-scrollbar-thumb {
+  @apply w-full bg-main-default rounded-xl;
+}
 
 .page {
   @apply h-full p-3 max-h-[calc(100dvh-12px)];
-}
-
-::-webkit-scrollbar {
-  @apply w-2;
-}
-::-webkit-scrollbar-track {
-  @apply  bg-support rounded-xl;
-}
-::-webkit-scrollbar-thumb {
-  @apply w-full bg-main-default rounded-xl;
 }
 
 img {
