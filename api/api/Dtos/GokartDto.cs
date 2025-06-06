@@ -2,6 +2,7 @@
 {
     public class GokartDto
     {
-        public string? Name { get; set; }
+        public string Gokart { get; set; } = String.Empty;
+        public IFormFile? Image { get; set; }
     }
 }

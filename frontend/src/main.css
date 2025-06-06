@@ -1,0 +1,27 @@
+@import url("https://fonts.googleapis.com/css2?family=Jura:wght@300..700&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  @apply p-0 m-0 box-border font-jura;
+}
+.customScroll::-webkit-scrollbar {
+  @apply w-2;
+}
+
+.customScroll::-webkit-scrollbar-track {
+  @apply bg-support rounded-xl;
+}
+
+.customScroll::-webkit-scrollbar-thumb {
+  @apply w-full bg-main-default rounded-xl;
+}
+
+.page {
+  @apply h-full p-3 max-h-[calc(100dvh-12px)];
+}
+
+img {
+  @apply object-cover
+}

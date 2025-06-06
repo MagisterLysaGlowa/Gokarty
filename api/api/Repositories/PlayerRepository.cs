@@ -5,149 +5,115 @@ using api.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Repositories {
-    public class PlayerRepository :IPlayerRepository {
+    public class PlayerRepository : IPlayerRepository {
         private readonly AppDbContext _context;
 
-        public PlayerRepository(AppDbContext context) {
-            _context = context;
-        }
+        public PlayerRepository(AppDbContext context) => _context = context;
 
-        public int AddPlayerToTournament(int tournamentId, int playerId) {
-            var playerTournament = new PlayerTournament() {
-                PlayersId = playerId,
-                TournamentsId = tournamentId
-            };
-            if(!_context.PlayerTournaments.Any(e => e.TournamentsId == tournamentId && e.PlayersId == playerId)) {
-                _context.PlayerTournaments.Add(playerTournament);
-                _context.SaveChanges();
-                return playerId;
-            }
-            throw new InvalidOperationException("Something went wrong");
-        }
-
-        public Player Create(Player player, int tournamentId) {
-            var tournament = _context.Tournaments.Find(tournamentId);
-            if(tournament == null)
-                return null!;
-            _context.Add(player);
-            tournament?.PlayerTournaments.Add(new PlayerTournament { Player = player });
-            _context.SaveChanges();
+        public async Task<Player> CreateAsync(Player player)
+        {
+            await _context.AddAsync(player);
+            await _context.SaveChangesAsync();
             return player;
         }
 
-        public List<Player> FilterPlayers(PlayerFilterDto dto) {
-            var players = _context.Players.Include(z => z.School).ToList();
+        public async Task<Player> UpdateAsync(Player player)
+        {
+            player.Class = null;
+            _context.Players.Update(player);
+            await _context.SaveChangesAsync();
+            return player;
+        }
 
-            if(dto.Name != "" && dto.Name != null) {
-                players = players.Where(p => p.Name!.ToLower().Contains(dto.Name.ToLower())).ToList();
+        public async Task<int?> RemoveAsync(int playerId)
+        {
+            if (await _context.Players.FindAsync(playerId) is Player player)
+            {
+                _context.Remove(player);
+                await _context.SaveChangesAsync();
+                return playerId;
+            }
+            return null;
+        }
+
+        public async Task<Player?> GetAsync(int playerId)
+        {
+            return await _context.Players
+                .Include(p => p.Class)
+                .ThenInclude(c => c.School)
+                .FirstAsync(p => p.PlayerId == playerId);
+        }
+
+        public async Task<List<Player>> FilterPlayersAsync(PlayerFilterDto dto) {
+            var players = await _context.Players
+                .Include(z => z.Class)
+                .ThenInclude(z => z.School)
+                .ToListAsync();
+
+            if (!string.IsNullOrEmpty(dto.Name)) {
+                players = players.Where(p => p.Name.ToLower().Contains(dto.Name.ToLower())).ToList();
             }
 
-            if(dto.Surname != "" && dto.Surname != null) {
-                players = players.Where(p => p.Surname!.ToLower().Contains(dto.Surname.ToLower())).ToList();
+            if (!string.IsNullOrEmpty(dto.Surname)) {
+                players = players.Where(p => p.Surname.ToLower().Contains(dto.Surname.ToLower())).ToList();
             }
 
-            if(dto.SchoolId != 0) {
-                players = players.Where(p => p.SchoolId == dto.SchoolId).ToList();
+            if (dto.SchoolId != 0) {
+                players = players.Where(p => p.Class.SchoolId == dto.SchoolId).ToList();
             }
 
-            var playersInThisTournament = _context.PlayerTournaments
+            if (dto.ClassId != 0) {
+                players = players.Where(p => p.ClassId == dto.ClassId).ToList();
+            }
+
+            var playersInThisTournament = await _context.PlayerTournaments
                 .Where(t => t.TournamentsId == dto.TournamentId)
                 .Select(t => t.PlayersId)
-                .ToList();
+                .ToListAsync();
 
             players = players.Where(p => !playersInThisTournament.Contains(p.PlayerId)).ToList();
 
             return players;
         }
 
-        public Player Get(int playerId) {
-            var player = _context.Players.Find(playerId);
-            if(player == null)
-                return null!;
-            return player;
+
+        public async Task<List<Player>> GetAllForTournamentAsync(int tournamentId) {
+           return await _context.PlayerTournaments
+                .Where(pt => pt.TournamentsId == tournamentId)
+                .Include(pt => pt.Player)
+                    .ThenInclude(p => p.Class)
+                        .ThenInclude(c => c.School)
+                .Select(pt => pt.Player)
+                .OrderBy(p=>p.PlayerId)
+                .ToListAsync();
         }
 
-        public List<Player> GetAll() {
-            var players = _context.Players.ToList();
-            if(players == null)
-                return null!;
-            return players;
-        }
-
-        public List<Player> GetAllForTournament(int tournamentId) {
-            var players = _context.PlayerTournaments
-                            .Where(pt => pt.TournamentsId == tournamentId)
-                            .Select(pt => pt.Player)
-                            .ToList();
-            return players;
-        }
-
-        public List<PlayerSchool> GetAllForTournamentWithSchool(int tournamentId) {
-            var players = _context.PlayerTournaments.Where(pt => pt.TournamentsId == tournamentId).Select(pt => pt.Player).ToList();
-            var playersWithSchool = new List<PlayerSchool>();
-
-            foreach(var player in players) {
-                playersWithSchool.Add(new PlayerSchool {
-                    PlayerId = player.PlayerId,
-                    Name = player.Name,
-                    Surname = player.Surname,
-                    BirthDate = player.BirthDate,
-                    School = _context.Schools.FirstOrDefaultAsync(s => s.SchoolId == player.SchoolId).Result,
-                });
+        public async Task<int?> AddToTournamentAsync(int tournamentId, int playerId)
+        {
+            if (!_context.PlayerTournaments.Any(e => e.TournamentsId == tournamentId && e.PlayersId == playerId) && _context.Players.Any(p => p.PlayerId == playerId)) {
+                var playerTournament = new PlayerTournament() {
+                    PlayersId = playerId,
+                    TournamentsId = tournamentId
+                };
+                await _context.PlayerTournaments.AddAsync(playerTournament);
+                await _context.SaveChangesAsync();
+                return playerId;
             }
-
-            return playersWithSchool;
+            return null;
         }
 
-        public PlayerSchool GetPlayerWithSchool(int playerId) {
-            var player = _context.Players.FirstOrDefaultAsync(p => p.PlayerId == playerId).Result;
-            if(player == null)
-                return null!;
-            var playerSchool = new PlayerSchool {
-                PlayerId = player.PlayerId,
-                Name = player.Name,
-                Surname = player.Surname,
-                BirthDate = player.BirthDate,
-                School = _context.Schools.FirstOrDefaultAsync(s => s.SchoolId == player.SchoolId).Result,
-            };
-            return playerSchool;
-        }
-
-        public int Remove(int playerId) {
-            var player = _context.Players.Find(playerId);
-            if(player == null)
-                return 0;
-            _context.Remove(player);
-            _context.SaveChanges();
-            return playerId;
-        }
-
-        public int RemovePlayerFromTournament(int tournamentId, int playerId) {
-            var playerTournament = _context.PlayerTournaments
-                .FirstOrDefault(pt => pt.PlayersId == playerId && pt.TournamentsId == tournamentId);
-            if(playerTournament == null) {
-                throw new InvalidCastException("Something went wrong");
+        public async Task<int?> RemoveFromTournamentAsync(int tournamentId, int playerId) {
+            var playerTournament = await _context.PlayerTournaments.FirstOrDefaultAsync(pt => pt.PlayersId == playerId && pt.TournamentsId == tournamentId);
+            if (playerTournament is PlayerTournament pt) {
+                _context.PlayerTournaments.Remove(playerTournament);
+                await _context.SaveChangesAsync();
+                return playerTournament.PlayersId;
             }
-            _context.PlayerTournaments.Remove(playerTournament);
-            _context.SaveChanges();
-
-            return playerTournament.PlayersId;
+            return null;
         }
 
-
-        public Player Update(int playerId, Player player) {
-            var player_db = _context.Players.Find(playerId);
-            if(player_db == null)
-                return null!;
-
-            player_db.Name = player.Name;
-            player_db.Surname = player.Surname;
-            player_db.BirthDate = player.BirthDate;
-            player_db.SchoolId = player.SchoolId;
-
-            _context.Players.Update(player_db);
-            _context.SaveChanges();
-            return player_db;
+        public async Task<bool> ExistsAsync(int playerId) {
+            return await _context.Players.AnyAsync(p=>p.PlayerId==playerId);
         }
     }
 }

@@ -1,14 +1,12 @@
 ﻿using api.Models;
 
-namespace api.Interfaces
-{
-    public interface IGokartRepository
-    {
-        Gokart Create(Gokart gokart);
-        Gokart Update(int gokartId, Gokart gokart);
-        int Remove(int gokartId);
-        List<Gokart> GetAll();
-        Gokart Get(int gokartId);
-
+namespace api.Interfaces {
+    public interface IGokartRepository {
+        Task<Gokart> CreateAsync(Gokart gokart);
+        Task<Gokart> UpdateAsync(Gokart gokart);
+        Task<int?> RemoveAsync(int gokartId);
+        Task<Gokart?> GetAsync(int gokartId);
+        Task<List<Gokart>> GetAllAsync();
+        Task<bool> ExistsAsync(int gokartId);
     }
 }

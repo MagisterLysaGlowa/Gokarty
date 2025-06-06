@@ -1,174 +1,177 @@
-export interface LoginFormData {
-  login: string;
-  password: string;
-}
-
-export interface TournamentFormData {
-  name: string;
-  startDate: Date;
-  endDate: Date;
-  tournamentStateId: number;
-  tournamentTypeId: number;
-}
-
-export interface TournamentType {
-  tournamentTypeId: number;
-  name: string;
-}
-
-export interface PlayerFormData {
-  name: string;
-  surname: string;
-  birthDate: Date;
-  schoolId: number;
-}
-
-export interface PlayerFilterFormData {
-  name: string;
-  surname: string;
-  schoolId: number;
-  tournamentId: number;
-}
-
-export interface SchoolFormData {
-  name: string;
-  city: string;
-  acronym: string;
-}
-
-export interface GokartFormData {
-  name: string;
-}
-
-export interface RideFormData {
-  tournamentId: number;
-  playerId: number;
-  gokartId: number;
-  time: number;
-  isDisqualified: number;
-}
-
-export interface QueueFormData {
-  tournamentId: number;
-  gokartIds: Array<number>;
-  numberOfRidesInOneGokart: number;
-}
-
-export interface UserData {
-  userId: number;
-  login: string;
-  access: string;
-}
-
-export interface TournamentData {
-  tournamentId: number;
-  name: string;
-  startDate: Date;
-  endDate: Date;
-  tournamentStateId: number;
-  tournamentTypeId: number;
-  tournamentType: TournamentType;
-}
-
-export interface TournamentFullData {
-  tournamentId: number;
-  name: string;
-  startDate: Date;
-  endDate: Date;
-  tournamentStateId: number;
-}
-
-export interface PlayerData {
-  playerId: number;
-  name: string;
-  surname: string;
-  birthDate: Date;
-  schoolId: number;
-}
-
-export interface SchoolData {
-  schoolId: number;
-  name: string;
-  city: string;
-  acronym: string;
-}
-
-export interface PlayerWithSchoolData {
-  playerId: number;
-  name: string;
-  surname: string;
-  birthDate: Date;
-  school: SchoolData;
-}
-
 export interface GokartData {
-  gokartId: number;
+  gokartId?: number;
   name: string;
-}
-
-export interface RideData {
-  rideId: number;
-  tournamentId: number;
-  playerId: number;
-  gokartId: number;
-  time: number;
-  rideNumber: number;
-  isDisqualified: boolean;
-}
-
-export interface FullRideData {
-  rideId: number;
-  tournamentId: number;
-  playerId: number;
-  gokartId: number;
-  time: number;
-  rideNumber: number;
-  tournament: TournamentData;
-  player: PlayerWithSchoolData;
-  gokart: GokartData;
-  isDisqualified: boolean;
-}
-
-export interface RideStatusData {
-  rideStatusId: number;
-  state: string;
+  description?: string;
+  image?: string;
 }
 
 export interface QueueData {
   queueId: number;
   tournamentId: number;
-  playerId: number;
-  queuePosition: number;
-  rideStatusId: number;
-  gokartId: number;
-}
-
-export interface FullQueueData {
-  queueId: number;
-  tournamentId: number;
-  playerId: number;
-  queuePosition: number;
-  rideStatusId: number;
   tournament: TournamentData;
-  player: PlayerWithSchoolData;
-  rideStatus: RideStatusData;
+  playerId: number;
+  player: PlayerData;
+  queuePosition: number;
   gokartId: number;
   gokart: GokartData;
 }
 
-export interface Time {
-  ms: number;
-  s: number;
-  m: number;
-  h: number;
+export interface QueueFormData {
+  tournamentId: number;
+  gokartIds: number[];
+  numberOfRidesInOneGokart: number;
 }
 
-export interface PhotoCellData {
-  lapCount: number;
-  lapsLeft: number;
-  time: Time;
-  startPermission: boolean;
-  photocell1Activ: boolean;
-  photocell2Activ: boolean;
-  photocell3Activ: boolean;
+export interface TournamentData {
+  tournamentId?: number;
+  name: string;
+  startDate: Date;
+  endDate: Date;
+  tournamentStateId: number;
+  tournamentTypeId: number;
+  tournamentState?: TournamentStateData;
+  tournamentType?: TournamentTypeData;
+  image?: string;
 }
+
+export interface TournamentStateData {
+  turnamentStateId?: number;
+  state: string;
+}
+
+export interface TournamentTypeData {
+  tournamentTypeId?: number;
+  name: string;
+}
+
+export interface PlayerData {
+  playerId?: number;
+  name: string;
+  surname: string;
+  birthDate: Date;
+  classId: number;
+  class?: ClassData;
+}
+
+export interface PlayerFilterFormData {
+  name: string;
+  surname: string;
+  schoolId?: number;
+  classId?: number;
+  tournamentId: number;
+}
+
+export interface ClassData {
+  classId?: number;
+  name: string;
+  schoolId: number;
+  school?: SchoolData;
+}
+
+export interface SchoolData {
+  schoolId?: number;
+  name: string;
+  city: string;
+  acronym: string;
+}
+
+export interface RideFormData {
+  deleteQueueId: number;
+  tournamentId: number;
+  playerId: number;
+  gokartId: number;
+  classId: number;
+  time: number;
+  isDisqualified: number;
+  penaltyPoints: number;
+}
+
+export interface RideAndPersonData {
+  ride: RideData;
+  playerId: number;
+  player: PlayerData;
+  classId: number;
+  class: ClassData;
+  tournamentId: number;
+  tournament: TournamentData;
+}
+
+export type RideGroupData = {
+  rideGroupId: number;
+  rides: RideData[];
+  playerId: number;
+  player: PlayerData;
+  classId: number;
+  class: ClassData;
+  tournamentId: number;
+  tournament: TournamentData;
+};
+
+export interface RideData {
+  gokartId: number;
+  gokart?: GokartData;
+  rideNumber: number;
+  time: number;
+  rideId: number;
+  isDisqualified: boolean;
+  penaltyPoints: number;
+  rideGroupId: number;
+}
+
+export type ModalProps = {
+  isOpen: boolean;
+  onOpenChange: () => void;
+  onOpen: () => void;
+};
+
+export type TableActionButtonProps = {
+  size?: "sm" | "md" | "lg";
+  endContent?: React.ReactNode;
+  variant?:
+    | "flat"
+    | "solid"
+    | "bordered"
+    | "light"
+    | "faded"
+    | "shadow"
+    | "ghost";
+  color?:
+    | "default"
+    | "primary"
+    | "secondary"
+    | "success"
+    | "warning"
+    | "danger";
+  className?: string;
+  isIconOnly?: boolean;
+};
+
+export type TableActionProps = {
+  modal: ModalProps;
+  buttonProps: TableActionButtonProps;
+};
+
+export type UserLogin = {
+  LoginOrEmail: string;
+  Password: string;
+};
+
+export type UserRegister = {
+  UserName: string;
+  Password: string;
+  PasswordRepeat: string;
+  Email: string;
+};
+
+export type User = {
+  id: number;
+  userName: string;
+  email: string;
+  roles: Role[];
+};
+
+export type Role = {
+  id: number;
+  name: string;
+};
+export type Roles = "Admin" | "Operator" | "Player";

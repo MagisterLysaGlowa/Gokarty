@@ -1,43 +1,30 @@
+.navbar {
+  @apply hover:w-[500px] hover:backdrop-blur-lg hover:bg-nav-bg-hover;
 
-.appNavBar{
-    width: 100%;
-    display: flex;
-    height: 75px;
-    background-color: black;
-    color: white;
-    justify-content: space-between;
-    align-items: center;
-    font-weight: 500;
-    font-size: 17px;
+  @apply bg-nav-bg
+  w-nav-w
+  fixed 
+  top-0 
+  left-0 
+  h-dvh
+  flex
+  flex-col
+  justify-between
+  py-5
+  transition-all
+  z-50
+  overflow-hidden
+  text-purple-600;
 }
 
-.appNavBar>*{
-    align-items: center;
+.navbarListElement {
+  @apply flex h-[50px] items-center w-max gap-5 hover:text-yellow-300 duration-300; 
 }
 
-.left{
-    display: flex;
-    gap: 20px;
+.navbarListElementIcon {
+  @apply min-w-nav-w text-[40px] flex justify-center;
 }
 
-.appNavBar img{
-    padding: 10px;
-    height: 75px;
-    transition: all ease-in-out .5s;
-}
-
-.appNavBar img:hover{
-    transform: rotateY(180deg);
-}
-
-ul{
-    margin: 0 !important;
-    list-style: none;
-    display: flex;
-    gap: 30px;
-}
-
-.appNavBar a{
-    text-decoration: none;
-    color: white;
+.navbarListElementText {
+  @apply flex-1 text-nowrap text-2xl font-medium;
 }

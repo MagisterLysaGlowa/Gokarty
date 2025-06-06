@@ -1,37 +1,25 @@
-import { UserData } from "../../types";
+import { User, UserLogin, UserRegister } from "../../types";
 import apiClient from "./apiClient";
 
-export const login = async (
-  login: string,
-  password: string
-): Promise<string> => {
-  const formData = new FormData();
-  formData.append("login", login);
-  formData.append("password", password);
+export class AuthService {
+  static async login(data: UserLogin): Promise<User> {
+    const response = await apiClient.post("/auth/login", data);
+    return response.data;
+  }
 
-  const response = await apiClient.post<string>("/auth/login", formData, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    withCredentials: true,
-  });
-  return response.data;
-};
+  static async register(data: UserRegister) {
+    const response = await apiClient.post("/auth/register", data);
+    return response.data;
+  }
 
-export const logout = async (): Promise<void> => {
-  await apiClient.post<string>("/auth/logout", {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    withCredentials: true,
-  });
-};
+  static async logout() {
+    const response = await apiClient.post("/auth/logout");
+    return response.data;
+  }
 
-export const getUser = async (): Promise<UserData> => {
-  const response = await apiClient.get<UserData>("/auth/user", {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  return response.data;
-};
+  static async isUserLoggedIn(): Promise<User> {
+    const response = await apiClient.post("/auth/isUserLoggedin");
+    return response.data;
+  }
+}
+export default AuthService;

@@ -1,0 +1,30 @@
+.homeContainer {
+  @apply min-h-full 
+  flex 
+  flex-col 
+  justify-between 
+  border-3 
+  rounded-[30px] 
+  border-main-default 
+  px-10
+  py-5;
+}
+
+.homeNavigationElement {
+  @apply w-full 
+  rounded-[2dvw]
+  md:rounded-[1dvw]
+  bg-support 
+  text-main-default 
+  aspect-square 
+  flex 
+  items-center 
+  justify-center
+  transition-all
+  duration-300;
+
+  @apply hover:text-nav-selected hover:bg-nav-bg-hover;
+}
+.btnImg{
+  font-size: 250%;
+}

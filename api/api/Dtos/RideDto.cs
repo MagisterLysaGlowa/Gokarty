@@ -5,10 +5,13 @@ namespace api.Dtos
 {
     public class RideDto
     {
+        public int deleteQueueId { get; set; }
         public int TournamentId { get; set; }
         public int PlayerId { get; set; }
         public int GokartId { get; set; }
+        public int ClassId { get; set; }
         public int Time { get; set; }
         public int IsDisqualified { get; set; }
+        public int PenaltyPoints { get; set; }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using api.Data;
+using api.Helpers;
 using api.Interfaces;
 using api.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Repositories
 {
@@ -8,51 +10,55 @@ namespace api.Repositories
     {
         private readonly AppDbContext _context;
 
-        public TournamentRepository(AppDbContext context)
-        {
-            _context = context;
-        }
+        public TournamentRepository(AppDbContext context) => _context = context;
 
-        public Tournament Create(Tournament tournament)
+
+        public async Task<Tournament> CreateAsync(Tournament tournament)
         {
-            _context.Tournaments.Add(tournament);
-            _context.SaveChanges();
+            await _context.Tournaments.AddAsync(tournament);
+            await _context.SaveChangesAsync();
             return tournament;
         }
 
-        public Tournament Update(int tournamentId, Tournament tournament)
+        public async Task<Tournament?> UpdateAsync(Tournament data)
         {
-            var tournament_db = _context.Tournaments.Find(tournamentId);
-            if (tournament_db == null) return null!;
-
-            tournament_db.Name = tournament.Name;
-            tournament_db.StartDate = tournament.StartDate;
-            tournament_db.EndDate = tournament.EndDate;
-            tournament_db.TournamentStateId = tournament.TournamentStateId;
-            tournament_db.TournamentTypeId = tournament.TournamentTypeId;
-
-            _context.Tournaments.Update(tournament_db);
-            _context.SaveChanges();
-            return tournament_db;
+            data.TournamentState = null;
+            data.TournamentType = null;
+            _context.Tournaments.Update(data);
+            await _context.SaveChangesAsync();
+            return data;
         }
 
-        public int Remove(int tournamentId)
+        public async Task<int?> RemoveAsync(int tournamentId)
         {
-            var tournament = _context.Tournaments.Find(tournamentId);
-            if (tournament == null) return 0;
-            _context.Tournaments.Remove(tournament);
-            _context.SaveChanges();
-            return tournamentId;
+            if (await _context.Tournaments.FindAsync(tournamentId) is Tournament t && await ImageHelper.DeleteImage(t.Image)) {
+                _context.Tournaments.Remove(t);
+                await _context.SaveChangesAsync();
+                return tournamentId;
+            }
+            return null;
         }
 
-        public List<Tournament> GetAll()
+        public async Task<List<Tournament>> GetAllAsync()
         {
-            return _context.Tournaments.ToList();
+            return await _context.Tournaments
+                .Include(t => t.TournamentState)
+                .Include(t => t.TournamentType)
+                .OrderBy(t => t.TournamentStateId)
+                    .ThenByDescending(t => t.StartDate)
+                .ToListAsync();
         }
 
-        public Tournament Get(int tournamentId)
+        public async Task<Tournament?> GetAsync(int tournamentId)
         {
-            return _context.Tournaments.Find(tournamentId)!;
+            return await _context.Tournaments
+                .Include(z => z.TournamentType)
+                .Include(z => z.TournamentState)
+                .FirstOrDefaultAsync(z => z.TournamentId == tournamentId);
+        }
+
+        public async Task<bool> ExistsAsync(int tournamentId) {
+           return await _context.Tournaments.AnyAsync(t=>t.TournamentId==tournamentId);
         }
     }
 }

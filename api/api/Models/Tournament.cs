@@ -1,21 +1,21 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace api.Models {
     public class Tournament {
         public int TournamentId { get; set; }
-        public string? Name { get; set; }
+        public string Name { get; set; } = String.Empty;
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public int TournamentStateId { get; set; }
-        public TournamentState TournamentState { get; set; } = default!;
+        public TournamentState? TournamentState { get; set; } = default!;
         public int? TournamentTypeId { get; set; }
-        public TournamentType TournamentType { get; set; } = default!;
+        public TournamentType? TournamentType { get; set; } = default!;
+        public string Image { get; set; } = String.Empty;
         [JsonIgnore]
-        public List<PlayerTournament> PlayerTournaments { get; set; } = new();
+        public ICollection<PlayerTournament> PlayerTournaments { get; set; } = [];
         [JsonIgnore]
-        public ICollection<Ride> Rides { get; } = default!;
+        public ICollection<RideGroup> RideGroups { get; } = [];
         [JsonIgnore]
-        public ICollection<Queue> Queues { get; } = default!;
+        public ICollection<Queue> Queues { get; } = [];
     }
 }

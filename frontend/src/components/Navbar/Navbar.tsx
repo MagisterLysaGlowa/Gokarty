@@ -1,30 +1,48 @@
-import "bootstrap/dist/css/bootstrap.min.css";
 import "./navbar.css";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { navElements } from "./navbarUtils";
+import { NavbarListElement } from "./NavbarListElement";
+import { Divider } from "@heroui/react";
+import { useLocation } from "react-router-dom";
 
 const Navbar = () => {
+  const [selected, setSelected] = useState(-1);
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    setSelected(
+      () =>
+        navElements.find((z) =>
+          z.to.substring(1).startsWith(pathname.split("/")[1])
+        )?.id ?? -1
+    );
+  }, [pathname, selected]);
+
   return (
-    <nav className="appNavBar px-5">
-      <div className="left">
-        <div>
-          <img src="/images/gokart.png" alt="Logo" />
-        </div>
-        <div>
-          <ul>
-            <li>
-              <Link to={"/"}>Strona Główna</Link>
-            </li>
-            <li>
-              <Link to={"/zawody"}>Zawody</Link>
-            </li>
-            <li>
-              <Link to={"/"}>Archiwum</Link>
-            </li>
-          </ul>
-        </div>
+    <nav className="navbar">
+      <div className="flex flex-col gap-6">
+        {navElements
+          .filter((z) => z !== navElements[navElements.length - 1])
+          .map((el) => (
+            <div key={el.id} className="flex flex-col gap-6">
+              <NavbarListElement
+                element={el}
+                selected={selected}
+                setSelected={setSelected}
+              />
+              {el !== navElements[navElements.length - 2] && (
+                <Divider className="w-[90%] mx-auto h-[2px] bg-nav-separator" />
+              )}
+            </div>
+          ))}
       </div>
       <div>
-        <Link to={"/"}>Zaloguj</Link>
+        <NavbarListElement
+          element={navElements[navElements.length - 1]}
+          selected={selected}
+          setSelected={setSelected}
+          key={navElements[navElements.length - 1].id}
+        />
       </div>
     </nav>
   );

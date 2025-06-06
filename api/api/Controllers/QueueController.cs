@@ -1,92 +1,68 @@
 ﻿using api.Dtos;
+using api.Exceptions;
+using api.Helpers;
 using api.Interfaces;
-using api.Models;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-namespace api.Controllers
-{
+namespace api.Controllers {
     [Route("api/[controller]")]
     [ApiController]
-    public class QueueController : ControllerBase
-    {
+    [Authorize(Roles = "Admin, Operator")]
+    public class QueueController : ControllerBase {
         private readonly IQueueRepository queueRepository;
+        private readonly ITournamentTableHubSender hubSender;
 
-        public QueueController(IQueueRepository queueRepository)
-        {
+        public QueueController(IQueueRepository queueRepository, ITournamentTableHubSender hubSender) {
             this.queueRepository = queueRepository;
+            this.hubSender = hubSender;
         }
 
         [HttpPost]
-        public IActionResult CreateQueues(QueueDto dto)
-        {
-            if(queueRepository.CreateQueues(dto.TournamentId, dto.GokartIds, dto.NumberOfRidesInOneGokart))
-                return Ok();
-            return BadRequest("Bad request");
+        public async Task<IActionResult> Create(QueueDto dto) {
+            try {
+                await queueRepository.CreateAsync(dto.TournamentId, dto.GokartIds, dto.NumberOfRidesInOneGokart);
+                await hubSender.SendUpdate(dto.TournamentId);
+                return StatusCode(201, new ResponseHelper(201, "Created", "Pomyślnie utworzono kolejkę"));
+            } catch (MoreRidesThanGokartsException) {
+                return StatusCode(400, new ResponseHelper(400, "BadRequest", "Nie można przeprowadzić więcej przejazdów niż jest wybranch gokartów do losowania"));
+            } catch (NumberOfRidesNotMultipleOfPlayersException) {
+                return StatusCode(408, new ResponseHelper(408, "Timeout", "Ilość graczy nie jest wielokrotnością ilości przejazdów na gokart"));
+            } catch (TimeoutException) {
+                return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
+            } catch (Exception) {
+                return StatusCode(500, new ResponseHelper(500, "ServerError", "Wystąpił nieoczekiwany błąd"));
+            }
         }
 
-        [HttpGet("{queueId}")]
-        public IActionResult Get(int queueId)
-        {
-            return Ok(queueRepository.Get(queueId));
+        [HttpGet("tournament/{tournamentId}")]
+        public async Task<IActionResult> GetAllForTournament(int tournamentId) {
+            try {
+                return Ok(await queueRepository.GetAllForTournamentAsync(tournamentId));
+            } catch (TimeoutException) {
+                return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
+            } catch (Exception) {
+                return StatusCode(500, new ResponseHelper(500, "ServerError", "Wystąpił nieoczekiwany błąd"));
+            }
         }
 
-        [HttpGet]
-        public IActionResult GetAll()
-        {
-            return Ok(queueRepository.GetAll());
-        }
-
-        [HttpPut("{queueId}")]
-        public IActionResult UpdateRideState(int queueId)
-        {
-            if(queueRepository.ChangeQueueState(queueId))
-                return Ok();
-            return BadRequest();
-        }
-
-        [HttpGet("full")]
-        public IActionResult FullGetAll()
-        {
-            return Ok(queueRepository.FullGetAll());
-        }
-
-        [HttpGet("full/tournament/{tournamentId}/active")]
-        public IActionResult FullGetActiveQueueForTournament(int tournamentId)
-        {
-            var queue = queueRepository.FullGetActiveQueueForTournament(tournamentId);
-            if (queue != null)
-                return Ok(queue);
-            else
-                return Ok(null);
-        }
-
-        [HttpGet("full/tournament/{tournamentId}")]
-        public IActionResult FullGetAllQuueuesForTournament(int tournamentId)
-        {
-            return Ok(queueRepository.FullGetAllQueuesForTournament(tournamentId));
-        }
-
-        [HttpGet("full/{queueId}")]
-        public IActionResult FullGetAll(int queueId)
-        {
-            return Ok(queueRepository.FullGet(queueId));
-        }
-
-        [HttpDelete("{tournamentId}")]
-        public IActionResult Remove(int tournamentId)
-        {
-            if(queueRepository.RemoveQueuesForTournament(tournamentId))
-                return Ok();
-            return BadRequest();
-        }
-        [HttpGet("tournament/{tournamentID}/players")]
-        public IActionResult getPlayers(int tournamentID) {
-            return Ok(queueRepository.GetPlayersForQueue(tournamentID));
-        }
-        [HttpPost("tournament/{tournamentID}/player/{playerID}")]
-        public IActionResult AddPlayerToQueue(int tournamentID,int playerID) {
-            return Ok(queueRepository.AddPlayerToQueue(tournamentID,playerID));
+        [HttpDelete("{queueId}")]
+        public async Task<IActionResult> Remove(int queueId) {
+            try {
+                if(await queueRepository.RemoveAsync(queueId) is int tournamentId)
+                {
+                    await hubSender.SendUpdate(tournamentId);
+                    return StatusCode(200, new ResponseHelper(201, "Ok", "Pomyślnie usunięto kolejkę"));
+                }
+                return StatusCode(404, new ResponseHelper(404, "NotFound", "Nie znaleziono kolejki"));
+            } catch (DbUpdateException) {
+                return StatusCode(409, new ResponseHelper(409, "Conflict", "Obiekt ma powiązane encje, usuń je i spróbuj ponownie"));
+            } catch (TimeoutException) {
+                return StatusCode(408, new ResponseHelper(408, "Timeout", "Przkroczono czas wykonania operacji"));
+            } catch (Exception) {
+                return StatusCode(500, new ResponseHelper(500, "ServerError", "Wystąpił nieoczekiwany błąd"));
+            }
         }
 
     }

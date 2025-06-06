@@ -1,102 +1,34 @@
-import { FullRideData, RideData, RideFormData } from "../../types";
+import { RideAndPersonData, RideGroupData } from "../../types";
 import apiClient from "./apiClient";
+import { BaseService } from "./baseService";
 
-export const create_ride = async (data: RideFormData): Promise<string> => {
-  const formData = new FormData();
-  
-  formData.append("tournamentId", data.tournamentId.toString());
-  formData.append("playerId", data.playerId.toString());
-  formData.append("gokartId", data.gokartId.toString());
-  formData.append("time", data.time.toString());
-  formData.append("isDisqualified", data.isDisqualified.toString());
-  
+class RideService extends BaseService {
+  static async getTournamentBestRides(
+    tournamentId: number
+  ): Promise<RideAndPersonData[]> {
+    const response = await apiClient.get<RideAndPersonData[]>(
+      `/ride/tournament/${tournamentId}/best`
+    );
+    return response.data;
+  }
 
-  const response = await apiClient.post<string>("/ride", formData, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  return response.data;
-};
+  static async getTournamentLastRide(
+    tournamentId: number
+  ): Promise<RideAndPersonData> {
+    const response = await apiClient.get<RideAndPersonData>(
+      `/ride/tournament/${tournamentId}/last`
+    );
+    return response.data;
+  }
 
-export const update_ride = async (
-  rideId: number,
-  data: RideFormData
-): Promise<string> => {
-  const formData = new FormData();
-  formData.append("tournamentId", data.tournamentId.toString());
-  formData.append("playerId", data.playerId.toString());
-  formData.append("gokartId", data.gokartId.toString());
-  formData.append("time", data.time.toString());
-  formData.append("isDisqualified", data.isDisqualified.toString());
-  
+  static async getAllRidesForTournament(
+    tournamentId: number
+  ): Promise<RideGroupData[]> {
+    const response = await apiClient.get<RideGroupData[]>(
+      `/ride/tournament/${tournamentId}`
+    );
+    return response.data;
+  }
+}
 
-  const response = await apiClient.put<string>(`/ride/${rideId}`, formData, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  return response.data;
-};
-
-export const remove_ride = async (rideId: number): Promise<void> => {
-  await apiClient.delete<string>(`/ride/${rideId}`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-};
-
-export const get_all_rides = async (): Promise<RideData[]> => {
-  const response = await apiClient.get<RideData[]>(`/ride`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  return response.data;
-};
-
-export const get_ride = async (rideId: number): Promise<RideData> => {
-  const response = await apiClient.get<RideData>(`/ride/${rideId}`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  return response.data;
-};
-
-export const get_all_full_rides = async (): Promise<FullRideData[]> => {
-  const response = await apiClient.get<FullRideData[]>(`/ride/full`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  return response.data;
-};
-
-export const get_tournament_best_full_rides = async (tournamentId: number): Promise<FullRideData[]> => {
-  const response = await apiClient.get<FullRideData[]>(`/ride/full/tournament/${tournamentId}`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  return response.data;
-};
-
-export const get_tournament_last_full_ride = async (tournamentId: number): Promise<FullRideData> => {
-  const response = await apiClient.get<FullRideData>(`/ride/full/tournament/${tournamentId}/last`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  return response.data;
-};
-
-export const get_full_ride = async (rideId: number): Promise<FullRideData> => {
-  const response = await apiClient.get<FullRideData>(`/ride/full/${rideId}`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  return response.data;
-};
+export default RideService;

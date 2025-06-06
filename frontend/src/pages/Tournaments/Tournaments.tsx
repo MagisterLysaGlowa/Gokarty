@@ -1,100 +1,27 @@
-import { useEffect, useState } from "react";
-import { TournamentListElement } from "../../components/componentsExport";
-import "./tournaments.css";
-import {
-  create_tournament,
-  get_all_tournaments,
-} from "../../services/tournament";
-import { TournamentFormData } from "../../../types";
-import { useQuery, useMutation } from "react-query";
-import {
-  createTournamentTexts,
-  promiseToast,
-} from "../../Utils/ToastNotifications";
-import { tournamentValidate } from "../../validations/TournamentValidation";
-import { addTournamentToList, resetTournamentValues } from "./TournamentUtils";
+import { Button, useDisclosure } from "@heroui/react";
+import { IoMdAdd } from "react-icons/io";
+import { CreateTournamentModal } from "./tournamentsComponents/TournamentCreateModal";
+import { TournamentsListContainer } from "./tournamentsComponents/TournamentsListContainer";
 
 const Tournaments = () => {
-  const [tournament, SetTournament] = useState<TournamentFormData>(
-    resetTournamentValues
-  );
-
-  const { data, isLoading, isFetching } = useQuery(
-    "getTournaments",
-    async () => await get_all_tournaments()
-  );
-
-  const { mutateAsync: createTournamentAsync } = useMutation(
-    async (data: TournamentFormData) =>
-      await promiseToast(create_tournament(data), createTournamentTexts),
-    {
-      onSuccess: async (tournament) => addTournamentToList(tournament),
-    }
-  );
-
-  /*
-    Ustawia date zakończenia zawodów na date rozpoczęcia zawodów
-    gdy tworzysz zawody. Wynika to z walidacji dat turnieju gdzie 
-    data końca nie może być mniejsza niż data startu.
-  */
-
-  useEffect(() => {
-    const changeEndDate = () => {
-      SetTournament((prev) => ({ ...prev, endDate: prev.startDate }));
-    };
-    changeEndDate();
-  }, [tournament.startDate]);
+  const addModal = useDisclosure();
 
   return (
-    <div className="d-flex">
-      <div className="w-75">
-        <div className="tournamentList">
-          {isLoading || isFetching ? (
-            <p>Loading...</p>
-          ) : (
-            data?.map((z) => (
-              <TournamentListElement data={z} key={z.tournamentId} />
-            ))
-          )}
-        </div>
+    <div className="flex gap-2 flex-col overflow-hidden">
+      <div className="flex-1 overflow-y-auto px-3 .customScroll">
+        <TournamentsListContainer />
       </div>
-      <div className="w-25 right" style={{ margin: "5px" }}>
-        <form
-          className="d-flex flex-column tournamentForm"
-          style={{ gap: "10px" }}
-          onSubmit={(e) => e.preventDefault()}
-        >
-          <h4 className="text-center">Dodaj turniej</h4>
-          <input
-            type="text"
-            className="form-control"
-            placeholder="nazwa"
-            onChange={(e) => {
-              SetTournament({ ...tournament, name: e.target.value });
-            }}
-          />
-          <input
-            type="date"
-            className="form-control"
-            placeholder="nazwa"
-            onChange={(e) =>
-              SetTournament({
-                ...tournament,
-                startDate: new Date(e.target.value),
-              })
-            }
-          />
-          <button
-            className="btn btn-dark"
-            onClick={async () => {
-              if (await tournamentValidate(tournament))
-                await createTournamentAsync(tournament);
-            }}
-          >
-            Dodaj
-          </button>
-        </form>
-      </div>
+      <CreateTournamentModal
+        key={`add`}
+        modal={addModal}
+      />
+      <Button
+        isIconOnly
+        className="rounded-[50%] bg-main-default w-[100px] h-[100px] text-[60px] fixed right-10 bottom-5 z-10"
+        size="lg"
+        endContent={<IoMdAdd />}
+        onPress={addModal.onOpen}
+      />
     </div>
   );
 };

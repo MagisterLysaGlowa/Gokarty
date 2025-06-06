@@ -1,7 +1,5 @@
-﻿using api.Dtos;
-using api.Interfaces;
-using api.Models;
-using Microsoft.AspNetCore.Http;
+﻿using api.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers
@@ -10,97 +8,126 @@ namespace api.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IUserRepository userRepository;
-        private readonly IJwtService jwtService;
-        private readonly IWebHostEnvironment hostEnvironment;
-        public AuthController(IUserRepository userRepository, IJwtService jwtService, IWebHostEnvironment hostEnvironment)
+        private readonly UserManager<User> userManager;
+        private readonly RoleManager<Role> roleManager;
+        private readonly SignInManager<User> signInManager;
+        public AuthController(RoleManager<Role> roleManager, UserManager<User> userManager, SignInManager<User> signInManager)
         {
-            this.userRepository = userRepository;
-            this.jwtService = jwtService;
-            this.hostEnvironment = hostEnvironment;
+            this.roleManager = roleManager;
+            this.userManager = userManager;
+            this.signInManager = signInManager;
         }
-
         [HttpPost("register")]
-        public IActionResult Register(RegisterDto dto)
+        public async Task<IActionResult> Register([FromBody] RegisterDto data)
         {
-            var user = new User()
+            if (data.Password != data.PasswordRepeat)
+                return Unauthorized();
+
+
+            var existingUser = await userManager.FindByNameAsync(data.UserName);
+            if (existingUser is not null)
+                return Conflict();
+
+
+            User user = new()
             {
-                Login = dto.Login,
-                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-                Access = "user"
+                Email = data.Email,
+                UserName = data.UserName
             };
 
-            return Created("success", userRepository.Create(user));
-        }
+            var result = await userManager.CreateAsync(user, data.Password);
 
+            if (!result.Succeeded)
+                return Unauthorized();
+
+            //TODO: do zmiany
+            await userManager.AddToRoleAsync(user, "Admin");
+            return Created("", "Zarejestrowano pomyślnie");
+        }
         [HttpPost("login")]
-        public IActionResult Login(LoginDto dto)
+        public async Task<IActionResult> Login([FromBody] LoginDto data)
         {
-            var user = userRepository.GetByLogin(dto.Login);
-            if (user == null) return BadRequest(new { message = "Invalid Credentials" });
+            var user = await userManager.FindByNameAsync(data.LoginOrEmail)
+                ?? await userManager.FindByEmailAsync(data.LoginOrEmail);
 
-            if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.Password))
-            {
-                return BadRequest(new { message = "Invalid Credentials" });
-            }
 
-            var jwt = jwtService.Generate(user.UserId);
+            if (user is null)
+                return Unauthorized(new { message = "Nieprawidłowe dane logowania." });
 
-            Response.Cookies.Append("jwt", jwt, new CookieOptions
-            {
-                HttpOnly = true
-            });
+            var passwordValid = await userManager.CheckPasswordAsync(user, data.Password);
+            if (!passwordValid)
+                return Unauthorized(new { message = "Nieprawidłowe dane logowania." });
 
-            return Ok(new
-            {
-                message = "success"
-            });
+            await signInManager.SignInAsync(user, false);
+
+            var roleNames = await userManager.GetRolesAsync(user);
+            var rolesWithId = roleManager.Roles
+                .Where(role => roleNames.Contains(role.Name!))
+                .Select(role => new
+                {
+                    id = role.Id,
+                    name = role.Name
+                })
+                .ToList();
+
+
+            return Ok(
+                new
+                {
+                    id = user.Id,
+                    email = user.Email,
+                    username = user.UserName,
+                    roles = rolesWithId
+                }
+                );
         }
-
-        [HttpGet("user")]
-        public IActionResult GetUserByJwt()
-        {
-            try
-            {
-                var jwt = Request.Cookies["jwt"];
-
-                var token = jwtService.Verify(jwt);
-
-                int userId = int.Parse(token.Issuer);
-
-                var user = userRepository.GetById(userId);
-
-                return Ok(user);
-            }
-            catch (Exception)
-            {
-                return Ok(null);
-            }
-        }
-
-        [HttpGet("loginIsFree/{login}")]
-        public IActionResult CheckIfLoginIsFree(string login)
-        {
-            try
-            {
-                return Ok(userRepository.LoginFree(login));
-            }
-            catch (Exception ex)
-            {
-                return NotFound();
-            }
-        }
-
         [HttpPost("logout")]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            Response.Cookies.Delete("jwt");
+            await signInManager.SignOutAsync();
+            return Ok();
+        }
+        [HttpPost("isUserLoggedIn")]
+        public async Task<IActionResult> IsUserLoggedIn()
+        {
+            if (!User.Identity.IsAuthenticated)
+                return Unauthorized();
+
+            var user = await userManager.FindByNameAsync(User.Identity.Name);
+            if (user == null)
+                return NotFound();
+
+            var roleNames = await userManager.GetRolesAsync(user);
+            var rolesWithId = roleManager.Roles
+                .Where(role => roleNames.Contains(role.Name!))
+                .Select(role => new
+                {
+                    id = role.Id,
+                    name = role.Name
+                })
+                .ToList();
 
             return Ok(new
             {
-                message = "success"
+                id = user.Id,
+                email = user.Email,
+                username = user.UserName,
+                roles = rolesWithId
             });
         }
+
+    }
+    public class LoginDto
+    {
+        public string LoginOrEmail { get; set; }
+        public string Password { get; set; }
+    }
+
+    public class RegisterDto
+    {
+        public string UserName { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public string PasswordRepeat { get; set; }
     }
 }
-

@@ -17,10 +17,149 @@ namespace api.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.8")
+                .HasAnnotation("ProductVersion", "9.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("text");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetRoleClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("text");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("text");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserLogins", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("api.Models.Class", b =>
+                {
+                    b.Property<int>("ClassId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ClassId"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("SchoolId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ClassId");
+
+                    b.HasIndex("SchoolId");
+
+                    b.ToTable("Classes");
+
+                    b.HasData(
+                        new
+                        {
+                            ClassId = 1,
+                            Name = "5TP",
+                            SchoolId = 1
+                        },
+                        new
+                        {
+                            ClassId = 2,
+                            Name = "5TI",
+                            SchoolId = 1
+                        });
+                });
 
             modelBuilder.Entity("api.Models.Gokart", b =>
                 {
@@ -30,7 +169,16 @@ namespace api.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("GokartId"));
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("GokartId");
@@ -41,11 +189,15 @@ namespace api.Migrations
                         new
                         {
                             GokartId = 1,
+                            Description = "",
+                            Image = "defaultGokartImage.jpg",
                             Name = "Czarny 1"
                         },
                         new
                         {
                             GokartId = 2,
+                            Description = "",
+                            Image = "defaultGokartImage.jpg",
                             Name = "Czarny 2"
                         });
                 });
@@ -61,18 +213,20 @@ namespace api.Migrations
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<int>("SchoolId")
+                    b.Property<int?>("ClassId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Surname")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("PlayerId");
 
-                    b.HasIndex("SchoolId");
+                    b.HasIndex("ClassId");
 
                     b.ToTable("Players");
 
@@ -81,16 +235,16 @@ namespace api.Migrations
                         {
                             PlayerId = 1,
                             BirthDate = new DateTime(2024, 10, 5, 12, 0, 0, 0, DateTimeKind.Utc),
+                            ClassId = 1,
                             Name = "Maciej",
-                            SchoolId = 1,
                             Surname = "Traktor"
                         },
                         new
                         {
                             PlayerId = 2,
                             BirthDate = new DateTime(2024, 10, 5, 12, 0, 0, 0, DateTimeKind.Utc),
+                            ClassId = 1,
                             Name = "Michalina",
-                            SchoolId = 1,
                             Surname = "Ciągnik"
                         });
                 });
@@ -139,9 +293,6 @@ namespace api.Migrations
                     b.Property<int>("QueuePosition")
                         .HasColumnType("integer");
 
-                    b.Property<int>("RideStatusId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("TournamentId")
                         .HasColumnType("integer");
 
@@ -150,8 +301,6 @@ namespace api.Migrations
                     b.HasIndex("GokartId");
 
                     b.HasIndex("PlayerId");
-
-                    b.HasIndex("RideStatusId");
 
                     b.HasIndex("TournamentId");
 
@@ -172,7 +321,10 @@ namespace api.Migrations
                     b.Property<bool>("IsDisqualified")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("PlayerId")
+                    b.Property<int>("PenaltyPoints")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("RideGroupId")
                         .HasColumnType("integer");
 
                     b.Property<int>("RideNumber")
@@ -181,50 +333,81 @@ namespace api.Migrations
                     b.Property<int>("Time")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TournamentId")
-                        .HasColumnType("integer");
-
                     b.HasKey("RideId");
 
                     b.HasIndex("GokartId");
+
+                    b.HasIndex("RideGroupId");
+
+                    b.ToTable("Rides");
+                });
+
+            modelBuilder.Entity("api.Models.RideGroup", b =>
+                {
+                    b.Property<int>("RideGroupId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("RideGroupId"));
+
+                    b.Property<int>("ClassId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PlayerId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TournamentId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("RideGroupId");
+
+                    b.HasIndex("ClassId");
 
                     b.HasIndex("PlayerId");
 
                     b.HasIndex("TournamentId");
 
-                    b.ToTable("Rides");
+                    b.ToTable("RideGroups");
                 });
 
-            modelBuilder.Entity("api.Models.RideStatus", b =>
+            modelBuilder.Entity("api.Models.Role", b =>
                 {
-                    b.Property<int>("RideStatusId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("RideStatusId"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("State")
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
                         .HasColumnType("text");
 
-                    b.HasKey("RideStatusId");
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
-                    b.ToTable("RideStatuses");
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex");
+
+                    b.ToTable("AspNetRoles", (string)null);
 
                     b.HasData(
                         new
                         {
-                            RideStatusId = 1,
-                            State = "Oczekuje"
+                            Id = 1,
+                            Name = "Admin"
                         },
                         new
                         {
-                            RideStatusId = 2,
-                            State = "W trakcie"
-                        },
-                        new
-                        {
-                            RideStatusId = 3,
-                            State = "Zakończył"
+                            Id = 2,
+                            Name = "Operator"
                         });
                 });
 
@@ -237,12 +420,15 @@ namespace api.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("SchoolId"));
 
                     b.Property<string>("Acronym")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("City")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("SchoolId");
@@ -270,7 +456,12 @@ namespace api.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("StartDate")
@@ -295,6 +486,7 @@ namespace api.Migrations
                         {
                             TournamentId = 1,
                             EndDate = new DateTime(2024, 10, 5, 12, 0, 0, 0, DateTimeKind.Utc),
+                            Image = "defaultTournamentImage.jpg",
                             Name = "Wyścig",
                             StartDate = new DateTime(2024, 10, 5, 12, 0, 0, 0, DateTimeKind.Utc),
                             TournamentStateId = 1
@@ -310,6 +502,7 @@ namespace api.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("TournamentStateId"));
 
                     b.Property<string>("State")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("TournamentStateId");
@@ -343,6 +536,7 @@ namespace api.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("TournamentTypeId"));
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("TournamentTypeId");
@@ -364,35 +558,141 @@ namespace api.Migrations
 
             modelBuilder.Entity("api.Models.User", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("UserId"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Access")
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
                         .HasColumnType("text");
 
-                    b.Property<string>("Login")
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("PasswordHash")
                         .HasColumnType("text");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
 
-                    b.HasKey("UserId");
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("boolean");
 
-                    b.ToTable("Users");
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex");
+
+                    b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
+                {
+                    b.HasOne("api.Models.Role", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
+                {
+                    b.HasOne("api.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
+                {
+                    b.HasOne("api.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
+                {
+                    b.HasOne("api.Models.Role", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("api.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
+                {
+                    b.HasOne("api.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("api.Models.Class", b =>
+                {
+                    b.HasOne("api.Models.School", "School")
+                        .WithMany("Classes")
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("School");
                 });
 
             modelBuilder.Entity("api.Models.Player", b =>
                 {
-                    b.HasOne("api.Models.School", "School")
+                    b.HasOne("api.Models.Class", "Class")
                         .WithMany("Players")
-                        .HasForeignKey("SchoolId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ClassId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("School");
+                    b.Navigation("Class");
                 });
 
             modelBuilder.Entity("api.Models.PlayerTournament", b =>
@@ -400,13 +700,13 @@ namespace api.Migrations
                     b.HasOne("api.Models.Player", "Player")
                         .WithMany("PlayerTournaments")
                         .HasForeignKey("PlayersId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("api.Models.Tournament", "Tournament")
                         .WithMany("PlayerTournaments")
                         .HasForeignKey("TournamentsId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Player");
@@ -419,32 +719,24 @@ namespace api.Migrations
                     b.HasOne("api.Models.Gokart", "Gokart")
                         .WithMany("Queues")
                         .HasForeignKey("GokartId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("api.Models.Player", "Player")
                         .WithMany("Queues")
                         .HasForeignKey("PlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("api.Models.RideStatus", "RideStatus")
-                        .WithMany("Queues")
-                        .HasForeignKey("RideStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("api.Models.Tournament", "Tournament")
                         .WithMany("Queues")
                         .HasForeignKey("TournamentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Gokart");
 
                     b.Navigation("Player");
-
-                    b.Navigation("RideStatus");
 
                     b.Navigation("Tournament");
                 });
@@ -454,22 +746,40 @@ namespace api.Migrations
                     b.HasOne("api.Models.Gokart", "Gokart")
                         .WithMany("Rides")
                         .HasForeignKey("GokartId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("api.Models.RideGroup", "RideGroup")
+                        .WithMany("Rides")
+                        .HasForeignKey("RideGroupId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Gokart");
+
+                    b.Navigation("RideGroup");
+                });
+
+            modelBuilder.Entity("api.Models.RideGroup", b =>
+                {
+                    b.HasOne("api.Models.Class", "Class")
+                        .WithMany("RideGroups")
+                        .HasForeignKey("ClassId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("api.Models.Player", "Player")
-                        .WithMany("Rides")
+                        .WithMany("RideGroups")
                         .HasForeignKey("PlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("api.Models.Tournament", "Tournament")
-                        .WithMany("Rides")
+                        .WithMany("RideGroups")
                         .HasForeignKey("TournamentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Gokart");
+                    b.Navigation("Class");
 
                     b.Navigation("Player");
 
@@ -481,16 +791,24 @@ namespace api.Migrations
                     b.HasOne("api.Models.TournamentState", "TournamentState")
                         .WithMany("Tournaments")
                         .HasForeignKey("TournamentStateId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("api.Models.TournamentType", "TournamentType")
                         .WithMany("Tournaments")
-                        .HasForeignKey("TournamentTypeId");
+                        .HasForeignKey("TournamentTypeId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("TournamentState");
 
                     b.Navigation("TournamentType");
+                });
+
+            modelBuilder.Entity("api.Models.Class", b =>
+                {
+                    b.Navigation("Players");
+
+                    b.Navigation("RideGroups");
                 });
 
             modelBuilder.Entity("api.Models.Gokart", b =>
@@ -506,17 +824,17 @@ namespace api.Migrations
 
                     b.Navigation("Queues");
 
-                    b.Navigation("Rides");
+                    b.Navigation("RideGroups");
                 });
 
-            modelBuilder.Entity("api.Models.RideStatus", b =>
+            modelBuilder.Entity("api.Models.RideGroup", b =>
                 {
-                    b.Navigation("Queues");
+                    b.Navigation("Rides");
                 });
 
             modelBuilder.Entity("api.Models.School", b =>
                 {
-                    b.Navigation("Players");
+                    b.Navigation("Classes");
                 });
 
             modelBuilder.Entity("api.Models.Tournament", b =>
@@ -525,7 +843,7 @@ namespace api.Migrations
 
                     b.Navigation("Queues");
 
-                    b.Navigation("Rides");
+                    b.Navigation("RideGroups");
                 });
 
             modelBuilder.Entity("api.Models.TournamentState", b =>

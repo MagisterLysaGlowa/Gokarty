@@ -1,0 +1,74 @@
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+} from "@heroui/react";
+import { FC } from "react";
+import { ModalProps } from "../../../../types";
+import { TableRowsType } from "../tournamentTableUtils";
+
+type RideInfoModalProps = {
+  modal: ModalProps;
+  ride: TableRowsType
+};
+
+export const RideInfoModal: FC<RideInfoModalProps> = ({
+  modal,
+  ride
+}) => {
+  const setColorForPosition = (position: number) => {
+    if (position === 1) return "text-yellow-500";
+    if (position === 2) return "text-gray-500";
+    if (position === 3) return "text-amber-900";
+    return "text-white";
+  }
+
+  const setBorderForPosition = (position: number) => {
+    if (position === 1) return "border-yellow-500";
+    if (position === 2) return "border-gray-500";
+    if (position === 3) return "border-amber-900";
+    return "border-none";
+  }
+
+  return (
+    <Modal isOpen={modal.isOpen} onOpenChange={modal.onOpenChange}>
+      <ModalContent className={`border-2 ${setBorderForPosition(Number(ride.position?.substring(1)))}`}>
+        {(onClose) => (
+          <>
+            <ModalHeader className={`flex flex-col gap-1 text-lg text-center ${setColorForPosition(Number(ride.position?.substring(1)))}`}>
+              {ride.person}
+            </ModalHeader>
+            <ModalBody>
+              <div className="grid grid-cols-2">
+                <div>
+                  <p>Szkoła:</p>
+                  <p>Miejsce:</p>
+                  <p>Gokart:</p>
+                  <p>Czas:</p>
+                  <p>Pkt karne:</p>
+                  {ride.difference !== "" && <p>Różnica:</p>}
+                </div>
+                <div>
+                  <p>{ride.school}</p>
+                  <p>{ride.time}</p>
+                  <p>{ride.gokart}</p>
+                  <p>{ride.time}</p>
+                  <p className="text-red-700">2</p>
+                  <p className="text-red-700">{ride.difference}</p>
+                </div>
+              </div>
+            </ModalBody>
+            <ModalFooter>
+              <Button color="primary" onPress={onClose}>
+                OK
+              </Button>
+            </ModalFooter>
+          </>
+        )}
+      </ModalContent>
+    </Modal>
+  );
+};
