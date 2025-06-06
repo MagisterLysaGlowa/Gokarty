@@ -1,27 +1,26 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "../App";
-import HomePage from "../pages/HomePage/HomePage";
-import LoginPage from "../pages/LoginPage/LoginPage";
-import RegisterPage from "../pages/RegisterPage/RegisterPage";
-import Tournaments from "../pages/Tournaments/Tournaments";
-import TournamentTable from "../pages/TournamentTable/TournamentTable";
-import { SchoolManagement } from "../pages/SchoolManagement/SchoolManagement";
-import { AddGokart } from "../pages/GokartManagement/GokartManagement";
+import { ProtectedPathComponent } from "../components/ProtectedPathComponent/ProtectedPathComponent";
+import { DualNavigationManagment } from "../layouts/DualNavigationManagment";
 import { EmptyLayout } from "../layouts/EmptyLayout";
 import { MainNavigationLayout } from "../layouts/MainNavigationLayout";
-import { DualNavigationManagment } from "../layouts/DualNavigationManagment";
-import { TournamentRides } from "../pages/TournamentManagement/SubPages/tournamentRides/TournamentRides";
-import { TournamentInfo } from "../pages/TournamentManagement/SubPages/tournamentInfo/TournamentInfo";
+import { Forbidden } from "../pages/Errors/Forbidden";
+import { AddGokart } from "../pages/GokartManagement/GokartManagement";
+import { GokartsPage } from "../pages/GokartsPage/GokartsPage";
+import HomePage from "../pages/HomePage/HomePage";
+import { InfoPage } from "../pages/InfoPage/InfoPage";
+import LoginPage from "../pages/LoginPage/LoginPage";
+import { LoginRegister } from "../pages/LoginRegister/LoginRegister";
+import { QueueManagement } from "../pages/QueueManagement/QueueManagement";
+import { SchoolManagement } from "../pages/SchoolManagement/SchoolManagement";
 import { AddPlayerForTournament } from "../pages/TournamentManagement/SubPages/addPlayerForTournament/AddPlayerForTournament";
 import { PlayersForTournament } from "../pages/TournamentManagement/SubPages/playersForTournament/PlayersForTournament";
-import { InfoPage } from "../pages/InfoPage/InfoPage";
-import { GokartsPage } from "../pages/GokartsPage/GokartsPage";
-import { QueueManagement } from "../pages/QueueManagement/QueueManagement";
-import { LoginRegister } from "../pages/LoginRegister/LoginRegister";
-import { ProtectedPathComponent } from "../components/ProtectedPathComponent/ProtectedPathComponent";
-import { Forbidden } from "../pages/Errors/Forbidden";
+import { TournamentInfo } from "../pages/TournamentManagement/SubPages/tournamentInfo/TournamentInfo";
+import { TournamentRides } from "../pages/TournamentManagement/SubPages/tournamentRides/TournamentRides";
+import Tournaments from "../pages/Tournaments/Tournaments";
+import TournamentTable from "../pages/TournamentTable/TournamentTable";
 import { TournamentsPage } from "../pages/TournamntsPage/TournamentsPage";
-import { protectedPathsWithRoles } from "../Utils/globalUtils";
+import { RoleName } from "../Utils/globalUtils";
 
 export const router = createBrowserRouter([
   {
@@ -34,7 +33,6 @@ export const router = createBrowserRouter([
         children: [
           { path: "", element: <HomePage /> },
           { path: "login", element: <LoginPage /> },
-          { path: "register", element: <RegisterPage /> },
           { path: "zawody/:id/wyniki", element: <TournamentTable /> },
           { path: "informacje", element: <InfoPage /> },
           { path: "gokarty", element: <GokartsPage /> },
@@ -46,9 +44,7 @@ export const router = createBrowserRouter([
       {
         path: "/",
         element: (
-          <ProtectedPathComponent
-            allowedRoles={protectedPathsWithRoles.get("management")}
-          >
+          <ProtectedPathComponent allowedRoles={RoleName.management}>
             <MainNavigationLayout />
           </ProtectedPathComponent>
         ),
@@ -60,7 +56,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "zawody",
-        element: <DualNavigationManagment />,
+        element: (
+          <ProtectedPathComponent allowedRoles={RoleName.management}>
+            <DualNavigationManagment />
+          </ProtectedPathComponent>
+        ),
         children: [
           { path: ":id/:tournamentName", element: <TournamentInfo /> },
           {

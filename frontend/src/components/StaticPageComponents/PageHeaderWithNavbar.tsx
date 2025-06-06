@@ -1,30 +1,26 @@
 import { FC } from "react";
-import { Header } from "./Header";
+import { LoginButton } from "../LoginButton/LoginButton";
 import { StaticPageNavbar } from "../StaticPageNavbar/StaticPageNavbar";
-import { Link } from "react-router-dom";
+import { Header } from "./Header";
 
 type props = {
   title: string;
 };
 
-export const PageHeaderWithNavbar: FC<props> = ({ title }) => {
+export const PageHeaderWithNavbar: FC<props> = () => {
   return (
-      <Header className=" py-2">
-        <div  className="grid grid-cols-[15%_70%_15%] content-center">
-        <div  className="mx-auto">
-
-        </div>
+    <Header className=" py-2">
+      <div className="grid grid-cols-[15%_70%_15%] content-center">
+        <div className="mx-auto"></div>
         <div className="lg:text-[40px] sm:text-[35px] xs:text-[30px] text-[25px] flex gap-2 font-medium text-center justify-center">
           <span>Gokarty</span>
-          <span className="text-main-default">
-            hub
-          </span>
+          <span className="text-main-default">hub</span>
         </div>
         <label className="justify-center flex">
-        <Link to="/logowanie" className="text-center flex align-middle my-auto hover:text-zinc-300">Zapodaj logowanie</Link>
+          <LoginButton />
         </label>
-        </div>
-        <StaticPageNavbar/>
-      </Header>
+      </div>
+      <StaticPageNavbar />
+    </Header>
   );
 };

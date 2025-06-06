@@ -1,29 +1,8 @@
 import { SlotsToClasses } from "@heroui/react";
-import { Roles, TableActionButtonProps, User } from "../../types";
 import { FaEdit, FaTrash } from "react-icons/fa";
-import { validateImageFile } from "../validations/ImageFileValidation";
 import { HiPlus } from "react-icons/hi";
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export type DeepKeys<T, Prefix extends string = ""> = {
-  [K in keyof T]: T[K] extends object
-    ? T[K] extends Array<any>
-      ? `${Prefix}${Extract<K, string>}`
-      :
-          | `${Prefix}${Extract<K, string>}`
-          | DeepKeys<T[K], `${Prefix}${Extract<K, string>}.`>
-    : `${Prefix}${Extract<K, string>}`;
-}[keyof T];
-
-export const handleInputChange =
-  <T>(
-    seter: React.Dispatch<React.SetStateAction<T>>,
-    key: DeepKeys<T>,
-    value?: any
-  ) =>
-  (e: React.ChangeEvent<HTMLInputElement>) => {
-    seter((prev) => ({ ...prev, [key]: value || e.target.value }));
-  };
+import { Roles, TableActionButtonProps, User } from "../../types";
+import { validateImageFile } from "../validations/ImageFileValidation";
 
 export const imagesPath = "http://localhost:5079/images/";
 
@@ -84,16 +63,26 @@ export const defaultAddButtonProps: TableActionButtonProps = {
   color: "warning",
 };
 
-export const protectedPathsWithRoles = new Map<string, Roles[]>([
-  ["management", ["Admin", "Operator"]],
-]);
+export enum RoleName {
+  management = "management",
+  player = "player",
+  logedIn = "logedIn",
+}
 
-export const amIAllowed = (
-  user: User | undefined,
-  alloweRoles: Roles[] | undefined
-) => {
-  if (!user?.roles.some((z) => alloweRoles?.includes(z.name as Roles))) {
-    return false;
+export class UserRoleAccess {
+  public static pathWithRoles = new Map<RoleName, Roles[]>([
+    [RoleName.management, ["Admin", "Operator"]],
+    [RoleName.player, ["Player"]],
+    [RoleName.logedIn, ["Admin", "Operator", "Player"]],
+  ]);
+
+  public static getRoles(roles: RoleName) {
+    return this.pathWithRoles.get(roles) ?? [];
   }
-  return true;
-};
+
+  public static amIAllowed = (user: User | undefined, roles: RoleName) => {
+    return user?.roles.some((z) =>
+      this.getRoles(roles).includes(z.name as Roles)
+    );
+  };
+}

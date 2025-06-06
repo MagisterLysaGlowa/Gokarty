@@ -1,12 +1,11 @@
 import { FC, ReactNode, useEffect } from "react";
-import { useAuth } from "../../contexts/authContext/useAuth";
 import { useNavigate } from "react-router-dom";
-import { Roles } from "../../../types";
-import { amIAllowed } from "../../Utils/globalUtils";
+import { useAuth } from "../../contexts/authContext/useAuth";
+import { RoleName, UserRoleAccess } from "../../Utils/globalUtils";
 
 type ProtectedPathComponentProps = {
   children: ReactNode;
-  allowedRoles: Roles[] | undefined;
+  allowedRoles: RoleName;
 };
 
 export const ProtectedPathComponent: FC<ProtectedPathComponentProps> = ({
@@ -18,7 +17,7 @@ export const ProtectedPathComponent: FC<ProtectedPathComponentProps> = ({
 
   useEffect(() => {
     if (!user) navigate("/logowanie", { replace: true });
-    else if (!amIAllowed(user, allowedRoles))
+    else if (!UserRoleAccess.amIAllowed(user, allowedRoles))
       navigate("/forbidden", { replace: true });
   }, [navigate, allowedRoles, user]);
 

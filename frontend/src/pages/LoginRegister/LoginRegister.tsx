@@ -1,11 +1,21 @@
-import { useState } from "react";
-import { RegisterForms } from "./LoginRegisterComponents/RegisterForms";
-import { LoginForms } from "./LoginRegisterComponents/LoginForms";
 import { Divider } from "@heroui/react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/authContext/useAuth";
+import { LoginForms } from "./LoginRegisterComponents/LoginForms";
+import { RegisterForms } from "./LoginRegisterComponents/RegisterForms";
 
 export const LoginRegister = () => {
   const [isLogin, setIsLogin] = useState<boolean>(true);
+  const { user, isLoggedIn } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    (async () => {
+      if (isLoggedIn && user) navigate("/", { replace: true });
+    })();
+  }, [isLoggedIn, user, navigate]);
+
   return (
     <div className="bg-[url(images/mainPage.jpg)] h-full">
       <div className="flex-1 flex justify-center h-full backdrop-blur-md backdrop-brightness-50 ">

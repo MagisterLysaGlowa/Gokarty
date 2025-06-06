@@ -174,4 +174,4 @@ export type Role = {
   id: number;
   name: string;
 };
-export type Roles = "Admin" | "Operator";
+export type Roles = "Admin" | "Operator" | "Player";

@@ -2,20 +2,24 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace api.Controllers {
+namespace api.Controllers
+{
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase {
+    public class AuthController : ControllerBase
+    {
         private readonly UserManager<User> userManager;
         private readonly RoleManager<Role> roleManager;
         private readonly SignInManager<User> signInManager;
-        public AuthController(RoleManager<Role> roleManager, UserManager<User> userManager, SignInManager<User> signInManager) {
+        public AuthController(RoleManager<Role> roleManager, UserManager<User> userManager, SignInManager<User> signInManager)
+        {
             this.roleManager = roleManager;
             this.userManager = userManager;
             this.signInManager = signInManager;
         }
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDto data) {
+        public async Task<IActionResult> Register([FromBody] RegisterDto data)
+        {
             if (data.Password != data.PasswordRepeat)
                 return Unauthorized();
 
@@ -24,15 +28,25 @@ namespace api.Controllers {
             if (existingUser is not null)
                 return Conflict();
 
-            var result = await userManager.CreateAsync(new Models.User { Email = data.Email, UserName = data.UserName }, data.Password);
 
-            if(!result.Succeeded) 
+            User user = new()
+            {
+                Email = data.Email,
+                UserName = data.UserName
+            };
+
+            var result = await userManager.CreateAsync(user, data.Password);
+
+            if (!result.Succeeded)
                 return Unauthorized();
 
-            return Created("","Zarejestrowano pomyślnie");
+            //TODO: do zmiany
+            await userManager.AddToRoleAsync(user, "Admin");
+            return Created("", "Zarejestrowano pomyślnie");
         }
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginDto data) {
+        public async Task<IActionResult> Login([FromBody] LoginDto data)
+        {
             var user = await userManager.FindByNameAsync(data.LoginOrEmail)
                 ?? await userManager.FindByEmailAsync(data.LoginOrEmail);
 
@@ -49,7 +63,8 @@ namespace api.Controllers {
             var roleNames = await userManager.GetRolesAsync(user);
             var rolesWithId = roleManager.Roles
                 .Where(role => roleNames.Contains(role.Name!))
-                .Select(role => new {
+                .Select(role => new
+                {
                     id = role.Id,
                     name = role.Name
                 })
@@ -57,7 +72,8 @@ namespace api.Controllers {
 
 
             return Ok(
-                new {
+                new
+                {
                     id = user.Id,
                     email = user.Email,
                     username = user.UserName,
@@ -66,12 +82,14 @@ namespace api.Controllers {
                 );
         }
         [HttpPost("logout")]
-        public async Task<IActionResult> Logout() {
+        public async Task<IActionResult> Logout()
+        {
             await signInManager.SignOutAsync();
             return Ok();
         }
         [HttpPost("isUserLoggedIn")]
-        public async Task<IActionResult> IsUserLoggedIn() {
+        public async Task<IActionResult> IsUserLoggedIn()
+        {
             if (!User.Identity.IsAuthenticated)
                 return Unauthorized();
 
@@ -82,13 +100,15 @@ namespace api.Controllers {
             var roleNames = await userManager.GetRolesAsync(user);
             var rolesWithId = roleManager.Roles
                 .Where(role => roleNames.Contains(role.Name!))
-                .Select(role => new {
+                .Select(role => new
+                {
                     id = role.Id,
                     name = role.Name
                 })
                 .ToList();
 
-            return Ok(new {
+            return Ok(new
+            {
                 id = user.Id,
                 email = user.Email,
                 username = user.UserName,
@@ -97,12 +117,14 @@ namespace api.Controllers {
         }
 
     }
-    public class LoginDto {
+    public class LoginDto
+    {
         public string LoginOrEmail { get; set; }
         public string Password { get; set; }
     }
 
-    public class RegisterDto {
+    public class RegisterDto
+    {
         public string UserName { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }

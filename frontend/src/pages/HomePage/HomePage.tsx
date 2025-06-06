@@ -1,30 +1,19 @@
-import {
-  Button,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-  Image,
-} from "@heroui/react";
+import { Button, Image } from "@heroui/react";
 import { FaArrowRight } from "react-icons/fa";
-import { staticPageNav } from "../../components/Navbar/navbarUtils";
 import { useNavigate } from "react-router-dom";
-import "./HomePage.css";
 import { Footer } from "../../components/componentsExport";
-import { Separator } from "../../components/StaticPageComponents/Separator";
+import { LoginButton } from "../../components/LoginButton/LoginButton";
+import { staticPageNav } from "../../components/Navbar/navbarUtils";
 import { Header } from "../../components/StaticPageComponents/Header";
-import { NavigationBox } from "./HomePageComponents/NavigationBox";
+import { Separator } from "../../components/StaticPageComponents/Separator";
 import { useAuth } from "../../contexts/authContext/useAuth";
-import { AuthQuery } from "../../queries/authQuery";
-import { FcManager } from "react-icons/fc";
-import { BiLogIn, BiLogOut } from "react-icons/bi";
-import { amIAllowed, protectedPathsWithRoles } from "../../Utils/globalUtils";
+import { RoleName, UserRoleAccess } from "../../Utils/globalUtils";
+import "./HomePage.css";
+import { NavigationBox } from "./HomePageComponents/NavigationBox";
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const { isLoggedIn, user } = useAuth();
-
-  const { mutateAsync: logoutAsync } = AuthQuery.logout();
+  const { user } = useAuth();
 
   return (
     <div className="h-full w-full flex flex-col overflow-auto">
@@ -38,49 +27,13 @@ const HomePage = () => {
         </div>
         <label className="justify-center flex">
           {/* <Link to="/logowanie" className="text-center flex align-middle my-auto hover:text-zinc-300">Zapodaj logowanie</Link> */}
-          {isLoggedIn && user ? (
-            <Dropdown>
-              <DropdownTrigger>
-                <Button
-                  variant="bordered"
-                  className="text-center text-xl flex align-middle my-auto hover:text-zinc-300"
-                >
-                  Konto
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu aria-label="Static Actions">
-                <DropdownItem
-                  key="manage"
-                  className="text-center text-xl flex align-middle my-auto hover:text-zinc-300"
-                  endContent={<FcManager className="text-2xl" />}
-                >
-                  Zarządzaj
-                </DropdownItem>
-                <DropdownItem
-                  className="text-center text-xl flex align-middle my-auto hover:text-zinc-300"
-                  endContent={<BiLogOut className="text-2xl" />}
-                  onPress={async () => await logoutAsync()}
-                  key="copy"
-                >
-                  Wyloguj
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          ) : (
-            <Button
-              className="text-center text-xl flex align-middle my-auto hover:text-zinc-300"
-              onPress={() => navigate("/logowanie")}
-              endContent={<BiLogIn className="text-2xl" />}
-            >
-              Zaloguj się
-            </Button>
-          )}
+          <LoginButton />
         </label>
       </Header>
       <div className="grid grid-cols-3 bg-white xl:p-4 lg:p-3 p-2 xl:border-y-8 lg:border-y-8 md:border-y-7 border-y-4 border-main-default w-full">
-        <Image src="images/mainPage.jpg" className="rounded-none" />
-        <Image src="images/mainPage.jpg" className="rounded-none" />
-        <Image src="images/mainPage.jpg" className="rounded-none" />
+        {Array.from({ length: 3 }, () => (
+          <Image src="images/mainPage.jpg" className="rounded-none" />
+        ))}
       </div>
       <div className="flex flex-col justify-evenly flex-1 items-center">
         <h2 className="lg:text-4xl md:text-3xl sm:text-2xl xs:text-xl text-lg font-bold text-center lg:m-5 md:m-3 m-2">
@@ -121,7 +74,7 @@ const HomePage = () => {
               size="lg"
               endContent={<FaArrowRight className="text-sm" />}
               onPress={() => {
-                if (amIAllowed(user, protectedPathsWithRoles.get("management")))
+                if (UserRoleAccess.amIAllowed(user, RoleName.management))
                   navigate("/zawody");
                 else navigate("/turnieje");
               }}
